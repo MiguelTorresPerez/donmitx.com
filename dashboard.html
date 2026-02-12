@@ -28,6 +28,7 @@
             </a>
         </div>
         <div class="topbar-right">
+            <div id="firebase-status" class="status-indicator">Initializing...</div>
             <div class="user-info" id="user-info">
                 <img class="user-avatar" id="user-avatar" src="" alt="avatar" />
                 <span class="user-name" id="user-name"></span>
@@ -161,6 +162,8 @@
                     and never shared.</p>
             </div>
             <div class="form-actions">
+                <button type="button" class="btn-secondary" id="btn-test-connection" style="margin-right: auto;">Test
+                    Connection</button>
                 <button type="button" class="btn-secondary" id="btn-settings-cancel">Cancel</button>
                 <button type="submit" class="btn-primary">Save Settings</button>
             </div>

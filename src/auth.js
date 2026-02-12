@@ -59,24 +59,47 @@ export const Auth = {
             const result = await signInWithPopup(auth, googleProvider);
             const user = result.user;
 
-            // Sync with Firestore to get role (superuser)
-            const userProfile = await syncUserProfile({
+            // ⚡ Optimistic Auth Strategy:
+            // 1. We assume success and generate a session immediately.
+            // 2. We trigger the DB sync in the background.
+            // 3. If DB sync succeeds quickly, we use the fresh data (including roles).
+            // 4. If DB sync is slow/fails, we use the Auth data and update the role later/on next load.
+
+            let userProfile = {
                 uid: user.uid,
                 email: user.email,
                 displayName: user.displayName,
-                photoURL: user.photoURL
-            });
+                photoURL: user.photoURL,
+                superuser: false
+            };
+
+            const syncProfilePromise = syncUserProfile(userProfile)
+                .then(profile => {
+                    if (profile) userProfile = profile; // Update local reference if successful
+                    return profile;
+                })
+                .catch(err => {
+                    console.warn('[donmitx] Background profile sync failed:', err);
+                    return null;
+                });
+
+            // Wait up to 1.5s for the profile to load (for better UX - showing admin badge immediately)
+            // But don't block forever.
+            await Promise.race([
+                syncProfilePromise,
+                new Promise(resolve => setTimeout(resolve, 1500))
+            ]);
 
             // Create JWT
             const token = JWT.create({
-                sub: user.uid,
-                email: user.email,
-                name: user.displayName,
-                picture: user.photoURL,
-                superuser: userProfile?.superuser || false
+                sub: userProfile.uid,
+                email: userProfile.email,
+                name: userProfile.displayName,
+                picture: userProfile.photoURL,
+                superuser: userProfile.superuser || false
             });
 
-            // Store full profile in local storage
+            // Store full profile
             localStorage.setItem(this.TOKEN_KEY, token);
             localStorage.setItem(this.USER_KEY, JSON.stringify(userProfile));
 

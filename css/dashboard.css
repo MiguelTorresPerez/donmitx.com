@@ -413,3 +413,34 @@
         font-size: var(--fs-3xl);
     }
 }
+/* Firebase Status Indicator */
+.status-indicator {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-right: 12px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.status-info {
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.status-warning {
+    color: #fbbf24;
+    background: rgba(251, 191, 36, 0.1);
+}
+
+.status-success {
+    color: #34d399;
+    background: rgba(52, 211, 153, 0.1);
+    box-shadow: 0 0 10px rgba(52, 211, 153, 0.2);
+}
+
+.status-error {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.1);
+    border: 1px solid rgba(248, 113, 113, 0.2);
+}
