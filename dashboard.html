@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>donmitx — Dashboard</title>
+    <meta name="description" content="Your personal project dashboard on donmitx.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="/css/index.css" />
+    <link rel="stylesheet" href="/css/dashboard.css" />
+</head>
+
+<body>
+    <!-- Particle Canvas (subtle) -->
+    <canvas id="particle-canvas" class="subtle"></canvas>
+    <div class="gradient-mesh subtle"></div>
+
+    <!-- Top Navigation Bar -->
+    <header class="topbar glass" id="topbar">
+        <div class="topbar-left">
+            <a href="/" class="topbar-brand">
+                <span class="gradient-text">don</span><span class="gradient-text-accent">mitx</span>
+            </a>
+        </div>
+        <div class="topbar-right">
+            <div class="user-info" id="user-info">
+                <img class="user-avatar" id="user-avatar" src="" alt="avatar" />
+                <span class="user-name" id="user-name"></span>
+            </div>
+            <button class="btn-icon" id="btn-settings" title="Settings">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                    </path>
+                </svg>
+            </button>
+            <button class="btn-icon" id="btn-logout" title="Log out">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <!-- Hero Section -->
+        <section class="dashboard-hero">
+            <h1 class="dashboard-title">Your <span class="gradient-text">Projects</span></h1>
+            <p class="dashboard-subtitle">Explore, showcase, and manage your work</p>
+        </section>
+
+        <!-- Action Bar -->
+        <div class="action-bar">
+            <div class="search-box glass-subtle">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input type="text" id="search-input" placeholder="Search projects..." />
+            </div>
+            <button class="btn-primary" id="btn-add-project">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                <span>New Project</span>
+            </button>
+        </div>
+
+        <!-- Project Grid -->
+        <section class="project-grid" id="project-grid">
+            <!-- Cards injected dynamically -->
+        </section>
+
+        <!-- Empty State -->
+        <div class="empty-state hidden" id="empty-state">
+            <div class="empty-icon">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
+                    stroke-linecap="round" stroke-linejoin="round" opacity="0.4">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                </svg>
+            </div>
+            <h2>No projects yet</h2>
+            <p>Click <strong>"New Project"</strong> to add your first project</p>
+        </div>
+    </main>
+
+    <!-- Add Project Modal -->
+    <div class="modal-overlay hidden" id="modal-overlay">
+        <div class="modal glass" id="modal-add-project">
+            <div class="modal-header">
+                <h2>New Project</h2>
+                <button class="btn-icon" id="btn-modal-close">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+            <form id="form-add-project" class="modal-form">
+                <div class="form-group">
+                    <label for="project-name">Project Name</label>
+                    <input type="text" id="project-name" placeholder="my-awesome-project" required />
+                </div>
+                <div class="form-group">
+                    <label for="project-description">Description</label>
+                    <textarea id="project-description" rows="3"
+                        placeholder="A brief description of your project..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="project-tags">Tags <span class="hint">(comma-separated)</span></label>
+                    <input type="text" id="project-tags" placeholder="javascript, canvas, api" />
+                </div>
+                <div class="form-group">
+                    <label for="project-url">Live URL <span class="hint">(optional)</span></label>
+                    <input type="url" id="project-url" placeholder="https://..." />
+                </div>
+                <div class="form-group">
+                    <label for="project-repo">Repository URL <span class="hint">(optional)</span></label>
+                    <input type="url" id="project-repo" placeholder="https://github.com/..." />
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="btn-cancel-project">Cancel</button>
+                    <button type="submit" class="btn-primary">Create Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal glass hidden" id="modal-settings">
+        <div class="modal-header">
+            <h2>Settings</h2>
+            <button class="btn-icon" id="btn-settings-close">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+        </div>
+        <form id="form-settings" class="modal-form">
+            <div class="form-group">
+                <label for="github-token">GitHub Personal Access Token</label>
+                <input type="password" id="github-token" placeholder="ghp_..." />
+                <p class="hint">Required to save projects to the repository. The token is stored locally in your browser
+                    and never shared.</p>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" id="btn-settings-cancel">Cancel</button>
+                <button type="submit" class="btn-primary">Save Settings</button>
+            </div>
+        </form>
+    </div>
+
+    <script type="module" src="/src/dashboard-main.js"></script>
+</body>
+
+</html>
