@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    function isSignedIn() { return request.auth != null; }
+    
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
+
+    // Check if the user has the 'superuser' flag in their profile document
+    function isSuperuser() {
+      let userPath = /databases/$(database)/documents/users/$(request.auth.uid);
+      // Check if document exists BEFORE trying to read data to avoid null pointer issues
+      return isSignedIn() && exists(userPath) && get(userPath).data.superuser == true;
+    }
+
+    match /users/{userId} {
+      allow read, write: if isOwner(userId) || isSuperuser();
+    }
+
+    match /project_drafts/{draftId} {
+      allow create: if isSignedIn() && request.resource.data.ownerUid == request.auth.uid;
+      allow read, update, delete: if isOwner(resource.data.ownerUid) || isSuperuser();
+    }
+  }
+}

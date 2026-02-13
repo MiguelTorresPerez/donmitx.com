@@ -10,6 +10,7 @@
  * 3. Google Account validation
  */
 
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 export const firebaseConfig = {
     apiKey: "AIzaSyBCvqxX68Yhoc7dn8uFFuimwHSG0RSBOJ0",
     authDomain: "donmitx.firebaseapp.com",
