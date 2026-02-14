@@ -16,7 +16,9 @@ export const ContentType = {
 
 class AIStrategy {
     canHandle(url) {
-        return /chatgpt\.com|openai\.com|gemini\.google|deepseek|claude\.ai/.test(url);
+        try {
+            return /(?:^|\.)(?:chatgpt|openai|gemini\.google|deepseek|claude)\./i.test(new URL(url).hostname);
+        } catch (e) { return false; }
     }
     parse(url) {
         let title = 'AI Match';
@@ -30,7 +32,7 @@ class AIStrategy {
             imageUrl = 'https://www.gstatic.com/lamda/images/gemini_sparkle_v002_d4735304ff6292a690345.svg';
         } else if (url.includes('claude')) {
             title = 'Claude Chat';
-            imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/7/74/Claude-logo-icon.svg'; // Placeholder
+            imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/7/74/Claude-logo-icon.svg';
         }
 
         return { type: ContentType.AI_CHAT, title, imageUrl, summary: 'Shared AI Conversation' };
@@ -39,7 +41,9 @@ class AIStrategy {
 
 class VideoStrategy {
     canHandle(url) {
-        return /youtube\.com|youtu\.be|vimeo\.com|loom\.com/.test(url);
+        try {
+            return /(?:^|\.)(?:youtube\.com|youtu\.be|vimeo\.com|loom\.com)$/i.test(new URL(url).hostname);
+        } catch (e) { return false; }
     }
     parse(url) {
         let imageUrl = '';
@@ -58,7 +62,10 @@ class VideoStrategy {
 
 class SocialStrategy {
     canHandle(url) {
-        return /twitter\.com|x\.com|linkedin\.com|reddit\.com|instagram\.com/.test(url);
+        try {
+            const h = new URL(url).hostname;
+            return /(?:^|\.)(?:twitter\.com|x\.com|linkedin\.com|reddit\.com|instagram\.com)$/i.test(h);
+        } catch (e) { return false; }
     }
     parse(url) {
         let title = 'Social Post';
@@ -66,7 +73,6 @@ class SocialStrategy {
 
         if (url.includes('twitter') || url.includes('x.com')) {
             title = 'X (Twitter) Post';
-            // X doesn't allow easy favicon scraping without API, use generic logo
             imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/c/ce/X_logo_2023.svg';
         } else if (url.includes('linkedin')) {
             title = 'LinkedIn Post';
@@ -79,7 +85,10 @@ class SocialStrategy {
 
 class CodeStrategy {
     canHandle(url) {
-        return /github\.com|gitlab\.com|gist\.github\.com|codepen\.io/.test(url);
+        try {
+            const h = new URL(url).hostname;
+            return /(?:^|\.)(?:github\.com|gitlab\.com|codepen\.io)$/i.test(h) || h === 'gist.github.com';
+        } catch (e) { return false; }
     }
     parse(url) {
         let title = 'Code Repository';
@@ -95,13 +104,18 @@ class CodeStrategy {
 class DefaultStrategy {
     canHandle() { return true; }
     parse(url) {
-        const domain = new URL(url).hostname.replace('www.', '');
-        return {
-            type: ContentType.LINK,
-            title: domain,
-            imageUrl: `https://www.google.com/s2/favicons?domain=${domain}&sz=128`, // Google Favicon Service
-            summary: 'Web Link'
-        };
+        try {
+            const domain = new URL(url).hostname.replace('www.', '');
+            return {
+                type: ContentType.LINK,
+                title: domain,
+                // High-res Google Favicon
+                imageUrl: `https://www.google.com/s2/favicons?domain=${domain}&sz=256`,
+                summary: 'Web Link'
+            };
+        } catch (e) {
+            return { type: ContentType.LINK, title: 'Link', imageUrl: '', summary: '' };
+        }
     }
 }
 
