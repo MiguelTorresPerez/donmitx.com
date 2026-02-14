@@ -1,72 +1,22 @@
-import { collection, addDoc, getDocs, deleteDoc, doc, query, where, orderBy, getDoc, setDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, deleteDoc, doc, query, where, orderBy, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, limit } from 'firebase/firestore';
 import { db } from './firebase-init.js';
 
-const DRAFTS_COLLECTION = 'project_drafts';
-const USERS_COLLECTION = 'users';
+// Collections
+const USERS_COL = 'users';
+const FOLDERS_COL = 'folders';
+const ITEMS_COL = 'items';
+const REQ_COL = 'friend_requests';
+const CHATS_COL = 'chats';
 
-// --- Draft Operations ---
+// --- User & Social Operations ---
 
-export async function createDraft(project, user) {
-    try {
-        const docRef = await addDoc(collection(db, DRAFTS_COLLECTION), {
-            ...project,
-            ownerUid: user.uid,
-            ownerEmail: user.email,
-            ownerName: user.displayName,
-            status: 'pending',
-            createdAt: new Date().toISOString()
-        });
-        console.log('Draft created with ID: ', docRef.id);
-        return { id: docRef.id, ...project };
-    } catch (e) {
-        console.error('Error adding draft: ', e);
-        throw e;
-    }
-}
-
-export async function getDrafts(userUid = null) {
-    let q;
-    const draftsRef = collection(db, DRAFTS_COLLECTION);
-
-    if (userUid) {
-        q = query(draftsRef, where('ownerUid', '==', userUid));
-    } else {
-        q = query(draftsRef, orderBy('createdAt', 'desc'));
-    }
-
-    try {
-        const querySnapshot = await getDocs(q);
-        return querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-            isDraft: true
-        }));
-    } catch (error) {
-        console.error('Error fetching drafts:', error);
-        return [];
-    }
-}
-
-export async function deleteDraft(draftId) {
-    await deleteDoc(doc(db, DRAFTS_COLLECTION, draftId));
-}
-
-// --- User Operations ---
-
-/**
- * Get or create user profile in Firestore
- * @param {Object} user - Auth user object
- * @returns {Promise<Object>} User profile including role
- */
 export async function syncUserProfile(user) {
     if (!user || !user.uid) return null;
-
-    const userRef = doc(db, USERS_COLLECTION, user.uid);
-    const isHardcodedAdmin = ['miguelsiok@hotmail.com', 'migueltorresperez@gmail.com'].includes(user.email);
+    const userRef = doc(db, USERS_COL, user.uid);
+    // Hardcoded safety net
+    const isHardcodedAdmin = ['miguelsiok@hotmail.com', 'migueltorresperez@gmail.com', 'migueldev97@gmail.com'].includes(user.email);
 
     try {
-        // Use setDoc with merge: true for atomic upsert
-        // This avoids the read-check-write cycle which is slower and racier
         const userData = {
             uid: user.uid,
             email: user.email,
@@ -75,26 +25,114 @@ export async function syncUserProfile(user) {
             lastLogin: new Date().toISOString()
         };
 
-        // We only want to set superuser if it's the first time or if we are enforcing hardcoded admins
-        // But to keep it simple and consistent with Firestore rules:
-        // We will just merge. The rules should protect 'superuser' field from being overwritten by non-admins if we were sending it from client
-        // For now, we trust the client logic for the initial creation. 
-        // Actually, to be safe, we should ONLY send fields we want to update.
+        if (isHardcodedAdmin) userData.superuser = true;
 
-        // If it's a hardcoded admin, force valid superuser status
-        if (isHardcodedAdmin) {
-            userData.superuser = true;
-        }
-
+        // Atomic upsert with merge
         await setDoc(userRef, userData, { merge: true });
 
-        // Fetch the final record to return (in case there were existing fields like 'superuser' that we didn't touch but need)
         const userSnap = await getDoc(userRef);
-        return userSnap.exists() ? userSnap.data() : { ...userData, superuser: isHardcodedAdmin };
-
+        return userSnap.exists() ? userSnap.data() : userData;
     } catch (e) {
-        console.error('Error syncing user profile:', e);
-        // Fallback: if DB fails, return what we have
+        console.error('Error syncing profile:', e);
         return { ...user, superuser: isHardcodedAdmin };
     }
+}
+
+export async function checkUsernameAvailability(username) {
+    const q = query(collection(db, USERS_COL), where('username', '==', username), limit(1));
+    const snap = await getDocs(q);
+    return snap.empty;
+}
+
+export async function updateUsername(uid, username) {
+    const isAvailable = await checkUsernameAvailability(username);
+    if (!isAvailable) throw new Error('Username taken');
+    await updateDoc(doc(db, USERS_COL, uid), { username: username });
+}
+
+export async function searchUsers(term) {
+    // Simple prefix search (requires compatible indexing or just exact match for MVP)
+    // Firestore doesn't do "contains". We'll do exact username match or simple range query
+    const q = query(
+        collection(db, USERS_COL),
+        where('username', '>=', term),
+        where('username', '<=', term + '\uf8ff'),
+        limit(5)
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map(d => d.data());
+}
+
+export async function sendFriendRequest(fromUid, toUid) {
+    await addDoc(collection(db, REQ_COL), {
+        fromUid, toUid, status: 'pending', createdAt: new Date().toISOString()
+    });
+}
+
+export async function getFriendRequests(uid) {
+    // Incoming
+    const q = query(collection(db, REQ_COL), where('toUid', '==', uid), where('status', '==', 'pending'));
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
+export async function acceptFriendRequest(requestId, fromUid, toUid) {
+    // 1. Update Request
+    await updateDoc(doc(db, REQ_COL, requestId), { status: 'accepted' });
+
+    // 2. Add to both users' friend lists
+    await updateDoc(doc(db, USERS_COL, fromUid), { friends: arrayUnion(toUid) });
+    await updateDoc(doc(db, USERS_COL, toUid), { friends: arrayUnion(fromUid) });
+}
+
+// --- Folder Operations ---
+
+export async function createFolder(folderData, user) {
+    const docRef = await addDoc(collection(db, FOLDERS_COL), {
+        ...folderData,
+        ownerUid: user.uid,
+        createdAt: new Date().toISOString(),
+        itemCount: 0
+    });
+    return { id: docRef.id, ...folderData };
+}
+
+export async function getFolders(userId = null) {
+    let q;
+    if (userId) {
+        // My Library
+        q = query(collection(db, FOLDERS_COL), where('ownerUid', '==', userId), orderBy('createdAt', 'desc'));
+    } else {
+        // Public Feed (Global)
+        q = query(collection(db, FOLDERS_COL), where('privacy', '==', 'public'), orderBy('createdAt', 'desc'), limit(50));
+    }
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
+export async function deleteFolder(folderId) {
+    await deleteDoc(doc(db, FOLDERS_COL, folderId));
+    // Ideally delete all items in folder too (batch), simpler for now
+}
+
+// --- Item Operations ---
+
+export async function addItem(itemData, user) {
+    const docRef = await addDoc(collection(db, ITEMS_COL), {
+        ...itemData,
+        ownerUid: user.uid,
+        createdAt: new Date().toISOString()
+    });
+    // Increment specific folder count? Optional optimization.
+    return { id: docRef.id, ...itemData };
+}
+
+export async function getFolderItems(folderId) {
+    const q = query(collection(db, ITEMS_COL), where('folderId', '==', folderId), orderBy('createdAt', 'desc'));
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
+export async function deleteItem(itemId) {
+    await deleteDoc(doc(db, ITEMS_COL, itemId));
 }

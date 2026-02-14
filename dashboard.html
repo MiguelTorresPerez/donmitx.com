@@ -1,22 +1,33 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>donmitx — Dashboard</title>
-    <meta name="description" content="Your personal project dashboard on donmitx.com" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
-        rel="stylesheet" />
-    <link rel="stylesheet" href="/css/index.css" />
-    <link rel="stylesheet" href="/css/dashboard.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>donmitx — Social Hub</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💠</text></svg>">
 </head>
 
-<body>
-    <!-- Particle Canvas (subtle) -->
+<body class="dashboard-body">
+
+    <!-- Auth Guard (Hidden until loaded) -->
+    <div id="auth-loading" class="auth-loading">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Background Effects -->
     <canvas id="particle-canvas" class="subtle"></canvas>
     <div class="gradient-mesh subtle"></div>
 
@@ -26,12 +37,23 @@
             <a href="/" class="topbar-brand">
                 <span class="gradient-text">don</span><span class="gradient-text-accent">mitx</span>
             </a>
+
+            <!-- Main Navigation Tabs -->
+            <nav class="main-nav">
+                <button class="nav-tab active" data-tab="library">My Library</button>
+                <button class="nav-tab" data-tab="feed">Global Feed</button>
+                <button class="nav-tab" data-tab="social">Social</button>
+            </nav>
         </div>
+
         <div class="topbar-right">
+            <button class="btn-primary btn-sm" id="btn-new-content">+ New</button>
+
             <div class="user-info" id="user-info">
                 <img class="user-avatar" id="user-avatar" src="" alt="avatar" />
                 <span class="user-name" id="user-name"></span>
             </div>
+
             <button class="btn-icon" id="btn-settings" title="Settings">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
@@ -41,133 +63,203 @@
                     </path>
                 </svg>
             </button>
-            <button class="btn-icon" id="btn-logout" title="Log out">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                    <polyline points="16 17 21 12 16 7" />
-                    <line x1="21" y1="12" x2="9" y2="12" />
-                </svg>
-            </button>
         </div>
     </header>
 
-    <!-- Main Content -->
+    <!-- Main Content Area -->
     <main class="dashboard-main">
-        <!-- Hero Section -->
-        <section class="dashboard-hero">
-            <h1 class="dashboard-title">Your <span class="gradient-text">Projects</span></h1>
-            <p class="dashboard-subtitle">Explore, showcase, and manage your work</p>
+
+        <!-- View: Library (Folders) -->
+        <section id="view-library" class="view-section active">
+            <div class="section-header">
+                <h2>My Folders</h2>
+                <div class="view-controls">
+                    <!-- Specific controls for library -->
+                </div>
+            </div>
+            <div class="folder-grid" id="folder-grid">
+                <!-- Folders injected here -->
+            </div>
+
+            <!-- Items Area (When a folder is selected) -->
+            <div id="folder-items-container" class="hidden">
+                <div class="folder-breadcrumb">
+                    <button class="btn-text" id="btn-back-folders">← Back to Folders</button>
+                    <span class="separator">/</span>
+                    <span id="current-folder-title">Folder Name</span>
+                    <button class="btn-primary btn-xs" id="btn-add-item-to-folder">+ Add Link</button>
+                </div>
+                <div class="items-grid" id="items-grid">
+                    <!-- Items injected here -->
+                </div>
+            </div>
         </section>
 
-        <!-- Action Bar -->
-        <div class="action-bar">
-            <div class="search-box glass-subtle">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8" />
-                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
-                <input type="text" id="search-input" placeholder="Search projects..." />
+        <!-- View: Feed -->
+        <section id="view-feed" class="view-section hidden">
+            <div class="section-header">
+                <h2>Discover</h2>
+                <p>Trending content from the community</p>
             </div>
-            <button class="btn-primary" id="btn-add-project">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                <span>New Project</span>
-            </button>
-        </div>
-
-        <!-- Project Grid -->
-        <section class="project-grid" id="project-grid">
-            <!-- Cards injected dynamically -->
+            <div class="feed-grid" id="feed-grid">
+                <!-- Global items -->
+            </div>
         </section>
 
-        <!-- Empty State -->
-        <div class="empty-state hidden" id="empty-state">
-            <div class="empty-icon">
-                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
-                    stroke-linecap="round" stroke-linejoin="round" opacity="0.4">
-                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-                </svg>
+        <!-- View: Social -->
+        <section id="view-social" class="view-section hidden">
+            <div class="social-layout">
+                <aside class="friends-sidebar">
+                    <h3>Friends</h3>
+                    <div class="friend-search">
+                        <input type="text" id="user-search-input" placeholder="Find users...">
+                    </div>
+                    <ul class="friend-list" id="friend-list">
+                        <!-- Friend items -->
+                    </ul>
+                    <div class="requests-area" id="requests-area">
+                        <!-- Pending requests -->
+                    </div>
+                </aside>
+                <div class="chat-area empty" id="chat-area">
+                    <div class="empty-state">Select a friend to start chatting</div>
+                </div>
             </div>
-            <h2>No projects yet</h2>
-            <p>Click <strong>"New Project"</strong> to add your first project</p>
-        </div>
+        </section>
+
     </main>
 
-    <!-- Add Project Modal -->
-    <div class="modal-overlay hidden" id="modal-overlay">
-        <div class="modal glass" id="modal-add-project">
+    <!-- Modal: New Content (Selector) -->
+    <div class="modal-backdrop" id="modal-new-content">
+        <div class="modal glass">
             <div class="modal-header">
-                <h2>New Project</h2>
-                <button class="btn-icon" id="btn-modal-close">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                </button>
+                <h2>Create New</h2>
+                <button class="btn-close" data-close="modal-new-content">×</button>
             </div>
-            <form id="form-add-project" class="modal-form">
-                <div class="form-group">
-                    <label for="project-name">Project Name</label>
-                    <input type="text" id="project-name" placeholder="my-awesome-project" required />
+            <div class="modal-body">
+                <div class="creation-options">
+                    <button class="creation-card" id="opt-new-folder">
+                        <span class="icon">📁</span>
+                        <h3>New Folder</h3>
+                        <p>Organize your links</p>
+                    </button>
+                    <button class="creation-card" id="opt-new-link">
+                        <span class="icon">🔗</span>
+                        <h3>New Link</h3>
+                        <p>Share a URL</p>
+                    </button>
                 </div>
-                <div class="form-group">
-                    <label for="project-description">Description</label>
-                    <textarea id="project-description" rows="3"
-                        placeholder="A brief description of your project..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="project-tags">Tags <span class="hint">(comma-separated)</span></label>
-                    <input type="text" id="project-tags" placeholder="javascript, canvas, api" />
-                </div>
-                <div class="form-group">
-                    <label for="project-url">Live URL <span class="hint">(optional)</span></label>
-                    <input type="url" id="project-url" placeholder="https://..." />
-                </div>
-                <div class="form-group">
-                    <label for="project-repo">Repository URL <span class="hint">(optional)</span></label>
-                    <input type="url" id="project-repo" placeholder="https://github.com/..." />
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Create Folder -->
+    <div class="modal-backdrop" id="modal-create-folder">
+        <div class="modal glass">
+            <div class="modal-header">
+                <h2>New Folder</h2>
+                <button class="btn-close" data-close="modal-create-folder">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="form-create-folder">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" name="title" required placeholder="e.g. AI Research">
+                    </div>
+                    <div class="form-group">
+                        <label>Preview Color</label>
+                        <div class="color-picker-row">
+                            <!-- Simple radio buttons for gradients -->
+                            <label class="color-opt"
+                                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
+                                <input type="radio" name="color"
+                                    value="linear-gradient(135deg, #667eea 0%, #764ba2 100%)" checked>
+                            </label>
+                            <label class="color-opt"
+                                style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)">
+                                <input type="radio" name="color"
+                                    value="linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)">
+                            </label>
+                            <label class="color-opt"
+                                style="background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%)">
+                                <input type="radio" name="color"
+                                    value="linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%)">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Privacy</label>
+                        <select name="privacy">
+                            <option value="private">Private (Only Me)</option>
+                            <option value="public">Public (Everyone)</option>
+                            <option value="friends">Friends Only</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary full-width">Create Folder</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add Item -->
+    <div class="modal-backdrop" id="modal-add-item">
+        <div class="modal glass">
+            <div class="modal-header">
+                <h2>Add Link</h2>
+                <button class="btn-close" data-close="modal-add-item">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="form-add-item">
+                    <div class="form-group">
+                        <label>URL</label>
+                        <input type="url" name="url" id="inp-item-url" required placeholder="https://...">
+                    </div>
+
+                    <div id="url-preview-area" class="hidden">
+                        <div class="preview-card glass-panel">
+                            <img id="preview-img" src="" class="hidden">
+                            <h4 id="preview-title">...</h4>
+                            <span id="preview-type" class="badge">Link</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Folder</label>
+                        <select name="folderId" id="inp-item-folder" required>
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary full-width" id="btn-save-item">Save Link</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Settings/Logout -->
+    <div class="modal-backdrop" id="modal-settings">
+        <div class="modal glass">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="btn-close" data-close="modal-settings">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-group">
+                    <h3>Account</h3>
+                    <p id="settings-email"></p>
+                    <div class="firebase-status-row">
+                        <span>Connection Status:</span>
+                        <span id="db-status-indicator" class="status-badge success">Online</span>
+                    </div>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" id="btn-cancel-project">Cancel</button>
-                    <button type="submit" class="btn-primary">Create Project</button>
+                    <button type="button" class="btn-secondary" id="btn-test-connection">Test DB Connection</button>
+                    <button class="btn-danger" id="btn-logout">Sign Out</button>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 
-    <!-- Settings Modal -->
-    <div class="modal glass hidden" id="modal-settings">
-        <div class="modal-header">
-            <h2>Settings</h2>
-            <button class="btn-icon" id="btn-settings-close">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-            </button>
-        </div>
-        <form id="form-settings" class="modal-form">
-            <div class="form-group">
-                <label for="github-token">GitHub Personal Access Token</label>
-                <input type="password" id="github-token" placeholder="ghp_..." />
-                <p class="hint">Required to save projects to the repository. The token is stored locally in your browser
-                    and never shared.</p>
-            </div>
-            <div class="form-actions">
-                <button type="button" class="btn-secondary" id="btn-settings-cancel">Cancel</button>
-                <button type="submit" class="btn-primary">Save Settings</button>
-            </div>
-        </form>
-    </div>
-
-    <script type="module" src="/src/dashboard-main.js"></script>
+    <script type="module" src="src/dashboard-main.js"></script>
 </body>
 
 </html>
