@@ -3,7 +3,7 @@
  * Robust URL parsing using Strategy Pattern.
  */
 
-const ContentType = {
+export const ContentType = {
     AI_CHAT: 'ai_chat',
     VIDEO: 'video',
     SOCIAL: 'social',
