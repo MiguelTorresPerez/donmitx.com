@@ -1,25 +1,16 @@
 /**
  * donmitx — Authentication Module
+ * Uses the shared Firebase instance from firebase-init.js.
  */
 
-import { firebaseConfig, isFirebaseConfigured } from './firebase-config.js';
+import { auth } from './firebase-init.js';
 import { syncUserProfile } from './db.js';
-import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 
-// Initialize Firebase statically if configured
-let auth = null;
-let googleProvider = null;
+// Google provider (only if auth is available)
+const googleProvider = auth ? new GoogleAuthProvider() : null;
 
-if (isFirebaseConfigured()) {
-    try {
-        const app = initializeApp(firebaseConfig);
-        auth = getAuth(app);
-        googleProvider = new GoogleAuthProvider();
-    } catch (e) {
-        console.error('Firebase init error:', e);
-    }
-}
+// --- Client-side JWT (Session Token) ---
 
 const JWT = {
     create(payload, expiresInHours = 24) {
@@ -41,65 +32,51 @@ const JWT = {
     isValid(token) { return this.decode(token) !== null; }
 };
 
+// --- Auth Interface ---
+
 export const Auth = {
     TOKEN_KEY: 'donmitx_jwt',
     USER_KEY: 'donmitx_user',
 
     async init() {
-        if (!isFirebaseConfigured()) return this.getSession();
-        // Listener for auth state changes if needed, but we rely on session storage for simplicity
         return this.getSession();
     },
 
     async signInWithGoogle() {
-        if (!isFirebaseConfigured()) return this.createDemoSession();
-        if (!auth) throw new Error('Firebase not initialized');
+        if (!auth) return this.createDemoSession();
 
         try {
             const result = await signInWithPopup(auth, googleProvider);
             const user = result.user;
 
-            // ⚡ Optimistic Auth Strategy:
-            // 1. We assume success and generate a session immediately.
-            // 2. We trigger the DB sync in the background.
-            // 3. If DB sync succeeds quickly, we use the fresh data (including roles).
-            // 4. If DB sync is slow/fails, we use the Auth data and update the role later/on next load.
-
+            // Optimistic session: create immediately, sync role in background
             let userProfile = {
                 uid: user.uid,
                 email: user.email,
                 displayName: user.displayName,
                 photoURL: user.photoURL,
-                superuser: false
+                role: 'user' // default until Firestore sync completes
             };
 
-            const syncProfilePromise = syncUserProfile(userProfile)
-                .then(profile => {
-                    if (profile) userProfile = profile; // Update local reference if successful
-                    return profile;
-                })
-                .catch(err => {
-                    console.warn('[donmitx] Background profile sync failed:', err);
-                    return null;
-                });
+            // Background sync — wait up to 1.5s for role data
+            const syncPromise = syncUserProfile(userProfile)
+                .then(profile => { if (profile) userProfile = profile; return profile; })
+                .catch(err => { console.warn('[donmitx] Background sync failed:', err); return null; });
 
-            // Wait up to 1.5s for the profile to load (for better UX - showing admin badge immediately)
-            // But don't block forever.
             await Promise.race([
-                syncProfilePromise,
+                syncPromise,
                 new Promise(resolve => setTimeout(resolve, 1500))
             ]);
 
-            // Create JWT
+            // Create session
             const token = JWT.create({
                 sub: userProfile.uid,
                 email: userProfile.email,
                 name: userProfile.displayName,
                 picture: userProfile.photoURL,
-                superuser: userProfile.superuser || false
+                role: userProfile.role || 'user'
             });
 
-            // Store full profile
             localStorage.setItem(this.TOKEN_KEY, token);
             localStorage.setItem(this.USER_KEY, JSON.stringify(userProfile));
 
@@ -116,7 +93,7 @@ export const Auth = {
             email: 'demo@donmitx.com',
             displayName: 'Demo User',
             photoURL: 'https://api.dicebear.com/7.x/initials/svg?seed=DU&backgroundColor=6366f1',
-            superuser: false
+            role: 'user'
         };
         const token = JWT.create({ sub: demoUser.uid, ...demoUser });
         localStorage.setItem(this.TOKEN_KEY, token);
@@ -135,7 +112,7 @@ export const Auth = {
 
     async signOut() {
         if (auth) {
-            try { await signOut(auth); } catch (e) { }
+            try { await signOut(auth); } catch (e) { /* ignore */ }
         }
         this.clearSession();
     },
@@ -145,9 +122,10 @@ export const Auth = {
         localStorage.removeItem(this.USER_KEY);
     },
 
+    /** Check if current user has admin role */
     isAdmin() {
         const user = this.getSession();
-        return !!(user && user.superuser);
+        return !!(user && (user.role === 'admin' || user.superuser === true));
     },
 
     isAuthenticated() {

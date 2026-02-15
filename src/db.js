@@ -1,22 +1,42 @@
-import { collection, addDoc, getDocs, deleteDoc, doc, query, where, orderBy, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, limit } from 'firebase/firestore';
+/**
+ * donmitx — Database Layer (Firestore)
+ * All Firestore operations in one module.
+ */
+
+import {
+    collection, addDoc, getDocs, deleteDoc, doc, query,
+    where, orderBy, getDoc, setDoc, updateDoc,
+    arrayUnion, arrayRemove, limit, increment, getCountFromServer
+} from 'firebase/firestore';
 import { db } from './firebase-init.js';
 
-// Collections
-const USERS_COL = 'users';
-const FOLDERS_COL = 'folders';
-const ITEMS_COL = 'items';
-const REQ_COL = 'friend_requests';
-const CHATS_COL = 'chats';
+// --- Collection Names ---
+const COL = {
+    USERS: 'users',
+    FOLDERS: 'folders',
+    ITEMS: 'items',
+    FRIEND_REQUESTS: 'friend_requests',
+    CHATS: 'chats',
+    DRAFTS: 'drafts'
+};
 
-// --- User & Social Operations ---
+// ============================================================
+//  USER & PROFILE
+// ============================================================
 
+/**
+ * Sync a Firebase Auth user to Firestore.
+ * Reads existing role from Firestore — never overwrites it.
+ */
 export async function syncUserProfile(user) {
-    if (!user || !user.uid) return null;
-    const userRef = doc(db, USERS_COL, user.uid);
-    // Hardcoded safety net
-    const isHardcodedAdmin = ['miguelsiok@hotmail.com', 'migueltorresperez@gmail.com', 'migueldev97@gmail.com'].includes(user.email);
+    if (!user?.uid) return null;
+    const userRef = doc(db, COL.USERS, user.uid);
 
     try {
+        // Check if user already exists (to preserve role)
+        const existingSnap = await getDoc(userRef);
+        const existingData = existingSnap.exists() ? existingSnap.data() : null;
+
         const userData = {
             uid: user.uid,
             email: user.email,
@@ -25,21 +45,24 @@ export async function syncUserProfile(user) {
             lastLogin: new Date().toISOString()
         };
 
-        if (isHardcodedAdmin) userData.superuser = true;
+        // Only set role on first creation, never overwrite
+        if (!existingData) {
+            userData.role = 'user'; // default role for new users
+        }
 
-        // Atomic upsert with merge
         await setDoc(userRef, userData, { merge: true });
 
-        const userSnap = await getDoc(userRef);
-        return userSnap.exists() ? userSnap.data() : userData;
+        // Read back the full profile (includes role set by admin)
+        const freshSnap = await getDoc(userRef);
+        return freshSnap.exists() ? freshSnap.data() : userData;
     } catch (e) {
-        console.error('Error syncing profile:', e);
-        return { ...user, superuser: isHardcodedAdmin };
+        console.error('[donmitx] Error syncing profile:', e);
+        return { ...user, role: 'user' };
     }
 }
 
 export async function checkUsernameAvailability(username) {
-    const q = query(collection(db, USERS_COL), where('username', '==', username), limit(1));
+    const q = query(collection(db, COL.USERS), where('username', '==', username), limit(1));
     const snap = await getDocs(q);
     return snap.empty;
 }
@@ -47,14 +70,12 @@ export async function checkUsernameAvailability(username) {
 export async function updateUsername(uid, username) {
     const isAvailable = await checkUsernameAvailability(username);
     if (!isAvailable) throw new Error('Username taken');
-    await updateDoc(doc(db, USERS_COL, uid), { username: username });
+    await updateDoc(doc(db, COL.USERS, uid), { username });
 }
 
 export async function searchUsers(term) {
-    // Simple prefix search (requires compatible indexing or just exact match for MVP)
-    // Firestore doesn't do "contains". We'll do exact username match or simple range query
     const q = query(
-        collection(db, USERS_COL),
+        collection(db, COL.USERS),
         where('username', '>=', term),
         where('username', '<=', term + '\uf8ff'),
         limit(5)
@@ -63,84 +84,146 @@ export async function searchUsers(term) {
     return snap.docs.map(d => d.data());
 }
 
+// ============================================================
+//  FRIEND REQUESTS
+// ============================================================
+
 export async function sendFriendRequest(fromUid, toUid) {
-    await addDoc(collection(db, REQ_COL), {
+    await addDoc(collection(db, COL.FRIEND_REQUESTS), {
         fromUid, toUid, status: 'pending', createdAt: new Date().toISOString()
     });
 }
 
 export async function getFriendRequests(uid) {
-    // Incoming
-    const q = query(collection(db, REQ_COL), where('toUid', '==', uid), where('status', '==', 'pending'));
+    const q = query(
+        collection(db, COL.FRIEND_REQUESTS),
+        where('toUid', '==', uid),
+        where('status', '==', 'pending')
+    );
     const snap = await getDocs(q);
     return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
 export async function acceptFriendRequest(requestId, fromUid, toUid) {
-    // 1. Update Request
-    await updateDoc(doc(db, REQ_COL, requestId), { status: 'accepted' });
-
-    // 2. Add to both users' friend lists
-    await updateDoc(doc(db, USERS_COL, fromUid), { friends: arrayUnion(toUid) });
-    await updateDoc(doc(db, USERS_COL, toUid), { friends: arrayUnion(fromUid) });
+    await updateDoc(doc(db, COL.FRIEND_REQUESTS, requestId), { status: 'accepted' });
+    await updateDoc(doc(db, COL.USERS, fromUid), { friends: arrayUnion(toUid) });
+    await updateDoc(doc(db, COL.USERS, toUid), { friends: arrayUnion(fromUid) });
 }
 
-// --- Folder Operations ---
+// ============================================================
+//  FOLDERS
+// ============================================================
 
 export async function createFolder(folderData, user) {
-    const docRef = await addDoc(collection(db, FOLDERS_COL), {
+    const docRef = await addDoc(collection(db, COL.FOLDERS), {
         ...folderData,
         ownerUid: user.uid,
         createdAt: new Date().toISOString(),
         itemCount: 0
     });
-    return { id: docRef.id, ...folderData };
+    return { id: docRef.id, ...folderData, itemCount: 0 };
 }
 
 export async function getFolders(userId = null) {
     let q;
     if (userId) {
-        // My Library
-        q = query(collection(db, FOLDERS_COL), where('ownerUid', '==', userId), orderBy('createdAt', 'desc'));
+        q = query(collection(db, COL.FOLDERS), where('ownerUid', '==', userId), orderBy('createdAt', 'desc'));
     } else {
-        // Public Feed (Global)
-        q = query(collection(db, FOLDERS_COL), where('privacy', '==', 'public'), orderBy('createdAt', 'desc'), limit(50));
+        q = query(collection(db, COL.FOLDERS), where('privacy', '==', 'public'), orderBy('createdAt', 'desc'), limit(50));
     }
     const snap = await getDocs(q);
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    // Compute real item counts for each folder
+    const folders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const countPromises = folders.map(async (folder) => {
+        try {
+            const itemsQuery = query(collection(db, COL.ITEMS), where('folderId', '==', folder.id));
+            const countSnap = await getCountFromServer(itemsQuery);
+            folder.itemCount = countSnap.data().count;
+        } catch {
+            // Keep existing itemCount if count fails
+        }
+        return folder;
+    });
+    return Promise.all(countPromises);
 }
 
 export async function deleteFolder(folderId) {
-    await deleteDoc(doc(db, FOLDERS_COL, folderId));
-    // Ideally delete all items in folder too (batch), simpler for now
+    // Delete all items in the folder first
+    const itemsQuery = query(collection(db, COL.ITEMS), where('folderId', '==', folderId));
+    const itemsSnap = await getDocs(itemsQuery);
+    const deletePromises = itemsSnap.docs.map(d => deleteDoc(d.ref));
+    await Promise.all(deletePromises);
+
+    await deleteDoc(doc(db, COL.FOLDERS, folderId));
 }
 
-// --- Item Operations ---
+// ============================================================
+//  ITEMS
+// ============================================================
 
 export async function addItem(itemData, user) {
-    const docRef = await addDoc(collection(db, ITEMS_COL), {
+    const docRef = await addDoc(collection(db, COL.ITEMS), {
         ...itemData,
         ownerUid: user.uid,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        views: 0,
+        likes: 0,
+        likedBy: [],
+        commentCount: 0,
+        privacy: itemData.privacy || 'private'
     });
-    // Increment specific folder count? Optional optimization.
+
+    // Increment the parent folder's item count
+    if (itemData.folderId) {
+        try {
+            await updateDoc(doc(db, COL.FOLDERS, itemData.folderId), {
+                itemCount: increment(1)
+            });
+        } catch (e) {
+            console.warn('[donmitx] Could not update folder itemCount:', e);
+        }
+    }
+
     return { id: docRef.id, ...itemData };
 }
 
 export async function getFolderItems(folderId) {
-    const q = query(collection(db, ITEMS_COL), where('folderId', '==', folderId), orderBy('createdAt', 'desc'));
+    const q = query(collection(db, COL.ITEMS), where('folderId', '==', folderId), orderBy('createdAt', 'desc'));
     const snap = await getDocs(q);
     return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
 export async function deleteItem(itemId) {
-    await deleteDoc(doc(db, ITEMS_COL, itemId));
+    // Read item to get folderId before deleting
+    const itemRef = doc(db, COL.ITEMS, itemId);
+    const itemSnap = await getDoc(itemRef);
+
+    if (itemSnap.exists()) {
+        const folderId = itemSnap.data().folderId;
+        await deleteDoc(itemRef);
+
+        // Decrement folder count
+        if (folderId) {
+            try {
+                await updateDoc(doc(db, COL.FOLDERS, folderId), {
+                    itemCount: increment(-1)
+                });
+            } catch (e) {
+                console.warn('[donmitx] Could not update folder itemCount:', e);
+            }
+        }
+    } else {
+        await deleteDoc(itemRef);
+    }
 }
 
-// --- Social Interactions ---
+// ============================================================
+//  SOCIAL INTERACTIONS
+// ============================================================
 
 export async function toggleLike(itemId, userId) {
-    const itemRef = doc(db, ITEMS_COL, itemId);
+    const itemRef = doc(db, COL.ITEMS, itemId);
     const itemSnap = await getDoc(itemRef);
 
     if (!itemSnap.exists()) return;
@@ -149,13 +232,11 @@ export async function toggleLike(itemId, userId) {
     const isLiked = likedBy.includes(userId);
 
     if (isLiked) {
-        // Unlike
         await updateDoc(itemRef, {
             likes: (data.likes || 1) - 1,
             likedBy: arrayRemove(userId)
         });
     } else {
-        // Like
         await updateDoc(itemRef, {
             likes: (data.likes || 0) + 1,
             likedBy: arrayUnion(userId)
@@ -164,16 +245,12 @@ export async function toggleLike(itemId, userId) {
 }
 
 export async function incrementView(itemId) {
-    // Simple atomic increment
-    // Note: increment() is cleaner but we'll stick to read-write for now if not importing increment
-    // Actually, let's import increment
-    const { increment } = await import('firebase/firestore');
-    const itemRef = doc(db, ITEMS_COL, itemId);
+    const itemRef = doc(db, COL.ITEMS, itemId);
     await updateDoc(itemRef, { views: increment(1) });
 }
 
 export async function addComment(itemId, user, text) {
-    const commentsRef = collection(db, ITEMS_COL, itemId, 'comments');
+    const commentsRef = collection(db, COL.ITEMS, itemId, 'comments');
     await addDoc(commentsRef, {
         text,
         userId: user.uid,
@@ -183,22 +260,80 @@ export async function addComment(itemId, user, text) {
     });
 
     // Update main item comment count
-    const { increment } = await import('firebase/firestore');
-    await updateDoc(doc(db, ITEMS_COL, itemId), { commentCount: increment(1) });
+    await updateDoc(doc(db, COL.ITEMS, itemId), { commentCount: increment(1) });
 }
 
 export async function getComments(itemId) {
-    const q = query(collection(db, ITEMS_COL, itemId, 'comments'), orderBy('timestamp', 'desc'));
+    const q = query(collection(db, COL.ITEMS, itemId, 'comments'), orderBy('timestamp', 'desc'));
     const snap = await getDocs(q);
     return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
-// --- Admin ---
+// ============================================================
+//  ADMIN
+// ============================================================
 
 export async function getAllUsers() {
-    // Admin only - requires rules to allow
-    const q = query(collection(db, USERS_COL), orderBy('lastLogin', 'desc'), limit(100));
+    const q = query(collection(db, COL.USERS), orderBy('lastLogin', 'desc'), limit(100));
     const snap = await getDocs(q);
     return snap.docs.map(d => d.data());
 }
 
+/**
+ * Get platform stats for admin dashboard
+ */
+export async function getAdminStats() {
+    try {
+        const [usersSnap, foldersSnap, itemsSnap] = await Promise.all([
+            getCountFromServer(collection(db, COL.USERS)),
+            getCountFromServer(collection(db, COL.FOLDERS)),
+            getCountFromServer(collection(db, COL.ITEMS))
+        ]);
+        return {
+            totalUsers: usersSnap.data().count,
+            totalFolders: foldersSnap.data().count,
+            totalItems: itemsSnap.data().count
+        };
+    } catch (e) {
+        console.error('[donmitx] Stats error:', e);
+        return { totalUsers: 0, totalFolders: 0, totalItems: 0 };
+    }
+}
+
+/**
+ * Update a user's role (admin only)
+ */
+export async function updateUserRole(uid, role) {
+    await updateDoc(doc(db, COL.USERS, uid), { role });
+}
+
+// ============================================================
+//  DRAFTS (Projects feature)
+// ============================================================
+
+export async function createDraft(draftData, user) {
+    const docRef = await addDoc(collection(db, COL.DRAFTS), {
+        ...draftData,
+        ownerUid: user.uid,
+        ownerName: user.displayName || user.email,
+        isDraft: true,
+        createdAt: new Date().toISOString()
+    });
+    return { id: docRef.id, isDraft: true, ...draftData };
+}
+
+export async function getDrafts(userId = null) {
+    let q;
+    if (userId) {
+        q = query(collection(db, COL.DRAFTS), where('ownerUid', '==', userId), orderBy('createdAt', 'desc'));
+    } else {
+        // Admin: get all drafts
+        q = query(collection(db, COL.DRAFTS), orderBy('createdAt', 'desc'), limit(50));
+    }
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({ id: d.id, isDraft: true, ...d.data() }));
+}
+
+export async function deleteDraft(draftId) {
+    await deleteDoc(doc(db, COL.DRAFTS, draftId));
+}

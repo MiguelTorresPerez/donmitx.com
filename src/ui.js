@@ -1,51 +1,53 @@
 /**
  * donmitx — UI Renderer
- * Handles rendering of Folders and Content Items (Cards).
+ * Renders Folders, Items, Comments, and Admin components.
  */
 
+import { escapeHtml, formatNumber, timeAgo, avatarUrl } from './utils.js';
 import { ContentType } from './content.js';
 
 export const UI = {
 
     /**
-     * Render a Folder Card (3D Tilt Effect)
+     * Render a Folder Card with 3D tilt effect
      */
     createFolderCard(folder, onClick) {
         const card = document.createElement('div');
         card.className = 'folder-card';
         card.dataset.id = folder.id;
 
-        // Random gradient or user cover
         const gradient = folder.color || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        const privacyIcon = folder.privacy === 'public' ? '🌐' : folder.privacy === 'friends' ? '👥' : '🔒';
+        const count = folder.itemCount || 0;
 
         card.innerHTML = `
             <div class="folder-cover" style="background: ${gradient}">
                 <div class="folder-icon">📁</div>
+                <span class="folder-privacy-badge">${privacyIcon}</span>
             </div>
             <div class="folder-info">
                 <h3>${escapeHtml(folder.title)}</h3>
-                <p>${folder.itemCount || 0} items</p>
+                <div class="folder-meta">
+                    <span class="folder-count">📄 ${count} item${count !== 1 ? 's' : ''}</span>
+                    ${folder.createdAt ? `<span class="folder-date">${timeAgo(folder.createdAt)}</span>` : ''}
+                </div>
             </div>
         `;
 
-        // Click Handler
         if (onClick) card.addEventListener('click', () => onClick(folder));
-
-        // Tilt Effect
         this.addTiltEffect(card);
 
         return card;
     },
 
     /**
-     * Render an Item Card (Content)
+     * Render an Item Card with social interactions
      */
-    createItemCard(item, onDelete, onLike, onComment) {
+    createItemCard(item, onDelete, onLike, onComment, onView) {
         const card = document.createElement('div');
         card.className = `item-card type-${item.type}`;
         card.dataset.id = item.id;
 
-        // Icons
         const icons = {
             [ContentType.YOUTUBE]: '▶️',
             [ContentType.VIDEO]: '▶️',
@@ -56,7 +58,6 @@ export const UI = {
         };
         const icon = icons[item.type] || '📄';
 
-        // Action Button Text
         const actions = {
             [ContentType.YOUTUBE]: 'Watch',
             [ContentType.VIDEO]: 'Watch',
@@ -64,13 +65,12 @@ export const UI = {
             [ContentType.CODE]: 'View Code'
         };
         const actionText = actions[item.type] || 'Visit';
-        const actionClass = item.type === ContentType.VIDEO || item.type === ContentType.YOUTUBE ? 'btn-play' : 'btn-visit';
+        const actionClass = (item.type === ContentType.VIDEO || item.type === ContentType.YOUTUBE) ? 'btn-play' : 'btn-visit';
 
-        // Stats
         const likes = item.likes || 0;
         const views = item.views || 0;
         const comments = item.commentCount || 0;
-        const isLiked = item.isLikedByMe ? 'liked' : ''; // Needs to be injected by business logic
+        const isLiked = item.isLikedByMe ? 'liked' : '';
 
         const imageHtml = item.imageUrl
             ? `<div class="item-image" style="background-image: url('${item.imageUrl}')"></div>`
@@ -80,7 +80,7 @@ export const UI = {
             ${imageHtml}
             <div class="item-content">
                 <div class="item-header">
-                    <span class="item-type-badge">${item.type}</span>
+                    <span class="item-type-badge type-badge-${item.type}">${item.type}</span>
                     <div class="item-controls">
                         ${onDelete ? `<button class="btn-icon btn-delete" title="Delete">×</button>` : ''}
                     </div>
@@ -91,23 +91,27 @@ export const UI = {
                 
                 <div class="item-stats-row">
                     <button class="stat-pill btn-like ${isLiked}" title="Like">
-                        <span>❤️</span> ${likes}
+                        <span class="like-icon">${isLiked ? '❤️' : '🤍'}</span>
+                        <span class="stat-count">${formatNumber(likes)}</span>
                     </button>
                     <button class="stat-pill btn-comment" title="Comments">
-                        <span>💬</span> ${comments}
+                        <span>💬</span>
+                        <span class="stat-count">${formatNumber(comments)}</span>
                     </button>
                     <div class="stat-pill view-count" title="Views">
-                        <span>👁️</span> ${views}
+                        <span>👁️</span>
+                        <span class="stat-count">${formatNumber(views)}</span>
                     </div>
                 </div>
 
                 <div class="item-actions">
-                    <a href="${item.url}" target="_blank" class="${actionClass}">${actionText}</a>
+                    <a href="${item.url}" target="_blank" rel="noopener" class="${actionClass}">${actionText}</a>
                 </div>
             </div>
         `;
 
-        // Event Listeners
+        // --- Event Listeners ---
+
         if (onDelete) {
             card.querySelector('.btn-delete').addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -118,16 +122,22 @@ export const UI = {
         if (onLike) {
             card.querySelector('.btn-like').addEventListener('click', (e) => {
                 e.stopPropagation();
-                // Optimistic UI update
                 const btn = e.currentTarget;
-                const countSpan = btn.childNodes[2]; // Text node
-                let count = parseInt(countSpan.textContent);
+                const countEl = btn.querySelector('.stat-count');
+                const iconEl = btn.querySelector('.like-icon');
+                let count = parseInt(countEl.textContent) || 0;
+
                 if (btn.classList.contains('liked')) {
                     btn.classList.remove('liked');
-                    countSpan.textContent = ` ${count - 1}`;
+                    iconEl.textContent = '🤍';
+                    countEl.textContent = formatNumber(Math.max(0, count - 1));
                 } else {
                     btn.classList.add('liked');
-                    countSpan.textContent = ` ${count + 1}`;
+                    iconEl.textContent = '❤️';
+                    countEl.textContent = formatNumber(count + 1);
+                    // Pulse animation
+                    btn.classList.add('pulse');
+                    setTimeout(() => btn.classList.remove('pulse'), 400);
                 }
                 onLike(item);
             });
@@ -140,14 +150,85 @@ export const UI = {
             });
         }
 
-        // Card Click (Increments View)
+        // Card click → increment view
         card.addEventListener('click', (e) => {
-            // Don't trigger if clicked on button/link
-            if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A') return;
-            // Also logic to open modal detail could go here
+            if (e.target.closest('button') || e.target.closest('a')) return;
+            if (onView) onView(item);
         });
 
         return card;
+    },
+
+    /**
+     * Create a comment element
+     */
+    createCommentEl(comment) {
+        const el = document.createElement('div');
+        el.className = 'comment-item';
+        el.innerHTML = `
+            <img class="comment-avatar" src="${avatarUrl(comment)}" alt="">
+            <div class="comment-body">
+                <div class="comment-meta">
+                    <strong>${escapeHtml(comment.username)}</strong>
+                    <span class="comment-time">${timeAgo(comment.timestamp)}</span>
+                </div>
+                <p>${escapeHtml(comment.text)}</p>
+            </div>
+        `;
+        return el;
+    },
+
+    /**
+     * Create an admin stat card
+     */
+    createStatCard(label, value, icon, color) {
+        const card = document.createElement('div');
+        card.className = 'admin-stat-card';
+        card.innerHTML = `
+            <div class="stat-icon" style="background: ${color}">${icon}</div>
+            <div class="stat-info">
+                <span class="stat-value">${formatNumber(value)}</span>
+                <span class="stat-label">${label}</span>
+            </div>
+        `;
+        return card;
+    },
+
+    /**
+     * Create a shimmer loading skeleton
+     */
+    createSkeleton(type = 'card') {
+        const el = document.createElement('div');
+        el.className = `skeleton skeleton-${type}`;
+        if (type === 'card') {
+            el.innerHTML = `
+                <div class="skeleton-image shimmer"></div>
+                <div class="skeleton-body">
+                    <div class="skeleton-line w-60 shimmer"></div>
+                    <div class="skeleton-line w-80 shimmer"></div>
+                    <div class="skeleton-line w-40 shimmer"></div>
+                </div>
+            `;
+        } else if (type === 'folder') {
+            el.innerHTML = `
+                <div class="skeleton-cover shimmer"></div>
+                <div class="skeleton-info">
+                    <div class="skeleton-line w-60 shimmer"></div>
+                    <div class="skeleton-line w-40 shimmer"></div>
+                </div>
+            `;
+        }
+        return el;
+    },
+
+    /**
+     * Show loading skeletons in a grid
+     */
+    showSkeletons(container, count = 6, type = 'card') {
+        container.innerHTML = '';
+        for (let i = 0; i < count; i++) {
+            container.appendChild(this.createSkeleton(type));
+        }
     },
 
     /**
@@ -169,10 +250,3 @@ export const UI = {
         });
     }
 };
-
-function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}

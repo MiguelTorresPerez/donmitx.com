@@ -6,6 +6,7 @@
 import { GitHubAPI } from './github-api.js';
 import { Auth } from './auth.js';
 import { createDraft, getDrafts, deleteDraft } from './db.js';
+import { escapeHtml } from './utils.js';
 
 /**
  * Get all projects (Public + Drafts)
@@ -234,8 +235,4 @@ export function createProjectCard(project, index = 0) {
   return card;
 }
 
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
+// escapeHtml imported from utils.js

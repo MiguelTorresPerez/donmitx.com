@@ -292,6 +292,25 @@
         </div>
     </div>
 
+    <!-- Modal: Comments -->
+    <div class="modal-backdrop" id="modal-comments">
+        <div class="modal glass modal-lg">
+            <div class="modal-header">
+                <h2>Comments — <span id="comment-item-title" class="text-muted"></span></h2>
+                <button class="btn-close" data-close="modal-comments">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="comments-list" id="comments-list">
+                    <!-- Comments injected here -->
+                </div>
+                <div class="comment-input-row">
+                    <input type="text" id="comment-input" placeholder="Write a comment..." class="comment-input">
+                    <button class="btn-primary btn-sm" id="btn-submit-comment">Post</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="src/dashboard-main.js"></script>
 </body>
 

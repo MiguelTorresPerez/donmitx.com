@@ -3,36 +3,38 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     // --- Helper Functions ---
-    
-    // Check if user is signed in
+
     function isSignedIn() {
       return request.auth != null;
     }
 
-    // Check if user is the owner of the data
     function isOwner(ownerUid) {
       return isSignedIn() && request.auth.uid == ownerUid;
     }
-    
-    // Fetch the user's role from their profile document
+
     function isSuperUser() {
        return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
-    // Check if user is a participant in a list (for chats)
     function isParticipant(participants) {
       return isSignedIn() && (request.auth.uid in participants);
     }
 
     // --- Collections ---
 
-    // 1. Users: 
-    // - Public read for profiles.
-    // - SuperUser can list/read all.
-    // - Owner can write.
+    // 1. Users
+    // - Any signed-in user can read individual profiles.
+    // - Only superusers can LIST all users (for admin panel).
+    // - Owner can update their own profile, but CANNOT change their role.
+    // - SuperUser can write any user doc (including role changes).
     match /users/{userId} {
-      allow read: if isSignedIn(); // Public profiles
-      allow write: if isOwner(userId) || isSuperUser();
+      allow get: if isSignedIn();
+      allow list: if isSuperUser();
+      allow create: if isOwner(userId);
+      allow update: if isSuperUser() || (
+        isOwner(userId) && 
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role'])
+      );
     }
 
     // 2. Folders
@@ -50,16 +52,16 @@ service cloud.firestore {
     match /items/{itemId} {
       allow create: if isSignedIn() && request.resource.data.ownerUid == request.auth.uid;
       
-      // Allow Owner OR SuperUser to full update/delete
-      // Allow PUBLIC (Authenticated) users to toggle LIKES and increment VIEWS only
+      // Owner or SuperUser: full update/delete
+      // Authenticated users: toggle likes or increment views only
       allow update: if isOwner(resource.data.ownerUid) || isSuperUser() || (
         isSignedIn() && (
-           // Case 1: Toggling Like (Update 'likedBy' and 'likes' count)
+           // Case 1: Toggling Like (update 'likes' and 'likedBy')
            (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'likedBy']) && 
             request.resource.data.likes == request.resource.data.likedBy.size() &&
             (request.resource.data.likedBy.hasAll(resource.data.likedBy) || resource.data.likedBy.hasAll(request.resource.data.likedBy))) 
            ||
-           // Case 2: Increment View (Update 'views' only)
+           // Case 2: Increment View (update 'views' only)
            (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views']) &&
             request.resource.data.views == resource.data.views + 1)
         )
@@ -81,7 +83,7 @@ service cloud.firestore {
       }
     }
 
-    // 4. Friend Requests:
+    // 4. Friend Requests
     match /friend_requests/{requestId} {
       allow read: if isSignedIn() && (
                     request.auth.uid == resource.data.from || 
@@ -91,13 +93,22 @@ service cloud.firestore {
       allow update: if isSignedIn() && request.auth.uid == resource.data.to;
     }
 
-    // 5. Chats & Messages:
+    // 5. Chats & Messages
     match /chats/{chatId} {
       allow read, write: if isParticipant(resource.data.participants);
       
       match /messages/{messageId} {
         allow read, write: if isParticipant(get(/databases/$(database)/documents/chats/$(chatId)).data.participants);
       }
+    }
+
+    // 6. Drafts (Projects)
+    match /drafts/{draftId} {
+      allow create: if isSignedIn() && request.resource.data.ownerUid == request.auth.uid;
+      allow update, delete: if isOwner(resource.data.ownerUid) || isSuperUser();
+      allow read: if isSignedIn() && (
+                    isOwner(resource.data.ownerUid) || isSuperUser()
+                  );
     }
   }
 }

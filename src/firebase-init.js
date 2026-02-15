@@ -21,11 +21,7 @@ if (isFirebaseConfigured()) {
             localCache: persistentLocalCache()
         }, 'default');
 
-        console.log(`[donmitx] Firebase Initialization Debug:`);
-        console.log(`- Project ID: "${firebaseConfig.projectId}"`);
-        console.log(`- Auth Domain: "${firebaseConfig.authDomain}"`);
-        console.log(`[donmitx] Firebase initialized for project: ${firebaseConfig.projectId}, database: default`);
-        console.log('[donmitx] Database initialization complete');
+        console.log('[donmitx] Firebase initialized for project:', firebaseConfig.projectId);
     } catch (e) {
         console.error('[donmitx] Firebase initialization error:', e);
     }
