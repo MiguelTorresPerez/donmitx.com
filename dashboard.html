@@ -111,19 +111,53 @@
         <section id="view-social" class="view-section hidden">
             <div class="social-layout">
                 <aside class="friends-sidebar">
-                    <h3>Friends</h3>
-                    <div class="friend-search">
-                        <input type="text" id="user-search-input" placeholder="Find users...">
+                    <div class="sidebar-header">
+                        <h3>Friends</h3>
+                        <div class="user-search-wrapper">
+                            <input type="text" id="user-search-input" placeholder="Find users..." autocomplete="off">
+                            <div id="search-results-dropdown" class="search-dropdown hidden"></div>
+                        </div>
                     </div>
-                    <ul class="friend-list" id="friend-list">
-                        <!-- Friend items -->
-                    </ul>
-                    <div class="requests-area" id="requests-area">
-                        <!-- Pending requests -->
+
+                    <div id="requests-area" class="requests-area hidden">
+                        <h4>Requests <span id="req-count" class="badge">0</span></h4>
+                        <div id="requests-list" class="requests-list"></div>
+                    </div>
+
+                    <div class="friends-list-container">
+                        <div id="friends-list" class="friends-list">
+                            <!-- Friends injected here -->
+                        </div>
                     </div>
                 </aside>
+
                 <div class="chat-area empty" id="chat-area">
-                    <div class="empty-state">Select a friend to start chatting</div>
+                    <div class="empty-state">
+                        <div class="empty-icon">💬</div>
+                        <h3>Select a friend</h3>
+                        <p>Choose a friend from the sidebar to start chatting</p>
+                    </div>
+                </div>
+
+                <div class="chat-area hidden" id="chat-panel">
+                    <div class="chat-header">
+                        <div class="chat-user-info">
+                            <img src="" id="chat-avatar" class="avatar-sm">
+                            <h4 id="chat-username">User</h4>
+                        </div>
+                        <button class="btn-icon btn-close-chat mobile-only">←</button>
+                    </div>
+
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- Messages injected here -->
+                    </div>
+
+                    <form class="chat-input-area" id="form-chat">
+                        <input type="text" id="inp-chat-msg" placeholder="Type a message..." autocomplete="off">
+                        <button type="submit" class="btn-primary btn-icon">
+                            ➤
+                        </button>
+                    </form>
                 </div>
             </div>
         </section>

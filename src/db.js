@@ -88,7 +88,21 @@ export async function searchUsers(term) {
 //  FRIEND REQUESTS
 // ============================================================
 
+// ============================================================
+//  FRIEND REQUESTS
+// ============================================================
+
 export async function sendFriendRequest(fromUid, toUid) {
+    // Check if request already exists
+    const q = query(
+        collection(db, COL.FRIEND_REQUESTS),
+        where('fromUid', '==', fromUid),
+        where('toUid', '==', toUid),
+        where('status', '==', 'pending')
+    );
+    const snap = await getDocs(q);
+    if (!snap.empty) throw new Error('Request already pending');
+
     await addDoc(collection(db, COL.FRIEND_REQUESTS), {
         fromUid, toUid, status: 'pending', createdAt: new Date().toISOString()
     });
@@ -101,13 +115,114 @@ export async function getFriendRequests(uid) {
         where('status', '==', 'pending')
     );
     const snap = await getDocs(q);
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    // Enrich with sender info
+    const requests = await Promise.all(snap.docs.map(async d => {
+        const data = d.data();
+        const userSnap = await getDoc(doc(db, COL.USERS, data.fromUid));
+        return {
+            id: d.id,
+            ...data,
+            fromUser: userSnap.exists() ? userSnap.data() : { displayName: 'Unknown' }
+        };
+    }));
+    return requests;
 }
 
 export async function acceptFriendRequest(requestId, fromUid, toUid) {
     await updateDoc(doc(db, COL.FRIEND_REQUESTS, requestId), { status: 'accepted' });
+
+    // Add to both users' friend lists
     await updateDoc(doc(db, COL.USERS, fromUid), { friends: arrayUnion(toUid) });
     await updateDoc(doc(db, COL.USERS, toUid), { friends: arrayUnion(fromUid) });
+}
+
+export async function rejectFriendRequest(requestId) {
+    await updateDoc(doc(db, COL.FRIEND_REQUESTS, requestId), { status: 'rejected' });
+}
+
+export async function getFriendsList(uid) {
+    const userSnap = await getDoc(doc(db, COL.USERS, uid));
+    if (!userSnap.exists()) return [];
+
+    const friendUids = userSnap.data().friends || [];
+    if (friendUids.length === 0) return [];
+
+    // Fetch in batches of 10 (Firestore 'in' limit)
+    const chunks = [];
+    for (let i = 0; i < friendUids.length; i += 10) {
+        chunks.push(friendUids.slice(i, i + 10));
+    }
+
+    const friends = [];
+    for (const chunk of chunks) {
+        const q = query(collection(db, COL.USERS), where('uid', 'in', chunk));
+        const snap = await getDocs(q);
+        snap.forEach(d => friends.push(d.data()));
+    }
+    return friends;
+}
+
+// ============================================================
+//  CHATS & MESSAGES
+// ============================================================
+
+/**
+ * Create or get existing chat between two users
+ */
+export async function createChat(participants) {
+    // Check if chat exists (naive check: participants array match)
+    // For scalability, you'd usually store chat IDs in user profile.
+    // Here we query for simplicity.
+    const q = query(
+        collection(db, COL.CHATS),
+        where('participants', 'array-contains', participants[0])
+    );
+    const snap = await getDocs(q);
+
+    const existing = snap.docs.find(d => {
+        const p = d.data().participants;
+        return p.length === participants.length && p.every(uid => participants.includes(uid));
+    });
+
+    if (existing) return { id: existing.id, ...existing.data() };
+
+    const docRef = await addDoc(collection(db, COL.CHATS), {
+        participants,
+        createdAt: new Date().toISOString(),
+        lastMessage: null,
+        lastMessageTime: null
+    });
+    return { id: docRef.id, participants };
+}
+
+export async function sendMessage(chatId, user, text) {
+    const msgData = {
+        text,
+        userId: user.uid,
+        username: user.displayName,
+        photoURL: user.photoURL,
+        timestamp: new Date().toISOString()
+    };
+
+    // Add to subcollection
+    await addDoc(collection(db, COL.CHATS, chatId, 'messages'), msgData);
+
+    // Update main chat doc
+    await updateDoc(doc(db, COL.CHATS, chatId), {
+        lastMessage: text,
+        lastMessageTime: msgData.timestamp
+    });
+}
+
+export async function getMessages(chatId) {
+    const q = query(
+        collection(db, COL.CHATS, chatId, 'messages'),
+        orderBy('timestamp', 'asc'),
+        limit(50)
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
 // ============================================================
@@ -254,7 +369,7 @@ export async function addComment(itemId, user, text) {
     await addDoc(commentsRef, {
         text,
         userId: user.uid,
-        username: user.displayName || 'Anonymous',
+        username: user.displayName,
         photoURL: user.photoURL,
         timestamp: new Date().toISOString()
     });

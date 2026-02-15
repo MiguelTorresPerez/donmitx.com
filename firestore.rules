@@ -23,10 +23,6 @@ service cloud.firestore {
     // --- Collections ---
 
     // 1. Users
-    // - Any signed-in user can read individual profiles.
-    // - Only superusers can LIST all users (for admin panel).
-    // - Owner can update their own profile, but CANNOT change their role.
-    // - SuperUser can write any user doc (including role changes).
     match /users/{userId} {
       allow get: if isSignedIn();
       allow list: if isSuperUser();
@@ -52,18 +48,17 @@ service cloud.firestore {
     match /items/{itemId} {
       allow create: if isSignedIn() && request.resource.data.ownerUid == request.auth.uid;
       
-      // Owner or SuperUser: full update/delete
-      // Authenticated users: toggle likes or increment views only
       allow update: if isOwner(resource.data.ownerUid) || isSuperUser() || (
         isSignedIn() && (
-           // Case 1: Toggling Like (update 'likes' and 'likedBy')
            (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'likedBy']) && 
             request.resource.data.likes == request.resource.data.likedBy.size() &&
             (request.resource.data.likedBy.hasAll(resource.data.likedBy) || resource.data.likedBy.hasAll(request.resource.data.likedBy))) 
            ||
-           // Case 2: Increment View (update 'views' only)
            (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views']) &&
             request.resource.data.views == resource.data.views + 1)
+           ||
+           (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['commentCount']) &&
+            request.resource.data.commentCount == resource.data.commentCount + 1)
         )
       );
       
@@ -83,22 +78,25 @@ service cloud.firestore {
       }
     }
 
-    // 4. Friend Requests
+    // 4. Friend Requests — FIX: field names match code (fromUid/toUid)
     match /friend_requests/{requestId} {
       allow read: if isSignedIn() && (
-                    request.auth.uid == resource.data.from || 
-                    request.auth.uid == resource.data.to
+                    request.auth.uid == resource.data.fromUid || 
+                    request.auth.uid == resource.data.toUid
                   );
-      allow create: if isSignedIn() && request.resource.data.from == request.auth.uid;
-      allow update: if isSignedIn() && request.auth.uid == resource.data.to;
+      allow create: if isSignedIn() && request.resource.data.fromUid == request.auth.uid;
+      allow update: if isSignedIn() && request.auth.uid == resource.data.toUid;
     }
 
-    // 5. Chats & Messages
+    // 5. Chats & Messages — FIX: split create (request.resource) vs read/update (resource)
     match /chats/{chatId} {
-      allow read, write: if isParticipant(resource.data.participants);
+      allow create: if isSignedIn() && request.auth.uid in request.resource.data.participants;
+      allow read, update: if isSignedIn() && request.auth.uid in resource.data.participants;
       
       match /messages/{messageId} {
-        allow read, write: if isParticipant(get(/databases/$(database)/documents/chats/$(chatId)).data.participants);
+        allow read: if isSignedIn() && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants;
+        allow create: if isSignedIn() && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants
+                      && request.resource.data.userId == request.auth.uid;
       }
     }
 

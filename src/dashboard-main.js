@@ -11,7 +11,9 @@ import {
     getFolders, createFolder, deleteFolder,
     getFolderItems, addItem, deleteItem,
     syncUserProfile, toggleLike, addComment, getComments,
-    incrementView, getAllUsers, getAdminStats
+    incrementView, getAllUsers, getAdminStats,
+    getFriendsList, getFriendRequests, sendFriendRequest, acceptFriendRequest, rejectFriendRequest,
+    createChat, getMessages, sendMessage
 } from './db.js';
 
 // --- State ---
@@ -147,15 +149,195 @@ async function loadFeed() {
     }
 }
 
-function loadSocial() {
-    const area = document.getElementById('chat-area');
-    area.innerHTML = `
-        <div class="empty-state">
-            <div class="empty-icon">💬</div>
-            <h3>Social Features Coming Soon</h3>
-            <p>Friend requests and chat will be available in the next update.</p>
-        </div>
-    `;
+async function loadSocial() {
+    const friendListEl = document.getElementById('friends-list');
+    const requestsListEl = document.getElementById('requests-list');
+    const requestsArea = document.getElementById('requests-area');
+    const reqCountBadge = document.getElementById('req-count');
+
+    // Reset Chat
+    document.getElementById('chat-area').classList.remove('hidden');
+    document.getElementById('chat-panel').classList.add('hidden');
+
+    // 1. Load Friends
+    friendListEl.innerHTML = '<div class="loader-sm"></div>';
+    try {
+        const friends = await getFriendsList(currentUser.uid);
+        friendListEl.innerHTML = '';
+        if (friends.length === 0) {
+            friendListEl.innerHTML = '<p class="text-muted text-center" style="padding:20px">No friends yet. Search for users to add them!</p>';
+        } else {
+            friends.forEach(friend => {
+                friendListEl.appendChild(UI.createFriendCard(friend, openChat));
+            });
+        }
+    } catch (e) {
+        console.error('Friends load error:', e);
+        friendListEl.innerHTML = '<p class="error-msg">Failed to load friends</p>';
+    }
+
+    // 2. Load Requests
+    try {
+        const requests = await getFriendRequests(currentUser.uid);
+        if (requests.length > 0) {
+            requestsArea.classList.remove('hidden');
+            reqCountBadge.textContent = requests.length;
+            requestsListEl.innerHTML = '';
+            requests.forEach(req => {
+                requestsListEl.appendChild(UI.createFriendRequestCard(req, handleAcceptRequest, handleRejectRequest));
+            });
+        } else {
+            requestsArea.classList.add('hidden');
+        }
+    } catch (e) {
+        console.warn('Requests load error:', e);
+    }
+}
+
+// --- Social Actions ---
+
+async function handleSearchUsers(query) {
+    const dropdown = document.getElementById('search-results-dropdown');
+    dropdown.innerHTML = '<div class="loader-sm"></div>';
+    dropdown.classList.remove('hidden');
+
+    try {
+        // Simple client-side filtering for now (simulated search)
+        // In prod, use a dedicated search index (Algolia/Typesense) or Firestore array-contains
+        const allUsers = await getAllUsers();
+        const results = allUsers.filter(u =>
+            u.uid !== currentUser.uid &&
+            (u.displayName || '').toLowerCase().includes(query.toLowerCase())
+        ).slice(0, 5);
+
+        dropdown.innerHTML = '';
+        if (results.length === 0) {
+            dropdown.innerHTML = '<p class="text-muted text-center" style="padding:10px">No users found</p>';
+        } else {
+            results.forEach(user => {
+                dropdown.appendChild(UI.createSearchResultCard(user, handleSendRequest));
+            });
+        }
+    } catch (e) {
+        dropdown.innerHTML = '<p class="error-msg">Search failed</p>';
+    }
+}
+
+async function handleSendRequest(user) {
+    try {
+        await sendFriendRequest(currentUser.uid, user.uid);
+    } catch (e) {
+        alert(e.message);
+    }
+}
+
+async function handleAcceptRequest(req) {
+    try {
+        await acceptFriendRequest(req.id, req.fromUid, req.toUid);
+        loadSocial(); // Refresh
+    } catch (e) {
+        console.error(e);
+        alert('Failed to accept request');
+    }
+}
+
+async function handleRejectRequest(req) {
+    try {
+        await rejectFriendRequest(req.id);
+        loadSocial(); // Refresh
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+// --- Chat Logic ---
+
+let currentChatId = null;
+let messageUnsubscribe = null;
+
+async function openChat(friend) {
+    // UI Switch
+    document.getElementById('chat-area').classList.add('hidden');
+    const panel = document.getElementById('chat-panel');
+    panel.classList.remove('hidden');
+
+    // Helper: Mobile back button
+    const backBtn = panel.querySelector('.btn-close-chat');
+    backBtn.style.display = 'block'; // Ensure visible on mobile
+    backBtn.onclick = () => {
+        panel.classList.add('hidden');
+        document.getElementById('chat-area').classList.remove('hidden');
+    };
+
+    // Header
+    document.getElementById('chat-username').textContent = friend.displayName;
+    document.getElementById('chat-avatar').src = avatarUrl(friend);
+
+    // Messages Container
+    const msgContainer = document.getElementById('chat-messages');
+    msgContainer.innerHTML = '<div class="loader-sm"></div>';
+
+    // Create/Get Chat
+    try {
+        const chat = await createChat([currentUser.uid, friend.uid]);
+        currentChatId = chat.id;
+
+        // Load messages (Real-time listener would be better, using polling for now or just fetch once)
+        // For accurate real-time, we'd need onSnapshot. Here we stick to async/await fetch as per db.js
+        loadMessages(currentChatId);
+
+    } catch (e) {
+        console.error('Chat open error:', e);
+        msgContainer.innerHTML = '<p class="error-msg">Failed to open chat</p>';
+    }
+}
+
+async function loadMessages(chatId) {
+    const msgContainer = document.getElementById('chat-messages');
+    const messages = await getMessages(chatId);
+
+    msgContainer.innerHTML = '';
+    if (messages.length === 0) {
+        msgContainer.innerHTML = '<p class="text-muted text-center" style="margin-top:20px">No messages yet. Say hi! 👋</p>';
+    } else {
+        messages.forEach(msg => {
+            const isOwn = msg.userId === currentUser.uid;
+            msgContainer.appendChild(UI.createMessageBubble(msg, isOwn));
+        });
+        // Scroll to bottom
+        msgContainer.scrollTop = msgContainer.scrollHeight;
+    }
+}
+
+async function handleSendMessage(e) {
+    e.preventDefault();
+    const input = document.getElementById('inp-chat-msg');
+    const text = input.value.trim();
+
+    if (!text || !currentChatId) return;
+
+    input.value = ''; // Optimistic clear
+
+    try {
+        await sendMessage(currentChatId, currentUser, text);
+
+        // Append locally immediately
+        const msgContainer = document.getElementById('chat-messages');
+        const emptyMsg = msgContainer.querySelector('.text-muted');
+        if (emptyMsg) emptyMsg.remove();
+
+        msgContainer.appendChild(UI.createMessageBubble({
+            text,
+            timestamp: new Date().toISOString(),
+            photoURL: currentUser.photoURL
+        }, true));
+
+        msgContainer.scrollTop = msgContainer.scrollHeight;
+
+    } catch (e) {
+        console.error('Send failed:', e);
+        alert('Failed to send message');
+    }
 }
 
 async function loadAdmin() {
@@ -520,6 +702,31 @@ function setupEventListeners() {
         Auth.signOut();
         window.location.href = '/index.html';
     });
+
+    // Social
+    const searchInput = document.getElementById('user-search-input');
+    if (searchInput) {
+        let searchDebounce;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchDebounce);
+            searchDebounce = setTimeout(() => {
+                const query = e.target.value.trim();
+                if (query.length > 2) handleSearchUsers(query);
+                else document.getElementById('search-results-dropdown').classList.add('hidden');
+            }, 500);
+        });
+        // Hide dropdown on click outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.user-search-wrapper')) {
+                document.getElementById('search-results-dropdown').classList.add('hidden');
+            }
+        });
+    }
+
+    const chatForm = document.getElementById('form-chat');
+    if (chatForm) {
+        chatForm.addEventListener('submit', handleSendMessage);
+    }
 }
 
 // --- Modal Utilities ---

@@ -224,6 +224,9 @@ export const UI = {
     /**
      * Show loading skeletons in a grid
      */
+    /**
+     * Show loading skeletons in a grid
+     */
     showSkeletons(container, count = 6, type = 'card') {
         container.innerHTML = '';
         for (let i = 0; i < count; i++) {
@@ -248,5 +251,77 @@ export const UI = {
         element.addEventListener('mouseleave', () => {
             element.style.transform = '';
         });
+    },
+
+    // --- Social Components ---
+
+    createFriendCard(user, onClick) {
+        const el = document.createElement('div');
+        el.className = 'friend-card';
+        el.innerHTML = `
+            <div class="friend-avatar-wrapper">
+                <img src="${avatarUrl(user)}" class="friend-avatar" alt="${escapeHtml(user.displayName)}">
+                <div class="status-dot online"></div>
+            </div>
+            <div class="friend-info">
+                <h4>${escapeHtml(user.displayName)}</h4>
+                <p class="friend-status">Online</p>
+            </div>
+        `;
+        el.addEventListener('click', () => onClick(user));
+        return el;
+    },
+
+    createFriendRequestCard(request, onAccept, onReject) {
+        const el = document.createElement('div');
+        el.className = 'request-card';
+        el.innerHTML = `
+            <div class="request-header">
+                <img src="${avatarUrl(request.fromUser)}" class="avatar-sm">
+                <div>
+                    <strong>${escapeHtml(request.fromUser.displayName)}</strong>
+                    <span>sent a request</span>
+                </div>
+            </div>
+            <div class="request-actions">
+                <button class="btn-xs btn-primary btn-accept">Accept</button>
+                <button class="btn-xs btn-outline btn-reject">Reject</button>
+            </div>
+        `;
+
+        el.querySelector('.btn-accept').addEventListener('click', () => onAccept(request));
+        el.querySelector('.btn-reject').addEventListener('click', () => onReject(request));
+        return el;
+    },
+
+    createSearchResultCard(user, onAdd) {
+        const el = document.createElement('div');
+        el.className = 'user-search-result';
+        el.innerHTML = `
+            <div class="user-cell">
+                <img src="${avatarUrl(user)}" class="avatar-sm">
+                <span>${escapeHtml(user.displayName)}</span>
+            </div>
+            <button class="btn-xs btn-primary btn-add">Add Friend</button>
+        `;
+        el.querySelector('.btn-add').addEventListener('click', (e) => {
+            e.target.textContent = 'Sent';
+            e.target.disabled = true;
+            onAdd(user);
+        });
+        return el;
+    },
+
+    createMessageBubble(msg, isOwn) {
+        const el = document.createElement('div');
+        el.className = `chat-message ${isOwn ? 'own' : 'other'}`;
+        el.innerHTML = `
+            ${!isOwn ? `<img src="${msg.photoURL || 'https://ui-avatars.com/api/?name=User'}" class="msg-avatar">` : ''}
+            <div class="msg-content">
+                <div class="msg-bubble">${escapeHtml(msg.text)}</div>
+                <div class="msg-time">${timeAgo(msg.timestamp)}</div>
+            </div>
+        `;
+        return el;
     }
 };
