@@ -1,0 +1,88 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- Helper Functions ---
+    
+    // Check if user is signed in
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Check if user is the owner of the data
+    function isOwner(ownerUid) {
+      return isSignedIn() && request.auth.uid == ownerUid;
+    }
+
+    // Check if the document is public
+    function isPublic() {
+      return resource.data.privacy == 'public';
+    }
+
+    // Check if user is a participant in a list (for chats)
+    function isParticipant(participants) {
+      return isSignedIn() && (request.auth.uid in participants);
+    }
+
+    // --- Collections ---
+
+    // 1. Users: Authenticated users can read profiles; Only owner can write.
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isOwner(userId);
+    }
+
+    // 2. Folders: 
+    // - Create: Must be signed in AND set ownerUid to self.
+    // - Update/Delete: Only owner.
+    // - Read: Owner OR Public.
+    match /folders/{folderId} {
+      allow create: if isSignedIn() 
+                    && request.resource.data.ownerUid == request.auth.uid;
+      
+      allow update, delete: if isOwner(resource.data.ownerUid);
+      
+      allow read: if isSignedIn() && (
+                    isOwner(resource.data.ownerUid) || 
+                    resource.data.privacy == 'public'
+                  );
+    }
+
+    // 3. Items:
+    // - Similar logic to folders.
+    match /items/{itemId} {
+      allow create: if isSignedIn() 
+                    && request.resource.data.ownerUid == request.auth.uid;
+
+      allow update, delete: if isOwner(resource.data.ownerUid);
+
+      allow read: if isSignedIn() && (
+                    isOwner(resource.data.ownerUid) || 
+                    resource.data.privacy == 'public'
+                  );
+    }
+
+    // 4. Friend Requests:
+    // - Read: Sender OR Recipient.
+    // - Create: Sender (must set 'from' to self).
+    // - Update: Recipient (to accept/reject).
+    match /friend_requests/{requestId} {
+      allow read: if isSignedIn() && (
+                    request.auth.uid == resource.data.from || 
+                    request.auth.uid == resource.data.to
+                  );
+      allow create: if isSignedIn() && request.resource.data.from == request.auth.uid;
+      allow update: if isSignedIn() && request.auth.uid == resource.data.to;
+    }
+
+    // 5. Chats & Messages:
+    // - Read/Write: Only participants.
+    match /chats/{chatId} {
+      allow read, write: if isParticipant(resource.data.participants);
+      
+      match /messages/{messageId} {
+        allow read, write: if isParticipant(get(/databases/$(database)/documents/chats/$(chatId)).data.participants);
+      }
+    }
+  }
+}
