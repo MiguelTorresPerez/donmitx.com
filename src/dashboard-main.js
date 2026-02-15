@@ -9,7 +9,7 @@ import { ContentParser } from './content.js';
 import {
     getFolders, createFolder, deleteFolder,
     getFolderItems, addItem, deleteItem,
-    syncUserProfile
+    syncUserProfile, toggleLike, addComment
 } from './db.js';
 
 // --- State ---
@@ -53,7 +53,13 @@ function updateUserProfileUI(user) {
     document.getElementById('user-name').textContent = user.displayName || user.email;
     document.getElementById('user-avatar').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=random`;
     document.getElementById('settings-email').textContent = user.email;
+    document.getElementById('settings-email').textContent = user.email;
     document.getElementById('auth-loading').style.display = 'none';
+
+    // Admin Check
+    if (user.superuser) {
+        document.getElementById('nav-admin').classList.remove('hidden');
+    }
 }
 
 // --- Navigation ---
@@ -74,6 +80,45 @@ function navigateToTab(tabName) {
     if (tabName === 'library') loadLibrary();
     if (tabName === 'feed') loadFeed();
     if (tabName === 'social') loadSocial();
+    if (tabName === 'admin') loadAdmin();
+}
+
+// --- Data Loading ---
+
+async function loadAdmin() {
+    if (!currentUser || !currentUser.superuser) return;
+
+    const tbody = document.getElementById('admin-user-list');
+    tbody.innerHTML = '<tr><td colspan="5" class="loading-cell">Loading users...</td></tr>';
+
+    try {
+        const { getAllUsers } = await import('./db.js');
+        const users = await getAllUsers();
+
+        tbody.innerHTML = '';
+        users.forEach(user => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>
+                    <div class="user-cell">
+                        <img src="${user.photoURL || 'https://ui-avatars.com/api/?name=' + (user.displayName || 'U')}" class="avatar-xs">
+                        <span>${escapeHtml(user.displayName || 'User')}</span>
+                    </div>
+                </td>
+                <td>${escapeHtml(user.email)}</td>
+                <td><span class="badge ${user.role === 'admin' || user.superuser ? 'badge-admin' : 'badge-user'}">${user.role || (user.superuser ? 'Admin' : 'User')}</span></td>
+                <td>${new Date(user.lastLogin).toLocaleDateString()}</td>
+                <td>
+                    <button class="btn-xs btn-outline" onclick="alert('Manage user: ${user.uid}')">Manage</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+    } catch (e) {
+        console.error('Admin load error', e);
+        tbody.innerHTML = '<tr><td colspan="5" class="error-cell">Failed to load users</td></tr>';
+    }
 }
 
 // --- Data Loading ---
@@ -168,12 +213,40 @@ async function openFolder(folder) {
         const isOwner = folder.ownerUid === currentUser.uid;
 
         items.forEach(item => {
-            const card = UI.createItemCard(item, isOwner ? handleDeleteItem : null);
+            const card = UI.createItemCard(
+                item,
+                isOwner ? handleDeleteItem : null,
+                handleLike,
+                handleComment
+            );
             grid.appendChild(card);
         });
     } catch (e) {
         console.error(e);
         grid.innerHTML = '<p class="error">Failed to load items</p>';
+    }
+}
+
+async function handleLike(item) {
+    try {
+        await toggleLike(item.id, currentUser.uid);
+    } catch (e) {
+        console.error('Like failed', e);
+    }
+}
+
+async function handleComment(item) {
+    // MVP: Simple Prompt
+    const text = prompt('Enter your comment:');
+    if (!text || !text.trim()) return;
+
+    try {
+        await addComment(item.id, currentUser, text);
+        alert('Comment added!');
+        // Ideally refresh comments view or update local count
+    } catch (e) {
+        console.error('Comment failed', e);
+        alert('Failed to add comment');
     }
 }
 

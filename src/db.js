@@ -136,3 +136,69 @@ export async function getFolderItems(folderId) {
 export async function deleteItem(itemId) {
     await deleteDoc(doc(db, ITEMS_COL, itemId));
 }
+
+// --- Social Interactions ---
+
+export async function toggleLike(itemId, userId) {
+    const itemRef = doc(db, ITEMS_COL, itemId);
+    const itemSnap = await getDoc(itemRef);
+
+    if (!itemSnap.exists()) return;
+    const data = itemSnap.data();
+    const likedBy = data.likedBy || [];
+    const isLiked = likedBy.includes(userId);
+
+    if (isLiked) {
+        // Unlike
+        await updateDoc(itemRef, {
+            likes: (data.likes || 1) - 1,
+            likedBy: arrayRemove(userId)
+        });
+    } else {
+        // Like
+        await updateDoc(itemRef, {
+            likes: (data.likes || 0) + 1,
+            likedBy: arrayUnion(userId)
+        });
+    }
+}
+
+export async function incrementView(itemId) {
+    // Simple atomic increment
+    // Note: increment() is cleaner but we'll stick to read-write for now if not importing increment
+    // Actually, let's import increment
+    const { increment } = await import('firebase/firestore');
+    const itemRef = doc(db, ITEMS_COL, itemId);
+    await updateDoc(itemRef, { views: increment(1) });
+}
+
+export async function addComment(itemId, user, text) {
+    const commentsRef = collection(db, ITEMS_COL, itemId, 'comments');
+    await addDoc(commentsRef, {
+        text,
+        userId: user.uid,
+        username: user.displayName || 'Anonymous',
+        photoURL: user.photoURL,
+        timestamp: new Date().toISOString()
+    });
+
+    // Update main item comment count
+    const { increment } = await import('firebase/firestore');
+    await updateDoc(doc(db, ITEMS_COL, itemId), { commentCount: increment(1) });
+}
+
+export async function getComments(itemId) {
+    const q = query(collection(db, ITEMS_COL, itemId, 'comments'), orderBy('timestamp', 'desc'));
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
+// --- Admin ---
+
+export async function getAllUsers() {
+    // Admin only - requires rules to allow
+    const q = query(collection(db, USERS_COL), orderBy('lastLogin', 'desc'), limit(100));
+    const snap = await getDocs(q);
+    return snap.docs.map(d => d.data());
+}
+

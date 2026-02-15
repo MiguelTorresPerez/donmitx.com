@@ -1,65 +1,73 @@
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-
     // --- Helper Functions ---
     
-    // Check if user is signed in
     function isSignedIn() {
       return request.auth != null;
     }
 
-    // Check if user is the owner of the data
     function isOwner(ownerUid) {
       return isSignedIn() && request.auth.uid == ownerUid;
     }
-
-    // Check if the document is public
-    function isPublic() {
-      return resource.data.privacy == 'public';
-    }
-
-    // Check if user is a participant in a list (for chats)
-    function isParticipant(participants) {
-      return isSignedIn() && (request.auth.uid in participants);
+    
+    // Fetch the user's role from their profile document
+    function isSuperUser() {
+       return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
     // --- Collections ---
 
-    // 1. Users: Authenticated users can read profiles; Only owner can write.
+    // 1. Users: 
+    // - Public read for profiles.
+    // - SuperUser can list/read all.
+    // - Owner can write.
     match /users/{userId} {
-      allow read: if isSignedIn();
-      allow write: if isOwner(userId);
+      allow read: if isSignedIn(); // Public profiles
+      allow write: if isOwner(userId) || isSuperUser();
     }
 
-    // 2. Folders: 
-    // - Create: Must be signed in AND set ownerUid to self.
-    // - Update/Delete: Only owner.
-    // - Read: Owner OR Public.
+    // 2. Folders
     match /folders/{folderId} {
-      allow create: if isSignedIn() 
-                    && request.resource.data.ownerUid == request.auth.uid;
-      
-      allow update, delete: if isOwner(resource.data.ownerUid);
-      
+      allow create: if isSignedIn() && request.resource.data.ownerUid == request.auth.uid;
+      allow update, delete: if isOwner(resource.data.ownerUid) || isSuperUser();
       allow read: if isSignedIn() && (
                     isOwner(resource.data.ownerUid) || 
-                    resource.data.privacy == 'public'
+                    resource.data.privacy == 'public' ||
+                    isSuperUser()
                   );
     }
 
-    // 3. Items:
-    // - Similar logic to folders.
+    // 3. Items & Interactions
     match /items/{itemId} {
-      allow create: if isSignedIn() 
-                    && request.resource.data.ownerUid == request.auth.uid;
-
-      allow update, delete: if isOwner(resource.data.ownerUid);
+      allow create: if isSignedIn() && request.resource.data.ownerUid == request.auth.uid;
+      
+      // Allow Owner OR SuperUser to full update/delete
+      // Allow PUBLIC (Authenticated) users to toggle LIKES and increment VIEWS only
+      allow update: if isOwner(resource.data.ownerUid) || isSuperUser() || (
+        isSignedIn() && (
+           // Case 1: Toggling Like (Update 'likedBy' and 'likes' count)
+           (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'likedBy']) && 
+            request.resource.data.likes == request.resource.data.likedBy.size() &&
+            (request.resource.data.likedBy.hasAll(resource.data.likedBy) || resource.data.likedBy.hasAll(request.resource.data.likedBy))) 
+           ||
+           // Case 2: Increment View (Update 'views' only)
+           (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views']) &&
+            request.resource.data.views == resource.data.views + 1)
+        )
+      );
+      
+      allow delete: if isOwner(resource.data.ownerUid) || isSuperUser();
 
       allow read: if isSignedIn() && (
                     isOwner(resource.data.ownerUid) || 
-                    resource.data.privacy == 'public'
+                    resource.data.privacy == 'public' ||
+                    isSuperUser()
                   );
+
+      // Comments Subcollection
+      match /comments/{commentId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+        allow delete: if isSignedIn() && (request.auth.uid == resource.data.userId || isSuperUser());
+      }
     }
 
     // 4. Friend Requests:

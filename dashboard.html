@@ -43,6 +43,7 @@
                 <button class="nav-tab active" data-tab="library">My Library</button>
                 <button class="nav-tab" data-tab="feed">Global Feed</button>
                 <button class="nav-tab" data-tab="social">Social</button>
+                <button class="nav-tab hidden" data-tab="admin" id="nav-admin">Admin</button>
             </nav>
         </div>
 
@@ -123,6 +124,38 @@
                 </aside>
                 <div class="chat-area empty" id="chat-area">
                     <div class="empty-state">Select a friend to start chatting</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- View: Admin -->
+        <section id="view-admin" class="view-section hidden">
+            <div class="section-header">
+                <h2>Admin Dashboard</h2>
+                <div class="view-controls">
+                    <span class="badge-admin">Super User</span>
+                </div>
+            </div>
+            <div class="admin-panel">
+                <div class="admin-stats-row" id="admin-stats">
+                    <!-- Stats injected here -->
+                </div>
+                <h3>User Management</h3>
+                <div class="user-table-container">
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Last Login</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-user-list">
+                            <!-- Users injected here -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </section>
