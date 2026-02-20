@@ -13,7 +13,7 @@ import {
     syncUserProfile, toggleLike, addComment, getComments,
     incrementView, getAllUsers, getAdminStats,
     getFriendsList, getFriendRequests, sendFriendRequest, acceptFriendRequest, rejectFriendRequest,
-    createChat, getMessages, sendMessage
+    createChat, getMessages, sendMessage, updateUserRole
 } from './db.js';
 
 // --- State ---
@@ -638,8 +638,6 @@ async function handleManageUser(e) {
     btn.disabled = true;
 
     try {
-        // Need to import updateUserRole from db.js
-        const { updateUserRole } = await import('./db.js');
         await updateUserRole(uid, newRole);
 
         // Refresh admin list
