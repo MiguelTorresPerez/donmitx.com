@@ -372,9 +372,13 @@
         </div>
     </div>
 
-    <script type="module">
-        import { db, auth } from '../../src/firebase-init.js';
-        import { doc, onSnapshot, updateDoc, setDoc, getDoc } from 'firebase/firestore';
+    <script>
+        // Access Firebase via parent window (Dashboard) because this file isn't processed by Vite
+        if (!window.parent.DONMITX_GAME_API) {
+            document.getElementById('game-area').innerHTML = '<p class="text-error">Error: Must be played from Dashboard.</p>';
+            throw new Error("Game API missing");
+        }
+        const { db, auth, doc, onSnapshot, updateDoc } = window.parent.DONMITX_GAME_API;
 
         // Same super-questions bank
         const ALL_QUESTIONS = [

@@ -18,6 +18,13 @@ import {
     getAllFolders, getAllItems,
     createGameRoom, joinGameRoom, listenToGameRoom, getActiveGameRooms
 } from './db.js';
+import { db, auth } from './firebase-init.js';
+import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
+
+// Expose safe API to same-origin game iframes
+window.DONMITX_GAME_API = {
+    db, auth, doc, onSnapshot, updateDoc
+};
 
 // --- State ---
 let currentUser = null;
