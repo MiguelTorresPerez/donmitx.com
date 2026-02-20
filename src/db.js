@@ -527,6 +527,18 @@ export async function updateUserRole(uid, role) {
     await updateDoc(doc(db, COL.USERS, uid), { role });
 }
 
+export async function getAllFolders() {
+    const q = query(collection(db, COL.FOLDERS), orderBy('createdAt', 'desc'), limit(100));
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
+export async function getAllItems() {
+    const q = query(collection(db, COL.ITEMS), orderBy('addedAt', 'desc'), limit(100));
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
 // ============================================================
 //  DRAFTS (Projects feature)
 // ============================================================

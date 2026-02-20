@@ -14,7 +14,8 @@ import {
     incrementView, getAllUsers, getAdminStats,
     getFriendsList, getFriendRequests, sendFriendRequest, acceptFriendRequest, rejectFriendRequest,
     createChat, getChats, getMessages, sendMessage, updateUserRole,
-    addParticipantToChat, removeParticipantFromChat
+    addParticipantToChat, removeParticipantFromChat,
+    getAllFolders, getAllItems
 } from './db.js';
 
 // --- State ---
@@ -142,7 +143,11 @@ async function loadFeed() {
         // Show public folders with their items
         for (const folder of folders) {
             const isOwner = folder.ownerUid === currentUser?.uid;
-            const card = UI.createFolderCard(folder, openFolder, isOwner ? handleDeleteFolder : null, handleShareFolder);
+            const card = UI.createFolderCard(folder, (f) => {
+                // Switch to library tab first so user sees the right context
+                navigateToTab('library');
+                openFolder(f);
+            }, isOwner ? handleDeleteFolder : null, handleShareFolder);
             card.classList.add('card-enter');
             grid.appendChild(card);
         }
@@ -447,6 +452,72 @@ async function loadAdmin() {
     } catch (e) {
         console.error('[donmitx] Admin load error:', e);
         tbody.innerHTML = '<tr><td colspan="5" class="error-cell">Failed to load users</td></tr>';
+    }
+
+    // Load Folders for admin management
+    const folderTbody = document.getElementById('admin-folder-list');
+    folderTbody.innerHTML = '<tr><td colspan="5" class="loading-cell">Loading folders...</td></tr>';
+    try {
+        const folders = await getAllFolders();
+        folderTbody.innerHTML = '';
+        folders.forEach(folder => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${escapeHtml(folder.title || 'Untitled')}</td>
+                <td>${escapeHtml(folder.ownerName || folder.ownerUid?.slice(0, 8) || '—')}</td>
+                <td><span class="badge">${folder.privacy || 'private'}</span></td>
+                <td>${folder.itemCount || 0}</td>
+                <td>
+                    <button class="btn-xs btn-outline btn-admin-delete-folder" data-id="${folder.id}">🗑️ Delete</button>
+                </td>
+            `;
+            folderTbody.appendChild(tr);
+        });
+        document.querySelectorAll('.btn-admin-delete-folder').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                if (!confirm('Delete this folder and all its items?')) return;
+                try {
+                    await deleteFolder(btn.dataset.id);
+                    btn.closest('tr').remove();
+                } catch (err) { alert('Delete failed: ' + err.message); }
+            });
+        });
+    } catch (e) {
+        console.error('[donmitx] Admin folders error:', e);
+        folderTbody.innerHTML = '<tr><td colspan="5" class="error-cell">Failed to load folders</td></tr>';
+    }
+
+    // Load Items for admin management
+    const itemTbody = document.getElementById('admin-item-list');
+    itemTbody.innerHTML = '<tr><td colspan="5" class="loading-cell">Loading items...</td></tr>';
+    try {
+        const items = await getAllItems();
+        itemTbody.innerHTML = '';
+        items.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${escapeHtml(item.title || 'Untitled')}</td>
+                <td><span class="badge">${item.type || 'link'}</span></td>
+                <td>${escapeHtml(item.ownerName || item.ownerUid?.slice(0, 8) || '—')}</td>
+                <td>${item.likes || 0}</td>
+                <td>
+                    <button class="btn-xs btn-outline btn-admin-delete-item" data-id="${item.id}">🗑️ Delete</button>
+                </td>
+            `;
+            itemTbody.appendChild(tr);
+        });
+        document.querySelectorAll('.btn-admin-delete-item').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                if (!confirm('Delete this item permanently?')) return;
+                try {
+                    await deleteItem(btn.dataset.id);
+                    btn.closest('tr').remove();
+                } catch (err) { alert('Delete failed: ' + err.message); }
+            });
+        });
+    } catch (e) {
+        console.error('[donmitx] Admin items error:', e);
+        itemTbody.innerHTML = '<tr><td colspan="5" class="error-cell">Failed to load items</td></tr>';
     }
 }
 

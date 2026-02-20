@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trivial - donmitx</title>
+    <title>Trivial Multiplayer - donmitx</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -44,7 +44,7 @@
 
         .game-wrapper {
             width: 100%;
-            max-width: 500px;
+            max-width: 560px;
         }
 
         .header {
@@ -57,6 +57,7 @@
             font-weight: 800;
             background: linear-gradient(135deg, var(--primary), #a855f7);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
@@ -66,45 +67,165 @@
             margin-top: 4px;
         }
 
-        .stats-bar {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .stat-box {
-            flex: 1;
+        /* --- Setup Screen --- */
+        .setup-card {
             background: var(--card);
             border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 12px;
-            padding: 12px;
+            border-radius: var(--radius);
+            padding: 32px;
             text-align: center;
         }
 
-        .stat-box .label {
+        .setup-card h2 {
+            margin-bottom: 20px;
+        }
+
+        .player-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .player-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player-row .color-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .player-row input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+        }
+
+        .player-row input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn-add-player {
+            background: transparent;
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            color: var(--text-muted);
+            padding: 10px;
+            border-radius: 10px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .btn-add-player:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .setup-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+            transform: scale(1.02);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: default;
+            transform: none;
+        }
+
+        /* --- Scoreboard --- */
+        .scoreboard {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .score-chip {
+            flex: 1;
+            min-width: 80px;
+            background: var(--card);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 10px 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .score-chip.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 12px var(--primary-glow);
+        }
+
+        .score-chip .player-name {
             font-size: 0.7rem;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .stat-box .value {
-            font-size: 1.3rem;
+        .score-chip .player-score {
+            font-size: 1.2rem;
             font-weight: 700;
             margin-top: 2px;
         }
 
-        .stat-box .value.streak {
+        .score-chip .player-streak {
+            font-size: 0.65rem;
             color: var(--gold);
+            margin-top: 1px;
         }
 
+        /* --- Turn Indicator --- */
+        .turn-indicator {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15));
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 10px;
+            padding: 8px 16px;
+            text-align: center;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* --- Progress --- */
         .progress-bar {
             width: 100%;
             height: 6px;
             background: rgba(255, 255, 255, 0.06);
             border-radius: 3px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             overflow: hidden;
         }
 
@@ -115,6 +236,7 @@
             transition: width 0.4s ease;
         }
 
+        /* --- Category Badge --- */
         .category-badge {
             display: inline-block;
             padding: 4px 12px;
@@ -156,6 +278,17 @@
             color: #818cf8;
         }
 
+        .cat-nature {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+        }
+
+        .cat-food {
+            background: rgba(251, 146, 60, 0.2);
+            color: #fb923c;
+        }
+
+        /* --- Question Card --- */
         .question-card {
             background: var(--card);
             border: 1px solid rgba(255, 255, 255, 0.06);
@@ -166,7 +299,7 @@
         }
 
         .question-text {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             font-weight: 600;
             line-height: 1.5;
             margin-bottom: 24px;
@@ -224,7 +357,7 @@
 
         .feedback-text {
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
         .feedback-text.correct {
@@ -252,36 +385,59 @@
             transform: scale(1.03);
         }
 
+        /* --- End Screen --- */
         .end-screen {
             text-align: center;
             padding: 40px 20px;
         }
 
-        .end-screen .score-circle {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
+        .podium {
             display: flex;
-            align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 2rem;
-            font-weight: 800;
-            border: 4px solid var(--primary);
-            box-shadow: 0 0 30px var(--primary-glow);
+            gap: 16px;
+            margin-bottom: 28px;
+            align-items: flex-end;
         }
 
-        .end-screen h2 {
-            font-size: 1.6rem;
-            margin-bottom: 8px;
+        .podium-slot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .end-screen p {
-            color: var(--text-muted);
-            margin-bottom: 24px;
+        .podium-bar {
+            width: 80px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 12px 8px;
+            color: white;
+            font-weight: 700;
         }
 
-        .end-screen .btn-next {
+        .podium-bar .rank {
+            font-size: 1.5rem;
+        }
+
+        .podium-bar .pts {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        .podium-name {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            max-width: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .end-screen .btn-primary {
             width: 100%;
             padding: 14px;
             font-size: 1rem;
@@ -347,55 +503,33 @@
 
     <div class="game-wrapper">
         <div class="header">
-            <h1>🧠 Trivial</h1>
-            <p class="subtitle">Test your knowledge across 6 categories</p>
+            <h1>🧠 Trivial Multiplayer</h1>
+            <p class="subtitle">Compete with friends across 8 categories!</p>
         </div>
 
-        <div class="stats-bar">
-            <div class="stat-box">
-                <div class="label">Score</div>
-                <div class="value" id="score">0</div>
-            </div>
-            <div class="stat-box">
-                <div class="label">Streak</div>
-                <div class="value streak" id="streak">🔥 0</div>
-            </div>
-            <div class="stat-box">
-                <div class="label">Question</div>
-                <div class="value" id="q-counter">1/10</div>
-            </div>
-        </div>
-
-        <div class="progress-bar">
-            <div class="progress-fill" id="progress" style="width: 0%"></div>
-        </div>
-
-        <div id="game-area">
-            <div class="question-card" id="question-card">
-                <span class="category-badge" id="category">Loading...</span>
-                <div class="question-text" id="question">Preparing questions...</div>
-                <div class="options" id="options"></div>
-                <div class="feedback-row">
-                    <span class="feedback-text" id="feedback"></span>
-                    <button class="btn-next" id="btn-next" style="display:none">Next →</button>
-                </div>
-            </div>
-        </div>
+        <div id="game-area"></div>
     </div>
 
     <script>
+        // ═══════════════════════════════════════════════════
+        //  QUESTION BANK — 100 questions, 8 categories
+        // ═══════════════════════════════════════════════════
         const ALL_QUESTIONS = [
-            // ── Science ──
+            // ── Science (13) ──
             { q: "What is the chemical symbol for gold?", a: ["Au", "Ag", "Fe", "Go"], c: 0, cat: "science" },
             { q: "How many bones are in the adult human body?", a: ["206", "208", "196", "212"], c: 0, cat: "science" },
             { q: "What planet is closest to the Sun?", a: ["Mercury", "Venus", "Mars", "Earth"], c: 0, cat: "science" },
             { q: "What gas do plants absorb from the atmosphere?", a: ["Carbon Dioxide", "Oxygen", "Nitrogen", "Hydrogen"], c: 0, cat: "science" },
             { q: "What is the speed of light in km/s (approx)?", a: ["300,000", "150,000", "500,000", "1,000,000"], c: 0, cat: "science" },
             { q: "Which element has the atomic number 1?", a: ["Hydrogen", "Helium", "Lithium", "Carbon"], c: 0, cat: "science" },
-            { q: "What is the hardest natural substance on Earth?", a: ["Diamond", "Titanium", "Quartz", "Sapphire"], c: 0, cat: "science" },
+            { q: "What is the hardest natural substance?", a: ["Diamond", "Titanium", "Quartz", "Sapphire"], c: 0, cat: "science" },
             { q: "What is the powerhouse of the cell?", a: ["Mitochondria", "Nucleus", "Ribosome", "Golgi body"], c: 0, cat: "science" },
             { q: "How many chromosomes do humans have?", a: ["46", "44", "48", "42"], c: 0, cat: "science" },
-            // ── History ──
+            { q: "What is the most abundant gas in Earth's atmosphere?", a: ["Nitrogen", "Oxygen", "Carbon Dioxide", "Argon"], c: 0, cat: "science" },
+            { q: "What is the boiling point of water in Celsius?", a: ["100", "90", "110", "120"], c: 0, cat: "science" },
+            { q: "Which blood type is a universal donor?", a: ["O negative", "A positive", "B positive", "AB positive"], c: 0, cat: "science" },
+            { q: "What planet is known as the Red Planet?", a: ["Mars", "Venus", "Jupiter", "Saturn"], c: 0, cat: "science" },
+            // ── History (13) ──
             { q: "In what year did the Titanic sink?", a: ["1912", "1905", "1920", "1898"], c: 0, cat: "history" },
             { q: "Who was the first Emperor of Rome?", a: ["Augustus", "Julius Caesar", "Nero", "Caligula"], c: 0, cat: "history" },
             { q: "What year did World War II end?", a: ["1945", "1944", "1946", "1943"], c: 0, cat: "history" },
@@ -404,62 +538,105 @@
             { q: "In which year did the Berlin Wall fall?", a: ["1989", "1991", "1987", "1990"], c: 0, cat: "history" },
             { q: "Who was the first person to walk on the Moon?", a: ["Neil Armstrong", "Buzz Aldrin", "Yuri Gagarin", "John Glenn"], c: 0, cat: "history" },
             { q: "What ancient wonder was located in Alexandria?", a: ["Lighthouse", "Colossus", "Hanging Gardens", "Great Pyramid"], c: 0, cat: "history" },
-            // ── Geography ──
+            { q: "Which country was formerly known as Persia?", a: ["Iran", "Iraq", "Turkey", "Egypt"], c: 0, cat: "history" },
+            { q: "Who discovered penicillin?", a: ["Alexander Fleming", "Louis Pasteur", "Marie Curie", "Isaac Newton"], c: 0, cat: "history" },
+            { q: "The French Revolution began in which year?", a: ["1789", "1799", "1776", "1804"], c: 0, cat: "history" },
+            { q: "Who was the first female Prime Minister of the UK?", a: ["Margaret Thatcher", "Theresa May", "Queen Victoria", "Emmeline Pankhurst"], c: 0, cat: "history" },
+            { q: "What was the name of the ship that brought the Pilgrims to America?", a: ["Mayflower", "Santa Maria", "Endeavour", "Beagle"], c: 0, cat: "history" },
+            // ── Geography (13) ──
             { q: "What is the largest ocean on Earth?", a: ["Pacific", "Atlantic", "Indian", "Arctic"], c: 0, cat: "geography" },
             { q: "What is the smallest country in the world?", a: ["Vatican City", "Monaco", "San Marino", "Liechtenstein"], c: 0, cat: "geography" },
             { q: "Which river is the longest in the world?", a: ["Nile", "Amazon", "Yangtze", "Mississippi"], c: 0, cat: "geography" },
             { q: "What is the capital of Australia?", a: ["Canberra", "Sydney", "Melbourne", "Brisbane"], c: 0, cat: "geography" },
-            { q: "Mount Everest is located in which mountain range?", a: ["Himalayas", "Andes", "Alps", "Rockies"], c: 0, cat: "geography" },
+            { q: "Mount Everest is in which mountain range?", a: ["Himalayas", "Andes", "Alps", "Rockies"], c: 0, cat: "geography" },
             { q: "Which country has the most islands?", a: ["Sweden", "Indonesia", "Philippines", "Japan"], c: 0, cat: "geography" },
             { q: "What is the driest desert on Earth?", a: ["Atacama", "Sahara", "Gobi", "Kalahari"], c: 0, cat: "geography" },
-            { q: "Which African country was formerly known as Abyssinia?", a: ["Ethiopia", "Kenya", "Somalia", "Sudan"], c: 0, cat: "geography" },
-            // ── Entertainment ──
+            { q: "Which African country was formerly Abyssinia?", a: ["Ethiopia", "Kenya", "Somalia", "Sudan"], c: 0, cat: "geography" },
+            { q: "What is the largest continent by area?", a: ["Asia", "Africa", "North America", "Europe"], c: 0, cat: "geography" },
+            { q: "Which strait separates Europe from Africa?", a: ["Strait of Gibraltar", "Bosphorus", "Strait of Hormuz", "Strait of Malacca"], c: 0, cat: "geography" },
+            { q: "What is the capital of Canada?", a: ["Ottawa", "Toronto", "Vancouver", "Montreal"], c: 0, cat: "geography" },
+            { q: "Lake Baikal is located in which country?", a: ["Russia", "Mongolia", "China", "Kazakhstan"], c: 0, cat: "geography" },
+            { q: "Which U.S. state has the most volcanoes?", a: ["Alaska", "Hawaii", "Washington", "California"], c: 0, cat: "geography" },
+            // ── Entertainment (13) ──
             { q: "Who directed 'Inception'?", a: ["Christopher Nolan", "Steven Spielberg", "James Cameron", "Ridley Scott"], c: 0, cat: "entertainment" },
-            { q: "What is the highest-grossing film of all time (adjusted)?", a: ["Avatar", "Avengers: Endgame", "Titanic", "Star Wars"], c: 0, cat: "entertainment" },
+            { q: "What is the highest-grossing film of all time?", a: ["Avatar", "Avengers: Endgame", "Titanic", "Star Wars"], c: 0, cat: "entertainment" },
             { q: "In which fictional city does Batman operate?", a: ["Gotham City", "Metropolis", "Star City", "Central City"], c: 0, cat: "entertainment" },
             { q: "Who wrote the Harry Potter series?", a: ["J.K. Rowling", "J.R.R. Tolkien", "George R.R. Martin", "C.S. Lewis"], c: 0, cat: "entertainment" },
             { q: "What band released 'Bohemian Rhapsody'?", a: ["Queen", "The Beatles", "Led Zeppelin", "Pink Floyd"], c: 0, cat: "entertainment" },
-            { q: "In the TV show 'Friends', what is the name of Ross's first wife?", a: ["Carol", "Emily", "Rachel", "Mona"], c: 0, cat: "entertainment" },
-            { q: "Which Disney movie features the song 'Let It Go'?", a: ["Frozen", "Tangled", "Moana", "Brave"], c: 0, cat: "entertainment" },
             { q: "Who played Iron Man in the MCU?", a: ["Robert Downey Jr.", "Chris Evans", "Chris Hemsworth", "Mark Ruffalo"], c: 0, cat: "entertainment" },
-            // ── Sports ──
-            { q: "How many players are on a soccer team on the field?", a: ["11", "10", "12", "9"], c: 0, cat: "sports" },
-            { q: "In which sport is the term 'ace' used for a serve?", a: ["Tennis", "Volleyball", "Badminton", "Table Tennis"], c: 0, cat: "sports" },
+            { q: "Which Disney movie features 'Let It Go'?", a: ["Frozen", "Tangled", "Moana", "Brave"], c: 0, cat: "entertainment" },
+            { q: "What is the name of the hobbit played by Elijah Wood?", a: ["Frodo", "Bilbo", "Sam", "Pippin"], c: 0, cat: "entertainment" },
+            { q: "Which TV series features the Iron Throne?", a: ["Game of Thrones", "The Witcher", "Vikings", "The Last Kingdom"], c: 0, cat: "entertainment" },
+            { q: "What is the best-selling video game of all time?", a: ["Minecraft", "GTA V", "Tetris", "Wii Sports"], c: 0, cat: "entertainment" },
+            { q: "Who sang 'Thriller'?", a: ["Michael Jackson", "Prince", "Stevie Wonder", "Whitney Houston"], c: 0, cat: "entertainment" },
+            { q: "What anime features 'titan' creatures attacking humanity?", a: ["Attack on Titan", "Naruto", "One Piece", "Dragon Ball"], c: 0, cat: "entertainment" },
+            { q: "Which movie features the quote 'I see dead people'?", a: ["The Sixth Sense", "The Others", "Casper", "Beetlejuice"], c: 0, cat: "entertainment" },
+            // ── Sports (12) ──
+            { q: "How many players are on a soccer team?", a: ["11", "10", "12", "9"], c: 0, cat: "sports" },
             { q: "Which country has won the most FIFA World Cups?", a: ["Brazil", "Germany", "Italy", "Argentina"], c: 0, cat: "sports" },
-            { q: "What is the diameter of a basketball hoop in inches?", a: ["18", "16", "20", "15"], c: 0, cat: "sports" },
             { q: "In which year were the first modern Olympics held?", a: ["1896", "1900", "1888", "1904"], c: 0, cat: "sports" },
-            { q: "How long is an Olympic swimming pool in meters?", a: ["50", "25", "100", "75"], c: 0, cat: "sports" },
+            { q: "How long is an Olympic swimming pool (meters)?", a: ["50", "25", "100", "75"], c: 0, cat: "sports" },
             { q: "Which country invented cricket?", a: ["England", "Australia", "India", "South Africa"], c: 0, cat: "sports" },
-            { q: "How many Grand Slam tournaments are there in tennis?", a: ["4", "5", "3", "6"], c: 0, cat: "sports" },
-            // ── Tech ──
+            { q: "How many Grand Slam tournaments in tennis?", a: ["4", "5", "3", "6"], c: 0, cat: "sports" },
+            { q: "What is the diameter of a basketball hoop (inches)?", a: ["18", "16", "20", "15"], c: 0, cat: "sports" },
+            { q: "In which sport is 'ace' used for a serve?", a: ["Tennis", "Volleyball", "Badminton", "Table Tennis"], c: 0, cat: "sports" },
+            { q: "How many holes in a standard round of golf?", a: ["18", "9", "12", "24"], c: 0, cat: "sports" },
+            { q: "What country hosts the Tour de France?", a: ["France", "Italy", "Spain", "Belgium"], c: 0, cat: "sports" },
+            { q: "How many periods in an ice hockey game?", a: ["3", "4", "2", "5"], c: 0, cat: "sports" },
+            { q: "Which sport uses a shuttlecock?", a: ["Badminton", "Tennis", "Squash", "Table Tennis"], c: 0, cat: "sports" },
+            // ── Tech (12) ──
             { q: "Who co-founded Apple with Steve Jobs?", a: ["Steve Wozniak", "Bill Gates", "Tim Cook", "Elon Musk"], c: 0, cat: "tech" },
             { q: "What does 'HTTP' stand for?", a: ["HyperText Transfer Protocol", "High Tech Transfer Protocol", "HyperText Transmission Protocol", "Hyper Transfer Text Protocol"], c: 0, cat: "tech" },
             { q: "In what year was the first iPhone released?", a: ["2007", "2005", "2009", "2006"], c: 0, cat: "tech" },
-            { q: "What programming language is known as the 'language of the web'?", a: ["JavaScript", "Python", "Java", "C++"], c: 0, cat: "tech" },
+            { q: "What programming language is 'the language of the web'?", a: ["JavaScript", "Python", "Java", "C++"], c: 0, cat: "tech" },
             { q: "What does 'CPU' stand for?", a: ["Central Processing Unit", "Core Processing Unit", "Central Program Unit", "Computer Processing Unit"], c: 0, cat: "tech" },
             { q: "Who is considered the father of Computer Science?", a: ["Alan Turing", "Charles Babbage", "John von Neumann", "Ada Lovelace"], c: 0, cat: "tech" },
-            { q: "What does 'AI' stand for in technology?", a: ["Artificial Intelligence", "Automated Interface", "Advanced Integration", "Analytical Input"], c: 0, cat: "tech" },
-            { q: "Which company developed the Android operating system?", a: ["Google", "Apple", "Microsoft", "Samsung"], c: 0, cat: "tech" },
+            { q: "What does 'AI' stand for?", a: ["Artificial Intelligence", "Automated Interface", "Advanced Integration", "Analytical Input"], c: 0, cat: "tech" },
+            { q: "Which company developed Android?", a: ["Google", "Apple", "Microsoft", "Samsung"], c: 0, cat: "tech" },
+            { q: "What year was the World Wide Web invented?", a: ["1989", "1991", "1985", "1993"], c: 0, cat: "tech" },
+            { q: "What does 'GPU' stand for?", a: ["Graphics Processing Unit", "General Processing Unit", "Graphical Power Unit", "Graphics Program Utility"], c: 0, cat: "tech" },
+            { q: "Which language was created by Guido van Rossum?", a: ["Python", "Ruby", "Perl", "Java"], c: 0, cat: "tech" },
+            { q: "What does 'URL' stand for?", a: ["Uniform Resource Locator", "Universal Reference Link", "Unified Resource Locator", "Universal Resource Link"], c: 0, cat: "tech" },
+            // ── Nature (12) ──
+            { q: "What is the largest mammal on Earth?", a: ["Blue Whale", "African Elephant", "Giraffe", "Hippopotamus"], c: 0, cat: "nature" },
+            { q: "How many legs does a spider have?", a: ["8", "6", "10", "12"], c: 0, cat: "nature" },
+            { q: "What is the fastest land animal?", a: ["Cheetah", "Lion", "Pronghorn", "Greyhound"], c: 0, cat: "nature" },
+            { q: "Which planet has the most moons?", a: ["Saturn", "Jupiter", "Uranus", "Neptune"], c: 0, cat: "nature" },
+            { q: "What type of animal is a Komodo dragon?", a: ["Lizard", "Snake", "Crocodile", "Dinosaur"], c: 0, cat: "nature" },
+            { q: "How many hearts does an octopus have?", a: ["3", "2", "4", "1"], c: 0, cat: "nature" },
+            { q: "What is the tallest tree species in the world?", a: ["Coast Redwood", "Giant Sequoia", "Douglas Fir", "Eucalyptus"], c: 0, cat: "nature" },
+            { q: "Which bird can fly backwards?", a: ["Hummingbird", "Swift", "Kingfisher", "Swallow"], c: 0, cat: "nature" },
+            { q: "What is the largest organ in the human body?", a: ["Skin", "Liver", "Heart", "Lungs"], c: 0, cat: "nature" },
+            { q: "Diamonds are made of which element?", a: ["Carbon", "Silicon", "Iron", "Calcium"], c: 0, cat: "nature" },
+            { q: "What is the only mammal capable of true flight?", a: ["Bat", "Flying Squirrel", "Sugar Glider", "Colugo"], c: 0, cat: "nature" },
+            { q: "How many teeth does an adult human typically have?", a: ["32", "28", "30", "36"], c: 0, cat: "nature" },
+            // ── Food & Culture (12) ──
+            { q: "What country is the origin of sushi?", a: ["Japan", "China", "Korea", "Thailand"], c: 0, cat: "food" },
+            { q: "What is the main ingredient in hummus?", a: ["Chickpeas", "Lentils", "Black Beans", "Peas"], c: 0, cat: "food" },
+            { q: "Champagne comes from which country?", a: ["France", "Italy", "Spain", "Germany"], c: 0, cat: "food" },
+            { q: "What spice gives curry its yellow color?", a: ["Turmeric", "Saffron", "Paprika", "Cumin"], c: 0, cat: "food" },
+            { q: "What Italian city is famous for its pizza?", a: ["Naples", "Rome", "Milan", "Florence"], c: 0, cat: "food" },
+            { q: "What fruit is known as the 'king of fruits'?", a: ["Durian", "Mango", "Jackfruit", "Pineapple"], c: 0, cat: "food" },
+            { q: "Kimchi originated in which country?", a: ["Korea", "Japan", "China", "Vietnam"], c: 0, cat: "food" },
+            { q: "What nut is used to make marzipan?", a: ["Almond", "Cashew", "Walnut", "Pistachio"], c: 0, cat: "food" },
+            { q: "Sake is a traditional drink from which country?", a: ["Japan", "China", "Korea", "Thailand"], c: 0, cat: "food" },
+            { q: "What grain is used to make traditional Italian risotto?", a: ["Arborio Rice", "Basmati Rice", "Wheat", "Barley"], c: 0, cat: "food" },
+            { q: "Brie and Camembert are types of what?", a: ["Cheese", "Bread", "Pastry", "Wine"], c: 0, cat: "food" },
+            { q: "What bean is chocolate made from?", a: ["Cacao", "Coffee", "Vanilla", "Carob"], c: 0, cat: "food" },
         ];
 
-        const ROUND_SIZE = 10;
-        let questions = [];
-        let currentIdx = 0;
-        let score = 0;
-        let streak = 0;
-        let bestStreak = 0;
+        // ═══════════════════════════════════════════════════
+        //  GAME ENGINE
+        // ═══════════════════════════════════════════════════
 
-        const $q = document.getElementById('question');
-        const $opts = document.getElementById('options');
-        const $fb = document.getElementById('feedback');
-        const $next = document.getElementById('btn-next');
-        const $score = document.getElementById('score');
-        const $streak = document.getElementById('streak');
-        const $counter = document.getElementById('q-counter');
-        const $progress = document.getElementById('progress');
-        const $cat = document.getElementById('category');
-        const $card = document.getElementById('question-card');
+        const PLAYER_COLORS = ['#6366f1', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#06b6d4'];
+        const QUESTIONS_PER_PLAYER = 5;
         const $area = document.getElementById('game-area');
+
+        let players = [];
+        let questions = [];
+        let currentQIdx = 0;
+        let currentPlayerIdx = 0;
 
         function shuffle(arr) {
             for (let i = arr.length - 1; i > 0; i--) {
@@ -469,95 +646,205 @@
             return arr;
         }
 
-        function startRound() {
-            questions = shuffle([...ALL_QUESTIONS]).slice(0, ROUND_SIZE);
-            // Shuffle answer order for each question
+        // ═══════════════════════════════════════════════════
+        //  SETUP SCREEN
+        // ═══════════════════════════════════════════════════
+
+        function showSetup() {
+            $area.innerHTML = `
+        <div class="setup-card animate-in">
+            <h2>👥 Player Setup</h2>
+            <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.85rem;">Enter 2–6 player names to start</p>
+            <div class="player-inputs" id="player-inputs">
+                <div class="player-row">
+                    <div class="color-dot" style="background:${PLAYER_COLORS[0]}"></div>
+                    <input type="text" placeholder="Player 1" maxlength="16" autofocus>
+                </div>
+                <div class="player-row">
+                    <div class="color-dot" style="background:${PLAYER_COLORS[1]}"></div>
+                    <input type="text" placeholder="Player 2" maxlength="16">
+                </div>
+            </div>
+            <button class="btn-add-player" id="btn-add">+ Add Player</button>
+            <div class="setup-actions">
+                <button class="btn-primary" id="btn-start">Start Game 🚀</button>
+            </div>
+        </div>
+    `;
+
+            const addBtn = document.getElementById('btn-add');
+            const container = document.getElementById('player-inputs');
+            addBtn.onclick = () => {
+                const count = container.children.length;
+                if (count >= 6) return;
+                const row = document.createElement('div');
+                row.className = 'player-row';
+                row.innerHTML = `
+            <div class="color-dot" style="background:${PLAYER_COLORS[count]}"></div>
+            <input type="text" placeholder="Player ${count + 1}" maxlength="16">
+        `;
+                container.appendChild(row);
+                if (count + 1 >= 6) addBtn.style.display = 'none';
+            };
+
+            document.getElementById('btn-start').onclick = () => {
+                const inputs = container.querySelectorAll('input');
+                players = [];
+                inputs.forEach((inp, i) => {
+                    const name = inp.value.trim() || `Player ${i + 1}`;
+                    players.push({ name, color: PLAYER_COLORS[i], score: 0, streak: 0, bestStreak: 0, correct: 0 });
+                });
+                if (players.length < 2) return alert('Need at least 2 players!');
+                startGame();
+            };
+        }
+
+        // ═══════════════════════════════════════════════════
+        //  GAME LOOP
+        // ═══════════════════════════════════════════════════
+
+        function startGame() {
+            const totalQ = players.length * QUESTIONS_PER_PLAYER;
+            questions = shuffle([...ALL_QUESTIONS]).slice(0, totalQ);
             questions.forEach(q => {
-                const correctAnswer = q.a[q.c];
+                const correct = q.a[q.c];
                 shuffle(q.a);
-                q.c = q.a.indexOf(correctAnswer);
+                q.c = q.a.indexOf(correct);
             });
-            currentIdx = 0; score = 0; streak = 0; bestStreak = 0;
-            $score.textContent = '0';
-            $streak.textContent = '🔥 0';
-            render();
+            currentQIdx = 0;
+            currentPlayerIdx = 0;
+            renderQuestion();
         }
 
-        function render() {
-            if (currentIdx >= questions.length) return showEnd();
+        function renderQuestion() {
+            if (currentQIdx >= questions.length) return showResults();
 
-            const q = questions[currentIdx];
-            $counter.textContent = `${currentIdx + 1}/${questions.length}`;
-            $progress.style.width = `${((currentIdx) / questions.length) * 100}%`;
+            const q = questions[currentQIdx];
+            const player = players[currentPlayerIdx];
+            const total = questions.length;
 
-            $cat.className = `category-badge cat-${q.cat}`;
-            $cat.textContent = q.cat;
-            $q.textContent = q.q;
-            $fb.textContent = '';
-            $fb.className = 'feedback-text';
-            $next.style.display = 'none';
-            $opts.innerHTML = '';
+            $area.innerHTML = `
+        <div class="scoreboard" id="scoreboard">
+            ${players.map((p, i) => `
+                <div class="score-chip ${i === currentPlayerIdx ? 'active' : ''}" style="${i === currentPlayerIdx ? `border-color:${p.color}; box-shadow:0 0 12px ${p.color}40` : ''}">
+                    <div class="player-name" style="color:${p.color}">${esc(p.name)}</div>
+                    <div class="player-score">${p.score}</div>
+                    <div class="player-streak">${p.streak > 0 ? '🔥' + p.streak : ''}</div>
+                </div>
+            `).join('')}
+        </div>
+        <div class="turn-indicator" style="border-color:${player.color}40; background:linear-gradient(135deg, ${player.color}15, ${player.color}08);">
+            <span style="color:${player.color}">${esc(player.name)}</span>'s turn — Question ${currentQIdx + 1}/${total}
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${(currentQIdx / total) * 100}%"></div></div>
+        <div class="question-card animate-in" id="q-card">
+            <span class="category-badge cat-${q.cat}">${q.cat}</span>
+            <div class="question-text">${esc(q.q)}</div>
+            <div class="options" id="options">
+                ${q.a.map((a, i) => `<button class="option-btn" data-i="${i}">${esc(a)}</button>`).join('')}
+            </div>
+            <div class="feedback-row">
+                <span class="feedback-text" id="feedback"></span>
+                <button class="btn-next" id="btn-next" style="display:none">Next →</button>
+            </div>
+        </div>
+    `;
 
-            $card.classList.remove('animate-in', 'shake', 'pop');
-            void $card.offsetWidth;
-            $card.classList.add('animate-in');
-
-            q.a.forEach((text, i) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.textContent = text;
-                btn.onclick = () => answer(i, btn);
-                $opts.appendChild(btn);
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.onclick = () => handleAnswer(parseInt(btn.dataset.i));
             });
+            document.getElementById('btn-next').onclick = () => {
+                currentPlayerIdx = (currentPlayerIdx + 1) % players.length;
+                currentQIdx++;
+                renderQuestion();
+            };
         }
 
-        function answer(idx, btn) {
-            const q = questions[currentIdx];
-            const btns = $opts.querySelectorAll('.option-btn');
+        function handleAnswer(idx) {
+            const q = questions[currentQIdx];
+            const player = players[currentPlayerIdx];
+            const btns = document.querySelectorAll('.option-btn');
+            const fb = document.getElementById('feedback');
+
             btns.forEach(b => b.disabled = true);
 
             if (idx === q.c) {
-                btn.classList.add('correct');
-                streak++;
-                if (streak > bestStreak) bestStreak = streak;
-                const points = 10 + (streak > 1 ? streak * 2 : 0);
-                score += points;
-                $fb.textContent = streak > 1 ? `🔥 Correct! +${points} (${streak}x streak!)` : `✅ Correct! +${points}`;
-                $fb.className = 'feedback-text correct';
-                $card.classList.add('pop');
+                btns[idx].classList.add('correct');
+                player.streak++;
+                player.correct++;
+                if (player.streak > player.bestStreak) player.bestStreak = player.streak;
+                const pts = 10 + (player.streak > 1 ? player.streak * 2 : 0);
+                player.score += pts;
+                fb.textContent = player.streak > 1 ? `🔥 Correct! +${pts} (${player.streak}x streak!)` : `✅ Correct! +${pts}`;
+                fb.className = 'feedback-text correct';
+                document.getElementById('q-card').classList.add('pop');
             } else {
-                btn.classList.add('wrong');
+                btns[idx].classList.add('wrong');
                 btns[q.c].classList.add('correct');
-                streak = 0;
-                $fb.textContent = '❌ Wrong!';
-                $fb.className = 'feedback-text wrong';
-                $card.classList.add('shake');
+                player.streak = 0;
+                fb.textContent = '❌ Wrong!';
+                fb.className = 'feedback-text wrong';
+                document.getElementById('q-card').classList.add('shake');
             }
 
-            $score.textContent = score;
-            $streak.textContent = `🔥 ${streak}`;
-            $next.style.display = 'inline-flex';
-            currentIdx++;
+            // Update scoreboard live
+            const chips = document.querySelectorAll('.score-chip');
+            chips[currentPlayerIdx].querySelector('.player-score').textContent = player.score;
+            chips[currentPlayerIdx].querySelector('.player-streak').textContent = player.streak > 0 ? '🔥' + player.streak : '';
+
+            document.getElementById('btn-next').style.display = 'inline-flex';
         }
 
-        function showEnd() {
-            const pct = Math.round((score / (questions.length * 10 + 90)) * 100); // rough percentage
-            const total = questions.length * 10;
-            let msg = score >= total ? "🏆 Perfect!" : score >= total * 0.7 ? "🌟 Great job!" : score >= total * 0.4 ? "👍 Not bad!" : "📚 Keep learning!";
+        // ═══════════════════════════════════════════════════
+        //  RESULTS SCREEN (PODIUM)
+        // ═══════════════════════════════════════════════════
+
+        function showResults() {
+            const sorted = [...players].sort((a, b) => b.score - a.score);
+            const maxScore = sorted[0].score || 1;
+            const podiumColors = ['#f59e0b', '#94a3b8', '#b45309'];
+
+            const podiumHtml = sorted.slice(0, 3).map((p, i) => {
+                const height = Math.max(60, (p.score / maxScore) * 160);
+                return `
+            <div class="podium-slot">
+                <div class="podium-bar" style="height:${height}px; background:${podiumColors[i] || p.color};">
+                    <div class="rank">${i === 0 ? '🏆' : i === 1 ? '🥈' : '🥉'}</div>
+                    <div class="pts">${p.score} pts</div>
+                </div>
+                <div class="podium-name" style="color:${p.color}">${esc(p.name)}</div>
+            </div>
+        `;
+            }).join('');
+
+            const statsHtml = sorted.map((p, i) => `
+        <tr>
+            <td style="color:${p.color}; font-weight:600;">${i + 1}. ${esc(p.name)}</td>
+            <td>${p.score}</td>
+            <td>${p.correct}/${QUESTIONS_PER_PLAYER}</td>
+            <td>🔥 ${p.bestStreak}</td>
+        </tr>
+    `).join('');
 
             $area.innerHTML = `
         <div class="end-screen animate-in">
-            <div class="score-circle">${score}</div>
-            <h2>${msg}</h2>
-            <p>Best streak: 🔥 ${bestStreak} • You answered ${ROUND_SIZE} questions</p>
-            <button class="btn-next" onclick="location.reload()">Play Again 🔄</button>
+            <h2 style="margin-bottom:24px;">🏆 ${esc(sorted[0].name)} Wins!</h2>
+            <div class="podium">${podiumHtml}</div>
+            <table style="width:100%;text-align:left;border-collapse:collapse;margin-bottom:24px;">
+                <thead><tr style="color:var(--text-muted);font-size:0.75rem;text-transform:uppercase;">
+                    <th style="padding:6px 0;">Player</th><th>Score</th><th>Correct</th><th>Streak</th>
+                </tr></thead>
+                <tbody style="font-size:0.9rem;">${statsHtml}</tbody>
+            </table>
+            <button class="btn-primary" onclick="showSetup()">Play Again 🔄</button>
         </div>
     `;
-            $progress.style.width = '100%';
         }
 
-        $next.onclick = render;
-        startRound();
+        function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+        // Start!
+        showSetup();
     </script>
 </body>
 
