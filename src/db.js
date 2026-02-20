@@ -193,11 +193,73 @@ export async function createChat(participants) {
 
     const docRef = await addDoc(collection(db, COL.CHATS), {
         participants,
+        admins: [participants[0]], // The initiator is the first admin
         createdAt: new Date().toISOString(),
         lastMessage: null,
         lastMessageTime: null
     });
     return { id: docRef.id, participants };
+}
+
+export async function getChats(userId) {
+    const q = query(
+        collection(db, COL.CHATS),
+        where('participants', 'array-contains', userId)
+    );
+    const snap = await getDocs(q);
+    const chats = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    // Client side sort to avoid complex index requirements
+    chats.sort((a, b) => new Date(b.lastMessageTime || b.createdAt) - new Date(a.lastMessageTime || a.createdAt));
+
+    // Resolve display names
+    for (const chat of chats) {
+        const others = chat.participants.filter(p => p !== userId);
+        const namePromises = others.map(async uid => {
+            try {
+                const uSnap = await getDoc(doc(db, COL.USERS, uid));
+                return uSnap.exists() ? uSnap.data().displayName : 'Unknown User';
+            } catch { return 'Unknown User'; }
+        });
+        const names = await Promise.all(namePromises);
+        chat.displayTitle = chat.title || names.join(', ') || 'Just You';
+        chat.isGroup = chat.participants.length > 2;
+    }
+
+    return chats;
+}
+
+export async function addParticipantToChat(chatId, newUid, currentUid) {
+    const chatRef = doc(db, COL.CHATS, chatId);
+    const snap = await getDoc(chatRef);
+    if (!snap.exists()) throw new Error('Chat not found');
+    const data = snap.data();
+
+    // Check admin
+    const admins = data.admins || data.participants;
+    if (!admins.includes(currentUid)) throw new Error('Only admins can add users');
+
+    await updateDoc(chatRef, {
+        participants: arrayUnion(newUid),
+        ...(data.admins ? {} : { admins: [currentUid] }) // Ensure admins exists
+    });
+}
+
+export async function removeParticipantFromChat(chatId, targetUid, currentUid) {
+    const chatRef = doc(db, COL.CHATS, chatId);
+    const snap = await getDoc(chatRef);
+    if (!snap.exists()) throw new Error('Chat not found');
+    const data = snap.data();
+
+    // Check admin (or user leaving themselves)
+    const admins = data.admins || data.participants;
+    if (!admins.includes(currentUid) && currentUid !== targetUid) {
+        throw new Error('Only admins can remove users');
+    }
+
+    await updateDoc(chatRef, {
+        participants: arrayRemove(targetUid),
+        ...(data.admins && currentUid !== targetUid ? { admins: arrayRemove(targetUid) } : {})
+    });
 }
 
 export async function sendMessage(chatId, user, text) {
@@ -243,7 +305,7 @@ export async function createFolder(folderData, user) {
     return { id: docRef.id, ...folderData, itemCount: 0 };
 }
 
-export async function getFolders(userId = null) {
+export async function getFolders(userId = null, currentUid = null) {
     if (userId) {
         // Gets all folders specifically owned by the requested user
         const q = query(collection(db, COL.FOLDERS), where('ownerUid', '==', userId), orderBy('createdAt', 'desc'));
@@ -252,8 +314,6 @@ export async function getFolders(userId = null) {
         return populateItemCounts(folders);
     } else {
         // Global Feed: Get 'public' ones. To get friend-specific ones, we query them individually.
-        const currentUid = Auth?.getSession()?.uid || null;
-
         const qPub = query(collection(db, COL.FOLDERS), where('privacy', '==', 'public'), orderBy('createdAt', 'desc'), limit(50));
         const pubSnap = await getDocs(qPub);
         let allFolders = pubSnap.docs.map(d => ({ id: d.id, ...d.data() }));

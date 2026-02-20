@@ -13,7 +13,8 @@ import {
     syncUserProfile, toggleLike, addComment, getComments,
     incrementView, getAllUsers, getAdminStats,
     getFriendsList, getFriendRequests, sendFriendRequest, acceptFriendRequest, rejectFriendRequest,
-    createChat, getMessages, sendMessage, updateUserRole
+    createChat, getChats, getMessages, sendMessage, updateUserRole,
+    addParticipantToChat, removeParticipantFromChat
 } from './db.js';
 
 // --- State ---
@@ -106,7 +107,8 @@ async function loadLibrary() {
         }
 
         folders.forEach((folder, i) => {
-            const card = UI.createFolderCard(folder, openFolder);
+            const isOwner = folder.ownerUid === currentUser?.uid;
+            const card = UI.createFolderCard(folder, openFolder, isOwner ? handleDeleteFolder : null, handleShareFolder);
             card.style.animationDelay = `${i * 0.06}s`;
             card.classList.add('card-enter');
             grid.appendChild(card);
@@ -123,7 +125,7 @@ async function loadFeed() {
 
     try {
         // Feed shows PUBLIC items across all folders
-        const folders = await getFolders(null);
+        const folders = await getFolders(null, currentUser?.uid);
         grid.innerHTML = '';
 
         if (folders.length === 0) {
@@ -139,7 +141,8 @@ async function loadFeed() {
 
         // Show public folders with their items
         for (const folder of folders) {
-            const card = UI.createFolderCard(folder, openFolder);
+            const isOwner = folder.ownerUid === currentUser?.uid;
+            const card = UI.createFolderCard(folder, openFolder, isOwner ? handleDeleteFolder : null, handleShareFolder);
             card.classList.add('card-enter');
             grid.appendChild(card);
         }
@@ -158,6 +161,24 @@ async function loadSocial() {
     // Reset Chat
     document.getElementById('chat-area').classList.remove('hidden');
     document.getElementById('chat-panel').classList.add('hidden');
+
+    // 0. Load Active Chats
+    const chatsListEl = document.getElementById('chats-list');
+    chatsListEl.innerHTML = '<div class="loader-sm"></div>';
+    try {
+        const chats = await getChats(currentUser.uid);
+        chatsListEl.innerHTML = '';
+        if (chats.length === 0) {
+            chatsListEl.innerHTML = '<p class="text-muted text-center" style="padding:10px; font-size:0.85rem;">No active chats</p>';
+        } else {
+            chats.forEach(chat => {
+                chatsListEl.appendChild(UI.createChatCard(chat, openChatFromCard));
+            });
+        }
+    } catch (e) {
+        console.error('Chats load error:', e);
+        chatsListEl.innerHTML = '<p class="error-msg">Failed to load chats</p>';
+    }
 
     // 1. Load Friends
     friendListEl.innerHTML = '<div class="loader-sm"></div>';
@@ -271,6 +292,8 @@ async function openChat(friend) {
 
     // Header
     document.getElementById('chat-username').textContent = friend.displayName;
+    document.getElementById('chat-subtitle').textContent = 'Direct Message';
+    document.getElementById('chat-avatar').style.display = 'block';
     document.getElementById('chat-avatar').src = avatarUrl(friend);
 
     // Messages Container
@@ -292,6 +315,35 @@ async function openChat(friend) {
     }
 }
 
+async function openChatFromCard(chat) {
+    document.getElementById('chat-area').classList.add('hidden');
+    const panel = document.getElementById('chat-panel');
+    panel.classList.remove('hidden');
+
+    const backBtn = panel.querySelector('.btn-close-chat');
+    backBtn.style.display = 'block';
+    backBtn.onclick = () => {
+        panel.classList.add('hidden');
+        document.getElementById('chat-area').classList.remove('hidden');
+    };
+
+    document.getElementById('chat-username').textContent = chat.displayTitle;
+    document.getElementById('chat-subtitle').textContent = chat.isGroup ? 'Group Chat' : 'Direct Message';
+    document.getElementById('chat-avatar').style.display = 'none';
+
+    currentChatId = chat.id;
+
+    const msgContainer = document.getElementById('chat-messages');
+    msgContainer.innerHTML = '<div class="loader-sm"></div>';
+
+    try {
+        loadMessages(currentChatId);
+    } catch (e) {
+        console.error('Chat open error:', e);
+        msgContainer.innerHTML = '<p class="error-msg">Failed to open chat</p>';
+    }
+}
+
 async function loadMessages(chatId) {
     const msgContainer = document.getElementById('chat-messages');
     const messages = await getMessages(chatId);
@@ -302,7 +354,7 @@ async function loadMessages(chatId) {
     } else {
         messages.forEach(msg => {
             const isOwn = msg.userId === currentUser.uid;
-            msgContainer.appendChild(UI.createMessageBubble(msg, isOwn));
+            msgContainer.appendChild(UI.createMessageBubble(msg, isOwn, openFolder));
         });
         // Scroll to bottom
         msgContainer.scrollTop = msgContainer.scrollHeight;
@@ -330,7 +382,7 @@ async function handleSendMessage(e) {
             text,
             timestamp: new Date().toISOString(),
             photoURL: currentUser.photoURL
-        }, true));
+        }, true, openFolder));
 
         msgContainer.scrollTop = msgContainer.scrollHeight;
 
@@ -618,6 +670,27 @@ async function handleDeleteItem(itemId) {
     }
 }
 
+async function handleDeleteFolder(folder) {
+    if (!confirm(`Are you sure you want to delete the folder "${folder.title}" and all its items?`)) return;
+    try {
+        await deleteFolder(folder.id);
+        if (currentTab === 'library') loadLibrary();
+        else if (currentTab === 'feed') loadFeed();
+    } catch (e) {
+        alert('Delete failed');
+    }
+}
+
+async function handleShareFolder(folder) {
+    const text = `[shared-folder:${folder.id}:${folder.title}]`;
+    try {
+        await navigator.clipboard.writeText(text);
+        alert('Folder share link copied to clipboard! Paste it inside any chat.');
+    } catch (e) {
+        prompt('Copy this text and paste it in a chat to share the folder:', text);
+    }
+}
+
 /** Admin Manage User Feature */
 async function handleManageUser(e) {
     const btn = e.target;
@@ -688,6 +761,41 @@ function setupEventListeners() {
 
         const folders = await getFolders(currentUser.uid);
         select.innerHTML = folders.map(f => `<option value="${f.id}">${escapeHtml(f.title)}</option>`).join('');
+    });
+
+    document.getElementById('opt-new-app').addEventListener('click', async () => {
+        closeModal('modal-new-content');
+
+        const select = document.getElementById('inp-item-folder');
+        select.innerHTML = '<option>Loading...</option>';
+        openModal('modal-add-item');
+
+        const urlInput = document.getElementById('inp-item-url');
+        urlInput.value = '/games/trivial/index.html';
+        urlInput.dispatchEvent(new Event('input'));
+
+        const folders = await getFolders(currentUser.uid);
+        select.innerHTML = folders.map(f => `<option value="${f.id}">${escapeHtml(f.title)}</option>`).join('');
+    });
+
+    // Global: Play App handler (delegated)
+    document.addEventListener('click', (e) => {
+        const playBtn = e.target.closest('.btn-play-app');
+        if (playBtn) {
+            e.preventDefault();
+            const appUrl = playBtn.dataset.appUrl;
+            if (appUrl) {
+                document.getElementById('game-iframe').src = appUrl;
+                openModal('modal-play-game');
+            }
+        }
+    });
+
+    // Clean up iframe when game modal closes
+    document.getElementById('modal-play-game').addEventListener('click', (e) => {
+        if (e.target.closest('[data-close]')) {
+            document.getElementById('game-iframe').src = '';
+        }
     });
 
     // Forms
@@ -767,6 +875,40 @@ function setupEventListeners() {
     if (chatForm) {
         chatForm.addEventListener('submit', handleSendMessage);
     }
+
+    // Add friend to chat
+    document.getElementById('btn-chat-add-user').addEventListener('click', async () => {
+        if (!currentChatId) return;
+
+        openModal('modal-add-to-chat');
+        const listEl = document.getElementById('chat-friends-list');
+        listEl.innerHTML = '<div class="loader-sm"></div>';
+
+        try {
+            const friends = await getFriendsList(currentUser.uid);
+            listEl.innerHTML = '';
+            if (friends.length === 0) {
+                listEl.innerHTML = '<p class="text-muted text-center">No friends to add.</p>';
+            } else {
+                friends.forEach(f => {
+                    const card = UI.createFriendCard(f, async () => {
+                        try {
+                            await addParticipantToChat(currentChatId, f.uid, currentUser.uid);
+                            alert(`${f.displayName} added to chat!`);
+                            closeModal('modal-add-to-chat');
+                            loadSocial();
+                            document.getElementById('chat-subtitle').textContent = 'Group Chat';
+                        } catch (e) {
+                            alert(e.message);
+                        }
+                    });
+                    listEl.appendChild(card);
+                });
+            }
+        } catch (e) {
+            listEl.innerHTML = '<p class="error-msg">Failed to load friends</p>';
+        }
+    });
 }
 
 // --- Modal Utilities ---

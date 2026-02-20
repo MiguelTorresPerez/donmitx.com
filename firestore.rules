@@ -104,10 +104,17 @@ service cloud.firestore {
       allow update: if isSignedIn() && request.auth.uid == resource.data.toUid;
     }
 
-    // 5. Chats & Messages — FIX: split create (request.resource) vs read/update (resource)
+    // 5. Chats & Messages
     match /chats/{chatId} {
       allow create: if isSignedIn() && request.auth.uid in request.resource.data.participants;
-      allow read, update: if isSignedIn() && request.auth.uid in resource.data.participants;
+      allow read: if isSignedIn() && request.auth.uid in resource.data.participants;
+      allow update: if isSignedIn() && request.auth.uid in resource.data.participants && (
+        // Standard message updates don't touch participants or admins
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['participants', 'admins']) ||
+        // Only admins can modify participants or admins (fallback to all participants if no admins array exists yet)
+        request.auth.uid in resource.data.get('admins', resource.data.participants) ||
+        isSuperUser()
+      );
       
       match /messages/{messageId} {
         allow read: if isSignedIn() && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants;

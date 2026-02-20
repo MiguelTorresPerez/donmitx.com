@@ -9,6 +9,7 @@ export const ContentType = {
     SOCIAL: 'social',
     CODE: 'code',
     ARTICLE: 'article',
+    APP: 'app',
     LINK: 'link'
 };
 
@@ -101,6 +102,15 @@ class CodeStrategy {
     }
 }
 
+class AppStrategy {
+    canHandle(url) {
+        return url.startsWith('/games/') || url.includes('app=true');
+    }
+    parse(url) {
+        return { type: ContentType.APP, title: 'Interactive App', imageUrl: 'https://cdn-icons-png.flaticon.com/512/13/13973.png', summary: 'Playable Mini-Game' };
+    }
+}
+
 class DefaultStrategy {
     canHandle() { return true; }
     parse(url) {
@@ -123,6 +133,7 @@ class DefaultStrategy {
 
 export const ContentParser = {
     strategies: [
+        new AppStrategy(),
         new AIStrategy(),
         new VideoStrategy(),
         new SocialStrategy(),
@@ -133,7 +144,7 @@ export const ContentParser = {
     parse(url) {
         try {
             const cleanUrl = url.trim();
-            if (!cleanUrl.startsWith('http')) return null; // Invalid
+            if (!cleanUrl.startsWith('http') && !cleanUrl.startsWith('/')) return null; // Invalid
 
             for (const strategy of this.strategies) {
                 if (strategy.canHandle(cleanUrl)) {

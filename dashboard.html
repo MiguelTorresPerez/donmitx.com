@@ -125,6 +125,13 @@
                     </div>
 
                     <div class="friends-list-container">
+                        <h4
+                            style="padding: 0 var(--space-4); font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">
+                            ACTIVE CHATS</h4>
+                        <div id="chats-list" class="friends-list"></div>
+
+                        <h4 style="padding: 16px var(--space-4) 8px; font-size: 0.8rem; color: var(--text-muted);">
+                            FRIENDS</h4>
                         <div id="friends-list" class="friends-list">
                             <!-- Friends injected here -->
                         </div>
@@ -143,9 +150,16 @@
                     <div class="chat-header">
                         <div class="chat-user-info">
                             <img src="" id="chat-avatar" class="avatar-sm">
-                            <h4 id="chat-username">User</h4>
+                            <div class="chat-titles" style="display:flex; flex-direction:column;">
+                                <h4 id="chat-username" style="margin:0;">User</h4>
+                                <span id="chat-subtitle" style="font-size:0.75rem; color:var(--text-muted);"></span>
+                            </div>
                         </div>
-                        <button class="btn-icon btn-close-chat mobile-only">←</button>
+                        <div class="chat-actions" style="display:flex; gap:8px;">
+                            <button id="btn-chat-add-user" class="btn-icon" title="Add friend to chat"
+                                style="background:rgba(255,255,255,0.1); border-radius:50%; width:32px; height:32px;">➕</button>
+                            <button class="btn-icon btn-close-chat mobile-only">←</button>
+                        </div>
                     </div>
 
                     <div class="chat-messages" id="chat-messages">
@@ -214,6 +228,11 @@
                         <span class="icon">🔗</span>
                         <h3>New Link</h3>
                         <p>Share a URL</p>
+                    </button>
+                    <button class="creation-card" id="opt-new-app">
+                        <span class="icon">🎮</span>
+                        <h3>New App</h3>
+                        <p>Embed an interactive app</p>
                     </button>
                 </div>
             </div>
@@ -326,6 +345,21 @@
         </div>
     </div>
 
+    <!-- Modal: Add to Chat -->
+    <div class="modal-backdrop" id="modal-add-to-chat">
+        <div class="modal glass">
+            <div class="modal-header">
+                <h2>Add Friend to Chat</h2>
+                <button class="btn-close" data-close="modal-add-to-chat">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="chat-friends-list" class="friends-list" style="max-height: 300px; overflow-y: auto;">
+                    <!-- Friends injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal: Comments -->
     <div class="modal-backdrop" id="modal-comments">
         <div class="modal glass modal-lg">
@@ -341,6 +375,23 @@
                     <input type="text" id="comment-input" placeholder="Write a comment..." class="comment-input">
                     <button class="btn-primary btn-sm" id="btn-submit-comment">Post</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Play Game -->
+    <div class="modal-backdrop" id="modal-play-game">
+        <div class="modal glass modal-lg"
+            style="width:90%; height:90%; padding:0; display:flex; flex-direction:column;">
+            <div class="modal-header"
+                style="padding:10px 20px; z-index:10; background:rgba(0,0,0,0.5); border-bottom:1px solid rgba(255,255,255,0.1);">
+                <h2 style="margin:0; font-size:1rem;">Playing App</h2>
+                <button class="btn-close" data-close="modal-play-game"
+                    style="color:white; background:transparent; border:none; cursor:pointer;">×</button>
+            </div>
+            <div class="modal-body" style="flex:1; padding:0; display:flex;">
+                <iframe id="game-iframe" src=""
+                    style="flex:1; width:100%; border:none; border-bottom-left-radius:16px; border-bottom-right-radius:16px;"></iframe>
             </div>
         </div>
     </div>
