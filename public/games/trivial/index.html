@@ -378,7 +378,13 @@
             document.getElementById('game-area').innerHTML = '<p class="text-error">Error: Must be played from Dashboard.</p>';
             throw new Error("Game API missing");
         }
-        const { db, auth, doc, onSnapshot, updateDoc } = window.parent.DONMITX_GAME_API;
+        const { db, auth, doc, onSnapshot, updateDoc: _updateDoc } = window.parent.DONMITX_GAME_API;
+
+        // Wrap updateDoc to prevent cross-origin iframe custom Object errors in Firestore
+        const updateDoc = async (ref, data) => {
+            const pureData = window.parent.JSON.parse(JSON.stringify(data));
+            return _updateDoc(ref, pureData);
+        };
 
         // Same super-questions bank
         const ALL_QUESTIONS = [

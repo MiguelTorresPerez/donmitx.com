@@ -78,7 +78,15 @@ service cloud.firestore {
       );
       
       allow delete: if isOwner(resource.data.ownerUid) || isSuperUser();
-      allow read: if isSignedIn();
+      allow read: if isSignedIn() && (
+        isOwner(resource.data.ownerUid) || 
+        isSuperUser() ||
+        get(/databases/$(database)/documents/folders/$(resource.data.folderId)).data.privacy == 'public' ||
+        (
+          get(/databases/$(database)/documents/folders/$(resource.data.folderId)).data.privacy == 'friends' && 
+          isFriend(get(/databases/$(database)/documents/folders/$(resource.data.folderId)).data.ownerUid)
+        )
+      );
 
       // Comments Subcollection
       match /comments/{commentId} {
