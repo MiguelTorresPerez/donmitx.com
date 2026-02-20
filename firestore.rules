@@ -131,5 +131,22 @@ service cloud.firestore {
                     isOwner(resource.data.ownerUid) || isSuperUser()
                   );
     }
+
+    // 7. Game Rooms (Multiplayer)
+    match /game_rooms/{roomId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.hostUid == request.auth.uid;
+      // Host can update anything; regular players can only update aspects involving themselves (via Cloud Functions conceptually, but we allow general updates here for the MVP if they affect players/state)
+      allow update: if isSignedIn() && (
+        isOwner(resource.data.hostUid) || 
+        request.resource.data.diff(resource.data).affectedKeys().hasAny(['players', 'answers']) 
+      );
+      allow delete: if isOwner(resource.data.hostUid) || isSuperUser();
+
+      match /answers/{answerId} {
+        allow read: if isSignedIn();
+        allow write: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+      }
+    }
   }
 }

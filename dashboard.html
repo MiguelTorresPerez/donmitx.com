@@ -416,6 +416,31 @@
         </div>
     </div>
 
+    <!-- Modal: Game Lobby -->
+    <div class="modal-backdrop" id="modal-game-lobby">
+        <div class="modal glass modal-lg">
+            <div class="modal-header">
+                <h2>Lobby — <span id="lobby-game-title" class="text-primary"></span></h2>
+                <button class="btn-close" data-close="modal-game-lobby">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="lobby-actions"
+                    style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <p class="text-muted">Join an active room or host your own game.</p>
+                    <button class="btn-primary" id="btn-create-room">➕ Host Game</button>
+                </div>
+
+                <div class="rooms-list-container">
+                    <h3>Active Rooms</h3>
+                    <div id="active-rooms-list"
+                        style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                        <!-- Active rooms injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal: Play Game -->
     <div class="modal-backdrop" id="modal-play-game">
         <div class="modal glass modal-lg"

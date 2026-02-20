@@ -6,7 +6,7 @@
 import {
     collection, addDoc, getDocs, deleteDoc, doc, query,
     where, orderBy, getDoc, setDoc, updateDoc,
-    arrayUnion, arrayRemove, limit, increment, getCountFromServer
+    arrayUnion, arrayRemove, limit, increment, getCountFromServer, onSnapshot
 } from 'firebase/firestore';
 import { db } from './firebase-init.js';
 
@@ -17,7 +17,8 @@ const COL = {
     ITEMS: 'items',
     FRIEND_REQUESTS: 'friend_requests',
     CHATS: 'chats',
-    DRAFTS: 'drafts'
+    DRAFTS: 'drafts',
+    GAME_ROOMS: 'game_rooms'
 };
 
 // ============================================================
@@ -568,4 +569,96 @@ export async function getDrafts(userId = null) {
 
 export async function deleteDraft(draftId) {
     await deleteDoc(doc(db, COL.DRAFTS, draftId));
+}
+
+// ============================================================
+//  MULTIPLAYER GAMES (Rooms)
+// ============================================================
+
+/**
+ * Create a new multiplayer game room
+ */
+export async function createGameRoom(gameId, user, config = {}) {
+    const roomData = {
+        gameId,
+        hostUid: user.uid,
+        status: 'lobby', // 'lobby', 'playing', 'finished'
+        createdAt: new Date().toISOString(),
+        config,
+        state: {
+            currentQuestion: 0,
+            timestamp: 0,
+            answersRevealed: false
+        },
+        players: {
+            [user.uid]: {
+                uid: user.uid,
+                name: user.displayName || 'Host',
+                photoURL: user.photoURL || '',
+                score: 0,
+                streak: 0,
+                bestStreak: 0,
+                correct: 0,
+                isReady: true
+            }
+        }
+    };
+    const docRef = await addDoc(collection(db, COL.GAME_ROOMS), roomData);
+    return docRef.id;
+}
+
+/**
+ * Join an existing game room
+ */
+export async function joinGameRoom(roomId, user) {
+    const docRef = doc(db, COL.GAME_ROOMS, roomId);
+    await updateDoc(docRef, {
+        [`players.${user.uid}`]: {
+            uid: user.uid,
+            name: user.displayName || 'Player',
+            photoURL: user.photoURL || '',
+            score: 0,
+            streak: 0,
+            bestStreak: 0,
+            correct: 0,
+            isReady: false
+        }
+    });
+}
+
+/**
+ * Update the game room state or status (usually called by Host)
+ */
+export async function updateGameRoom(roomId, updates) {
+    const docRef = doc(db, COL.GAME_ROOMS, roomId);
+    await updateDoc(docRef, updates);
+}
+
+/**
+ * Listen to a game room for real-time updates
+ */
+export function listenToGameRoom(roomId, callback) {
+    const docRef = doc(db, COL.GAME_ROOMS, roomId);
+    return onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+            callback({ id: docSnap.id, ...docSnap.data() });
+        } else {
+            callback(null); // Room deleted
+        }
+    });
+}
+
+/**
+ * Get active game rooms for a specific game
+ */
+export async function getActiveGameRooms(gameId) {
+    const q = query(
+        collection(db, COL.GAME_ROOMS),
+        where('gameId', '==', gameId),
+        where('status', '==', 'lobby'),
+        orderBy('createdAt', 'desc'),
+        limit(20)
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }

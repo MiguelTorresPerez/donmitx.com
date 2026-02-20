@@ -15,7 +15,8 @@ import {
     getFriendsList, getFriendRequests, sendFriendRequest, acceptFriendRequest, rejectFriendRequest,
     createChat, getChats, getMessages, sendMessage, updateUserRole,
     addParticipantToChat, removeParticipantFromChat,
-    getAllFolders, getAllItems
+    getAllFolders, getAllItems,
+    createGameRoom, joinGameRoom, listenToGameRoom, getActiveGameRooms
 } from './db.js';
 
 // --- State ---
@@ -856,8 +857,13 @@ function setupEventListeners() {
             e.preventDefault();
             const appUrl = playBtn.dataset.appUrl;
             if (appUrl) {
-                document.getElementById('game-iframe').src = appUrl;
-                openModal('modal-play-game');
+                // If it's a known multiplayer game, open the native lobby instead
+                if (appUrl.includes('/games/trivial/index.html')) {
+                    openGameLobby('trivial', appUrl);
+                } else {
+                    document.getElementById('game-iframe').src = appUrl;
+                    openModal('modal-play-game');
+                }
             }
         }
     });
@@ -866,6 +872,95 @@ function setupEventListeners() {
     document.getElementById('modal-play-game').addEventListener('click', (e) => {
         if (e.target.closest('[data-close]')) {
             document.getElementById('game-iframe').src = '';
+        }
+    });
+
+    // --- GAME LOBBY LOGIC ---
+    let currentLobbyGameId = null;
+    let currentLobbyAppUrl = null;
+
+    async function openGameLobby(gameId, appUrl) {
+        currentLobbyGameId = gameId;
+        currentLobbyAppUrl = appUrl;
+
+        document.getElementById('lobby-game-title').textContent = gameId.toUpperCase();
+        const list = document.getElementById('active-rooms-list');
+        list.innerHTML = '<p class="text-muted">Loading rooms...</p>';
+
+        openModal('modal-game-lobby');
+
+        try {
+            const rooms = await getActiveGameRooms(gameId);
+            list.innerHTML = '';
+
+            if (rooms.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state" style="padding: 20px 0;">
+                        <div class="empty-icon">🎮</div>
+                        <p>No active rooms found.</p>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">Be the first to host one!</p>
+                    </div>`;
+                return;
+            }
+
+            rooms.forEach(room => {
+                const playerCount = Object.keys(room.players || {}).length;
+                const div = document.createElement('div');
+                div.className = 'chat-card'; // Reuse chat card styling for simplicity
+                div.innerHTML = `
+                    <div class="chat-info" style="flex:1;">
+                        <h4 style="margin:0; font-size:1rem;">Host: ${escapeHtml(room.players[room.hostUid]?.name || 'Unknown')}</h4>
+                        <span class="text-muted" style="font-size:0.85rem;">Players: ${playerCount}/6</span>
+                    </div>
+                    ${playerCount < 6 ? `<button class="btn-primary btn-sm btn-join-room" data-room-id="${room.id}">Join</button>` : '<span class="badge">Full</span>'}
+                `;
+                list.appendChild(div);
+            });
+
+            // Join Room
+            document.querySelectorAll('.btn-join-room').forEach(btn => {
+                btn.addEventListener('click', async (joinEvent) => {
+                    const roomId = joinEvent.target.dataset.roomId;
+                    try {
+                        joinEvent.target.textContent = 'Joining...';
+                        joinEvent.target.disabled = true;
+                        await joinGameRoom(roomId, currentUser);
+                        closeModal('modal-game-lobby');
+                        document.getElementById('game-iframe').src = `${currentLobbyAppUrl}?roomId=${roomId}`;
+                        openModal('modal-play-game');
+                    } catch (err) {
+                        console.error('Failed to join:', err);
+                        alert('Could not join room.');
+                        joinEvent.target.textContent = 'Join';
+                        joinEvent.target.disabled = false;
+                    }
+                });
+            });
+
+        } catch (e) {
+            console.error('[donmitx] Failed to load lobby:', e);
+            list.innerHTML = '<p class="error-msg">Failed to load active rooms.</p>';
+        }
+    }
+
+    // Host Room
+    document.getElementById('btn-create-room').addEventListener('click', async (e) => {
+        if (!currentLobbyGameId) return;
+        const btn = e.target;
+        btn.textContent = 'Creating...';
+        btn.disabled = true;
+
+        try {
+            const roomId = await createGameRoom(currentLobbyGameId, currentUser, { maxPlayers: 6 });
+            closeModal('modal-game-lobby');
+            document.getElementById('game-iframe').src = `${currentLobbyAppUrl}?roomId=${roomId}`;
+            openModal('modal-play-game');
+        } catch (err) {
+            console.error('Failed to create room:', err);
+            alert('Could not create room.');
+        } finally {
+            btn.textContent = '➕ Host Game';
+            btn.disabled = false;
         }
     });
 
