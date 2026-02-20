@@ -671,37 +671,49 @@
         document.addEventListener('click', async (e) => {
             if (e.target.id === 'btn-start-game') {
                 e.target.disabled = true;
-                // Host generates the game session cache
-                const shuffled = [...ALL_QUESTIONS].sort(() => 0.5 - Math.random()).slice(0, 10);
-                sessionStorage.setItem(CACHE_KEY, JSON.stringify(shuffled));
+                try {
+                    // Host generates the game session cache
+                    const shuffled = [...ALL_QUESTIONS].sort(() => 0.5 - Math.random()).slice(0, 10);
+                    sessionStorage.setItem(CACHE_KEY, JSON.stringify(shuffled));
 
-                await updateDoc(roomRef, {
-                    status: 'playing',
-                    'state.currentQuestion': 0,
-                    'state.answersRevealed': false,
-                    // Reset players
-                    ...Object.fromEntries(Object.keys(roomState.players).map(uid => [`players.${uid}.score`, 0])),
-                    ...Object.fromEntries(Object.keys(roomState.players).map(uid => [`players.${uid}.streak`, 0])),
-                    ...Object.fromEntries(Object.keys(roomState.players).map(uid => [`players.${uid}.hasAnswered`, false])),
-                    'state.qData': shuffled[0]
-                });
+                    await updateDoc(roomRef, {
+                        status: 'playing',
+                        'state.currentQuestion': 0,
+                        'state.answersRevealed': false,
+                        // Reset players
+                        ...Object.fromEntries(Object.keys(roomState.players).map(uid => [`players.${uid}.score`, 0])),
+                        ...Object.fromEntries(Object.keys(roomState.players).map(uid => [`players.${uid}.streak`, 0])),
+                        ...Object.fromEntries(Object.keys(roomState.players).map(uid => [`players.${uid}.hasAnswered`, false])),
+                        'state.qData': shuffled[0]
+                    });
+                } catch (err) {
+                    console.error('Failed to start game:', err);
+                    alert('Could not start game: ' + err.message);
+                    e.target.disabled = false;
+                }
             }
             else if (e.target.id === 'btn-next-round') {
                 e.target.disabled = true;
-                const qList = JSON.parse(sessionStorage.getItem(CACHE_KEY));
-                const nextIdx = roomState.state.currentQuestion + 1;
+                try {
+                    const qList = JSON.parse(sessionStorage.getItem(CACHE_KEY));
+                    const nextIdx = roomState.state.currentQuestion + 1;
 
-                if (nextIdx >= qList.length) {
-                    // Game Over
-                    await updateDoc(roomRef, { status: 'finished' });
-                } else {
-                    // Next Q
-                    await updateDoc(roomRef, {
-                        'state.currentQuestion': nextIdx,
-                        'state.answersRevealed': false,
-                        'state.qData': qList[nextIdx],
-                        ...Object.fromEntries(Object.keys(roomState.players).map(uid => [`players.${uid}.hasAnswered`, false]))
-                    });
+                    if (nextIdx >= qList.length) {
+                        // Game Over
+                        await updateDoc(roomRef, { status: 'finished' });
+                    } else {
+                        // Next Q
+                        await updateDoc(roomRef, {
+                            'state.currentQuestion': nextIdx,
+                            'state.answersRevealed': false,
+                            'state.qData': qList[nextIdx],
+                            ...Object.fromEntries(Object.keys(roomState.players).map(uid => [`players.${uid}.hasAnswered`, false]))
+                        });
+                    }
+                } catch (err) {
+                    console.error('Failed to next round:', err);
+                    alert('Could not go to next round: ' + err.message);
+                    e.target.disabled = false;
                 }
             }
             else if (e.target.id === 'btn-play-again') {
