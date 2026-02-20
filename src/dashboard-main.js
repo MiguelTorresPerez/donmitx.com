@@ -379,11 +379,19 @@ async function loadAdmin() {
                 <td><span class="badge ${isAdmin ? 'badge-admin' : 'badge-user'}">${isAdmin ? 'Admin' : 'User'}</span></td>
                 <td>${user.lastLogin ? timeAgo(user.lastLogin) : '—'}</td>
                 <td>
-                    <button class="btn-xs btn-outline" data-manage-uid="${user.uid}">Manage</button>
+                    <button class="btn-xs btn-outline btn-manage-user" data-uid="${user.uid}" data-current-role="${isAdmin ? 'admin' : 'user'}">
+                        ${isAdmin ? 'Demote' : 'Promote'}
+                    </button>
                 </td>
             `;
             tbody.appendChild(tr);
         });
+
+        // Attach listeners to new manage buttons
+        document.querySelectorAll('.btn-manage-user').forEach(btn => {
+            btn.addEventListener('click', handleManageUser);
+        });
+
     } catch (e) {
         console.error('[donmitx] Admin load error:', e);
         tbody.innerHTML = '<tr><td colspan="5" class="error-cell">Failed to load users</td></tr>';
@@ -607,6 +615,40 @@ async function handleDeleteItem(itemId) {
         openFolder(folderMock);
     } catch (e) {
         alert('Delete failed');
+    }
+}
+
+/** Admin Manage User Feature */
+async function handleManageUser(e) {
+    const btn = e.target;
+    const uid = btn.dataset.uid;
+    const currentRole = btn.dataset.currentRole;
+
+    // Prevent self-demotion to avoid locking out the only admin
+    if (uid === currentUser.uid) {
+        alert("You cannot modify your own role from this interface.");
+        return;
+    }
+
+    const newRole = currentRole === 'admin' ? 'user' : 'admin';
+    if (!confirm(`Are you sure you want to change this user's role to ${newRole.toUpperCase()}?`)) return;
+
+    const originalText = btn.textContent;
+    btn.textContent = '...';
+    btn.disabled = true;
+
+    try {
+        // Need to import updateUserRole from db.js
+        const { updateUserRole } = await import('./db.js');
+        await updateUserRole(uid, newRole);
+
+        // Refresh admin list
+        loadAdmin();
+    } catch (err) {
+        console.error('Failed to change role:', err);
+        alert('Could not update user role. Ensure you have the permissions.');
+        btn.textContent = originalText;
+        btn.disabled = false;
     }
 }
 

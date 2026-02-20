@@ -244,16 +244,53 @@ export async function createFolder(folderData, user) {
 }
 
 export async function getFolders(userId = null) {
-    let q;
     if (userId) {
-        q = query(collection(db, COL.FOLDERS), where('ownerUid', '==', userId), orderBy('createdAt', 'desc'));
+        // Gets all folders specifically owned by the requested user
+        const q = query(collection(db, COL.FOLDERS), where('ownerUid', '==', userId), orderBy('createdAt', 'desc'));
+        const snap = await getDocs(q);
+        const folders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        return populateItemCounts(folders);
     } else {
-        q = query(collection(db, COL.FOLDERS), where('privacy', '==', 'public'), orderBy('createdAt', 'desc'), limit(50));
-    }
-    const snap = await getDocs(q);
+        // Global Feed: Get 'public' ones. To get friend-specific ones, we query them individually.
+        const currentUid = Auth?.getSession()?.uid || null;
 
-    // Compute real item counts for each folder
-    const folders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const qPub = query(collection(db, COL.FOLDERS), where('privacy', '==', 'public'), orderBy('createdAt', 'desc'), limit(50));
+        const pubSnap = await getDocs(qPub);
+        let allFolders = pubSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        if (currentUid) {
+            // Also need to get 'friends' privacy folders where the owner is a friend.
+            // Firestore doesn't easily allow "privacy == 'friends' AND ownerUid IN [list]" broadly without compound indexes,
+            // Or we just get all 'friends' folders and filter client side.
+            const qFriends = query(collection(db, COL.FOLDERS), where('privacy', '==', 'friends'), orderBy('createdAt', 'desc'), limit(100));
+            const friendSnap = await getDocs(qFriends);
+
+            // We need the current user's friend list to filter
+            const myFriends = await getFriendsList(currentUid);
+            const myFriendIds = myFriends.map(f => f.uid);
+
+            const friendFolders = friendSnap.docs
+                .map(d => ({ id: d.id, ...d.data() }))
+                .filter(f => myFriendIds.includes(f.ownerUid) || f.ownerUid === currentUid); // friends or self
+
+            // Merge and deduplicate
+            const folderIds = new Set(allFolders.map(f => f.id));
+            for (const ff of friendFolders) {
+                if (!folderIds.has(ff.id)) {
+                    allFolders.push(ff);
+                    folderIds.add(ff.id);
+                }
+            }
+
+            // Sort merged array
+            allFolders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        }
+
+        return populateItemCounts(allFolders);
+    }
+}
+
+async function populateItemCounts(folders) {
     const countPromises = folders.map(async (folder) => {
         try {
             const itemsQuery = query(collection(db, COL.ITEMS), where('folderId', '==', folder.id));

@@ -22,6 +22,10 @@ service cloud.firestore {
     function isParticipant(participants) {
       return isSignedIn() && (request.auth.uid in participants);
     }
+    
+    function isFriend(ownerUid) {
+      return isSignedIn() && request.auth.uid in get(/databases/$(database)/documents/users/$(ownerUid)).data.friends;
+    }
 
     // --- Collections ---
 
@@ -50,6 +54,7 @@ service cloud.firestore {
       allow read: if isSignedIn() && (
                     isOwner(resource.data.ownerUid) || 
                     resource.data.privacy == 'public' ||
+                    (resource.data.privacy == 'friends' && isFriend(resource.data.ownerUid)) ||
                     isSuperUser()
                   );
     }
@@ -77,6 +82,7 @@ service cloud.firestore {
       allow read: if isSignedIn() && (
                     isOwner(resource.data.ownerUid) || 
                     resource.data.privacy == 'public' ||
+                    (resource.data.privacy == 'friends' && isFriend(resource.data.ownerUid)) ||
                     isSuperUser()
                   );
 
