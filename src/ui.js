@@ -29,10 +29,15 @@ export const UI = {
             actionsHtml += '</div>';
         }
 
+        const ownerAvatarHtml = folder.ownerPhotoURL
+            ? `<img class="folder-owner-avatar" src="${folder.ownerPhotoURL}" alt="Owner" onerror="this.style.display='none'">`
+            : '';
+
         card.innerHTML = `
             <div class="folder-cover" style="background: ${gradient}">
                 <div class="folder-icon">📁</div>
                 <span class="folder-privacy-badge">${privacyIcon}</span>
+                ${ownerAvatarHtml}
                 ${actionsHtml}
             </div>
             <div class="folder-info">

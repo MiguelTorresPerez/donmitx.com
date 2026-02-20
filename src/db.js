@@ -299,10 +299,12 @@ export async function createFolder(folderData, user) {
     const docRef = await addDoc(collection(db, COL.FOLDERS), {
         ...folderData,
         ownerUid: user.uid,
+        ownerPhotoURL: user.photoURL || '',
+        ownerName: user.displayName || 'Unknown',
         createdAt: new Date().toISOString(),
         itemCount: 0
     });
-    return { id: docRef.id, ...folderData, itemCount: 0 };
+    return { id: docRef.id, ...folderData, itemCount: 0, ownerPhotoURL: user.photoURL || '' };
 }
 
 export async function getFolders(userId = null, currentUid = null) {
@@ -319,31 +321,33 @@ export async function getFolders(userId = null, currentUid = null) {
         let allFolders = pubSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
         if (currentUid) {
-            // Also need to get 'friends' privacy folders where the owner is a friend.
-            // Firestore doesn't easily allow "privacy == 'friends' AND ownerUid IN [list]" broadly without compound indexes,
-            // Or we just get all 'friends' folders and filter client side.
-            const qFriends = query(collection(db, COL.FOLDERS), where('privacy', '==', 'friends'), orderBy('createdAt', 'desc'), limit(100));
-            const friendSnap = await getDocs(qFriends);
+            try {
+                // Also need to get 'friends' privacy folders where the owner is a friend.
+                const qFriends = query(collection(db, COL.FOLDERS), where('privacy', '==', 'friends'), orderBy('createdAt', 'desc'), limit(100));
+                const friendSnap = await getDocs(qFriends);
 
-            // We need the current user's friend list to filter
-            const myFriends = await getFriendsList(currentUid);
-            const myFriendIds = myFriends.map(f => f.uid);
+                // We need the current user's friend list to filter
+                const myFriends = await getFriendsList(currentUid);
+                const myFriendIds = myFriends.map(f => f.uid);
 
-            const friendFolders = friendSnap.docs
-                .map(d => ({ id: d.id, ...d.data() }))
-                .filter(f => myFriendIds.includes(f.ownerUid) || f.ownerUid === currentUid); // friends or self
+                const friendFolders = friendSnap.docs
+                    .map(d => ({ id: d.id, ...d.data() }))
+                    .filter(f => myFriendIds.includes(f.ownerUid) || f.ownerUid === currentUid);
 
-            // Merge and deduplicate
-            const folderIds = new Set(allFolders.map(f => f.id));
-            for (const ff of friendFolders) {
-                if (!folderIds.has(ff.id)) {
-                    allFolders.push(ff);
-                    folderIds.add(ff.id);
+                // Merge and deduplicate
+                const folderIds = new Set(allFolders.map(f => f.id));
+                for (const ff of friendFolders) {
+                    if (!folderIds.has(ff.id)) {
+                        allFolders.push(ff);
+                        folderIds.add(ff.id);
+                    }
                 }
-            }
 
-            // Sort merged array
-            allFolders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                // Sort merged array
+                allFolders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            } catch (friendsErr) {
+                console.warn('[donmitx] Could not load friend folders, continuing with public only:', friendsErr);
+            }
         }
 
         return populateItemCounts(allFolders);

@@ -245,6 +245,60 @@
     z-index: 2;
 }
 
+.folder-actions {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    display: flex;
+    gap: 6px;
+    z-index: 3;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.folder-card:hover .folder-actions {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.folder-actions .btn-action {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: white;
+    border-radius: var(--radius-full);
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.folder-actions .btn-action:hover {
+    background: rgba(0, 0, 0, 0.85);
+    transform: scale(1.1);
+}
+
+.folder-actions .btn-delete:hover {
+    background: rgba(239, 68, 68, 0.8);
+}
+
+.folder-owner-avatar {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    z-index: 3;
+    object-fit: cover;
+}
+
 .folder-info {
     padding: var(--space-4);
     background: var(--bg-glass);

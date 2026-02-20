@@ -24,7 +24,7 @@ service cloud.firestore {
     }
     
     function isFriend(ownerUid) {
-      return isSignedIn() && request.auth.uid in get(/databases/$(database)/documents/users/$(ownerUid)).data.friends;
+      return isSignedIn() && request.auth.uid in get(/databases/$(database)/documents/users/$(ownerUid)).data.get('friends', []);
     }
 
     // --- Collections ---

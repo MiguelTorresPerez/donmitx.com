@@ -4,61 +4,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trivial Mini-Game</title>
+    <title>Trivial - donmitx</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
+            --bg: #0a0e1a;
+            --card: #141929;
+            --card-hover: #1c2238;
             --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --primary-glow: rgba(99, 102, 241, 0.3);
             --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.15);
             --error: #ef4444;
+            --error-bg: rgba(239, 68, 68, 0.15);
+            --text: #f1f5f9;
+            --text-muted: #64748b;
+            --gold: #f59e0b;
+            --radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            margin: 0;
-            padding: 20px;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
         }
 
-        .game-container {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            max-width: 400px;
+        .game-wrapper {
             width: 100%;
+            max-width: 500px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header .subtitle {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            flex: 1;
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 12px;
             text-align: center;
         }
 
-        h1 {
-            margin-top: 0;
-            color: var(--primary);
-        }
-
-        .score-board {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
+        .stat-box .label {
+            font-size: 0.7rem;
             color: var(--text-muted);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
-        .question {
-            font-size: 1.2rem;
+        .stat-box .value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .stat-box .value.streak {
+            color: var(--gold);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 3px;
             margin-bottom: 20px;
-            line-height: 1.4;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #a855f7);
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 16px;
+        }
+
+        .cat-science {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+
+        .cat-history {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+        }
+
+        .cat-geography {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        .cat-entertainment {
+            background: rgba(236, 72, 153, 0.2);
+            color: #f472b6;
+        }
+
+        .cat-sports {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .cat-tech {
+            background: rgba(99, 102, 241, 0.2);
+            color: #818cf8;
+        }
+
+        .question-card {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius);
+            padding: 28px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 24px;
         }
 
         .options {
@@ -67,144 +178,386 @@
             gap: 10px;
         }
 
-        button {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-main);
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 1rem;
+        .option-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text);
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 0.95rem;
             cursor: pointer;
-            transition: all 0.2s;
+            text-align: left;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        button:hover:not(:disabled) {
-            background: var(--primary);
-            border-color: var(--primary);
+        .option-btn:hover:not(:disabled) {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: rgba(99, 102, 241, 0.3);
+            transform: translateX(4px);
         }
 
-        button:disabled {
-            cursor: not-allowed;
-            opacity: 0.8;
+        .option-btn:disabled {
+            cursor: default;
         }
 
-        button.correct {
-            background: var(--success);
+        .option-btn.correct {
+            background: var(--success-bg);
             border-color: var(--success);
+            color: var(--success);
         }
 
-        button.wrong {
-            background: var(--error);
+        .option-btn.wrong {
+            background: var(--error-bg);
             border-color: var(--error);
+            color: var(--error);
         }
 
-        .feedback {
-            margin-top: 20px;
-            font-weight: bold;
-            min-height: 24px;
+        .feedback-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 16px;
+            min-height: 40px;
+        }
+
+        .feedback-text {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .feedback-text.correct {
+            color: var(--success);
+        }
+
+        .feedback-text.wrong {
+            color: var(--error);
         }
 
         .btn-next {
-            margin-top: 20px;
             background: var(--primary);
-            display: none;
-            width: 100%;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
         .btn-next:hover {
-            background: var(--primary-hover);
+            background: #4f46e5;
+            transform: scale(1.03);
+        }
+
+        .end-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .end-screen .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            font-weight: 800;
+            border: 4px solid var(--primary);
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        .end-screen h2 {
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+        }
+
+        .end-screen p {
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .end-screen .btn-next {
+            width: 100%;
+            padding: 14px;
+            font-size: 1rem;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: slideIn 0.35s ease forwards;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-6px);
+            }
+
+            75% {
+                transform: translateX(6px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes pop {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.04);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .pop {
+            animation: pop 0.3s ease;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="game-container">
-        <h1>🤓 Trivial</h1>
-        <div class="score-board">
-            <span>Score: <span id="score">0</span></span>
-            <span>Question <span id="q-num">1</span>/5</span>
+    <div class="game-wrapper">
+        <div class="header">
+            <h1>🧠 Trivial</h1>
+            <p class="subtitle">Test your knowledge across 6 categories</p>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-box">
+                <div class="label">Score</div>
+                <div class="value" id="score">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="label">Streak</div>
+                <div class="value streak" id="streak">🔥 0</div>
+            </div>
+            <div class="stat-box">
+                <div class="label">Question</div>
+                <div class="value" id="q-counter">1/10</div>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress" style="width: 0%"></div>
         </div>
 
         <div id="game-area">
-            <div class="question" id="question">Loading...</div>
-            <div class="options" id="options"></div>
-            <div class="feedback" id="feedback"></div>
-            <button class="btn-next" id="btn-next">Next Question</button>
+            <div class="question-card" id="question-card">
+                <span class="category-badge" id="category">Loading...</span>
+                <div class="question-text" id="question">Preparing questions...</div>
+                <div class="options" id="options"></div>
+                <div class="feedback-row">
+                    <span class="feedback-text" id="feedback"></span>
+                    <button class="btn-next" id="btn-next" style="display:none">Next →</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        const questions = [
-            { q: "What is the capital of France?", a: ["Berlin", "Madrid", "Paris", "Rome"], correct: 2 },
-            { q: "Which planet is known as the Red Planet?", a: ["Venus", "Mars", "Jupiter", "Saturn"], correct: 1 },
-            { q: "What is the largest ocean on Earth?", a: ["Atlantic", "Indian", "Arctic", "Pacific"], correct: 3 },
-            { q: "Who wrote 'Hamlet'?", a: ["Charles Dickens", "William Shakespeare", "Mark Twain", "Jane Austen"], correct: 1 },
-            { q: "What is the square root of 64?", a: ["6", "7", "8", "9"], correct: 2 }
+        const ALL_QUESTIONS = [
+            // ── Science ──
+            { q: "What is the chemical symbol for gold?", a: ["Au", "Ag", "Fe", "Go"], c: 0, cat: "science" },
+            { q: "How many bones are in the adult human body?", a: ["206", "208", "196", "212"], c: 0, cat: "science" },
+            { q: "What planet is closest to the Sun?", a: ["Mercury", "Venus", "Mars", "Earth"], c: 0, cat: "science" },
+            { q: "What gas do plants absorb from the atmosphere?", a: ["Carbon Dioxide", "Oxygen", "Nitrogen", "Hydrogen"], c: 0, cat: "science" },
+            { q: "What is the speed of light in km/s (approx)?", a: ["300,000", "150,000", "500,000", "1,000,000"], c: 0, cat: "science" },
+            { q: "Which element has the atomic number 1?", a: ["Hydrogen", "Helium", "Lithium", "Carbon"], c: 0, cat: "science" },
+            { q: "What is the hardest natural substance on Earth?", a: ["Diamond", "Titanium", "Quartz", "Sapphire"], c: 0, cat: "science" },
+            { q: "What is the powerhouse of the cell?", a: ["Mitochondria", "Nucleus", "Ribosome", "Golgi body"], c: 0, cat: "science" },
+            { q: "How many chromosomes do humans have?", a: ["46", "44", "48", "42"], c: 0, cat: "science" },
+            // ── History ──
+            { q: "In what year did the Titanic sink?", a: ["1912", "1905", "1920", "1898"], c: 0, cat: "history" },
+            { q: "Who was the first Emperor of Rome?", a: ["Augustus", "Julius Caesar", "Nero", "Caligula"], c: 0, cat: "history" },
+            { q: "What year did World War II end?", a: ["1945", "1944", "1946", "1943"], c: 0, cat: "history" },
+            { q: "Which civilization built Machu Picchu?", a: ["Inca", "Maya", "Aztec", "Olmec"], c: 0, cat: "history" },
+            { q: "Who painted the Sistine Chapel ceiling?", a: ["Michelangelo", "Da Vinci", "Raphael", "Donatello"], c: 0, cat: "history" },
+            { q: "In which year did the Berlin Wall fall?", a: ["1989", "1991", "1987", "1990"], c: 0, cat: "history" },
+            { q: "Who was the first person to walk on the Moon?", a: ["Neil Armstrong", "Buzz Aldrin", "Yuri Gagarin", "John Glenn"], c: 0, cat: "history" },
+            { q: "What ancient wonder was located in Alexandria?", a: ["Lighthouse", "Colossus", "Hanging Gardens", "Great Pyramid"], c: 0, cat: "history" },
+            // ── Geography ──
+            { q: "What is the largest ocean on Earth?", a: ["Pacific", "Atlantic", "Indian", "Arctic"], c: 0, cat: "geography" },
+            { q: "What is the smallest country in the world?", a: ["Vatican City", "Monaco", "San Marino", "Liechtenstein"], c: 0, cat: "geography" },
+            { q: "Which river is the longest in the world?", a: ["Nile", "Amazon", "Yangtze", "Mississippi"], c: 0, cat: "geography" },
+            { q: "What is the capital of Australia?", a: ["Canberra", "Sydney", "Melbourne", "Brisbane"], c: 0, cat: "geography" },
+            { q: "Mount Everest is located in which mountain range?", a: ["Himalayas", "Andes", "Alps", "Rockies"], c: 0, cat: "geography" },
+            { q: "Which country has the most islands?", a: ["Sweden", "Indonesia", "Philippines", "Japan"], c: 0, cat: "geography" },
+            { q: "What is the driest desert on Earth?", a: ["Atacama", "Sahara", "Gobi", "Kalahari"], c: 0, cat: "geography" },
+            { q: "Which African country was formerly known as Abyssinia?", a: ["Ethiopia", "Kenya", "Somalia", "Sudan"], c: 0, cat: "geography" },
+            // ── Entertainment ──
+            { q: "Who directed 'Inception'?", a: ["Christopher Nolan", "Steven Spielberg", "James Cameron", "Ridley Scott"], c: 0, cat: "entertainment" },
+            { q: "What is the highest-grossing film of all time (adjusted)?", a: ["Avatar", "Avengers: Endgame", "Titanic", "Star Wars"], c: 0, cat: "entertainment" },
+            { q: "In which fictional city does Batman operate?", a: ["Gotham City", "Metropolis", "Star City", "Central City"], c: 0, cat: "entertainment" },
+            { q: "Who wrote the Harry Potter series?", a: ["J.K. Rowling", "J.R.R. Tolkien", "George R.R. Martin", "C.S. Lewis"], c: 0, cat: "entertainment" },
+            { q: "What band released 'Bohemian Rhapsody'?", a: ["Queen", "The Beatles", "Led Zeppelin", "Pink Floyd"], c: 0, cat: "entertainment" },
+            { q: "In the TV show 'Friends', what is the name of Ross's first wife?", a: ["Carol", "Emily", "Rachel", "Mona"], c: 0, cat: "entertainment" },
+            { q: "Which Disney movie features the song 'Let It Go'?", a: ["Frozen", "Tangled", "Moana", "Brave"], c: 0, cat: "entertainment" },
+            { q: "Who played Iron Man in the MCU?", a: ["Robert Downey Jr.", "Chris Evans", "Chris Hemsworth", "Mark Ruffalo"], c: 0, cat: "entertainment" },
+            // ── Sports ──
+            { q: "How many players are on a soccer team on the field?", a: ["11", "10", "12", "9"], c: 0, cat: "sports" },
+            { q: "In which sport is the term 'ace' used for a serve?", a: ["Tennis", "Volleyball", "Badminton", "Table Tennis"], c: 0, cat: "sports" },
+            { q: "Which country has won the most FIFA World Cups?", a: ["Brazil", "Germany", "Italy", "Argentina"], c: 0, cat: "sports" },
+            { q: "What is the diameter of a basketball hoop in inches?", a: ["18", "16", "20", "15"], c: 0, cat: "sports" },
+            { q: "In which year were the first modern Olympics held?", a: ["1896", "1900", "1888", "1904"], c: 0, cat: "sports" },
+            { q: "How long is an Olympic swimming pool in meters?", a: ["50", "25", "100", "75"], c: 0, cat: "sports" },
+            { q: "Which country invented cricket?", a: ["England", "Australia", "India", "South Africa"], c: 0, cat: "sports" },
+            { q: "How many Grand Slam tournaments are there in tennis?", a: ["4", "5", "3", "6"], c: 0, cat: "sports" },
+            // ── Tech ──
+            { q: "Who co-founded Apple with Steve Jobs?", a: ["Steve Wozniak", "Bill Gates", "Tim Cook", "Elon Musk"], c: 0, cat: "tech" },
+            { q: "What does 'HTTP' stand for?", a: ["HyperText Transfer Protocol", "High Tech Transfer Protocol", "HyperText Transmission Protocol", "Hyper Transfer Text Protocol"], c: 0, cat: "tech" },
+            { q: "In what year was the first iPhone released?", a: ["2007", "2005", "2009", "2006"], c: 0, cat: "tech" },
+            { q: "What programming language is known as the 'language of the web'?", a: ["JavaScript", "Python", "Java", "C++"], c: 0, cat: "tech" },
+            { q: "What does 'CPU' stand for?", a: ["Central Processing Unit", "Core Processing Unit", "Central Program Unit", "Computer Processing Unit"], c: 0, cat: "tech" },
+            { q: "Who is considered the father of Computer Science?", a: ["Alan Turing", "Charles Babbage", "John von Neumann", "Ada Lovelace"], c: 0, cat: "tech" },
+            { q: "What does 'AI' stand for in technology?", a: ["Artificial Intelligence", "Automated Interface", "Advanced Integration", "Analytical Input"], c: 0, cat: "tech" },
+            { q: "Which company developed the Android operating system?", a: ["Google", "Apple", "Microsoft", "Samsung"], c: 0, cat: "tech" },
         ];
 
-        let currentQ = 0;
+        const ROUND_SIZE = 10;
+        let questions = [];
+        let currentIdx = 0;
         let score = 0;
+        let streak = 0;
+        let bestStreak = 0;
 
-        const qEl = document.getElementById('question');
-        const optionsEl = document.getElementById('options');
-        const feedbackEl = document.getElementById('feedback');
-        const btnNext = document.getElementById('btn-next');
-        const scoreEl = document.getElementById('score');
-        const qNumEl = document.getElementById('q-num');
+        const $q = document.getElementById('question');
+        const $opts = document.getElementById('options');
+        const $fb = document.getElementById('feedback');
+        const $next = document.getElementById('btn-next');
+        const $score = document.getElementById('score');
+        const $streak = document.getElementById('streak');
+        const $counter = document.getElementById('q-counter');
+        const $progress = document.getElementById('progress');
+        const $cat = document.getElementById('category');
+        const $card = document.getElementById('question-card');
+        const $area = document.getElementById('game-area');
 
-        function loadQuestion() {
-            if (currentQ >= questions.length) {
-                qEl.textContent = "Game Over!";
-                optionsEl.innerHTML = `You scored ${score} out of ${questions.length}!`;
-                feedbackEl.textContent = "";
-                btnNext.textContent = "Play Again";
-                btnNext.style.display = "block";
-                btnNext.onclick = () => location.reload();
-                return;
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
             }
+            return arr;
+        }
 
-            const q = questions[currentQ];
-            qEl.textContent = q.q;
-            optionsEl.innerHTML = '';
-            feedbackEl.textContent = '';
-            btnNext.style.display = 'none';
-            qNumEl.textContent = currentQ + 1;
+        function startRound() {
+            questions = shuffle([...ALL_QUESTIONS]).slice(0, ROUND_SIZE);
+            // Shuffle answer order for each question
+            questions.forEach(q => {
+                const correctAnswer = q.a[q.c];
+                shuffle(q.a);
+                q.c = q.a.indexOf(correctAnswer);
+            });
+            currentIdx = 0; score = 0; streak = 0; bestStreak = 0;
+            $score.textContent = '0';
+            $streak.textContent = '🔥 0';
+            render();
+        }
 
-            q.a.forEach((opt, index) => {
+        function render() {
+            if (currentIdx >= questions.length) return showEnd();
+
+            const q = questions[currentIdx];
+            $counter.textContent = `${currentIdx + 1}/${questions.length}`;
+            $progress.style.width = `${((currentIdx) / questions.length) * 100}%`;
+
+            $cat.className = `category-badge cat-${q.cat}`;
+            $cat.textContent = q.cat;
+            $q.textContent = q.q;
+            $fb.textContent = '';
+            $fb.className = 'feedback-text';
+            $next.style.display = 'none';
+            $opts.innerHTML = '';
+
+            $card.classList.remove('animate-in', 'shake', 'pop');
+            void $card.offsetWidth;
+            $card.classList.add('animate-in');
+
+            q.a.forEach((text, i) => {
                 const btn = document.createElement('button');
-                btn.textContent = opt;
-                btn.onclick = () => checkAnswer(index, btn);
-                optionsEl.appendChild(btn);
+                btn.className = 'option-btn';
+                btn.textContent = text;
+                btn.onclick = () => answer(i, btn);
+                $opts.appendChild(btn);
             });
         }
 
-        function checkAnswer(index, btn) {
-            const q = questions[currentQ];
-            const buttons = optionsEl.querySelectorAll('button');
-            buttons.forEach(b => b.disabled = true);
+        function answer(idx, btn) {
+            const q = questions[currentIdx];
+            const btns = $opts.querySelectorAll('.option-btn');
+            btns.forEach(b => b.disabled = true);
 
-            if (index === q.correct) {
+            if (idx === q.c) {
                 btn.classList.add('correct');
-                feedbackEl.textContent = "Correct! 🎉";
-                feedbackEl.style.color = "var(--success)";
-                score += 10;
-                scoreEl.textContent = score;
+                streak++;
+                if (streak > bestStreak) bestStreak = streak;
+                const points = 10 + (streak > 1 ? streak * 2 : 0);
+                score += points;
+                $fb.textContent = streak > 1 ? `🔥 Correct! +${points} (${streak}x streak!)` : `✅ Correct! +${points}`;
+                $fb.className = 'feedback-text correct';
+                $card.classList.add('pop');
             } else {
                 btn.classList.add('wrong');
-                buttons[q.correct].classList.add('correct');
-                feedbackEl.textContent = "Wrong! ❌";
-                feedbackEl.style.color = "var(--error)";
+                btns[q.c].classList.add('correct');
+                streak = 0;
+                $fb.textContent = '❌ Wrong!';
+                $fb.className = 'feedback-text wrong';
+                $card.classList.add('shake');
             }
 
-            currentQ++;
-            btnNext.style.display = 'block';
+            $score.textContent = score;
+            $streak.textContent = `🔥 ${streak}`;
+            $next.style.display = 'inline-flex';
+            currentIdx++;
         }
 
-        btnNext.onclick = loadQuestion;
+        function showEnd() {
+            const pct = Math.round((score / (questions.length * 10 + 90)) * 100); // rough percentage
+            const total = questions.length * 10;
+            let msg = score >= total ? "🏆 Perfect!" : score >= total * 0.7 ? "🌟 Great job!" : score >= total * 0.4 ? "👍 Not bad!" : "📚 Keep learning!";
 
-        // Start
-        loadQuestion();
+            $area.innerHTML = `
+        <div class="end-screen animate-in">
+            <div class="score-circle">${score}</div>
+            <h2>${msg}</h2>
+            <p>Best streak: 🔥 ${bestStreak} • You answered ${ROUND_SIZE} questions</p>
+            <button class="btn-next" onclick="location.reload()">Play Again 🔄</button>
+        </div>
+    `;
+            $progress.style.width = '100%';
+        }
+
+        $next.onclick = render;
+        startRound();
     </script>
 </body>
 
