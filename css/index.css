@@ -5,27 +5,27 @@
 /* --- CSS Custom Properties (Design Tokens) --- */
 :root {
   /* Colors — Deep Navy / Purple Theme */
-  --bg-primary: #0a0e1a;
-  --bg-secondary: #111827;
-  --bg-card: rgba(17, 24, 39, 0.6);
-  --bg-glass: rgba(255, 255, 255, 0.04);
-  --bg-glass-hover: rgba(255, 255, 255, 0.08);
-  --border-glass: rgba(255, 255, 255, 0.08);
-  --border-glass-hover: rgba(255, 255, 255, 0.15);
+  --bg-primary: #050511;
+  --bg-secondary: #0a0b16;
+  --bg-card: rgba(10, 11, 22, 0.4);
+  --bg-glass: rgba(255, 255, 255, 0.02);
+  --bg-glass-hover: rgba(255, 255, 255, 0.06);
+  --border-glass: rgba(255, 255, 255, 0.06);
+  --border-glass-hover: rgba(255, 255, 255, 0.12);
 
   /* Text */
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
   --text-muted: #64748b;
-  --text-accent: #a78bfa;
+  --text-accent: #c084fc;
 
   /* Gradients */
-  --gradient-brand: linear-gradient(135deg, #6366f1, #a78bfa, #c084fc);
-  --gradient-brand-hover: linear-gradient(135deg, #818cf8, #c4b5fd, #d8b4fe);
-  --gradient-accent: linear-gradient(135deg, #06b6d4, #3b82f6, #8b5cf6);
-  --gradient-mesh-1: radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%);
-  --gradient-mesh-2: radial-gradient(ellipse at 80% 20%, rgba(168, 85, 247, 0.12) 0%, transparent 50%);
-  --gradient-mesh-3: radial-gradient(ellipse at 50% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+  --gradient-brand: linear-gradient(135deg, #4f46e5, #a855f7, #ec4899);
+  --gradient-brand-hover: linear-gradient(135deg, #6366f1, #c084fc, #f472b6);
+  --gradient-accent: linear-gradient(135deg, #0284c7, #3b82f6, #8b5cf6);
+  --gradient-mesh-1: radial-gradient(circle at 15% 50%, rgba(79, 70, 229, 0.18) 0%, transparent 45%);
+  --gradient-mesh-2: radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.15) 0%, transparent 45%);
+  --gradient-mesh-3: radial-gradient(circle at 50% 80%, rgba(2ec4b6, 0.12) 0%, transparent 45%);
 
   /* Shadows */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -120,7 +120,8 @@ button {
   color: inherit;
 }
 
-input, textarea {
+input,
+textarea {
   font-family: inherit;
   color: inherit;
   background: none;
@@ -175,12 +176,14 @@ img {
       radial-gradient(ellipse at 80% 20%, rgba(168, 85, 247, 0.12) 0%, transparent 50%),
       radial-gradient(ellipse at 50% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
   }
+
   50% {
     background:
       radial-gradient(ellipse at 40% 30%, rgba(99, 102, 241, 0.12) 0%, transparent 50%),
       radial-gradient(ellipse at 60% 70%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
       radial-gradient(ellipse at 30% 60%, rgba(6, 182, 212, 0.12) 0%, transparent 50%);
   }
+
   100% {
     background:
       radial-gradient(ellipse at 70% 60%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
@@ -192,11 +195,11 @@ img {
 /* --- Glassmorphism Utilities --- */
 .glass {
   background: var(--bg-glass);
-  backdrop-filter: blur(20px) saturate(1.5);
-  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  backdrop-filter: blur(24px) saturate(1.8);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
   border: 1px solid var(--border-glass);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg), var(--shadow-glow);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), var(--shadow-lg), var(--shadow-glow);
 }
 
 .glass:hover {
@@ -298,6 +301,7 @@ img {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -305,18 +309,35 @@ img {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 /* --- Utility --- */

@@ -52,7 +52,7 @@ export async function syncUserProfile(user) {
 
         await setDoc(userRef, userData, { merge: true });
 
-        // Read back the full profile (includes role set by admin)
+        // Read back the full profile (includes role and superuser flag set by admin)
         const freshSnap = await getDoc(userRef);
         return freshSnap.exists() ? freshSnap.data() : userData;
     } catch (e) {
@@ -132,9 +132,13 @@ export async function getFriendRequests(uid) {
 export async function acceptFriendRequest(requestId, fromUid, toUid) {
     await updateDoc(doc(db, COL.FRIEND_REQUESTS, requestId), { status: 'accepted' });
 
-    // Add to both users' friend lists
-    await updateDoc(doc(db, COL.USERS, fromUid), { friends: arrayUnion(toUid) });
-    await updateDoc(doc(db, COL.USERS, toUid), { friends: arrayUnion(fromUid) });
+    // Add to both users' friend lists (handled by specific rule)
+    try {
+        await updateDoc(doc(db, COL.USERS, fromUid), { friends: arrayUnion(toUid) });
+        await updateDoc(doc(db, COL.USERS, toUid), { friends: arrayUnion(fromUid) });
+    } catch (e) {
+        console.error('[donmitx] Non-critical error updating friends lists:', e);
+    }
 }
 
 export async function rejectFriendRequest(requestId) {
