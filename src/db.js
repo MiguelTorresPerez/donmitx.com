@@ -534,7 +534,7 @@ export async function getAllFolders() {
 }
 
 export async function getAllItems() {
-    const q = query(collection(db, COL.ITEMS), orderBy('addedAt', 'desc'), limit(100));
+    const q = query(collection(db, COL.ITEMS), orderBy('createdAt', 'desc'), limit(100));
     const snap = await getDocs(q);
     return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
