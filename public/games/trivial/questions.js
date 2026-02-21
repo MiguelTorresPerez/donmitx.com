@@ -1,7 +1,7 @@
 // donmitx Trivial — Massive Question Bank
 // a[0] is ALWAYS the correct answer. The engine shuffles at runtime.
 
-export const TRIVIAL_CATEGORIES = [
+const TRIVIAL_CATEGORIES = [
     { id: "lady_gaga", name: "Lady Gaga" },
     { id: "egyptian_beetles", name: "Egyptian Beetles" },
     { id: "paleontology", name: "Paleontology" },
@@ -25,7 +25,7 @@ export const TRIVIAL_CATEGORIES = [
     { id: "entertainment", name: "Entertainment" }
 ];
 
-export const ALL_QUESTIONS = [
+const ALL_QUESTIONS = [
     // ===== LADY GAGA =====
     { q: "What is Lady Gaga's real name?", a: ["Stefani Germanotta", "Robyn Fenty", "Elizabeth Grant", "Destiny Hope Cyrus"], cat: "lady_gaga", type: "standard" },
     { q: "Which album features 'Bad Romance'?", a: ["The Fame Monster", "Born This Way", "Artpop", "Chromatica"], cat: "lady_gaga", type: "standard" },
