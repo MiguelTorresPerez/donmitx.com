@@ -722,7 +722,7 @@
                     } else if (roomState.status === 'playing') {
                         const s = roomState.state;
                         // Turn Execution Phase
-                        if (s.actions[p1Uid] && s.actions[p2Uid] && !s.resolving) {
+                        if (s && s.actions && s.actions[p1Uid] && s.actions[p2Uid] && !s.resolving) {
                             executeTurn();
                         }
                     }
@@ -734,11 +734,21 @@
         function esc(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
 
         function render() {
-            const area = document.getElementById('game-area');
-            if (roomState.status === 'lobby') area.innerHTML = renderLobby();
-            else if (roomState.status === 'teambuilder') area.innerHTML = renderTeamBuilder();
-            else if (roomState.status === 'playing') area.innerHTML = renderBattle();
-            else area.innerHTML = '<p>Game finished.</p>';
+            try {
+                const area = document.getElementById('game-area');
+                if (roomState.status === 'lobby') area.innerHTML = renderLobby();
+                else if (roomState.status === 'teambuilder') area.innerHTML = renderTeamBuilder();
+                else if (roomState.status === 'playing') area.innerHTML = renderBattle();
+                else area.innerHTML = '<p>Game finished.</p>';
+            } catch (err) {
+                console.error("Render Error:", err);
+                document.getElementById('game-area').innerHTML = `
+                    <div style="color:var(--danger); text-align:left; background:rgba(255,0,0,0.1); padding:10px; border-radius:8px;">
+                        <b>[Debug Error]</b> ${esc(err.message)}<br/>
+                        <span style="font-size:0.7rem;">${esc(err.stack)}</span>
+                    </div>
+                `;
+            }
         }
 
         // ------------------
@@ -1040,20 +1050,28 @@
 
         function renderBattle() {
             const state = roomState.state;
-            const myTeamFull = roomState.players[currentUser.uid].team;
+            const myTeamFull = roomState.players[currentUser.uid]?.team;
             const oppUid = Object.keys(roomState.players).find(id => id !== currentUser.uid);
-            const oppTeamFull = roomState.players[oppUid].team;
+            const oppTeamFull = oppUid ? roomState.players[oppUid]?.team : undefined;
 
-            const myActiveIdx = state.active[currentUser.uid];
-            const oppActiveIdx = state.active[oppUid];
+            if (!state || !state.active || !myTeamFull || !oppTeamFull || !oppUid) {
+                return `<div class="spinner"></div><p>Synchronizing battle connection...</p>`;
+            }
+
+            const myActiveIdx = state.active[currentUser.uid] ?? 0;
+            const oppActiveIdx = state.active[oppUid] ?? 0;
 
             const myActive = myTeamFull[myActiveIdx];
             const oppActive = oppTeamFull[oppActiveIdx];
 
+            if (!myActive || !oppActive) {
+                return `<div class="spinner"></div><p>Awaiting Team Data...</p>`;
+            }
+
             const myHpPct = myActive.currentHp / myActive.hp;
             const oppHpPct = oppActive.currentHp / oppActive.hp;
 
-            const amIWaiting = !!state.actions[currentUser.uid] || state.resolving;
+            const amIWaiting = (state.actions && !!state.actions[currentUser.uid]) || state.resolving;
             const activeIsFainted = myActive.currentHp <= 0;
 
             let html = `
