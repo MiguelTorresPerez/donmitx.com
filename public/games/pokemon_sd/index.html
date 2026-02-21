@@ -1227,7 +1227,9 @@
             if (!currentUser) return;
             if (!confirm("Are you sure you want to forfeit the match?")) return;
 
-            const oppUid = p1Uid === currentUser.uid ? p2Uid : p1Uid;
+            const uids = Object.keys(roomState.players || {});
+            const oppUid = uids.find(id => id !== currentUser.uid);
+            if (!oppUid) return;
             let log = [...(roomState.state?.log || [])];
             log.push(`${roomState.players[currentUser.uid].name} forfeited the match!`);
             log.push(`${roomState.players[oppUid].name} wins the battle!`);
@@ -1595,11 +1597,9 @@
             // Clear protect flags
             for (const uid of [p1Uid, p2Uid]) {
                 const mon = getMon(uid);
-                if (!move || !(move.effects && move.effects.protect)) {
-                    // Reset protect if this mon didn't use protect this turn
-                }
                 mon.protecting = false;
-                if (actions[uid]?.type !== 'move' || !(MOVES[actions[uid]?.val]?.effects?.protect)) {
+                const usedMove = actions[uid]?.type === 'move' ? MOVES[actions[uid]?.val] : null;
+                if (!usedMove || !(usedMove.effects && usedMove.effects.protect)) {
                     mon.protectLastTurn = false;
                 }
             }
@@ -1877,13 +1877,13 @@
                     <img src="${myActive.spriteBack}" class="sprite player ${myActive.currentHp <= 0 ? 'fainted' : ''}" style="filter: drop-shadow(0px 10px 10px rgba(0,0,0,0.5));">
                 </div>
 
-                <!-- Log & Controls Split -->
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
-                    <div class="battle-log" id="b-log">
-                        ${(state.log || []).map(l => `<p>${l}</p>`).join('')}
-                    </div>
+                <!-- Log below battlefield -->
+                <div class="battle-log" id="b-log" style="max-height:80px; overflow-y:auto; margin-bottom:12px; font-size:0.75rem;">
+                    ${(state.log || []).slice(-8).map(l => `<p style="margin:2px 0;">${l}</p>`).join('')}
+                </div>
 
-                    <div class="battle-controls">`;
+                <!-- Controls -->
+                <div class="battle-controls" style="width:100%;">`;
 
             if (isSpectator) {
                 html += `
@@ -1968,7 +1968,6 @@
             }).join('')}
                 </div>
                     </div>
-                </div>
                 <div style="text-align:right; margin-top:15px; padding-top:15px; border-top:1px solid rgba(255,255,255,0.1);">
                     <button class="btn btn-sm" style="background:var(--card-hover);" onclick="window.surrenderMatch()">Surrender</button>
                 </div>
