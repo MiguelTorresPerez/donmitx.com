@@ -372,7 +372,9 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        import { ALL_QUESTIONS, TRIVIAL_CATEGORIES } from './questions.js';
+
         // Access Firebase via parent window (Dashboard) because this file isn't processed by Vite
         if (!window.parent.DONMITX_GAME_API) {
             document.getElementById('game-area').innerHTML = '<p class="text-error">Error: Must be played from Dashboard.</p>';
@@ -385,25 +387,6 @@
             const pureData = window.parent.JSON.parse(JSON.stringify(data));
             return _updateDoc(ref, pureData);
         };
-
-        // Same super-questions bank
-        const ALL_QUESTIONS = [
-            { q: "What is the chemical symbol for gold?", a: ["Au", "Ag", "Fe", "Go"], c: 0, cat: "science" },
-            { q: "How many bones are in the adult human body?", a: ["206", "208", "196", "212"], c: 0, cat: "science" },
-            { q: "What planet is closest to the Sun?", a: ["Mercury", "Venus", "Mars", "Earth"], c: 0, cat: "science" },
-            { q: "Who was the first Emperor of Rome?", a: ["Augustus", "Julius Caesar", "Nero", "Caligula"], c: 0, cat: "history" },
-            { q: "What year did World War II end?", a: ["1945", "1944", "1946", "1943"], c: 0, cat: "history" },
-            { q: "What is the largest ocean on Earth?", a: ["Pacific", "Atlantic", "Indian", "Arctic"], c: 0, cat: "geography" },
-            { q: "What is the smallest country in the world?", a: ["Vatican City", "Monaco", "San Marino", "Liechtenstein"], c: 0, cat: "geography" },
-            { q: "Who directed 'Inception'?", a: ["Christopher Nolan", "Steven Spielberg", "James Cameron", "Ridley Scott"], c: 0, cat: "entertainment" },
-            { q: "What band released 'Bohemian Rhapsody'?", a: ["Queen", "The Beatles", "Led Zeppelin", "Pink Floyd"], c: 0, cat: "entertainment" },
-            { q: "How many players are on a soccer team?", a: ["11", "10", "12", "9"], c: 0, cat: "sports" },
-            { q: "Which country has won the most FIFA World Cups?", a: ["Brazil", "Germany", "Italy", "Argentina"], c: 0, cat: "sports" },
-            { q: "Who co-founded Apple with Steve Jobs?", a: ["Steve Wozniak", "Bill Gates", "Tim Cook", "Elon Musk"], c: 0, cat: "tech" },
-            { q: "What does 'HTTP' stand for?", a: ["HyperText Transfer Protocol", "High Tech Transfer Protocol", "HyperText Transmission Protocol", "Hyper Transfer Text Protocol"], c: 0, cat: "tech" },
-            { q: "What is the largest mammal on Earth?", a: ["Blue Whale", "African Elephant", "Giraffe", "Hippopotamus"], c: 0, cat: "nature" },
-            { q: "What country is the origin of sushi?", a: ["Japan", "China", "Korea", "Thailand"], c: 0, cat: "food" }
-        ];
 
         const urlParams = new URLSearchParams(window.location.search);
         const roomId = urlParams.get('roomId');
@@ -419,9 +402,8 @@
         let roomState = null;
 
         // Game variables
-        const Q_TIME = 10; // seconds to answer
         let timerInterval = null;
-        let timeRemaining = Q_TIME;
+        let timeRemaining = 10;
         let hasAnsweredThisRound = false;
 
         // Listen for Auth State
@@ -520,9 +502,43 @@
         `;
 
             if (isHost()) {
-                html += `<button class="btn-host" id="btn-start-game">Start Game Now</button>`;
+                html += `
+                <div class="question-card animate-in" style="padding: 24px; margin-top: 20px; text-align: left;">
+                    <h3 style="margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">⚙️ Host Settings</h3>
+                    
+                    <div style="margin-bottom: 12px;">
+                        <label style="display:block; margin-bottom: 4px; font-size: 0.85rem; color: var(--text-muted);">Questions Count</label>
+                        <select id="setting-qcount" style="width: 100%; padding: 8px; border-radius: 8px; background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                            <option value="5">5 Questions</option>
+                            <option value="10" selected>10 Questions</option>
+                            <option value="15">15 Questions</option>
+                            <option value="20">20 Questions</option>
+                            <option value="30">30 Questions</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 12px;">
+                        <label style="display:block; margin-bottom: 4px; font-size: 0.85rem; color: var(--text-muted);">Time per Question</label>
+                        <select id="setting-time" style="width: 100%; padding: 8px; border-radius: 8px; background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                            <option value="5">5 Seconds (Blitz)</option>
+                            <option value="10" selected>10 Seconds</option>
+                            <option value="15">15 Seconds</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <label style="display:block; margin-bottom: 4px; font-size: 0.85rem; color: var(--text-muted);">Categories (Ctrl+Click to multi-select)</label>
+                        <select id="setting-cats" multiple style="width: 100%; height: 140px; padding: 8px; border-radius: 8px; background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.1);">
+                            <option value="ALL" selected>🌟 All Categories (Mix)</option>
+                            ${TRIVIAL_CATEGORIES.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                        </select>
+                    </div>
+
+                    <button class="btn-host" id="btn-start-game" style="margin-top: 0;">Start Game Now</button>
+                </div>
+                `;
             } else {
-                html += `<div class="status-bar text-muted">Waiting for Host to start...</div>`;
+                html += `<div class="status-bar text-muted">Waiting for Host to configure game...</div>`;
             }
 
             return html;
@@ -581,10 +597,11 @@
             clearInterval(timerInterval);
             timeRemaining = seconds;
             let bar = document.getElementById('t-bar');
+            let maxTime = roomState.config?.timePerQuestion || 10;
 
             timerInterval = setInterval(() => {
                 timeRemaining--;
-                if (bar) bar.style.width = `${(timeRemaining / Q_TIME) * 100}%`;
+                if (bar) bar.style.width = `${(timeRemaining / maxTime) * 100}%`;
 
                 if (timeRemaining <= 0) {
                     clearInterval(timerInterval);
@@ -700,20 +717,55 @@
             if (e.target.id === 'btn-start-game') {
                 e.target.disabled = true;
                 try {
+                    // Host settings parsing
+                    const qCount = parseInt(document.getElementById('setting-qcount').value) || 10;
+                    const qTime = parseInt(document.getElementById('setting-time').value) || 10;
+                    const catsSelect = document.getElementById('setting-cats');
+                    const selectedCats = Array.from(catsSelect.selectedOptions).map(o => o.value);
+
+                    let pool = ALL_QUESTIONS;
+                    if (!selectedCats.includes("ALL")) {
+                        pool = ALL_QUESTIONS.filter(q => selectedCats.includes(q.cat));
+                    }
+                    if (pool.length === 0) {
+                        alert("Not enough questions in selected categories!");
+                        e.target.disabled = false;
+                        return;
+                    }
+
                     // Host generates the game session cache and saves it to Firestore!
-                    const shuffled = [...ALL_QUESTIONS].sort(() => 0.5 - Math.random()).slice(0, 10);
+                    const shuffled = [...pool].sort(() => 0.5 - Math.random()).slice(0, Math.min(qCount, pool.length));
+
+                    // Shuffle the Answers dynamically!
+                    const randomizedQuestions = shuffled.map(q => {
+                        const rawAnswers = q.a;
+                        const correctAnswerText = rawAnswers[0]; // [0] is ALWAYS correct in DB
+
+                        const mixedAnswers = [...rawAnswers].sort(() => 0.5 - Math.random());
+                        const correctIndex = mixedAnswers.indexOf(correctAnswerText);
+
+                        return {
+                            q: q.q,
+                            a: mixedAnswers, // Array is now thoroughly scrambled
+                            c: correctIndex, // But we record precisely which index is the true answer
+                            cat: TRIVIAL_CATEGORIES.find(c => c.id === q.cat)?.name || q.cat,
+                            type: q.type || 'standard'
+                        };
+                    });
 
                     await updateDoc(roomRef, {
                         status: 'playing',
+                        'config.timePerQuestion': qTime,
+                        'config.questionCount': qCount,
                         'state.currentQuestion': 0,
                         'state.answersRevealed': false,
-                        'state.questions': shuffled,
+                        'state.questions': randomizedQuestions,
                         // Reset players
                         ...Object.fromEntries(Object.keys(roomState.players).map(uid => [`players.${uid}.score`, 0])),
                         ...Object.fromEntries(Object.keys(roomState.players).map(uid => [`players.${uid}.streak`, 0])),
                         ...Object.fromEntries(Object.keys(roomState.players).map(uid => [`players.${uid}.correct`, 0])),
                         ...Object.fromEntries(Object.keys(roomState.players).map(uid => [`players.${uid}.hasAnswered`, false])),
-                        'state.qData': shuffled[0]
+                        'state.qData': randomizedQuestions[0]
                     });
                 } catch (err) {
                     console.error('Failed to start game:', err);
