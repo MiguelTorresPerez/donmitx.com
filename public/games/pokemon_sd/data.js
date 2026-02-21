@@ -1,22 +1,22 @@
 export const TYPE_CHART = {
-    Normal: { Rock: 0.5, Ghost: 0, Steel: 0.5 },
-    Fire: { Fire: 0.5, Water: 0.5, Grass: 2, Ice: 2, Bug: 2, Rock: 0.5, Dragon: 0.5, Steel: 2 },
-    Water: { Fire: 2, Water: 0.5, Grass: 0.5, Ground: 2, Rock: 2, Dragon: 0.5 },
-    Electric: { Water: 2, Electric: 0.5, Grass: 0.5, Ground: 0, Flying: 2, Dragon: 0.5 },
-    Grass: { Fire: 0.5, Water: 2, Grass: 0.5, Poison: 0.5, Ground: 2, Flying: 0.5, Bug: 0.5, Rock: 2, Dragon: 0.5, Steel: 0.5 },
-    Ice: { Fire: 0.5, Water: 0.5, Grass: 2, Ice: 0.5, Ground: 2, Flying: 2, Dragon: 2, Steel: 0.5 },
-    Fighting: { Normal: 2, Ice: 2, Poison: 0.5, Flying: 0.5, Psychic: 0.5, Bug: 0.5, Rock: 2, Ghost: 0, Dark: 2, Steel: 2, Fairy: 0.5 },
-    Poison: { Grass: 2, Poison: 0.5, Ground: 0.5, Rock: 0.5, Ghost: 0.5, Steel: 0, Fairy: 2 },
-    Ground: { Fire: 2, Electric: 2, Grass: 0.5, Poison: 2, Flying: 0, Bug: 0.5, Rock: 2, Steel: 2 },
-    Flying: { Electric: 0.5, Grass: 2, Fighting: 2, Bug: 2, Rock: 0.5, Steel: 0.5 },
+    Normal:  { Rock: 0.5, Ghost: 0, Steel: 0.5 },
+    Fire:    { Fire: 0.5, Water: 0.5, Grass: 2, Ice: 2, Bug: 2, Rock: 0.5, Dragon: 0.5, Steel: 2 },
+    Water:   { Fire: 2, Water: 0.5, Grass: 0.5, Ground: 2, Rock: 2, Dragon: 0.5 },
+    Electric:{ Water: 2, Electric: 0.5, Grass: 0.5, Ground: 0, Flying: 2, Dragon: 0.5 },
+    Grass:   { Fire: 0.5, Water: 2, Grass: 0.5, Poison: 0.5, Ground: 2, Flying: 0.5, Bug: 0.5, Rock: 2, Dragon: 0.5, Steel: 0.5 },
+    Ice:     { Fire: 0.5, Water: 0.5, Grass: 2, Ice: 0.5, Ground: 2, Flying: 2, Dragon: 2, Steel: 0.5 },
+    Fighting:{ Normal: 2, Ice: 2, Poison: 0.5, Flying: 0.5, Psychic: 0.5, Bug: 0.5, Rock: 2, Ghost: 0, Dark: 2, Steel: 2, Fairy: 0.5 },
+    Poison:  { Grass: 2, Poison: 0.5, Ground: 0.5, Rock: 0.5, Ghost: 0.5, Steel: 0, Fairy: 2 },
+    Ground:  { Fire: 2, Electric: 2, Grass: 0.5, Poison: 2, Flying: 0, Bug: 0.5, Rock: 2, Steel: 2 },
+    Flying:  { Electric: 0.5, Grass: 2, Fighting: 2, Bug: 2, Rock: 0.5, Steel: 0.5 },
     Psychic: { Fighting: 2, Poison: 2, Psychic: 0.5, Dark: 0, Steel: 0.5 },
-    Bug: { Fire: 0.5, Grass: 2, Fighting: 0.5, Poison: 0.5, Flying: 0.5, Psychic: 2, Ghost: 0.5, Dark: 2, Steel: 0.5, Fairy: 0.5 },
-    Rock: { Fire: 2, Ice: 2, Fighting: 0.5, Ground: 0.5, Flying: 2, Bug: 2, Steel: 0.5 },
-    Ghost: { Normal: 0, Psychic: 2, Ghost: 2, Dark: 0.5 },
-    Dragon: { Dragon: 2, Steel: 0.5, Fairy: 0 },
-    Dark: { Fighting: 0.5, Psychic: 2, Ghost: 2, Dark: 0.5, Fairy: 0.5 },
-    Steel: { Fire: 0.5, Water: 0.5, Electric: 0.5, Ice: 2, Rock: 2, Steel: 0.5, Fairy: 2 },
-    Fairy: { Fire: 0.5, Fighting: 2, Poison: 0.5, Dragon: 2, Dark: 2, Steel: 0.5 }
+    Bug:     { Fire: 0.5, Grass: 2, Fighting: 0.5, Poison: 0.5, Flying: 0.5, Psychic: 2, Ghost: 0.5, Dark: 2, Steel: 0.5, Fairy: 0.5 },
+    Rock:    { Fire: 2, Ice: 2, Fighting: 0.5, Ground: 0.5, Flying: 2, Bug: 2, Steel: 0.5 },
+    Ghost:   { Normal: 0, Psychic: 2, Ghost: 2, Dark: 0.5 },
+    Dragon:  { Dragon: 2, Steel: 0.5, Fairy: 0 },
+    Dark:    { Fighting: 0.5, Psychic: 2, Ghost: 2, Dark: 0.5, Fairy: 0.5 },
+    Steel:   { Fire: 0.5, Water: 0.5, Electric: 0.5, Ice: 2, Rock: 2, Steel: 0.5, Fairy: 2 },
+    Fairy:   { Fire: 0.5, Fighting: 2, Poison: 0.5, Dragon: 2, Dark: 2, Steel: 0.5 }
 };
 
 export function getEffectiveness(attackType, targetTypes) {
@@ -30,415 +30,6 @@ export function getEffectiveness(attackType, targetTypes) {
 }
 
 export const MOVES = {
-    "stealth-rock": {
-        "name": "Stealth Rock",
-        "type": "Rock",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "hazards": "stealth-rock",
-            "desc": "Hurts foes on switch-in based on Rock weakness."
-        }
-    },
-    "spikes": {
-        "name": "Spikes",
-        "type": "Ground",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "hazards": "spikes",
-            "desc": "Lays a trap of spikes that hurts grounded foes on switch-in."
-        }
-    },
-    "toxic-spikes": {
-        "name": "Toxic Spikes",
-        "type": "Poison",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "hazards": "toxic-spikes",
-            "desc": "Lays a trap that poisons grounded foes on switch-in."
-        }
-    },
-    "sticky-web": {
-        "name": "Sticky Web",
-        "type": "Bug",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "hazards": "sticky-web",
-            "desc": "Lays a trap that lowers Speed of grounded foes on switch-in."
-        }
-    },
-    "defog": {
-        "name": "Defog",
-        "type": "Flying",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "clearHazards": true,
-            "enemyDrop": {
-                "evasion": -1
-            },
-            "desc": "Lowers evasion by 1. Clears all hazards and screens on the field."
-        }
-    },
-    "rapid-spin": {
-        "name": "Rapid Spin",
-        "type": "Normal",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "clearMyHazards": true,
-            "selfBoost": {
-                "spe": 1
-            },
-            "desc": "Frees user from hazards/binding. Raises Speed by 1."
-        }
-    },
-    "mortal-spin": {
-        "name": "Mortal Spin",
-        "type": "Poison",
-        "power": 30,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "clearMyHazards": true,
-            "status": "PSN",
-            "statusRate": 100,
-            "desc": "Frees user from hazards/binding. Poisons adjacent foes."
-        }
-    },
-    "leech-seed": {
-        "name": "Leech Seed",
-        "type": "Grass",
-        "power": 0,
-        "accuracy": 90,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "leechSeed": true,
-            "desc": "Drains 1/8 of target's max HP each turn."
-        }
-    },
-    "substitute": {
-        "name": "Substitute",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "substitute": true,
-            "desc": "Sacrifices 25% max HP to create a decoy."
-        }
-    },
-    "taunt": {
-        "name": "Taunt",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "taunt": 3,
-            "desc": "Forces target to use damaging moves for 3 turns."
-        }
-    },
-    "encore": {
-        "name": "Encore",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "encore": 3,
-            "desc": "Target repeats its last move for 3 turns."
-        }
-    },
-    "trick": {
-        "name": "Trick",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "trick": true,
-            "desc": "User swaps held items with the target."
-        }
-    },
-    "switcheroo": {
-        "name": "Switcheroo",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "trick": true,
-            "desc": "User swaps held items with the target."
-        }
-    },
-    "whirlwind": {
-        "name": "Whirlwind",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": -6,
-        "effects": {
-            "forceSwitch": true,
-            "desc": "Forces target to switch to a random benched Pokémon."
-        }
-    },
-    "roar": {
-        "name": "Roar",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": -6,
-        "effects": {
-            "forceSwitch": true,
-            "desc": "Forces target to switch to a random benched Pokémon."
-        }
-    },
-    "haze": {
-        "name": "Haze",
-        "type": "Ice",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "haze": true,
-            "desc": "Eliminates all stat changes for all Pokémon on the field."
-        }
-    },
-    "clear-smog": {
-        "name": "Clear Smog",
-        "type": "Poison",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "hazeTarget": true,
-            "desc": "Eliminates the target's stat changes."
-        }
-    },
-    "curse": {
-        "name": "Curse",
-        "type": "Ghost",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "curse": true,
-            "desc": "Ghosts sacrifice 50% HP to curse target. Others lower Spe, raise Atk/Def."
-        }
-    },
-    "destiny-bond": {
-        "name": "Destiny Bond",
-        "type": "Ghost",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "destinyBond": true,
-            "desc": "If user faints from an attack this turn, the attacker faints too."
-        }
-    },
-    "perish-song": {
-        "name": "Perish Song",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "perishSong": 3,
-            "desc": "All active Pokémon faint in 3 turns. Ends if they switch out."
-        }
-    },
-    "reflect": {
-        "name": "Reflect",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "screen": "reflect",
-            "desc": "Halves physical damage for 5 turns."
-        }
-    },
-    "light-screen": {
-        "name": "Light Screen",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "screen": "light-screen",
-            "desc": "Halves special damage for 5 turns."
-        }
-    },
-    "aurora-veil": {
-        "name": "Aurora Veil",
-        "type": "Ice",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "screen": "aurora-veil",
-            "desc": "Halves all damage for 5 turns. Fails unless Snow is active."
-        }
-    },
-    "wish": {
-        "name": "Wish",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "wish": true,
-            "desc": "Next turn, heals active Pokémon by 50% of user's max HP."
-        }
-    },
-    "healing-wish": {
-        "name": "Healing Wish",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "healingWish": true,
-            "desc": "User faints. The incoming Pokémon is fully healed and cured of status."
-        }
-    },
-    "teleport": {
-        "name": "Teleport",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": -6,
-        "effects": {
-            "pivot": true,
-            "desc": "Switches the user out."
-        }
-    },
-    "parting-shot": {
-        "name": "Parting Shot",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "atk": -1,
-                "spa": -1
-            },
-            "pivot": true,
-            "desc": "Lowers target Atk/SpA. Switches the user out."
-        }
-    },
-    "u-turn": {
-        "name": "U-turn",
-        "type": "Bug",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "pivot": true,
-            "desc": "Switches the user out after dealing damage."
-        }
-    },
-    "volt-switch": {
-        "name": "Volt Switch",
-        "type": "Electric",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "pivot": true,
-            "desc": "Switches the user out after dealing damage."
-        }
-    },
-    "flip-turn": {
-        "name": "Flip Turn",
-        "type": "Water",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "pivot": true,
-            "desc": "Switches the user out after dealing damage."
-        }
-    },
-    "scald": {
-        "name": "Scald",
-        "type": "Water",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 30,
-            "desc": "30% chance to Burn."
-        }
-    },
-    "foul-play": {
-        "name": "Foul Play",
-        "type": "Dark",
-        "power": 95,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "useTargetAtk": true,
-            "desc": "Uses the target's Attack stat in damage calculation."
-        }
-    },
-    "pain-split": {
-        "name": "Pain Split",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "painSplit": true,
-            "desc": "Averages the user's and target's current HP."
-        }
-    },
     "struggle": {
         "name": "Struggle",
         "type": "Normal",
@@ -588,6 +179,303 @@ export const MOVES = {
             "desc": "Raises Sp. Atk, Sp. Def, Speed by 2."
         }
     },
+    "iron-defense": {
+        "name": "Iron Defense",
+        "type": "Steel",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "def": 2
+            },
+            "desc": "Raises Defense by 2."
+        }
+    },
+    "amnesia": {
+        "name": "Amnesia",
+        "type": "Psychic",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "spd": 2
+            },
+            "desc": "Raises Sp. Def by 2."
+        }
+    },
+    "acid-armor": {
+        "name": "Acid Armor",
+        "type": "Poison",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "def": 2
+            },
+            "desc": "Raises Defense by 2."
+        }
+    },
+    "barrier": {
+        "name": "Barrier",
+        "type": "Psychic",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "def": 2
+            },
+            "desc": "Raises Defense by 2."
+        }
+    },
+    "rock-polish": {
+        "name": "Rock Polish",
+        "type": "Rock",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "spe": 2
+            },
+            "desc": "Raises Speed by 2."
+        }
+    },
+    "autotomize": {
+        "name": "Autotomize",
+        "type": "Steel",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "spe": 2
+            },
+            "desc": "Raises Speed by 2."
+        }
+    },
+    "cotton-guard": {
+        "name": "Cotton Guard",
+        "type": "Grass",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "def": 3
+            },
+            "desc": "Raises Defense by 3."
+        }
+    },
+    "tail-glow": {
+        "name": "Tail Glow",
+        "type": "Bug",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "spa": 3
+            },
+            "desc": "Raises Sp. Atk by 3."
+        }
+    },
+    "belly-drum": {
+        "name": "Belly Drum",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "atk": 6
+            },
+            "healPerc": -0.5,
+            "desc": "Maxes Attack but cuts HP by 50%."
+        }
+    },
+    "coil": {
+        "name": "Coil",
+        "type": "Poison",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "atk": 1,
+                "def": 1
+            },
+            "desc": "Raises Attack, Defense, Accuracy by 1."
+        }
+    },
+    "cosmic-power": {
+        "name": "Cosmic Power",
+        "type": "Psychic",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "def": 1,
+                "spd": 1
+            },
+            "desc": "Raises Defense and Sp. Def by 1."
+        }
+    },
+    "hone-claws": {
+        "name": "Hone Claws",
+        "type": "Dark",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "atk": 1
+            },
+            "desc": "Raises Attack and Accuracy by 1."
+        }
+    },
+    "work-up": {
+        "name": "Work Up",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "atk": 1,
+                "spa": 1
+            },
+            "desc": "Raises Attack and Sp. Atk by 1."
+        }
+    },
+    "growth": {
+        "name": "Growth",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "atk": 1,
+                "spa": 1
+            },
+            "desc": "Raises Attack and Sp. Atk by 1."
+        }
+    },
+    "shift-gear": {
+        "name": "Shift Gear",
+        "type": "Steel",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "atk": 1,
+                "spe": 2
+            },
+            "desc": "Raises Attack by 1, Speed by 2."
+        }
+    },
+    "no-retreat": {
+        "name": "No Retreat",
+        "type": "Fighting",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "atk": 1,
+                "def": 1,
+                "spa": 1,
+                "spd": 1,
+                "spe": 1
+            },
+            "desc": "Raises all stats by 1. Cannot flee."
+        }
+    },
+    "victory-dance": {
+        "name": "Victory Dance",
+        "type": "Fighting",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "atk": 1,
+                "def": 1,
+                "spe": 1
+            },
+            "desc": "Raises Atk, Def, Speed by 1."
+        }
+    },
+    "clangorous-soul": {
+        "name": "Clangorous Soul",
+        "type": "Dragon",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "atk": 1,
+                "def": 1,
+                "spa": 1,
+                "spd": 1,
+                "spe": 1
+            },
+            "healPerc": -0.33,
+            "desc": "Raises all stats by 1. Costs 33% HP."
+        }
+    },
+    "minimize": {
+        "name": "Minimize",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "evasion": 2
+            },
+            "desc": "Raises Evasion by 2."
+        }
+    },
+    "double-team": {
+        "name": "Double Team",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "evasion": 1
+            },
+            "desc": "Raises Evasion by 1."
+        }
+    },
     "roost": {
         "name": "Roost",
         "type": "Flying",
@@ -660,6 +548,71 @@ export const MOVES = {
             "desc": "Heals 50% max HP."
         }
     },
+    "slack-off": {
+        "name": "Slack Off",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "healPerc": 0.5,
+            "desc": "Heals 50% max HP."
+        }
+    },
+    "milk-drink": {
+        "name": "Milk Drink",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "healPerc": 0.5,
+            "desc": "Heals 50% max HP."
+        }
+    },
+    "shore-up": {
+        "name": "Shore Up",
+        "type": "Ground",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "healPerc": 0.5,
+            "desc": "Heals 50% max HP."
+        }
+    },
+    "rest": {
+        "name": "Rest",
+        "type": "Psychic",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "healPerc": 1,
+            "status": "SLP",
+            "statusSelf": true,
+            "desc": "Fully heals HP. User falls asleep 2 turns."
+        }
+    },
+    "strength-sap": {
+        "name": "Strength Sap",
+        "type": "Grass",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "healPerc": 0.5,
+            "enemyDrop": {
+                "atk": -1
+            },
+            "desc": "Heals 50% HP. Lowers target Atk by 1."
+        }
+    },
     "spore": {
         "name": "Spore",
         "type": "Grass",
@@ -708,6 +661,54 @@ export const MOVES = {
             "desc": "Puts target to sleep."
         }
     },
+    "sing": {
+        "name": "Sing",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 55,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "status": "SLP",
+            "desc": "Puts target to sleep."
+        }
+    },
+    "dark-void": {
+        "name": "Dark Void",
+        "type": "Dark",
+        "power": 0,
+        "accuracy": 50,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "status": "SLP",
+            "desc": "Puts target to sleep."
+        }
+    },
+    "lovely-kiss": {
+        "name": "Lovely Kiss",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 75,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "status": "SLP",
+            "desc": "Puts target to sleep."
+        }
+    },
+    "grass-whistle": {
+        "name": "Grass Whistle",
+        "type": "Grass",
+        "power": 0,
+        "accuracy": 55,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "status": "SLP",
+            "desc": "Puts target to sleep."
+        }
+    },
     "will-o-wisp": {
         "name": "Will O Wisp",
         "type": "Fire",
@@ -732,11 +733,59 @@ export const MOVES = {
             "desc": "Badly poisons the target."
         }
     },
+    "poison-powder": {
+        "name": "Poison Powder",
+        "type": "Poison",
+        "power": 0,
+        "accuracy": 75,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "status": "PSN",
+            "desc": "Poisons the target."
+        }
+    },
+    "poison-gas": {
+        "name": "Poison Gas",
+        "type": "Poison",
+        "power": 0,
+        "accuracy": 90,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "status": "PSN",
+            "desc": "Poisons the target."
+        }
+    },
     "thunder-wave": {
         "name": "Thunder Wave",
         "type": "Electric",
         "power": 0,
         "accuracy": 90,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "status": "PAR",
+            "desc": "Paralyzes the target."
+        }
+    },
+    "stun-spore": {
+        "name": "Stun Spore",
+        "type": "Grass",
+        "power": 0,
+        "accuracy": 75,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "status": "PAR",
+            "desc": "Paralyzes the target."
+        }
+    },
+    "glare": {
+        "name": "Glare",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
         "category": "Status",
         "priority": 0,
         "effects": {
@@ -828,6 +877,484 @@ export const MOVES = {
         "effects": {
             "weather": "Snow",
             "desc": "Sets Snow weather for 5 turns."
+        }
+    },
+    "stealth-rock": {
+        "name": "Stealth Rock",
+        "type": "Rock",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "hazards": "stealth-rock",
+            "desc": "Sets rocks that damage on switch-in."
+        }
+    },
+    "spikes": {
+        "name": "Spikes",
+        "type": "Ground",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "hazards": "spikes",
+            "desc": "Sets spikes (up to 3 layers)."
+        }
+    },
+    "toxic-spikes": {
+        "name": "Toxic Spikes",
+        "type": "Poison",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "hazards": "toxic-spikes",
+            "desc": "Sets toxic spikes (up to 2 layers)."
+        }
+    },
+    "sticky-web": {
+        "name": "Sticky Web",
+        "type": "Bug",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "hazards": "sticky-web",
+            "desc": "Lowers Speed of opponents switching in."
+        }
+    },
+    "reflect": {
+        "name": "Reflect",
+        "type": "Psychic",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "screen": "reflect",
+            "desc": "Halves physical damage for 5 turns."
+        }
+    },
+    "light-screen": {
+        "name": "Light Screen",
+        "type": "Psychic",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "screen": "light-screen",
+            "desc": "Halves special damage for 5 turns."
+        }
+    },
+    "aurora-veil": {
+        "name": "Aurora Veil",
+        "type": "Ice",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "screen": "aurora-veil",
+            "desc": "Halves all damage for 5 turns. Requires Snow."
+        }
+    },
+    "substitute": {
+        "name": "Substitute",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "substitute": true,
+            "desc": "Creates a Substitute at 25% HP."
+        }
+    },
+    "leech-seed": {
+        "name": "Leech Seed",
+        "type": "Grass",
+        "power": 0,
+        "accuracy": 90,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "leechSeed": true,
+            "desc": "Drains 1/8 of target HP each turn."
+        }
+    },
+    "taunt": {
+        "name": "Taunt",
+        "type": "Dark",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "taunt": 3,
+            "desc": "Prevents target from using status moves for 3 turns."
+        }
+    },
+    "encore": {
+        "name": "Encore",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "encore": 3,
+            "desc": "Forces target to repeat last move for 3 turns."
+        }
+    },
+    "trick": {
+        "name": "Trick",
+        "type": "Psychic",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "trick": true,
+            "desc": "Swaps held items with the target."
+        }
+    },
+    "switcheroo": {
+        "name": "Switcheroo",
+        "type": "Dark",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "trick": true,
+            "desc": "Swaps held items with the target."
+        }
+    },
+    "haze": {
+        "name": "Haze",
+        "type": "Ice",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "haze": true,
+            "desc": "Resets all stat changes."
+        }
+    },
+    "whirlwind": {
+        "name": "Whirlwind",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": -6,
+        "effects": {
+            "forceSwitch": true,
+            "priority": -6,
+            "desc": "Forces target to switch out."
+        }
+    },
+    "roar": {
+        "name": "Roar",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": -6,
+        "effects": {
+            "forceSwitch": true,
+            "priority": -6,
+            "desc": "Forces target to switch out."
+        }
+    },
+    "wish": {
+        "name": "Wish",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "wish": true,
+            "desc": "Heals 50% HP at the end of next turn."
+        }
+    },
+    "healing-wish": {
+        "name": "Healing Wish",
+        "type": "Psychic",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "healingWish": true,
+            "desc": "User faints. Fully heals the switch-in."
+        }
+    },
+    "lunar-dance": {
+        "name": "Lunar Dance",
+        "type": "Psychic",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "healingWish": true,
+            "desc": "User faints. Fully heals the switch-in."
+        }
+    },
+    "pain-split": {
+        "name": "Pain Split",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "painSplit": true,
+            "desc": "Averages HP with the target."
+        }
+    },
+    "destiny-bond": {
+        "name": "Destiny Bond",
+        "type": "Ghost",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "destinyBond": true,
+            "desc": "If user faints, so does the attacker."
+        }
+    },
+    "perish-song": {
+        "name": "Perish Song",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "perishSong": true,
+            "desc": "All Pokémon faint in 3 turns unless switched."
+        }
+    },
+    "curse": {
+        "name": "Curse",
+        "type": "Ghost",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "curse": true,
+            "desc": "Ghost: lose 50% HP, target loses 25%/turn. Other: +Atk, +Def, -Spe."
+        }
+    },
+    "teleport": {
+        "name": "Teleport",
+        "type": "Psychic",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": -6,
+        "effects": {
+            "pivot": true,
+            "priority": -6,
+            "desc": "Switches the user out."
+        }
+    },
+    "defog": {
+        "name": "Defog",
+        "type": "Flying",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "enemyDrop": {
+                "evasion": -1
+            },
+            "clearHazards": true,
+            "desc": "Clears hazards/screens from the field."
+        }
+    },
+    "memento": {
+        "name": "Memento",
+        "type": "Dark",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "enemyDrop": {
+                "atk": -2,
+                "spa": -2
+            },
+            "healPerc": -1,
+            "desc": "User faints. Lowers target Atk/SpA by 2."
+        }
+    },
+    "charm": {
+        "name": "Charm",
+        "type": "Fairy",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "enemyDrop": {
+                "atk": -2
+            },
+            "desc": "Lowers target Attack by 2."
+        }
+    },
+    "fake-tears": {
+        "name": "Fake Tears",
+        "type": "Dark",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "enemyDrop": {
+                "spd": -2
+            },
+            "desc": "Lowers target Sp. Def by 2."
+        }
+    },
+    "screech": {
+        "name": "Screech",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 85,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "enemyDrop": {
+                "def": -2
+            },
+            "desc": "Lowers target Defense by 2."
+        }
+    },
+    "metal-sound": {
+        "name": "Metal Sound",
+        "type": "Steel",
+        "power": 0,
+        "accuracy": 85,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "enemyDrop": {
+                "spd": -2
+            },
+            "desc": "Lowers target Sp. Def by 2."
+        }
+    },
+    "scary-face": {
+        "name": "Scary Face",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "enemyDrop": {
+                "spe": -2
+            },
+            "desc": "Lowers target Speed by 2."
+        }
+    },
+    "growl": {
+        "name": "Growl",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "enemyDrop": {
+                "atk": -1
+            },
+            "desc": "Lowers target Attack by 1."
+        }
+    },
+    "leer": {
+        "name": "Leer",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "enemyDrop": {
+                "def": -1
+            },
+            "desc": "Lowers target Defense by 1."
+        }
+    },
+    "tail-whip": {
+        "name": "Tail Whip",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "enemyDrop": {
+                "def": -1
+            },
+            "desc": "Lowers target Defense by 1."
+        }
+    },
+    "string-shot": {
+        "name": "String Shot",
+        "type": "Bug",
+        "power": 0,
+        "accuracy": 95,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "enemyDrop": {
+                "spe": -2
+            },
+            "desc": "Lowers target Speed by 2."
+        }
+    },
+    "sweet-scent": {
+        "name": "Sweet Scent",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "enemyDrop": {
+                "evasion": -2
+            },
+            "desc": "Lowers target Evasion by 2."
+        }
+    },
+    "parting-shot": {
+        "name": "Parting Shot",
+        "type": "Dark",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "enemyDrop": {
+                "atk": -1,
+                "spa": -1
+            },
+            "pivot": true,
+            "desc": "Lowers Atk/SpA by 1 and switches out."
         }
     },
     "razor-wind": {
@@ -995,7 +1522,10 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "removeTargetItem": true,
+            "desc": "Removes the target item. 1.5x power if target has item."
+        }
     },
     "secret-power": {
         "name": "Secret Power",
@@ -1031,7 +1561,13 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "dropRate": 10,
+            "enemyDrop": {
+                "spd": -1
+            },
+            "desc": "10% chance to lower target Sp. Def."
+        }
     },
     "leaf-storm": {
         "name": "Leaf Storm",
@@ -1090,7 +1626,10 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "priority": 1,
+            "desc": "Strikes first in Grassy Terrain."
+        }
     },
     "tera-blast": {
         "name": "Tera Blast",
@@ -1141,7 +1680,11 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "statusRate": 30,
+            "status": "PSN",
+            "desc": "30% chance to Poison."
+        }
     },
     "earth-power": {
         "name": "Earth Power",
@@ -1298,7 +1841,11 @@ export const MOVES = {
         "accuracy": 85,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "statusRate": 10,
+            "status": "BRN",
+            "desc": "10% chance to Burn."
+        }
     },
     "swift": {
         "name": "Swift",
@@ -1325,7 +1872,10 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "critRate": true,
+            "desc": "High critical hit ratio."
+        }
     },
     "dynamic-punch": {
         "name": "Dynamic Punch",
@@ -1435,7 +1985,13 @@ export const MOVES = {
         "accuracy": 95,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "dropRate": 100,
+            "enemyDrop": {
+                "spe": -1
+            },
+            "desc": "100% chance to lower target Speed."
+        }
     },
     "aerial-ace": {
         "name": "Aerial Ace",
@@ -1494,7 +2050,13 @@ export const MOVES = {
         "accuracy": 70,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "dropRate": 10,
+            "enemyDrop": {
+                "spd": -1
+            },
+            "desc": "10% chance to lower target Sp. Def."
+        }
     },
     "shadow-claw": {
         "name": "Shadow Claw",
@@ -1566,7 +2128,10 @@ export const MOVES = {
         "accuracy": 90,
         "category": "Physical",
         "priority": -6,
-        "effects": null
+        "effects": {
+            "forceSwitch": true,
+            "desc": "Forces target to switch out after damage."
+        }
     },
     "breaking-swipe": {
         "name": "Breaking Swipe",
@@ -1668,7 +2233,13 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "dropRate": 100,
+            "enemyDrop": {
+                "spa": -1
+            },
+            "desc": "100% chance to lower target Sp. Atk."
+        }
     },
     "brutal-swing": {
         "name": "Brutal Swing",
@@ -1735,7 +2306,11 @@ export const MOVES = {
         "accuracy": 70,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "statusRate": 10,
+            "status": "FRZ",
+            "desc": "10% chance to Freeze."
+        }
     },
     "bubble-beam": {
         "name": "Bubble Beam",
@@ -1762,7 +2337,13 @@ export const MOVES = {
         "accuracy": 95,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "dropRate": 100,
+            "enemyDrop": {
+                "spe": -1
+            },
+            "desc": "100% chance to lower target Speed."
+        }
     },
     "fake-out": {
         "name": "Fake Out",
@@ -1811,7 +2392,13 @@ export const MOVES = {
         "accuracy": 95,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "dropRate": 100,
+            "enemyDrop": {
+                "spe": -1
+            },
+            "desc": "100% chance to lower target Speed."
+        }
     },
     "water-pulse": {
         "name": "Water Pulse",
@@ -1899,7 +2486,13 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "dropRate": 20,
+            "enemyDrop": {
+                "def": -1
+            },
+            "desc": "20% chance to lower target Defense."
+        }
     },
     "flip-turn": {
         "name": "Flip Turn",
@@ -1908,7 +2501,10 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "pivot": true,
+            "desc": "Deals damage then switches out."
+        }
     },
     "wave-crash": {
         "name": "Wave Crash",
@@ -1974,7 +2570,13 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "dropRate": 10,
+            "enemyDrop": {
+                "spd": -1
+            },
+            "desc": "10% chance to lower target Sp. Def."
+        }
     },
     "body-press": {
         "name": "Body Press",
@@ -2001,7 +2603,13 @@ export const MOVES = {
         "accuracy": 95,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "dropRate": 100,
+            "enemyDrop": {
+                "spe": -1
+            },
+            "desc": "100% chance to lower target Speed."
+        }
     },
     "psybeam": {
         "name": "Psybeam",
@@ -2076,7 +2684,10 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "pivot": true,
+            "desc": "Deals damage then switches out."
+        }
     },
     "bug-buzz": {
         "name": "Bug Buzz",
@@ -2085,7 +2696,13 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "dropRate": 10,
+            "enemyDrop": {
+                "spd": -1
+            },
+            "desc": "10% chance to lower target Sp. Def."
+        }
     },
     "pollen-puff": {
         "name": "Pollen Puff",
@@ -2139,7 +2756,10 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Physical",
         "priority": 1,
-        "effects": null
+        "effects": {
+            "priority": 1,
+            "desc": "Strikes first."
+        }
     },
     "sky-attack": {
         "name": "Sky Attack",
@@ -2209,7 +2829,11 @@ export const MOVES = {
         "accuracy": 70,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "statusRate": 30,
+            "status": "PAR",
+            "desc": "30% chance to Paralyze."
+        }
     },
     "hyper-fang": {
         "name": "Hyper Fang",
@@ -2274,7 +2898,7 @@ export const MOVES = {
         "priority": 1,
         "effects": {
             "priority": 1,
-            "desc": "Strikes first (fails if target status moves)."
+            "desc": "Strikes first (fails if target uses status)."
         }
     },
     "retaliate": {
@@ -2333,7 +2957,10 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "drainPerc": 0.5,
+            "desc": "Recovers 50% of damage dealt."
+        }
     },
     "mud-bomb": {
         "name": "Mud Bomb",
@@ -2360,7 +2987,11 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "statusRate": 10,
+            "status": "PSN",
+            "desc": "10% chance to Poison."
+        }
     },
     "snarl": {
         "name": "Snarl",
@@ -2369,7 +3000,13 @@ export const MOVES = {
         "accuracy": 95,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "dropRate": 100,
+            "enemyDrop": {
+                "spa": -1
+            },
+            "desc": "100% chance to lower target Sp. Atk."
+        }
     },
     "belch": {
         "name": "Belch",
@@ -2486,7 +3123,10 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "pivot": true,
+            "desc": "Deals damage then switches out."
+        }
     },
     "play-rough": {
         "name": "Play Rough",
@@ -2546,7 +3186,10 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "critRate": true,
+            "desc": "High critical hit ratio."
+        }
     },
     "stone-edge": {
         "name": "Stone Edge",
@@ -2555,7 +3198,10 @@ export const MOVES = {
         "accuracy": 80,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "critRate": true,
+            "desc": "High critical hit ratio."
+        }
     },
     "chip-away": {
         "name": "Chip Away",
@@ -2864,7 +3510,10 @@ export const MOVES = {
         "accuracy": 80,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "critRate": true,
+            "desc": "High critical hit ratio."
+        }
     },
     "vacuum-wave": {
         "name": "Vacuum Wave",
@@ -2963,7 +3612,10 @@ export const MOVES = {
         "accuracy": 90,
         "category": "Physical",
         "priority": -6,
-        "effects": null
+        "effects": {
+            "forceSwitch": true,
+            "desc": "Forces target to switch out after damage."
+        }
     },
     "darkest-lariat": {
         "name": "Darkest Lariat",
@@ -2981,7 +3633,10 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "critRate": true,
+            "desc": "High critical hit ratio."
+        }
     },
     "rolling-kick": {
         "name": "Rolling Kick",
@@ -3032,7 +3687,10 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "critRate": true,
+            "desc": "High critical hit ratio."
+        }
     },
     "leaf-tornado": {
         "name": "Leaf Tornado",
@@ -3068,7 +3726,12 @@ export const MOVES = {
         "accuracy": 90,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "selfDrop": {
+                "spe": -1
+            },
+            "desc": "Lowers Speed by 1."
+        }
     },
     "steamroller": {
         "name": "Steamroller",
@@ -3095,7 +3758,13 @@ export const MOVES = {
         "accuracy": 95,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "dropRate": 50,
+            "enemyDrop": {
+                "def": -1
+            },
+            "desc": "50% chance to lower target Defense."
+        }
     },
     "mirror-shot": {
         "name": "Mirror Shot",
@@ -3131,7 +3800,10 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Physical",
         "priority": 2,
-        "effects": null
+        "effects": {
+            "priority": 2,
+            "desc": "Strikes first. Only works first turn."
+        }
     },
     "jump-kick": {
         "name": "Jump Kick",
@@ -3179,7 +3851,10 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Physical",
         "priority": 1,
-        "effects": null
+        "effects": {
+            "priority": 1,
+            "desc": "Strikes first."
+        }
     },
     "icicle-crash": {
         "name": "Icicle Crash",
@@ -3357,7 +4032,11 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "statusRate": 10,
+            "status": "FRZ",
+            "desc": "10% FRZ. Super effective on Water."
+        }
     },
     "sparkling-aria": {
         "name": "Sparkling Aria",
@@ -3434,7 +4113,11 @@ export const MOVES = {
         "accuracy": 95,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "statusRate": 50,
+            "status": "BRN",
+            "desc": "50% chance to Burn."
+        }
     },
     "aeroblast": {
         "name": "Aeroblast",
@@ -3551,7 +4234,12 @@ export const MOVES = {
         "accuracy": 90,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "selfDrop": {
+                "spa": -2
+            },
+            "desc": "Lowers Sp. Atk by 2."
+        }
     },
     "attack-order": {
         "name": "Attack Order",
@@ -3653,7 +4341,13 @@ export const MOVES = {
         "accuracy": 85,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "dropRate": 40,
+            "enemyDrop": {
+                "spd": -2
+            },
+            "desc": "40% chance to lower target Sp. Def by 2."
+        }
     },
     "judgment": {
         "name": "Judgment",
@@ -3680,7 +4374,14 @@ export const MOVES = {
         "accuracy": 95,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "selfDrop": {
+                "def": -1,
+                "spd": -1,
+                "spe": -1
+            },
+            "desc": "Lowers Def, SpD, Spe by 1."
+        }
     },
     "night-daze": {
         "name": "Night Daze",
@@ -3710,7 +4411,14 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Special",
         "priority": 1,
-        "effects": null
+        "effects": {
+            "multiHit": [
+                2,
+                5
+            ],
+            "priority": 1,
+            "desc": "Hits 2-5 times. Priority +1."
+        }
     },
     "head-charge": {
         "name": "Head Charge",
@@ -3737,7 +4445,13 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "boostRate": 50,
+            "selfBoost": {
+                "spa": 1
+            },
+            "desc": "50% chance to raise Sp. Atk."
+        }
     },
     "bleakwind-storm": {
         "name": "Bleakwind Storm",
@@ -3764,7 +4478,11 @@ export const MOVES = {
         "accuracy": 85,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "statusRate": 20,
+            "status": "BRN",
+            "desc": "20% chance to Burn."
+        }
     },
     "fusion-flare": {
         "name": "Fusion Flare",
@@ -3782,7 +4500,11 @@ export const MOVES = {
         "accuracy": 85,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "statusRate": 20,
+            "status": "PAR",
+            "desc": "20% chance to Paralyze."
+        }
     },
     "fusion-bolt": {
         "name": "Fusion Bolt",
@@ -3845,7 +4567,10 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "drainPerc": 0.5,
+            "desc": "Recovers 50% of damage dealt."
+        }
     },
     "flying-press": {
         "name": "Flying Press",
@@ -3863,7 +4588,10 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "drainPerc": 0.75,
+            "desc": "Recovers 75% of damage dealt."
+        }
     },
     "thousand-arrows": {
         "name": "Thousand Arrows",
@@ -3926,7 +4654,11 @@ export const MOVES = {
         "accuracy": 95,
         "category": "Special",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "statusRate": 30,
+            "status": "BRN",
+            "desc": "30% chance to Burn."
+        }
     },
     "spirit-shackle": {
         "name": "Spirit Shackle",
@@ -3953,7 +4685,12 @@ export const MOVES = {
         "accuracy": 90,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "selfDrop": {
+                "spe": -1
+            },
+            "desc": "Lowers Speed by 1."
+        }
     },
     "revelation-dance": {
         "name": "Revelation Dance",
@@ -3971,7 +4708,10 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Physical",
         "priority": 1,
-        "effects": null
+        "effects": {
+            "priority": 1,
+            "desc": "Strikes first."
+        }
     },
     "trop-kick": {
         "name": "Trop Kick",
@@ -4111,7 +4851,15 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "multiHit": [
+                2,
+                2
+            ],
+            "statusRate": 30,
+            "status": "flinch",
+            "desc": "Hits 2 times. 30% flinch per hit."
+        }
     },
     "drum-beating": {
         "name": "Drum Beating",
@@ -4258,7 +5006,10 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "critRate": true,
+            "desc": "Always crits."
+        }
     },
     "thunder-cage": {
         "name": "Thunder Cage",
@@ -4294,7 +5045,12 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Physical",
         "priority": 0,
-        "effects": null
+        "effects": {
+            "critRate": true,
+            "statusRate": 50,
+            "status": "rnd",
+            "desc": "High crit. 50% status."
+        }
     },
     "springtide-storm": {
         "name": "Springtide Storm",
@@ -4387,7 +5143,10 @@ export const MOVES = {
         "accuracy": 100,
         "category": "Physical",
         "priority": 1,
-        "effects": null
+        "effects": {
+            "priority": 1,
+            "desc": "Strikes first."
+        }
     },
     "spin-out": {
         "name": "Spin Out",
@@ -62412,64 +63171,28 @@ export const POKEMON_DB = [
 ];
 
 export const ITEMS = {
-    "Heavy-Duty Boots": {
-        "name": "Heavy-Duty Boots",
-        "desc": "Protects the holder from entry hazards."
-    },
-    "Assault Vest": {
-        "name": "Assault Vest",
-        "desc": "Raises Sp. Def by 1.5x but prevents the use of status moves."
-    },
-    "Rocky Helmet": {
-        "name": "Rocky Helmet",
-        "desc": "Damages attackers taking contact damage by 1/6 max HP."
-    },
-    "Eviolite": {
-        "name": "Eviolite",
-        "desc": "Raises Defense and Sp. Def by 1.5x if the holder can evolve."
-    },
-    "Lum Berry": {
-        "name": "Lum Berry",
-        "desc": "Cures any status condition entirely."
-    },
-    "Sitrus Berry": {
-        "name": "Sitrus Berry",
-        "desc": "Restores 1/4 max HP when at 1/2 max HP or less."
-    },
-    "Light Clay": {
-        "name": "Light Clay",
-        "desc": "Extends the duration of Reflect, Light Screen, and Aurora Veil to 8 turns."
-    },
-    "Toxic Orb": {
-        "name": "Toxic Orb",
-        "desc": "Badly poisons the holder at the end of the turn."
-    },
-    "Flame Orb": {
-        "name": "Flame Orb",
-        "desc": "Burns the holder at the end of the turn."
-    },
-    "Expert Belt": {
-        "name": "Expert Belt",
-        "desc": "Super effective attacks do 1.2x damage."
-    },
-    "Air Balloon": {
-        "name": "Air Balloon",
-        "desc": "Makes the holder immune to Ground-type attacks. Pops when hit."
-    },
-    "White Herb": {
-        "name": "White Herb",
-        "desc": "Restores lowered stats immediately."
-    },
-    "Black Sludge": {
-        "name": "Black Sludge",
-        "desc": "Heals Poison types by 1/16 max HP. Damages other types by 1/8 max HP."
-    },
     'Leftovers': { name: 'Leftovers', desc: 'Heals 1/16 of max HP at the end of each turn.' },
     'Life Orb': { name: 'Life Orb', desc: 'Attacks deal 1.3x damage but user loses 1/10 max HP.' },
     'Choice Band': { name: 'Choice Band', desc: 'Attack is 1.5x, but only first selected move can be used.' },
     'Choice Specs': { name: 'Choice Specs', desc: 'Sp. Atk is 1.5x, but only first selected move can be used.' },
     'Choice Scarf': { name: 'Choice Scarf', desc: 'Speed is 1.5x, but only first selected move can be used.' },
-    'Focus Sash': { name: 'Focus Sash', desc: 'If at full HP, survives one hit that would KO with 1 HP.' },
+    'Focus Sash': { name: 'Focus Sash', desc: 'If at full HP, survives one hit with 1 HP. Single use.' },
+    'Heavy-Duty Boots': { name: 'Heavy-Duty Boots', desc: 'Holder bypasses entry hazards on switch-in.' },
+    'Assault Vest': { name: 'Assault Vest', desc: '1.5x Sp. Def but cannot use Status moves.' },
+    'Eviolite': { name: 'Eviolite', desc: '1.5x Def and Sp. Def for not-fully-evolved Pokémon.' },
+    'Rocky Helmet': { name: 'Rocky Helmet', desc: 'Contact moves deal 1/6 max HP to the attacker.' },
+    'Air Balloon': { name: 'Air Balloon', desc: 'Immune to Ground-type moves. Pops when hit.' },
+    'Expert Belt': { name: 'Expert Belt', desc: '1.2x damage on super effective hits.' },
+    'Black Sludge': { name: 'Black Sludge', desc: 'Poison types heal 1/16 HP per turn. Others lose 1/8.' },
+    'Toxic Orb': { name: 'Toxic Orb', desc: 'Badly poisons the holder at end of turn.' },
+    'Flame Orb': { name: 'Flame Orb', desc: 'Burns the holder at end of turn.' },
+    'Sitrus Berry': { name: 'Sitrus Berry', desc: 'Heals 25% HP when falling below 50%. Single use.' },
+    'Lum Berry': { name: 'Lum Berry', desc: 'Cures any status condition. Single use.' },
+    'White Herb': { name: 'White Herb', desc: 'Restores negative stat drops. Single use.' },
+    'Light Clay': { name: 'Light Clay', desc: 'Extends Reflect/Light Screen/Aurora Veil to 8 turns.' },
+    'Mental Herb': { name: 'Mental Herb', desc: 'Cures Encore/Taunt/Disable. Single use.' },
+    'Weakness Policy': { name: 'Weakness Policy', desc: 'When hit super effectively, raises Atk and SpA by 2. Single use.' },
+    'Booster Energy': { name: 'Booster Energy', desc: 'Raises highest stat for Paradox Pokémon.' },
     'None': { name: 'None', desc: 'No item.' }
 };
 
@@ -62479,12639 +63202,3 @@ export const FORMATS = [
     { id: 'gen9anythinggoes', name: '[Gen 9] Anything Goes', clauses: ['Endless Battle Clause', 'HP Percentage Mod', 'Cancel Mod'], warning: 'WARNING: Anything Goes format allows teams of identical Pokémon.' },
     { id: 'gen9hackmons', name: '[Gen 9] Unlimited Hackmons', clauses: ['HP Percentage Mod', 'Cancel Mod'], warning: 'WARNING: Pure Chaos!' }
 ];
-
-// GENERATED DATA REPLACE BLOCK
-// -------------------------------------------------------------
-const GENERATED_MOVES = {
-    "absorb": {
-        "name": "Absorb",
-        "type": "Grass",
-        "power": 20,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "drainPerc": 0.5,
-            "desc": "The user recovers 1/2 the HP lost by the target, rounded half up. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down."
-        }
-    },
-    "accelerock": {
-        "name": "Accelerock",
-        "type": "Rock",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 1,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "acid": {
-        "name": "Acid",
-        "type": "Poison",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spd": -1
-            },
-            "dropRate": 10,
-            "desc": "Has a 10% chance to lower the target's Special Defense by 1 stage."
-        }
-    },
-    "acidarmor": {
-        "name": "Acid Armor",
-        "type": "Poison",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "def": 2
-            },
-            "desc": "Raises the user's Defense by 2 stages."
-        }
-    },
-    "acidspray": {
-        "name": "Acid Spray",
-        "type": "Poison",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spd": -2
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Special Defense by 2 stages."
-        }
-    },
-    "acrobatics": {
-        "name": "Acrobatics",
-        "type": "Flying",
-        "power": 55,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power doubles if the user has no held item."
-        }
-    },
-    "acupressure": {
-        "name": "Acupressure",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Raises a random stat by 2 stages as long as the stat is not already at stage 6. The user can choose to use this move on itself or an adjacent ally. Fails if no stat stage can be raised or if used on an ally with a substitute."
-        }
-    },
-    "aerialace": {
-        "name": "Aerial Ace",
-        "type": "Flying",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This move does not check accuracy."
-        }
-    },
-    "aeroblast": {
-        "name": "Aeroblast",
-        "type": "Flying",
-        "power": 100,
-        "accuracy": 95,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a higher chance for a critical hit."
-        }
-    },
-    "afteryou": {
-        "name": "After You",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The target makes its move immediately after the user this turn, no matter the priority of its selected move. Fails if the target would have moved next anyway, or if the target already moved this turn."
-        }
-    },
-    "agility": {
-        "name": "Agility",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spe": 2
-            },
-            "desc": "Raises the user's Speed by 2 stages."
-        }
-    },
-    "aircutter": {
-        "name": "Air Cutter",
-        "type": "Flying",
-        "power": 60,
-        "accuracy": 95,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a higher chance for a critical hit."
-        }
-    },
-    "airslash": {
-        "name": "Air Slash",
-        "type": "Flying",
-        "power": 75,
-        "accuracy": 95,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 30% chance to make the target flinch."
-        }
-    },
-    "alluringvoice": {
-        "name": "Alluring Voice",
-        "type": "Fairy",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 100% chance to confuse the target if it had a stat stage raised this turn."
-        }
-    },
-    "allyswitch": {
-        "name": "Ally Switch",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 2,
-        "effects": {
-            "desc": "The user swaps positions with its ally. Fails if the user is the only Pokemon on its side. This move has a 1/X chance of being successful, where X starts at 1 and triples each time this move is successfully used. X resets to 1 if this move fails or if the user's last move used is not Ally Switch."
-        }
-    },
-    "amnesia": {
-        "name": "Amnesia",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spd": 2
-            },
-            "desc": "Raises the user's Special Defense by 2 stages."
-        }
-    },
-    "anchorshot": {
-        "name": "Anchor Shot",
-        "type": "Steel",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Prevents the target from switching out. The target can still switch out if it is holding Shed Shell or uses Baton Pass, Flip Turn, Parting Shot, Teleport, U-turn, or Volt Switch. The effect ends if either the user or the target leaves the field."
-        }
-    },
-    "ancientpower": {
-        "name": "Ancient Power",
-        "type": "Rock",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 10% chance to raise the user's Attack, Defense, Special Attack, Special Defense, and Speed by 1 stage."
-        }
-    },
-    "appleacid": {
-        "name": "Apple Acid",
-        "type": "Grass",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spd": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Special Defense by 1 stage."
-        }
-    },
-    "aquacutter": {
-        "name": "Aqua Cutter",
-        "type": "Water",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a higher chance for a critical hit."
-        }
-    },
-    "aquajet": {
-        "name": "Aqua Jet",
-        "type": "Water",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 1,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "aquaring": {
-        "name": "Aqua Ring",
-        "type": "Water",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user has 1/16 of its maximum HP, rounded down, restored at the end of each turn while it remains active. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down. If the user uses Baton Pass, the replacement will receive the healing effect."
-        }
-    },
-    "aquastep": {
-        "name": "Aqua Step",
-        "type": "Water",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 100% chance to raise the user's Speed by 1 stage."
-        }
-    },
-    "aquatail": {
-        "name": "Aqua Tail",
-        "type": "Water",
-        "power": 90,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "armorcannon": {
-        "name": "Armor Cannon",
-        "type": "Fire",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Lowers the user's Defense and Special Defense by 1 stage."
-        }
-    },
-    "armthrust": {
-        "name": "Arm Thrust",
-        "type": "Fighting",
-        "power": 15,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                5
-            ],
-            "desc": "Hits two to five times. Has a 35% chance to hit two or three times and a 15% chance to hit four or five times. If one of the hits breaks the target's substitute, it will take damage for the remaining hits. If the user has the Skill Link Ability, this move will always hit five times. If the user is holding Loaded Dice, this move will hit 4-5 times."
-        }
-    },
-    "aromatherapy": {
-        "name": "Aromatherapy",
-        "type": "Grass",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Every Pokemon in the user's party is cured of its non-volatile status condition. Active Pokemon with the Sap Sipper Ability are not cured, unless they are the user."
-        }
-    },
-    "aromaticmist": {
-        "name": "Aromatic Mist",
-        "type": "Fairy",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spd": 1
-            },
-            "desc": "Raises the target's Special Defense by 1 stage. Fails if there is no ally adjacent to the user."
-        }
-    },
-    "assist": {
-        "name": "Assist",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "A random move among those known by the user's party members is selected for use. Does not select Assist, Baneful Bunker, Beak Blast, Belch, Bestow, Blazing Torque, Bounce, Celebrate, Chatter, Circle Throw, Combat Torque, Copycat, Counter, Covet, Destiny Bond, Detect, Dig, Dive, Dragon Tail, Endure, Feint, Fly, Focus Punch, Follow Me, Helping Hand, Hold Hands, King's Shield, Magical Torque, Mat Block, Me First, Metronome, Mimic, Mirror Coat, Mirror Move, Nature Power, Noxious Torque, Phantom Force, Protect, Rage Powder, Roar, Shadow Force, Shell Trap, Sketch, Sky Drop, Sleep Talk, Snatch, Spiky Shield, Spotlight, Struggle, Switcheroo, Tera Starstorm, Thief, Transform, Trick, Whirlwind, or Wicked Torque."
-        }
-    },
-    "assurance": {
-        "name": "Assurance",
-        "type": "Dark",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power doubles if the target has already taken damage this turn, other than direct damage from Belly Drum, confusion, Curse, or Pain Split."
-        }
-    },
-    "astonish": {
-        "name": "Astonish",
-        "type": "Ghost",
-        "power": 30,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 30% chance to make the target flinch."
-        }
-    },
-    "astralbarrage": {
-        "name": "Astral Barrage",
-        "type": "Ghost",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "attackorder": {
-        "name": "Attack Order",
-        "type": "Bug",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a higher chance for a critical hit."
-        }
-    },
-    "attract": {
-        "name": "Attract",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Causes the target to become infatuated, making it unable to attack 50% of the time. Fails if both the user and the target are the same gender, if either is genderless, or if the target is already infatuated. The effect ends when either the user or the target is no longer active. Pokemon with the Oblivious Ability or protected by the Aroma Veil Ability are immune."
-        }
-    },
-    "aurasphere": {
-        "name": "Aura Sphere",
-        "type": "Fighting",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "This move does not check accuracy."
-        }
-    },
-    "aurawheel": {
-        "name": "Aura Wheel",
-        "type": "Electric",
-        "power": 110,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 100% chance to raise the user's Speed by 1 stage. If the user is a Morpeko in Full Belly Mode, this move is Electric type. If the user is a Morpeko in Hangry Mode, this move is Dark type. This move cannot be used successfully unless the user's current form, while considering Transform, is Full Belly or Hangry Mode Morpeko."
-        }
-    },
-    "aurorabeam": {
-        "name": "Aurora Beam",
-        "type": "Ice",
-        "power": 65,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "atk": -1
-            },
-            "dropRate": 10,
-            "desc": "Has a 10% chance to lower the target's Attack by 1 stage."
-        }
-    },
-    "auroraveil": {
-        "name": "Aurora Veil",
-        "type": "Ice",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "screen": "aurora-veil",
-            "desc": "For 5 turns, the user and its party members take 0.5x damage from physical and special attacks, or 0.66x damage if in a Double Battle; does not reduce damage further with Reflect or Light Screen. Critical hits ignore this protection. It is removed from the user's side if the user or an ally is successfully hit by Brick Break, Psychic Fangs, or Defog. Brick Break and Psychic Fangs remove the effect before damage is calculated. Lasts for 8 turns if the user is holding Light Clay. Fails unless the weather is Snow."
-        }
-    },
-    "autotomize": {
-        "name": "Autotomize",
-        "type": "Steel",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spe": 2
-            },
-            "desc": "Raises the user's Speed by 2 stages. If the user's Speed was changed, the user's weight is reduced by 100 kg as long as it remains active. This effect is stackable but cannot reduce the user's weight to less than 0.1 kg."
-        }
-    },
-    "avalanche": {
-        "name": "Avalanche",
-        "type": "Ice",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": -4,
-        "effects": {
-            "desc": "Power doubles if the user was hit by the target this turn."
-        }
-    },
-    "axekick": {
-        "name": "Axe Kick",
-        "type": "Fighting",
-        "power": 120,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 30% chance to confuse the target. If this attack is not successful, the user loses half of its maximum HP, rounded down, as crash damage. Pokemon with the Magic Guard Ability are unaffected by crash damage."
-        }
-    },
-    "babydolleyes": {
-        "name": "Baby-Doll Eyes",
-        "type": "Fairy",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 1,
-        "effects": {
-            "selfBoost": {
-                "atk": -1
-            },
-            "desc": "Lowers the target's Attack by 1 stage."
-        }
-    },
-    "baddybad": {
-        "name": "Baddy Bad",
-        "type": "Dark",
-        "power": 80,
-        "accuracy": 95,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "This move summons Reflect for 5 turns upon use."
-        }
-    },
-    "banefulbunker": {
-        "name": "Baneful Bunker",
-        "type": "Poison",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 4,
-        "effects": {
-            "protect": true,
-            "desc": "The user is protected from most attacks made by other Pokemon during this turn, and Pokemon making contact with the user become poisoned. This move has a 1/X chance of being successful, where X starts at 1 and triples each time this move is successfully used. X resets to 1 if this move fails, if the user's last move used is not Baneful Bunker, Burning Bulwark, Detect, Endure, King's Shield, Max Guard, Obstruct, Protect, Quick Guard, Silk Trap, Spiky Shield, or Wide Guard, or if it was one of those moves and the user's protection was broken. Fails if the user moves last this turn."
-        }
-    },
-    "barbbarrage": {
-        "name": "Barb Barrage",
-        "type": "Poison",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "PSN",
-            "statusRate": 50,
-            "desc": "Has a 50% chance to poison the target. Power doubles if the target is already poisoned."
-        }
-    },
-    "barrage": {
-        "name": "Barrage",
-        "type": "Normal",
-        "power": 15,
-        "accuracy": 85,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                5
-            ],
-            "desc": "Hits two to five times. Has a 35% chance to hit two or three times and a 15% chance to hit four or five times. If one of the hits breaks the target's substitute, it will take damage for the remaining hits. If the user has the Skill Link Ability, this move will always hit five times."
-        }
-    },
-    "barrier": {
-        "name": "Barrier",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "def": 2
-            },
-            "desc": "Raises the user's Defense by 2 stages."
-        }
-    },
-    "batonpass": {
-        "name": "Baton Pass",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user is replaced with another Pokemon in its party. The selected Pokemon has the user's stat stage changes transferred to it, as well as the effects of confusion, Aqua Ring, Curse, Dragon Cheer, Embargo, Focus Energy, Gastro Acid, Heal Block, Ingrain, Leech Seed, Lock-On (Mind Reader), Magnet Rise, Perish Song, Power Trick, Telekinesis, and a substitute with its remaining HP. The effect of Gastro Acid is not transferred if the recipient has an Ability that cannot be affected."
-        }
-    },
-    "beakblast": {
-        "name": "Beak Blast",
-        "type": "Flying",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": -3,
-        "effects": {
-            "desc": "If the user is hit by a contact move this turn before it can execute this move, the attacker is burned."
-        }
-    },
-    "beatup": {
-        "name": "Beat Up",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Hits one time for the user and one time for each unfainted Pokemon without a non-volatile status condition in the user's party. The power of each hit is equal to 5+(X/10), where X is each participating Pokemon's base Attack; each hit is considered to come from the user."
-        }
-    },
-    "behemothbash": {
-        "name": "Behemoth Bash",
-        "type": "Steel",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "behemothblade": {
-        "name": "Behemoth Blade",
-        "type": "Steel",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "belch": {
-        "name": "Belch",
-        "type": "Poison",
-        "power": 120,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "This move cannot be selected until the user eats a Berry, either by eating one that was held, stealing and eating one off another Pokemon with Bug Bite or Pluck, or eating one that was thrown at it with Fling. Once the condition is met, this move can be selected and used for the rest of the battle even if the user gains or uses another item or switches out. Consuming a Berry with Natural Gift does not count for the purposes of eating one."
-        }
-    },
-    "bellydrum": {
-        "name": "Belly Drum",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Raises the user's Attack by 12 stages in exchange for the user losing 1/2 of its maximum HP, rounded down. Fails if the user would faint or if its Attack stat stage is 6."
-        }
-    },
-    "bestow": {
-        "name": "Bestow",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The target receives the user's held item. Fails if the user has no item or is holding a Mail or Z-Crystal, if the target is already holding an item, if the user is a Kyogre holding a Blue Orb, a Groudon holding a Red Orb, a Giratina holding a Griseous Orb, an Arceus holding a Plate, a Genesect holding a Drive, a Silvally holding a Memory, a Pokemon that can Mega Evolve holding the Mega Stone for its species, or if the target is one of those Pokemon and the user is holding the respective item."
-        }
-    },
-    "bide": {
-        "name": "Bide",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 1,
-        "effects": {
-            "desc": "The user spends two turns locked into this move and then, on the second turn after using this move, the user attacks the last Pokemon that hit it, inflicting double the damage in HP it lost to attacks during the two turns. If the last Pokemon that hit it is no longer active, the user attacks a random opposing Pokemon instead. If the user is prevented from moving during this move's use, the effect ends. This move does not check accuracy and does not ignore type immunity."
-        }
-    },
-    "bind": {
-        "name": "Bind",
-        "type": "Normal",
-        "power": 15,
-        "accuracy": 85,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Prevents the target from switching for four or five turns (seven turns if the user is holding Grip Claw). Causes damage to the target equal to 1/8 of its maximum HP (1/6 if the user is holding Binding Band), rounded down, at the end of each turn during effect. The target can still switch out if it is holding Shed Shell or uses Baton Pass, Flip Turn, Parting Shot, Shed Tail, Teleport, U-turn, or Volt Switch. The effect ends if either the user or the target leaves the field, or if the target uses Mortal Spin, Rapid Spin, or Substitute successfully. This effect is not stackable or reset by using this or another binding move."
-        }
-    },
-    "bite": {
-        "name": "Bite",
-        "type": "Dark",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 30% chance to make the target flinch."
-        }
-    },
-    "bitterblade": {
-        "name": "Bitter Blade",
-        "type": "Fire",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "drainPerc": 0.5,
-            "desc": "The user recovers 1/2 the HP lost by the target, rounded half up. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down."
-        }
-    },
-    "bittermalice": {
-        "name": "Bitter Malice",
-        "type": "Ghost",
-        "power": 75,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "atk": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Attack by 1 stage."
-        }
-    },
-    "blastburn": {
-        "name": "Blast Burn",
-        "type": "Fire",
-        "power": 150,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, the user must recharge on the following turn and cannot select a move."
-        }
-    },
-    "blazekick": {
-        "name": "Blaze Kick",
-        "type": "Fire",
-        "power": 85,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to burn the target and a higher chance for a critical hit."
-        }
-    },
-    "blazingtorque": {
-        "name": "Blazing Torque",
-        "type": "Fire",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to burn the target."
-        }
-    },
-    "bleakwindstorm": {
-        "name": "Bleakwind Storm",
-        "type": "Flying",
-        "power": 100,
-        "accuracy": 80,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spe": -1
-            },
-            "dropRate": 30,
-            "desc": "Has a 30% chance to lower the target's Speed by 1 stage. If the weather is Primordial Sea or Rain Dance, this move does not check accuracy. If this move is used against a Pokemon holding Utility Umbrella, this move's accuracy remains at 80%."
-        }
-    },
-    "blizzard": {
-        "name": "Blizzard",
-        "type": "Ice",
-        "power": 110,
-        "accuracy": 70,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "FRZ",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to freeze the target. If the weather is Snow, this move does not check accuracy."
-        }
-    },
-    "block": {
-        "name": "Block",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Prevents the target from switching out. The target can still switch out if it is holding Shed Shell or uses Baton Pass, Flip Turn, Parting Shot, Teleport, U-turn, or Volt Switch. The effect ends if either the user or the target leaves the field."
-        }
-    },
-    "bloodmoon": {
-        "name": "Blood Moon",
-        "type": "Normal",
-        "power": 140,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Cannot be selected the turn after it's used."
-        }
-    },
-    "blueflare": {
-        "name": "Blue Flare",
-        "type": "Fire",
-        "power": 130,
-        "accuracy": 85,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 20,
-            "desc": "Has a 20% chance to burn the target."
-        }
-    },
-    "bodypress": {
-        "name": "Body Press",
-        "type": "Fighting",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Damage is calculated using the user's Defense stat as its Attack, including stat stage changes. Other effects that modify the Attack stat are used as normal."
-        }
-    },
-    "bodyslam": {
-        "name": "Body Slam",
-        "type": "Normal",
-        "power": 85,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to paralyze the target. Damage doubles and no accuracy check is done if the target has used Minimize while active."
-        }
-    },
-    "boltbeak": {
-        "name": "Bolt Beak",
-        "type": "Electric",
-        "power": 85,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power doubles if the user moves before the target."
-        }
-    },
-    "boltstrike": {
-        "name": "Bolt Strike",
-        "type": "Electric",
-        "power": 130,
-        "accuracy": 85,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "statusRate": 20,
-            "desc": "Has a 20% chance to paralyze the target."
-        }
-    },
-    "boneclub": {
-        "name": "Bone Club",
-        "type": "Ground",
-        "power": 65,
-        "accuracy": 85,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 10% chance to make the target flinch."
-        }
-    },
-    "bonemerang": {
-        "name": "Bonemerang",
-        "type": "Ground",
-        "power": 50,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                2
-            ],
-            "desc": "Hits twice. If the first hit breaks the target's substitute, it will take damage for the second hit."
-        }
-    },
-    "bonerush": {
-        "name": "Bone Rush",
-        "type": "Ground",
-        "power": 25,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                5
-            ],
-            "desc": "Hits two to five times. Has a 35% chance to hit two or three times and a 15% chance to hit four or five times. If one of the hits breaks the target's substitute, it will take damage for the remaining hits. If the user has the Skill Link Ability, this move will always hit five times. If the user is holding Loaded Dice, this move will hit 4-5 times."
-        }
-    },
-    "boomburst": {
-        "name": "Boomburst",
-        "type": "Normal",
-        "power": 140,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "bounce": {
-        "name": "Bounce",
-        "type": "Flying",
-        "power": 85,
-        "accuracy": 85,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to paralyze the target. This attack charges on the first turn and executes on the second. On the first turn, the user avoids all attacks other than Gust, Hurricane, Sky Uppercut, Smack Down, Thousand Arrows, Thunder, and Twister, and Gust and Twister have doubled power when used against it. If the user is holding a Power Herb, the move completes in one turn."
-        }
-    },
-    "bouncybubble": {
-        "name": "Bouncy Bubble",
-        "type": "Water",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "drainPerc": 0.5,
-            "desc": "The user recovers 1/2 the HP lost by the target, rounded half up. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down."
-        }
-    },
-    "branchpoke": {
-        "name": "Branch Poke",
-        "type": "Grass",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "bravebird": {
-        "name": "Brave Bird",
-        "type": "Flying",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "recoilPerc": 0.33,
-            "desc": "If the target lost HP, the user takes recoil damage equal to 33% the HP lost by the target, rounded half up, but not less than 1 HP."
-        }
-    },
-    "breakingswipe": {
-        "name": "Breaking Swipe",
-        "type": "Dragon",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "atk": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Attack by 1 stage."
-        }
-    },
-    "brickbreak": {
-        "name": "Brick Break",
-        "type": "Fighting",
-        "power": 75,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this attack does not miss, the effects of Reflect, Light Screen, and Aurora Veil end for the target's side of the field before damage is calculated."
-        }
-    },
-    "brine": {
-        "name": "Brine",
-        "type": "Water",
-        "power": 65,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Power doubles if the target has less than or equal to half of its maximum HP remaining."
-        }
-    },
-    "brutalswing": {
-        "name": "Brutal Swing",
-        "type": "Dark",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "bubble": {
-        "name": "Bubble",
-        "type": "Water",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spe": -1
-            },
-            "dropRate": 10,
-            "desc": "Has a 10% chance to lower the target's Speed by 1 stage."
-        }
-    },
-    "bubblebeam": {
-        "name": "Bubble Beam",
-        "type": "Water",
-        "power": 65,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spe": -1
-            },
-            "dropRate": 10,
-            "desc": "Has a 10% chance to lower the target's Speed by 1 stage."
-        }
-    },
-    "bugbite": {
-        "name": "Bug Bite",
-        "type": "Bug",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful and the user has not fainted, it steals the target's held Berry if it is holding one and eats it immediately, gaining its effects even if the user's item is being ignored. Items lost to this move cannot be regained with Recycle or the Harvest Ability."
-        }
-    },
-    "bugbuzz": {
-        "name": "Bug Buzz",
-        "type": "Bug",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spd": -1
-            },
-            "dropRate": 10,
-            "desc": "Has a 10% chance to lower the target's Special Defense by 1 stage."
-        }
-    },
-    "bulkup": {
-        "name": "Bulk Up",
-        "type": "Fighting",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": 1,
-                "def": 1
-            },
-            "desc": "Raises the user's Attack and Defense by 1 stage."
-        }
-    },
-    "bulldoze": {
-        "name": "Bulldoze",
-        "type": "Ground",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spe": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Speed by 1 stage."
-        }
-    },
-    "bulletpunch": {
-        "name": "Bullet Punch",
-        "type": "Steel",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 1,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "bulletseed": {
-        "name": "Bullet Seed",
-        "type": "Grass",
-        "power": 25,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                5
-            ],
-            "desc": "Hits two to five times. Has a 35% chance to hit two or three times and a 15% chance to hit four or five times. If one of the hits breaks the target's substitute, it will take damage for the remaining hits. If the user has the Skill Link Ability, this move will always hit five times. If the user is holding Loaded Dice, this move will hit 4-5 times."
-        }
-    },
-    "burningbulwark": {
-        "name": "Burning Bulwark",
-        "type": "Fire",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 4,
-        "effects": {
-            "desc": "The user is protected from most attacks made by other Pokemon during this turn, and Pokemon trying to make contact with the user become burned. Non-damaging moves go through this protection. This move has a 1/X chance of being successful, where X starts at 1 and triples each time this move is successfully used. X resets to 1 if this move fails, if the user's last move used is not Baneful Bunker, Burning Bulwark, Detect, Endure, King's Shield, Max Guard, Obstruct, Protect, Quick Guard, Silk Trap, Spiky Shield, or Wide Guard, or if it was one of those moves and the user's protection was broken. Fails if the user moves last this turn."
-        }
-    },
-    "burningjealousy": {
-        "name": "Burning Jealousy",
-        "type": "Fire",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 100% chance to burn the target if it had a stat stage raised this turn."
-        }
-    },
-    "burnup": {
-        "name": "Burn Up",
-        "type": "Fire",
-        "power": 130,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Fails unless the user is a Fire type. If this move is successful and the user is not Terastallized, the user's Fire type becomes typeless as long as it remains active."
-        }
-    },
-    "buzzybuzz": {
-        "name": "Buzzy Buzz",
-        "type": "Electric",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "statusRate": 100,
-            "desc": "Has a 100% chance to paralyze the foe."
-        }
-    },
-    "calmmind": {
-        "name": "Calm Mind",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spa": 1,
-                "spd": 1
-            },
-            "desc": "Raises the user's Special Attack and Special Defense by 1 stage."
-        }
-    },
-    "camouflage": {
-        "name": "Camouflage",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user's type changes based on the battle terrain. Normal type on the regular Wi-Fi terrain, Electric type during Electric Terrain, Fairy type during Misty Terrain, Grass type during Grassy Terrain, and Psychic type during Psychic Terrain. Fails if the user's type cannot be changed or if the user is already purely that type."
-        }
-    },
-    "captivate": {
-        "name": "Captivate",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spa": -2
-            },
-            "desc": "Lowers the target's Special Attack by 2 stages. The target is unaffected if both the user and the target are the same gender, or if either is genderless. Pokemon with the Oblivious Ability are immune."
-        }
-    },
-    "ceaselessedge": {
-        "name": "Ceaseless Edge",
-        "type": "Dark",
-        "power": 65,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, it sets up a hazard on the opposing side of the field, damaging each opposing Pokemon that switches in, unless it is a Flying-type Pokemon or has the Levitate Ability. A maximum of three layers may be set, and opponents lose 1/8 of their maximum HP with one layer, 1/6 of their maximum HP with two layers, and 1/4 of their maximum HP with three layers, all rounded down. Can be removed from the opposing side if any Pokemon uses Tidy Up, or if any opposing Pokemon uses Mortal Spin, Rapid Spin, or Defog successfully, or is hit by Defog."
-        }
-    },
-    "celebrate": {
-        "name": "Celebrate",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "No competitive use."
-        }
-    },
-    "charge": {
-        "name": "Charge",
-        "type": "Electric",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spd": 1
-            },
-            "desc": "Raises the user's Special Defense by 1 stage. The user's next Electric-type attack will have its power doubled; the effect ends when the user is no longer active, or after the user attempts to use any Electric-type move besides Charge, even if it is not successful."
-        }
-    },
-    "chargebeam": {
-        "name": "Charge Beam",
-        "type": "Electric",
-        "power": 50,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 70% chance to raise the user's Special Attack by 1 stage."
-        }
-    },
-    "charm": {
-        "name": "Charm",
-        "type": "Fairy",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": -2
-            },
-            "desc": "Lowers the target's Attack by 2 stages."
-        }
-    },
-    "chatter": {
-        "name": "Chatter",
-        "type": "Flying",
-        "power": 65,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 100% chance to confuse the target."
-        }
-    },
-    "chillingwater": {
-        "name": "Chilling Water",
-        "type": "Water",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "atk": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Attack by 1 stage."
-        }
-    },
-    "chillyreception": {
-        "name": "Chilly Reception",
-        "type": "Ice",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "weather": "Snowscape",
-            "desc": "For 5 turns, the weather becomes Snow. The user switches out even if it is trapped and is replaced immediately by a selected party member. The user does not switch out if there are no unfainted party members."
-        }
-    },
-    "chipaway": {
-        "name": "Chip Away",
-        "type": "Normal",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Ignores the target's stat stage changes, including evasiveness."
-        }
-    },
-    "chloroblast": {
-        "name": "Chloroblast",
-        "type": "Grass",
-        "power": 150,
-        "accuracy": 95,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, the user loses 1/2 of its maximum HP, rounded up, unless the user has the Magic Guard or Rock Head Abilities."
-        }
-    },
-    "circlethrow": {
-        "name": "Circle Throw",
-        "type": "Fighting",
-        "power": 60,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": -6,
-        "effects": {
-            "forceSwitch": true,
-            "desc": "If both the user and the target have not fainted, the target is forced to switch out and be replaced with a random unfainted ally. This effect fails if the target is under the effect of Ingrain, has the Suction Cups Ability, or this move hit a substitute."
-        }
-    },
-    "clamp": {
-        "name": "Clamp",
-        "type": "Water",
-        "power": 35,
-        "accuracy": 85,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Prevents the target from switching for four or five turns (seven turns if the user is holding Grip Claw). Causes damage to the target equal to 1/8 of its maximum HP (1/6 if the user is holding Binding Band), rounded down, at the end of each turn during effect. The target can still switch out if it is holding Shed Shell or uses Baton Pass, Flip Turn, Parting Shot, Shed Tail, Teleport, U-turn, or Volt Switch. The effect ends if either the user or the target leaves the field, or if the target uses Mortal Spin, Rapid Spin, or Substitute successfully. This effect is not stackable or reset by using this or another binding move."
-        }
-    },
-    "clangingscales": {
-        "name": "Clanging Scales",
-        "type": "Dragon",
-        "power": 110,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Lowers the user's Defense by 1 stage."
-        }
-    },
-    "clangoroussoul": {
-        "name": "Clangorous Soul",
-        "type": "Dragon",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": 1,
-                "def": 1,
-                "spa": 1,
-                "spd": 1,
-                "spe": 1
-            },
-            "desc": "Raises the user's Attack, Defense, Special Attack, Special Defense, and Speed by 1 stage in exchange for the user losing 33% of its maximum HP, rounded down. Fails if the user would faint or if its Attack, Defense, Special Attack, Special Defense, and Speed stat stages would not change."
-        }
-    },
-    "clearsmog": {
-        "name": "Clear Smog",
-        "type": "Poison",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "hazeTarget": true,
-            "desc": "Resets all of the target's stat stages to 0."
-        }
-    },
-    "closecombat": {
-        "name": "Close Combat",
-        "type": "Fighting",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Lowers the user's Defense and Special Defense by 1 stage."
-        }
-    },
-    "coaching": {
-        "name": "Coaching",
-        "type": "Fighting",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": 1,
-                "def": 1
-            },
-            "desc": "Raises the target's Attack and Defense by 1 stage. Fails if there is no ally adjacent to the user."
-        }
-    },
-    "coil": {
-        "name": "Coil",
-        "type": "Poison",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": 1,
-                "def": 1,
-                "accuracy": 1
-            },
-            "desc": "Raises the user's Attack, Defense, and accuracy by 1 stage."
-        }
-    },
-    "collisioncourse": {
-        "name": "Collision Course",
-        "type": "Fighting",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Damage is multiplied by 1.3333 if this move is super effective against the target."
-        }
-    },
-    "combattorque": {
-        "name": "Combat Torque",
-        "type": "Fighting",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to paralyze the target."
-        }
-    },
-    "cometpunch": {
-        "name": "Comet Punch",
-        "type": "Normal",
-        "power": 18,
-        "accuracy": 85,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                5
-            ],
-            "desc": "Hits two to five times. Has a 35% chance to hit two or three times and a 15% chance to hit four or five times. If one of the hits breaks the target's substitute, it will take damage for the remaining hits. If the user has the Skill Link Ability, this move will always hit five times."
-        }
-    },
-    "comeuppance": {
-        "name": "Comeuppance",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals damage to the last opposing Pokemon to hit the user with a physical or special attack this turn equal to 1.5 times the HP lost by the user from that attack, rounded down. If the user did not lose HP from that attack, this move deals 1 HP of damage instead. If that opposing Pokemon's position is no longer in use and there is another opposing Pokemon on the field, the damage is done to it instead. Only the last hit of a multi-hit attack is counted. Fails if the user was not hit by an opposing Pokemon's physical or special attack this turn."
-        }
-    },
-    "confide": {
-        "name": "Confide",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spa": -1
-            },
-            "desc": "Lowers the target's Special Attack by 1 stage."
-        }
-    },
-    "confuseray": {
-        "name": "Confuse Ray",
-        "type": "Ghost",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Causes the target to become confused."
-        }
-    },
-    "confusion": {
-        "name": "Confusion",
-        "type": "Psychic",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 10% chance to confuse the target."
-        }
-    },
-    "constrict": {
-        "name": "Constrict",
-        "type": "Normal",
-        "power": 10,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spe": -1
-            },
-            "dropRate": 10,
-            "desc": "Has a 10% chance to lower the target's Speed by 1 stage."
-        }
-    },
-    "conversion": {
-        "name": "Conversion",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user's type changes to match the original type of the move in its first move slot. Fails if the user cannot change its type, or if the type is one of the user's current types."
-        }
-    },
-    "conversion2": {
-        "name": "Conversion 2",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user's type changes to match a type that resists or is immune to the type of the last move used by the target, but not either of its current types. The determined type of the move is used rather than the original type. Fails if the target has not made a move, if the user cannot change its type, or if this move would only be able to select one of the user's current types."
-        }
-    },
-    "copycat": {
-        "name": "Copycat",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user uses the last move used by any Pokemon, including itself. Fails if no move has been used, or if the last move used was Assist, Baneful Bunker, Beak Blast, Behemoth Bash, Behemoth Blade, Belch, Bestow, Blazing Torque, Celebrate, Chatter, Circle Throw, Combat Torque, Copycat, Counter, Covet, Destiny Bond, Detect, Dragon Tail, Dynamax Cannon, Endure, Feint, Focus Punch, Follow Me, Helping Hand, Hold Hands, King's Shield, Magical Torque, Mat Block, Me First, Metronome, Mimic, Mirror Move, Nature Power, Noxious Torque, Protect, Rage Powder, Roar, Shell Trap, Sketch, Sleep Talk, Snatch, Spiky Shield, Spotlight, Struggle, Switcheroo, Tera Starstorm, Thief, Transform, Trick, Whirlwind, or Wicked Torque."
-        }
-    },
-    "coreenforcer": {
-        "name": "Core Enforcer",
-        "type": "Dragon",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If the user moves after the target, the target's Ability is rendered ineffective as long as it remains active. If the target uses Baton Pass, the replacement will remain under this effect. If the target's Ability is As One, Battle Bond, Comatose, Disguise, Gulp Missile, Ice Face, Multitype, Power Construct, RKS System, Schooling, Shields Down, Stance Change, Tera Shift, Zen Mode, or Zero to Hero, this effect does not happen, and receiving the effect through Baton Pass ends the effect immediately."
-        }
-    },
-    "corrosivegas": {
-        "name": "Corrosive Gas",
-        "type": "Poison",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The target loses its held item. This move cannot cause Pokemon with the Sticky Hold Ability to lose their held item or cause a Kyogre, a Groudon, a Giratina, an Arceus, a Genesect, a Silvally, a Zacian, or a Zamazenta to lose their Blue Orb, Red Orb, Griseous Orb, Plate, Drive, Memory, Rusted Sword, or Rusted Shield respectively. Items lost to this move cannot be regained with Recycle or the Harvest Ability."
-        }
-    },
-    "cosmicpower": {
-        "name": "Cosmic Power",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "def": 1,
-                "spd": 1
-            },
-            "desc": "Raises the user's Defense and Special Defense by 1 stage."
-        }
-    },
-    "cottonguard": {
-        "name": "Cotton Guard",
-        "type": "Grass",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "def": 3
-            },
-            "desc": "Raises the user's Defense by 3 stages."
-        }
-    },
-    "cottonspore": {
-        "name": "Cotton Spore",
-        "type": "Grass",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spe": -2
-            },
-            "desc": "Lowers the target's Speed by 2 stages."
-        }
-    },
-    "counter": {
-        "name": "Counter",
-        "type": "Fighting",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": -5,
-        "effects": {
-            "desc": "Deals damage to the last opposing Pokemon to hit the user with a physical attack this turn equal to twice the HP lost by the user from that attack. If the user did not lose HP from the attack, this move deals 1 HP of damage instead. If that opposing Pokemon's position is no longer in use and there is another opposing Pokemon on the field, the damage is done to it instead. Only the last hit of a multi-hit attack is counted. Fails if the user was not hit by an opposing Pokemon's physical attack this turn."
-        }
-    },
-    "courtchange": {
-        "name": "Court Change",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Switches the Mist, Light Screen, Reflect, Spikes, Safeguard, Tailwind, Toxic Spikes, Stealth Rock, Water Pledge, Fire Pledge, Grass Pledge, Sticky Web, Aurora Veil, G-Max Steelsurge, G-Max Cannonade, G-Max Vine Lash, and G-Max Wildfire effects from the user's side to the opposing side and vice versa."
-        }
-    },
-    "covet": {
-        "name": "Covet",
-        "type": "Normal",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this attack was successful and the user has not fainted, it steals the target's held item if the user is not holding one. The target's item is not stolen if it is a Mail or Z-Crystal, or if the target is a Kyogre holding a Blue Orb, a Groudon holding a Red Orb, a Giratina holding a Griseous Orb, an Arceus holding a Plate, a Genesect holding a Drive, a Silvally holding a Memory, or a Pokemon that can Mega Evolve holding the Mega Stone for its species. Items lost to this move cannot be regained with Recycle or the Harvest Ability."
-        }
-    },
-    "crabhammer": {
-        "name": "Crabhammer",
-        "type": "Water",
-        "power": 100,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a higher chance for a critical hit."
-        }
-    },
-    "craftyshield": {
-        "name": "Crafty Shield",
-        "type": "Fairy",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 3,
-        "effects": {
-            "desc": "The user and its party members are protected from non-damaging attacks made by other Pokemon, including allies, during this turn. Fails if the user moves last this turn or if this move is already in effect for the user's side."
-        }
-    },
-    "crosschop": {
-        "name": "Cross Chop",
-        "type": "Fighting",
-        "power": 100,
-        "accuracy": 80,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a higher chance for a critical hit."
-        }
-    },
-    "crosspoison": {
-        "name": "Cross Poison",
-        "type": "Poison",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "PSN",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to poison the target and a higher chance for a critical hit."
-        }
-    },
-    "crunch": {
-        "name": "Crunch",
-        "type": "Dark",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "def": -1
-            },
-            "dropRate": 20,
-            "desc": "Has a 20% chance to lower the target's Defense by 1 stage."
-        }
-    },
-    "crushclaw": {
-        "name": "Crush Claw",
-        "type": "Normal",
-        "power": 75,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "def": -1
-            },
-            "dropRate": 50,
-            "desc": "Has a 50% chance to lower the target's Defense by 1 stage."
-        }
-    },
-    "crushgrip": {
-        "name": "Crush Grip",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power is equal to 120 * (target's current HP / target's maximum HP), rounded half down, but not less than 1."
-        }
-    },
-    "curse": {
-        "name": "Curse",
-        "type": "Ghost",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "curse": true,
-            "desc": "If the user is not a Ghost type, lowers the user's Speed by 1 stage and raises the user's Attack and Defense by 1 stage. If the user is a Ghost type, the user loses 1/2 of its maximum HP, rounded down and even if it would cause fainting, in exchange for the target losing 1/4 of its maximum HP, rounded down, at the end of each turn while it is active. If the target uses Baton Pass, the replacement will continue to be affected. Fails if there is no target or if the target is already affected."
-        }
-    },
-    "cut": {
-        "name": "Cut",
-        "type": "Normal",
-        "power": 50,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "darkestlariat": {
-        "name": "Darkest Lariat",
-        "type": "Dark",
-        "power": 85,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Ignores the target's stat stage changes, including evasiveness."
-        }
-    },
-    "darkpulse": {
-        "name": "Dark Pulse",
-        "type": "Dark",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 20% chance to make the target flinch."
-        }
-    },
-    "darkvoid": {
-        "name": "Dark Void",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 50,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "status": "SLP",
-            "desc": "Causes the target to fall asleep. This move cannot be used successfully unless the user's current form, while considering Transform, is Darkrai."
-        }
-    },
-    "dazzlinggleam": {
-        "name": "Dazzling Gleam",
-        "type": "Fairy",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "decorate": {
-        "name": "Decorate",
-        "type": "Fairy",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": 2,
-                "spa": 2
-            },
-            "desc": "Raises the target's Attack and Special Attack by 2 stages."
-        }
-    },
-    "defendorder": {
-        "name": "Defend Order",
-        "type": "Bug",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "def": 1,
-                "spd": 1
-            },
-            "desc": "Raises the user's Defense and Special Defense by 1 stage."
-        }
-    },
-    "defensecurl": {
-        "name": "Defense Curl",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "def": 1
-            },
-            "desc": "Raises the user's Defense by 1 stage. As long as the user remains active, the power of the user's Ice Ball and Rollout will be doubled (this effect is not stackable)."
-        }
-    },
-    "defog": {
-        "name": "Defog",
-        "type": "Flying",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "clearHazards": true,
-            "desc": "Lowers the target's evasiveness by 1 stage. If this move is successful and whether or not the target's evasiveness was affected, the effects of Reflect, Light Screen, Aurora Veil, Safeguard, Mist, Spikes, Toxic Spikes, Stealth Rock, and Sticky Web end for the target's side, and the effects of Spikes, Toxic Spikes, Stealth Rock, and Sticky Web end for the user's side. Ignores a target's substitute, although a substitute will still block the lowering of evasiveness. If there is a terrain active and this move is successful, the terrain will be cleared."
-        }
-    },
-    "destinybond": {
-        "name": "Destiny Bond",
-        "type": "Ghost",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "destinyBond": true,
-            "desc": "Until the user's next move, if an opposing Pokemon's attack knocks the user out, that Pokemon faints as well, unless the attack was Doom Desire or Future Sight. Fails if the user used this move successfully as its last move, disregarding moves used through the Dancer Ability."
-        }
-    },
-    "detect": {
-        "name": "Detect",
-        "type": "Fighting",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 4,
-        "effects": {
-            "protect": true,
-            "desc": "The user is protected from most attacks made by other Pokemon during this turn. This move has a 1/X chance of being successful, where X starts at 1 and triples each time this move is successfully used. X resets to 1 if this move fails, if the user's last move used is not Baneful Bunker, Burning Bulwark, Detect, Endure, King's Shield, Max Guard, Obstruct, Protect, Quick Guard, Silk Trap, Spiky Shield, or Wide Guard, or if it was one of those moves and the user's protection was broken. Fails if the user moves last this turn."
-        }
-    },
-    "diamondstorm": {
-        "name": "Diamond Storm",
-        "type": "Rock",
-        "power": 100,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 50% chance to raise the user's Defense by 2 stages."
-        }
-    },
-    "dig": {
-        "name": "Dig",
-        "type": "Ground",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This attack charges on the first turn and executes on the second. On the first turn, the user avoids all attacks other than Earthquake and Magnitude but takes double damage from them, and is also unaffected by weather. If the user is holding a Power Herb, the move completes in one turn."
-        }
-    },
-    "direclaw": {
-        "name": "Dire Claw",
-        "type": "Poison",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 50% chance to cause the target to either fall asleep, become poisoned, or become paralyzed."
-        }
-    },
-    "disable": {
-        "name": "Disable",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "For 4 turns, the target's last move used becomes disabled. Fails if one of the target's moves is already disabled, if the target has not made a move, if the target no longer knows the move, or if the move was a Max or G-Max Move."
-        }
-    },
-    "disarmingvoice": {
-        "name": "Disarming Voice",
-        "type": "Fairy",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "This move does not check accuracy."
-        }
-    },
-    "discharge": {
-        "name": "Discharge",
-        "type": "Electric",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to paralyze the target."
-        }
-    },
-    "dive": {
-        "name": "Dive",
-        "type": "Water",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This attack charges on the first turn and executes on the second. On the first turn, the user avoids all attacks other than Surf and Whirlpool but takes double damage from them, and is also unaffected by weather. If the user is holding a Power Herb, the move completes in one turn."
-        }
-    },
-    "dizzypunch": {
-        "name": "Dizzy Punch",
-        "type": "Normal",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 20% chance to confuse the target."
-        }
-    },
-    "doodle": {
-        "name": "Doodle",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user and its ally's Abilities change to match the target's Ability. Does not change Ability if the user's or its ally's is As One, Battle Bond, Comatose, Disguise, Gulp Missile, Ice Face, Multitype, Power Construct, RKS System, Schooling, Shields Down, Stance Change, Tera Shift, Zen Mode, Zero to Hero, or already matches the target. Fails if both the user and its ally's Ability already matches the target, or if the target's Ability is As One, Battle Bond, Comatose, Commander, Disguise, Embody Aspect, Flower Gift, Forecast, Hunger Switch, Ice Face, Illusion, Imposter, Multitype, Neutralizing Gas, Poison Puppeteer, Power Construct, Power of Alchemy, Protosynthesis, Quark Drive, Receiver, RKS System, Schooling, Shields Down, Stance Change, Tera Shell, Tera Shift, Teraform Zero, Trace, Wonder Guard, Zen Mode, or Zero to Hero."
-        }
-    },
-    "doomdesire": {
-        "name": "Doom Desire",
-        "type": "Steel",
-        "power": 140,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals damage two turns after this move is used. At the end of that turn, the damage is calculated at that time and dealt to the Pokemon at the position the target had when the move was used. If the user is no longer active at the time, damage is calculated based on the user's natural Special Attack stat, types, and level, with no boosts from its held item or Ability. Fails if this move or Future Sight is already in effect for the target's position."
-        }
-    },
-    "doubleedge": {
-        "name": "Double-Edge",
-        "type": "Normal",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "recoilPerc": 0.33,
-            "desc": "If the target lost HP, the user takes recoil damage equal to 33% the HP lost by the target, rounded half up, but not less than 1 HP."
-        }
-    },
-    "doublehit": {
-        "name": "Double Hit",
-        "type": "Normal",
-        "power": 35,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                2
-            ],
-            "desc": "Hits twice. If the first hit breaks the target's substitute, it will take damage for the second hit."
-        }
-    },
-    "doubleironbash": {
-        "name": "Double Iron Bash",
-        "type": "Steel",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                2
-            ],
-            "desc": "Hits twice. If the first hit breaks the target's substitute, it will take damage for the second hit. Has a 30% chance to make the target flinch."
-        }
-    },
-    "doublekick": {
-        "name": "Double Kick",
-        "type": "Fighting",
-        "power": 30,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                2
-            ],
-            "desc": "Hits twice. If the first hit breaks the target's substitute, it will take damage for the second hit."
-        }
-    },
-    "doubleshock": {
-        "name": "Double Shock",
-        "type": "Electric",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Fails unless the user is an Electric type. If this move is successful and the user is not Terastallized, the user's Electric type becomes typeless as long as it remains active."
-        }
-    },
-    "doubleslap": {
-        "name": "Double Slap",
-        "type": "Normal",
-        "power": 15,
-        "accuracy": 85,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                5
-            ],
-            "desc": "Hits two to five times. Has a 35% chance to hit two or three times and a 15% chance to hit four or five times. If one of the hits breaks the target's substitute, it will take damage for the remaining hits. If the user has the Skill Link Ability, this move will always hit five times."
-        }
-    },
-    "doubleteam": {
-        "name": "Double Team",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "evasion": 1
-            },
-            "desc": "Raises the user's evasiveness by 1 stage."
-        }
-    },
-    "dracometeor": {
-        "name": "Draco Meteor",
-        "type": "Dragon",
-        "power": 130,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Lowers the user's Special Attack by 2 stages."
-        }
-    },
-    "dragonascent": {
-        "name": "Dragon Ascent",
-        "type": "Flying",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Lowers the user's Defense and Special Defense by 1 stage."
-        }
-    },
-    "dragonbreath": {
-        "name": "Dragon Breath",
-        "type": "Dragon",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to paralyze the target."
-        }
-    },
-    "dragoncheer": {
-        "name": "Dragon Cheer",
-        "type": "Dragon",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Raises the target's chance for a critical hit by 1 stage, or by 2 stages if the target is Dragon type. Fails if there is no ally adjacent to the user, or if the target already has this effect or the Focus Energy effect. Baton Pass can be used to transfer this effect to an ally."
-        }
-    },
-    "dragonclaw": {
-        "name": "Dragon Claw",
-        "type": "Dragon",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "dragondance": {
-        "name": "Dragon Dance",
-        "type": "Dragon",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": 1,
-                "spe": 1
-            },
-            "desc": "Raises the user's Attack and Speed by 1 stage."
-        }
-    },
-    "dragondarts": {
-        "name": "Dragon Darts",
-        "type": "Dragon",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                2
-            ],
-            "desc": "Hits twice. If the first hit breaks the target's substitute, it will take damage for the second hit. In Double Battles, this move attempts to hit the targeted Pokemon and its ally once each. If hitting one of these Pokemon would be prevented by immunity, protection, semi-invulnerability, an Ability, or accuracy, it attempts to hit the other Pokemon twice instead. If this move is redirected, it hits that target twice."
-        }
-    },
-    "dragonenergy": {
-        "name": "Dragon Energy",
-        "type": "Dragon",
-        "power": 150,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Power is equal to (user's current HP * 150 / user's maximum HP), rounded down, but not less than 1."
-        }
-    },
-    "dragonhammer": {
-        "name": "Dragon Hammer",
-        "type": "Dragon",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "dragonpulse": {
-        "name": "Dragon Pulse",
-        "type": "Dragon",
-        "power": 85,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "dragonrage": {
-        "name": "Dragon Rage",
-        "type": "Dragon",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals 40 HP of damage to the target."
-        }
-    },
-    "dragonrush": {
-        "name": "Dragon Rush",
-        "type": "Dragon",
-        "power": 100,
-        "accuracy": 75,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 20% chance to make the target flinch. Damage doubles and no accuracy check is done if the target has used Minimize while active."
-        }
-    },
-    "dragontail": {
-        "name": "Dragon Tail",
-        "type": "Dragon",
-        "power": 60,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": -6,
-        "effects": {
-            "forceSwitch": true,
-            "desc": "If both the user and the target have not fainted, the target is forced to switch out and be replaced with a random unfainted ally. This effect fails if the target used Ingrain previously, has the Suction Cups Ability, or this move hit a substitute."
-        }
-    },
-    "drainingkiss": {
-        "name": "Draining Kiss",
-        "type": "Fairy",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "drainPerc": 0.75,
-            "desc": "The user recovers 3/4 the HP lost by the target, rounded half up. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down."
-        }
-    },
-    "drainpunch": {
-        "name": "Drain Punch",
-        "type": "Fighting",
-        "power": 75,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "drainPerc": 0.5,
-            "desc": "The user recovers 1/2 the HP lost by the target, rounded half up. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down."
-        }
-    },
-    "dreameater": {
-        "name": "Dream Eater",
-        "type": "Psychic",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "drainPerc": 0.5,
-            "desc": "The target is unaffected by this move unless it is asleep. The user recovers 1/2 the HP lost by the target, rounded half up. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down."
-        }
-    },
-    "drillpeck": {
-        "name": "Drill Peck",
-        "type": "Flying",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "drillrun": {
-        "name": "Drill Run",
-        "type": "Ground",
-        "power": 80,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a higher chance for a critical hit."
-        }
-    },
-    "drumbeating": {
-        "name": "Drum Beating",
-        "type": "Grass",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spe": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Speed by 1 stage."
-        }
-    },
-    "dualchop": {
-        "name": "Dual Chop",
-        "type": "Dragon",
-        "power": 40,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                2
-            ],
-            "desc": "Hits twice. If the first hit breaks the target's substitute, it will take damage for the second hit."
-        }
-    },
-    "dualwingbeat": {
-        "name": "Dual Wingbeat",
-        "type": "Flying",
-        "power": 40,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                2
-            ],
-            "desc": "Hits twice. If the first hit breaks the target's substitute, it will take damage for the second hit."
-        }
-    },
-    "dynamaxcannon": {
-        "name": "Dynamax Cannon",
-        "type": "Dragon",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "dynamicpunch": {
-        "name": "Dynamic Punch",
-        "type": "Fighting",
-        "power": 100,
-        "accuracy": 50,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 100% chance to confuse the target."
-        }
-    },
-    "earthpower": {
-        "name": "Earth Power",
-        "type": "Ground",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spd": -1
-            },
-            "dropRate": 10,
-            "desc": "Has a 10% chance to lower the target's Special Defense by 1 stage."
-        }
-    },
-    "earthquake": {
-        "name": "Earthquake",
-        "type": "Ground",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Damage doubles if the target is using Dig."
-        }
-    },
-    "echoedvoice": {
-        "name": "Echoed Voice",
-        "type": "Normal",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "For every consecutive turn that this move is used by at least one Pokemon, this move's power is multiplied by the number of turns to pass, but not more than 5."
-        }
-    },
-    "eerieimpulse": {
-        "name": "Eerie Impulse",
-        "type": "Electric",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spa": -2
-            },
-            "desc": "Lowers the target's Special Attack by 2 stages."
-        }
-    },
-    "eeriespell": {
-        "name": "Eerie Spell",
-        "type": "Psychic",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful and the user has not fainted, the target loses 3 PP from its last move."
-        }
-    },
-    "eggbomb": {
-        "name": "Egg Bomb",
-        "type": "Normal",
-        "power": 100,
-        "accuracy": 75,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "electricterrain": {
-        "name": "Electric Terrain",
-        "type": "Electric",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "For 5 turns, the terrain becomes Electric Terrain. During the effect, the power of Electric-type attacks made by grounded Pokemon is multiplied by 1.3 and grounded Pokemon cannot fall asleep; Pokemon already asleep do not wake up. Grounded Pokemon cannot become affected by Yawn or fall asleep from its effect. Camouflage transforms the user into an Electric type, Nature Power becomes Thunderbolt, and Secret Power has a 30% chance to cause paralysis. Fails if the current terrain is Electric Terrain."
-        }
-    },
-    "electrify": {
-        "name": "Electrify",
-        "type": "Electric",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Causes the target's move to become Electric type this turn. Among effects that can change a move's type, this effect happens last. Fails if the target already moved this turn."
-        }
-    },
-    "electroball": {
-        "name": "Electro Ball",
-        "type": "Electric",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "The power of this move depends on (user's current Speed / target's current Speed), rounded down. Power is equal to 150 if the result is 4 or more, 120 if 3, 80 if 2, 60 if 1, 40 if less than 1. If the target's current Speed is 0, this move's power is 40."
-        }
-    },
-    "electrodrift": {
-        "name": "Electro Drift",
-        "type": "Electric",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Damage is multiplied by 1.3333 if this move is super effective against the target."
-        }
-    },
-    "electroshot": {
-        "name": "Electro Shot",
-        "type": "Electric",
-        "power": 130,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "This attack charges on the first turn and executes on the second. Raises the user's Special Attack by 1 stage on the first turn. If the user is holding a Power Herb or the weather is Primordial Sea or Rain Dance, the move completes in one turn. If the user is holding Utility Umbrella and the weather is Primordial Sea or Rain Dance, the move still requires a turn to charge."
-        }
-    },
-    "electroweb": {
-        "name": "Electroweb",
-        "type": "Electric",
-        "power": 55,
-        "accuracy": 95,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spe": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Speed by 1 stage."
-        }
-    },
-    "embargo": {
-        "name": "Embargo",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "For 5 turns, the target's held item has no effect. An item's effect of causing forme changes is unaffected, but any other effects from such items are negated. During the effect, Fling and Natural Gift are prevented from being used by the target. Items thrown at the target with Fling will still activate for it. If the target uses Baton Pass, the replacement will remain unable to use items."
-        }
-    },
-    "ember": {
-        "name": "Ember",
-        "type": "Fire",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to burn the target."
-        }
-    },
-    "encore": {
-        "name": "Encore",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "encore": 3,
-            "desc": "For its next 3 turns, the target is forced to repeat its last move used. If the affected move runs out of PP, the effect ends. Fails if the target is already under this effect, if it has not made a move, if the move has 0 PP, or if the move is Assist, Blazing Torque, Combat Torque, Copycat, Dynamax Cannon, Encore, Magical Torque, Me First, Metronome, Mimic, Mirror Move, Nature Power, Noxious Torque, Sketch, Sleep Talk, Struggle, Transform, or Wicked Torque."
-        }
-    },
-    "endeavor": {
-        "name": "Endeavor",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals damage to the target equal to (target's current HP - user's current HP). The target is unaffected if its current HP is less than or equal to the user's current HP."
-        }
-    },
-    "endure": {
-        "name": "Endure",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 4,
-        "effects": {
-            "desc": "The user will survive attacks made by other Pokemon during this turn with at least 1 HP. This move has a 1/X chance of being successful, where X starts at 1 and triples each time this move is successfully used. X resets to 1 if this move fails, if the user's last move used is not Baneful Bunker, Burning Bulwark, Detect, Endure, King's Shield, Max Guard, Obstruct, Protect, Quick Guard, Silk Trap, Spiky Shield, or Wide Guard, or if it was one of those moves and the user's protection was broken. Fails if the user moves last this turn."
-        }
-    },
-    "energyball": {
-        "name": "Energy Ball",
-        "type": "Grass",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spd": -1
-            },
-            "dropRate": 10,
-            "desc": "Has a 10% chance to lower the target's Special Defense by 1 stage."
-        }
-    },
-    "entrainment": {
-        "name": "Entrainment",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Causes the target's Ability to become the same as the user's. Fails if the target's Ability is As One, Battle Bond, Comatose, Disguise, Gulp Missile, Ice Face, Multitype, Power Construct, RKS System, Schooling, Shields Down, Stance Change, Tera Shift, Truant, Zen Mode, or Zero to Hero, or the same Ability as the user, or if the user's Ability is As One, Battle Bond, Comatose, Commander, Disguise, Embody Aspect, Flower Gift, Forecast, Hunger Switch, Ice Face, Illusion, Imposter, Multitype, Neutralizing Gas, Poison Puppeteer, Power Construct, Power of Alchemy, Protosynthesis, Quark Drive, Receiver, RKS System, Schooling, Shields Down, Stance Change, Tera Shell, Tera Shift, Teraform Zero, Trace, Wonder Guard, Zen Mode, or Zero to Hero."
-        }
-    },
-    "eruption": {
-        "name": "Eruption",
-        "type": "Fire",
-        "power": 150,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Power is equal to (user's current HP * 150 / user's maximum HP), rounded down, but not less than 1."
-        }
-    },
-    "esperwing": {
-        "name": "Esper Wing",
-        "type": "Psychic",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 100% chance to raise the user's Speed by 1 stage and a higher chance for a critical hit."
-        }
-    },
-    "eternabeam": {
-        "name": "Eternabeam",
-        "type": "Dragon",
-        "power": 160,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, the user must recharge on the following turn and cannot select a move."
-        }
-    },
-    "expandingforce": {
-        "name": "Expanding Force",
-        "type": "Psychic",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If the current terrain is Psychic Terrain and the user is grounded, this move hits all opposing Pokemon and has its power multiplied by 1.5."
-        }
-    },
-    "explosion": {
-        "name": "Explosion",
-        "type": "Normal",
-        "power": 250,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "The user faints after using this move, even if this move fails for having no target. This move is prevented from executing if any active Pokemon has the Damp Ability."
-        }
-    },
-    "extrasensory": {
-        "name": "Extrasensory",
-        "type": "Psychic",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 10% chance to make the target flinch."
-        }
-    },
-    "extremespeed": {
-        "name": "Extreme Speed",
-        "type": "Normal",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 2,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "facade": {
-        "name": "Facade",
-        "type": "Normal",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power doubles if the user is burned, paralyzed, or poisoned. The physical damage halving effect from the user's burn is ignored."
-        }
-    },
-    "fairylock": {
-        "name": "Fairy Lock",
-        "type": "Fairy",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Prevents all active Pokemon from switching next turn. A Pokemon can still switch out if it is holding Shed Shell or uses Baton Pass, Flip Turn, Parting Shot, Teleport, U-turn, or Volt Switch. Fails if the effect is already active."
-        }
-    },
-    "fairywind": {
-        "name": "Fairy Wind",
-        "type": "Fairy",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "fakeout": {
-        "name": "Fake Out",
-        "type": "Normal",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 3,
-        "effects": {
-            "desc": "Has a 100% chance to make the target flinch. Fails unless it is the user's first turn on the field."
-        }
-    },
-    "faketears": {
-        "name": "Fake Tears",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spd": -2
-            },
-            "desc": "Lowers the target's Special Defense by 2 stages."
-        }
-    },
-    "falsesurrender": {
-        "name": "False Surrender",
-        "type": "Dark",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This move does not check accuracy."
-        }
-    },
-    "falseswipe": {
-        "name": "False Swipe",
-        "type": "Normal",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Leaves the target with at least 1 HP."
-        }
-    },
-    "featherdance": {
-        "name": "Feather Dance",
-        "type": "Flying",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": -2
-            },
-            "desc": "Lowers the target's Attack by 2 stages."
-        }
-    },
-    "feint": {
-        "name": "Feint",
-        "type": "Normal",
-        "power": 30,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 2,
-        "effects": {
-            "desc": "If this move is successful, it breaks through the target's Baneful Bunker, Detect, King's Shield, Protect, or Spiky Shield for this turn, allowing other Pokemon to attack the target normally. If the target's side is protected by Crafty Shield, Mat Block, Quick Guard, or Wide Guard, that protection is also broken for this turn and other Pokemon may attack the target's side normally."
-        }
-    },
-    "feintattack": {
-        "name": "Feint Attack",
-        "type": "Dark",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This move does not check accuracy."
-        }
-    },
-    "fellstinger": {
-        "name": "Fell Stinger",
-        "type": "Bug",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Raises the user's Attack by 3 stages if this move knocks out the target."
-        }
-    },
-    "ficklebeam": {
-        "name": "Fickle Beam",
-        "type": "Dragon",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 30% chance this move's power is doubled."
-        }
-    },
-    "fierydance": {
-        "name": "Fiery Dance",
-        "type": "Fire",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 50% chance to raise the user's Special Attack by 1 stage."
-        }
-    },
-    "fierywrath": {
-        "name": "Fiery Wrath",
-        "type": "Dark",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 20% chance to make the target flinch."
-        }
-    },
-    "filletaway": {
-        "name": "Fillet Away",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": 2,
-                "spa": 2,
-                "spe": 2
-            },
-            "desc": "Raises the user's Attack, Special Attack, and Speed by 2 stages in exchange for the user losing 1/2 of its maximum HP, rounded down. Fails if the user would faint or if its Attack, Special Attack, and Speed stat stages would not change."
-        }
-    },
-    "finalgambit": {
-        "name": "Final Gambit",
-        "type": "Fighting",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals damage to the target equal to the user's current HP. If this move is successful, the user faints."
-        }
-    },
-    "fireblast": {
-        "name": "Fire Blast",
-        "type": "Fire",
-        "power": 110,
-        "accuracy": 85,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to burn the target."
-        }
-    },
-    "firefang": {
-        "name": "Fire Fang",
-        "type": "Fire",
-        "power": 65,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 10% chance to burn the target and a 10% chance to make it flinch."
-        }
-    },
-    "firelash": {
-        "name": "Fire Lash",
-        "type": "Fire",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "def": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Defense by 1 stage."
-        }
-    },
-    "firepledge": {
-        "name": "Fire Pledge",
-        "type": "Fire",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If one of the user's allies chose to use Grass Pledge or Water Pledge this turn and has not moved yet, it takes its turn immediately after the user and the user's move does nothing. If combined with Grass Pledge, the ally uses Fire Pledge with 150 power and a sea of fire appears on the target's side for 4 turns, which causes damage to non-Fire types equal to 1/8 of their maximum HP, rounded down, at the end of each turn during effect, including the last turn. If combined with Water Pledge, the ally uses Water Pledge with 150 power and a rainbow appears on the user's side for 4 turns, which doubles secondary effect chances and stacks with the Serene Grace Ability, except effects that cause flinching can only have their chance doubled once. When used as a combined move, this move gains STAB no matter what the user's type is. This move does not consume the user's Fire Gem."
-        }
-    },
-    "firepunch": {
-        "name": "Fire Punch",
-        "type": "Fire",
-        "power": 75,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to burn the target."
-        }
-    },
-    "firespin": {
-        "name": "Fire Spin",
-        "type": "Fire",
-        "power": 35,
-        "accuracy": 85,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Prevents the target from switching for four or five turns (seven turns if the user is holding Grip Claw). Causes damage to the target equal to 1/8 of its maximum HP (1/6 if the user is holding Binding Band), rounded down, at the end of each turn during effect. The target can still switch out if it is holding Shed Shell or uses Baton Pass, Flip Turn, Parting Shot, Shed Tail, Teleport, U-turn, or Volt Switch. The effect ends if either the user or the target leaves the field, or if the target uses Mortal Spin, Rapid Spin, or Substitute successfully. This effect is not stackable or reset by using this or another binding move."
-        }
-    },
-    "firstimpression": {
-        "name": "First Impression",
-        "type": "Bug",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 2,
-        "effects": {
-            "desc": "Fails unless it is the user's first turn on the field."
-        }
-    },
-    "fishiousrend": {
-        "name": "Fishious Rend",
-        "type": "Water",
-        "power": 85,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power doubles if the user moves before the target."
-        }
-    },
-    "fissure": {
-        "name": "Fissure",
-        "type": "Ground",
-        "power": 0,
-        "accuracy": 30,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals damage to the target equal to the target's maximum HP. Ignores accuracy and evasiveness modifiers. This attack's accuracy is equal to (user's level - target's level + 30)%, and fails if the target is at a higher level. Pokemon with the Sturdy Ability are immune."
-        }
-    },
-    "flail": {
-        "name": "Flail",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "The power of this move is 20 if X is 33 to 48, 40 if X is 17 to 32, 80 if X is 10 to 16, 100 if X is 5 to 9, 150 if X is 2 to 4, and 200 if X is 0 or 1, where X is equal to (user's current HP * 48 / user's maximum HP), rounded down."
-        }
-    },
-    "flameburst": {
-        "name": "Flame Burst",
-        "type": "Fire",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, the target's ally loses 1/16 of its maximum HP, rounded down, unless it has the Magic Guard Ability."
-        }
-    },
-    "flamecharge": {
-        "name": "Flame Charge",
-        "type": "Fire",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 100% chance to raise the user's Speed by 1 stage."
-        }
-    },
-    "flamethrower": {
-        "name": "Flamethrower",
-        "type": "Fire",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to burn the target."
-        }
-    },
-    "flamewheel": {
-        "name": "Flame Wheel",
-        "type": "Fire",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to burn the target."
-        }
-    },
-    "flareblitz": {
-        "name": "Flare Blitz",
-        "type": "Fire",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "recoilPerc": 0.33,
-            "status": "BRN",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to burn the target. If the target lost HP, the user takes recoil damage equal to 33% the HP lost by the target, rounded half up, but not less than 1 HP."
-        }
-    },
-    "flash": {
-        "name": "Flash",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "accuracy": -1
-            },
-            "desc": "Lowers the target's accuracy by 1 stage."
-        }
-    },
-    "flashcannon": {
-        "name": "Flash Cannon",
-        "type": "Steel",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spd": -1
-            },
-            "dropRate": 10,
-            "desc": "Has a 10% chance to lower the target's Special Defense by 1 stage."
-        }
-    },
-    "flatter": {
-        "name": "Flatter",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spa": 1
-            },
-            "desc": "Raises the target's Special Attack by 1 stage and confuses it."
-        }
-    },
-    "fleurcannon": {
-        "name": "Fleur Cannon",
-        "type": "Fairy",
-        "power": 130,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Lowers the user's Special Attack by 2 stages."
-        }
-    },
-    "fling": {
-        "name": "Fling",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "The power of this move is based on the user's held item. The held item is lost and it activates for the target if applicable. If there is no target or the target avoids this move by protecting itself, the user's held item is still lost. The user can regain a thrown item with Recycle or the Harvest Ability. Fails if the user has no held item, if the held item cannot be thrown, if the user is under the effect of Embargo or Magic Room, or if the user has the Klutz Ability."
-        }
-    },
-    "flipturn": {
-        "name": "Flip Turn",
-        "type": "Water",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "pivot": true,
-            "desc": "If this move is successful and the user has not fainted, the user switches out even if it is trapped and is replaced immediately by a selected party member. The user does not switch out if there are no unfainted party members, or if the target switched out using an Eject Button or through the effect of the Emergency Exit or Wimp Out Abilities."
-        }
-    },
-    "floatyfall": {
-        "name": "Floaty Fall",
-        "type": "Flying",
-        "power": 90,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 30% chance to make the target flinch."
-        }
-    },
-    "floralhealing": {
-        "name": "Floral Healing",
-        "type": "Fairy",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The target restores 1/2 of its maximum HP, rounded half up. If the terrain is Grassy Terrain, the target instead restores 2/3 of its maximum HP, rounded half down."
-        }
-    },
-    "flowershield": {
-        "name": "Flower Shield",
-        "type": "Fairy",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Raises the Defense of all active Grass-type Pokemon by 1 stage. Fails if there are no active Grass-type Pokemon."
-        }
-    },
-    "flowertrick": {
-        "name": "Flower Trick",
-        "type": "Grass",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This move is always a critical hit unless the target is under the effect of Lucky Chant or has the Battle Armor or Shell Armor Abilities. This move does not check accuracy."
-        }
-    },
-    "fly": {
-        "name": "Fly",
-        "type": "Flying",
-        "power": 90,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This attack charges on the first turn and executes on the second. On the first turn, the user avoids all attacks other than Gust, Hurricane, Sky Uppercut, Smack Down, Thousand Arrows, Thunder, and Twister, and Gust and Twister have doubled power when used against it. If the user is holding a Power Herb, the move completes in one turn."
-        }
-    },
-    "flyingpress": {
-        "name": "Flying Press",
-        "type": "Fighting",
-        "power": 100,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This move combines Flying in its type effectiveness against the target. Damage doubles and no accuracy check is done if the target has used Minimize while active."
-        }
-    },
-    "focusblast": {
-        "name": "Focus Blast",
-        "type": "Fighting",
-        "power": 120,
-        "accuracy": 70,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spd": -1
-            },
-            "dropRate": 10,
-            "desc": "Has a 10% chance to lower the target's Special Defense by 1 stage."
-        }
-    },
-    "focusenergy": {
-        "name": "Focus Energy",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Raises the user's chance for a critical hit by 2 stages. Fails if the user already has the effect. Baton Pass can be used to transfer this effect to an ally."
-        }
-    },
-    "focuspunch": {
-        "name": "Focus Punch",
-        "type": "Fighting",
-        "power": 150,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": -3,
-        "effects": {
-            "desc": "The user loses its focus and does nothing if it is hit by a damaging attack this turn before it can execute the move."
-        }
-    },
-    "followme": {
-        "name": "Follow Me",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 2,
-        "effects": {
-            "desc": "Until the end of the turn, all single-target attacks from the opposing side are redirected to the user. Such attacks are redirected to the user before they can be reflected by Magic Coat or the Magic Bounce Ability, or drawn in by the Lightning Rod or Storm Drain Abilities. Fails if it is not a Double Battle or Battle Royal. This effect is ignored while the user is under the effect of Sky Drop."
-        }
-    },
-    "forcepalm": {
-        "name": "Force Palm",
-        "type": "Fighting",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to paralyze the target."
-        }
-    },
-    "foresight": {
-        "name": "Foresight",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "As long as the target remains active, its evasiveness stat stage is ignored during accuracy checks against it if it is greater than 0, and Normal- and Fighting-type attacks can hit the target if it is a Ghost type. Fails if the target is already affected, or affected by Miracle Eye or Odor Sleuth."
-        }
-    },
-    "forestscurse": {
-        "name": "Forest's Curse",
-        "type": "Grass",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Causes the Grass type to be added to the target, effectively making it have two or three types. Fails if the target is already a Grass type. If Trick-or-Treat adds a type to the target, it replaces the type added by this move and vice versa."
-        }
-    },
-    "foulplay": {
-        "name": "Foul Play",
-        "type": "Dark",
-        "power": 95,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Damage is calculated using the target's Attack stat, including stat stage changes. The user's Ability, item, and burn are used as normal."
-        }
-    },
-    "freezedry": {
-        "name": "Freeze-Dry",
-        "type": "Ice",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "FRZ",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to freeze the target. This move's type effectiveness against Water is changed to be super effective no matter what this move's type is."
-        }
-    },
-    "freezeshock": {
-        "name": "Freeze Shock",
-        "type": "Ice",
-        "power": 140,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to paralyze the target. This attack charges on the first turn and executes on the second. If the user is holding a Power Herb, the move completes in one turn."
-        }
-    },
-    "freezingglare": {
-        "name": "Freezing Glare",
-        "type": "Psychic",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "FRZ",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to freeze the target."
-        }
-    },
-    "freezyfrost": {
-        "name": "Freezy Frost",
-        "type": "Ice",
-        "power": 100,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Resets the stat stages of all active Pokemon to 0."
-        }
-    },
-    "frenzyplant": {
-        "name": "Frenzy Plant",
-        "type": "Grass",
-        "power": 150,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, the user must recharge on the following turn and cannot select a move."
-        }
-    },
-    "frostbreath": {
-        "name": "Frost Breath",
-        "type": "Ice",
-        "power": 60,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "This move is always a critical hit unless the target is under the effect of Lucky Chant or has the Battle Armor or Shell Armor Abilities."
-        }
-    },
-    "frustration": {
-        "name": "Frustration",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power is equal to the greater of ((255 - user's Happiness) * 2/5), rounded down, or 1."
-        }
-    },
-    "furyattack": {
-        "name": "Fury Attack",
-        "type": "Normal",
-        "power": 15,
-        "accuracy": 85,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                5
-            ],
-            "desc": "Hits two to five times. Has a 35% chance to hit two or three times and a 15% chance to hit four or five times. If one of the hits breaks the target's substitute, it will take damage for the remaining hits. If the user has the Skill Link Ability, this move will always hit five times. If the user is holding Loaded Dice, this move will hit 4-5 times."
-        }
-    },
-    "furycutter": {
-        "name": "Fury Cutter",
-        "type": "Bug",
-        "power": 40,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power doubles with each successful hit, up to a maximum of 160 power. The power is reset if this move misses or another move is used."
-        }
-    },
-    "furyswipes": {
-        "name": "Fury Swipes",
-        "type": "Normal",
-        "power": 18,
-        "accuracy": 80,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                5
-            ],
-            "desc": "Hits two to five times. Has a 35% chance to hit two or three times and a 15% chance to hit four or five times. If one of the hits breaks the target's substitute, it will take damage for the remaining hits. If the user has the Skill Link Ability, this move will always hit five times. If the user is holding Loaded Dice, this move will hit 4-5 times."
-        }
-    },
-    "fusionbolt": {
-        "name": "Fusion Bolt",
-        "type": "Electric",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power doubles if the last move used by any Pokemon this turn was Fusion Flare."
-        }
-    },
-    "fusionflare": {
-        "name": "Fusion Flare",
-        "type": "Fire",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Power doubles if the last move used by any Pokemon this turn was Fusion Bolt."
-        }
-    },
-    "futuresight": {
-        "name": "Future Sight",
-        "type": "Psychic",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals damage two turns after this move is used. At the end of that turn, the damage is calculated at that time and dealt to the Pokemon at the position the target had when the move was used. If the user is no longer active at the time, damage is calculated based on the user's natural Special Attack stat, types, and level, with no boosts from its held item or Ability. Fails if this move or Doom Desire is already in effect for the target's position."
-        }
-    },
-    "gastroacid": {
-        "name": "Gastro Acid",
-        "type": "Poison",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Causes the target's Ability to be rendered ineffective as long as it remains active. If the target uses Baton Pass, the replacement will remain under this effect. If the target's Ability is As One, Battle Bond, Comatose, Disguise, Gulp Missile, Ice Face, Multitype, Power Construct, RKS System, Schooling, Shields Down, Stance Change, Tera Shift, Zen Mode, or Zero to Hero, this move fails, and receiving the effect through Baton Pass ends the effect immediately."
-        }
-    },
-    "geargrind": {
-        "name": "Gear Grind",
-        "type": "Steel",
-        "power": 50,
-        "accuracy": 85,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                2
-            ],
-            "desc": "Hits twice. If the first hit breaks the target's substitute, it will take damage for the second hit."
-        }
-    },
-    "gearup": {
-        "name": "Gear Up",
-        "type": "Steel",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Raises the Attack and Special Attack of Pokemon on the user's side with the Plus or Minus Abilities by 1 stage."
-        }
-    },
-    "geomancy": {
-        "name": "Geomancy",
-        "type": "Fairy",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spa": 2,
-                "spd": 2,
-                "spe": 2
-            },
-            "desc": "Raises the user's Special Attack, Special Defense, and Speed by 2 stages. This attack charges on the first turn and executes on the second. If the user is holding a Power Herb, the move completes in one turn."
-        }
-    },
-    "gigadrain": {
-        "name": "Giga Drain",
-        "type": "Grass",
-        "power": 75,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "drainPerc": 0.5,
-            "desc": "The user recovers 1/2 the HP lost by the target, rounded half up. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down."
-        }
-    },
-    "gigaimpact": {
-        "name": "Giga Impact",
-        "type": "Normal",
-        "power": 150,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, the user must recharge on the following turn and cannot select a move."
-        }
-    },
-    "gigatonhammer": {
-        "name": "Gigaton Hammer",
-        "type": "Steel",
-        "power": 160,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Cannot be selected the turn after it's used."
-        }
-    },
-    "glaciallance": {
-        "name": "Glacial Lance",
-        "type": "Ice",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "glaciate": {
-        "name": "Glaciate",
-        "type": "Ice",
-        "power": 65,
-        "accuracy": 95,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spe": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Speed by 1 stage."
-        }
-    },
-    "glaiverush": {
-        "name": "Glaive Rush",
-        "type": "Dragon",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, moves targeted at the user deal double damage and do not check accuracy until the user's next turn."
-        }
-    },
-    "glare": {
-        "name": "Glare",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "desc": "Paralyzes the target."
-        }
-    },
-    "glitzyglow": {
-        "name": "Glitzy Glow",
-        "type": "Psychic",
-        "power": 80,
-        "accuracy": 95,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "This move summons Light Screen for 5 turns upon use."
-        }
-    },
-    "grassknot": {
-        "name": "Grass Knot",
-        "type": "Grass",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "This move's power is 20 if the target weighs less than 10 kg, 40 if less than 25 kg, 60 if less than 50 kg, 80 if less than 100 kg, 100 if less than 200 kg, and 120 if greater than or equal to 200 kg."
-        }
-    },
-    "grasspledge": {
-        "name": "Grass Pledge",
-        "type": "Grass",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If one of the user's allies chose to use Fire Pledge or Water Pledge this turn and has not moved yet, it takes its turn immediately after the user and the user's move does nothing. If combined with Fire Pledge, the ally uses Fire Pledge with 150 power and a sea of fire appears on the target's side for 4 turns, which causes damage to non-Fire types equal to 1/8 of their maximum HP, rounded down, at the end of each turn during effect, including the last turn. If combined with Water Pledge, the ally uses Grass Pledge with 150 power and a swamp appears on the target's side for 4 turns, which quarters the Speed of each Pokemon on that side. When used as a combined move, this move gains STAB no matter what the user's type is. This move does not consume the user's Grass Gem."
-        }
-    },
-    "grasswhistle": {
-        "name": "Grass Whistle",
-        "type": "Grass",
-        "power": 0,
-        "accuracy": 55,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "status": "SLP",
-            "desc": "Causes the target to fall asleep."
-        }
-    },
-    "grassyglide": {
-        "name": "Grassy Glide",
-        "type": "Grass",
-        "power": 55,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If the current terrain is Grassy Terrain and the user is grounded, this move has its priority increased by 1."
-        }
-    },
-    "grassyterrain": {
-        "name": "Grassy Terrain",
-        "type": "Grass",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "For 5 turns, the terrain becomes Grassy Terrain. During the effect, the power of Grass-type attacks used by grounded Pokemon is multiplied by 1.3, the power of Bulldoze, Earthquake, and Magnitude used against grounded Pokemon is multiplied by 0.5, and grounded Pokemon have 1/16 of their maximum HP, rounded down, restored at the end of each turn, including the last turn. Camouflage transforms the user into a Grass type, Nature Power becomes Energy Ball, and Secret Power has a 30% chance to cause sleep. Fails if the current terrain is Grassy Terrain."
-        }
-    },
-    "gravapple": {
-        "name": "Grav Apple",
-        "type": "Grass",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "def": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Defense by 1 stage. Power is multiplied by 1.5 during Gravity's effect."
-        }
-    },
-    "gravity": {
-        "name": "Gravity",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "For 5 turns, the evasiveness of all active Pokemon is multiplied by 0.6. At the time of use, Bounce, Fly, Magnet Rise, Sky Drop, and Telekinesis end immediately for all active Pokemon. During the effect, Bounce, Fly, Flying Press, High Jump Kick, Jump Kick, Magnet Rise, Sky Drop, Splash, and Telekinesis are prevented from being used by all active Pokemon. Ground-type attacks, Spikes, Toxic Spikes, Sticky Web, and the Arena Trap Ability can affect Flying types or Pokemon with the Levitate Ability. Fails if this move is already in effect."
-        }
-    },
-    "growl": {
-        "name": "Growl",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": -1
-            },
-            "desc": "Lowers the target's Attack by 1 stage."
-        }
-    },
-    "growth": {
-        "name": "Growth",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": 1,
-                "spa": 1
-            },
-            "desc": "Raises the user's Attack and Special Attack by 1 stage. If the weather is Sunny Day or Desolate Land, this move raises the user's Attack and Special Attack by 2 stages. If the user is holding Utility Umbrella, this move will only raise the user's Attack and Special Attack by 1 stage, even if the weather is Sunny Day or Desolate Land."
-        }
-    },
-    "grudge": {
-        "name": "Grudge",
-        "type": "Ghost",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Until the user's next turn, if an opposing Pokemon's attack knocks the user out, that move loses all its remaining PP."
-        }
-    },
-    "guardsplit": {
-        "name": "Guard Split",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user and the target have their Defense and Special Defense stats set to be equal to the average of the user and the target's Defense and Special Defense stats, respectively, rounded down. Stat stage changes are unaffected."
-        }
-    },
-    "guardswap": {
-        "name": "Guard Swap",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user swaps its Defense and Special Defense stat stage changes with the target."
-        }
-    },
-    "guillotine": {
-        "name": "Guillotine",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 30,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals damage to the target equal to the target's maximum HP. Ignores accuracy and evasiveness modifiers. This attack's accuracy is equal to (user's level - target's level + 30)%, and fails if the target is at a higher level. Pokemon with the Sturdy Ability are immune."
-        }
-    },
-    "gunkshot": {
-        "name": "Gunk Shot",
-        "type": "Poison",
-        "power": 120,
-        "accuracy": 80,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "PSN",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to poison the target."
-        }
-    },
-    "gust": {
-        "name": "Gust",
-        "type": "Flying",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Power doubles if the target is using Bounce, Fly, or Sky Drop, or is under the effect of Sky Drop."
-        }
-    },
-    "gyroball": {
-        "name": "Gyro Ball",
-        "type": "Steel",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power is equal to (25 * target's current Speed / user's current Speed) + 1, rounded down, but not more than 150. If the user's current Speed is 0, this move's power is 1."
-        }
-    },
-    "hail": {
-        "name": "Hail",
-        "type": "Ice",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "weather": "Hail",
-            "desc": "For 5 turns, the weather becomes Hail. At the end of each turn except the last, all active Pokemon lose 1/16 of their maximum HP, rounded down, unless they are an Ice type or have the Ice Body, Magic Guard, Overcoat, or Snow Cloak Abilities. Lasts for 8 turns if the user is holding Icy Rock. Fails if the current weather is Hail."
-        }
-    },
-    "hammerarm": {
-        "name": "Hammer Arm",
-        "type": "Fighting",
-        "power": 100,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Lowers the user's Speed by 1 stage."
-        }
-    },
-    "happyhour": {
-        "name": "Happy Hour",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "No competitive use."
-        }
-    },
-    "harden": {
-        "name": "Harden",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "def": 1
-            },
-            "desc": "Raises the user's Defense by 1 stage."
-        }
-    },
-    "hardpress": {
-        "name": "Hard Press",
-        "type": "Steel",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power is equal to 100 * (target's current HP / target's maximum HP), rounded half down, but not less than 1."
-        }
-    },
-    "haze": {
-        "name": "Haze",
-        "type": "Ice",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "haze": true,
-            "desc": "Resets the stat stages of all active Pokemon to 0."
-        }
-    },
-    "headbutt": {
-        "name": "Headbutt",
-        "type": "Normal",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 30% chance to make the target flinch."
-        }
-    },
-    "headcharge": {
-        "name": "Head Charge",
-        "type": "Normal",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "recoilPerc": 0.25,
-            "desc": "If the target lost HP, the user takes recoil damage equal to 1/4 the HP lost by the target, rounded half up, but not less than 1 HP."
-        }
-    },
-    "headlongrush": {
-        "name": "Headlong Rush",
-        "type": "Ground",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Lowers the user's Defense and Special Defense by 1 stage."
-        }
-    },
-    "headsmash": {
-        "name": "Head Smash",
-        "type": "Rock",
-        "power": 150,
-        "accuracy": 80,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "recoilPerc": 0.5,
-            "desc": "If the target lost HP, the user takes recoil damage equal to 1/2 the HP lost by the target, rounded half up, but not less than 1 HP."
-        }
-    },
-    "healbell": {
-        "name": "Heal Bell",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Every Pokemon in the user's party is cured of its non-volatile status condition. Active Pokemon with the Soundproof Ability are not cured, unless they are the user."
-        }
-    },
-    "healblock": {
-        "name": "Heal Block",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "For 5 turns, the target is prevented from restoring any HP as long as it remains active. During the effect, healing and draining moves are unusable, and Abilities and items that grant healing will not heal the user. If an affected Pokemon uses Baton Pass, the replacement will remain unable to restore its HP. Pain Split and the Regenerator Ability are unaffected."
-        }
-    },
-    "healingwish": {
-        "name": "Healing Wish",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "healingWish": true,
-            "desc": "The user faints, and if the Pokemon brought out to replace it does not have full HP or has a non-volatile status condition, its HP is fully restored along with having any non-volatile status condition cured. The replacement is sent out at the end of the turn, and the healing happens before hazards take effect. This effect continues until a Pokemon that meets either of these conditions switches in at the user's position or gets swapped into the position with Ally Switch. Fails if the user is the last unfainted Pokemon in its party."
-        }
-    },
-    "healorder": {
-        "name": "Heal Order",
-        "type": "Bug",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "healPerc": 0.5,
-            "desc": "The user restores 1/2 of its maximum HP, rounded half up."
-        }
-    },
-    "healpulse": {
-        "name": "Heal Pulse",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The target restores 1/2 of its maximum HP, rounded half up. If the user has the Mega Launcher Ability, the target instead restores 3/4 of its maximum HP, rounded half down."
-        }
-    },
-    "heartstamp": {
-        "name": "Heart Stamp",
-        "type": "Psychic",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 30% chance to make the target flinch."
-        }
-    },
-    "heartswap": {
-        "name": "Heart Swap",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user swaps all its stat stage changes with the target."
-        }
-    },
-    "heatcrash": {
-        "name": "Heat Crash",
-        "type": "Fire",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "The power of this move depends on (user's weight / target's weight), rounded down. Power is equal to 120 if the result is 5 or more, 100 if 4, 80 if 3, 60 if 2, and 40 if 1 or less. Damage doubles and no accuracy check is done if the target has used Minimize while active."
-        }
-    },
-    "heatwave": {
-        "name": "Heat Wave",
-        "type": "Fire",
-        "power": 95,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to burn the target."
-        }
-    },
-    "heavyslam": {
-        "name": "Heavy Slam",
-        "type": "Steel",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "The power of this move depends on (user's weight / target's weight), rounded down. Power is equal to 120 if the result is 5 or more, 100 if 4, 80 if 3, 60 if 2, and 40 if 1 or less. Damage doubles and no accuracy check is done if the target has used Minimize while active."
-        }
-    },
-    "helpinghand": {
-        "name": "Helping Hand",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 5,
-        "effects": {
-            "desc": "The power of the target's attack this turn is multiplied by 1.5 (this effect is stackable). Fails if there is no ally adjacent to the user or if the ally already moved this turn, but does not fail if the ally is using a two-turn move."
-        }
-    },
-    "hex": {
-        "name": "Hex",
-        "type": "Ghost",
-        "power": 65,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Power doubles if the target has a non-volatile status condition."
-        }
-    },
-    "hiddenpower": {
-        "name": "Hidden Power",
-        "type": "Normal",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "This move's type depends on the user's individual values (IVs), and can be any type but Fairy and Normal."
-        }
-    },
-    "hiddenpowerbug": {
-        "name": "Hidden Power Bug",
-        "type": "Bug",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0
-    },
-    "hiddenpowerdark": {
-        "name": "Hidden Power Dark",
-        "type": "Dark",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0
-    },
-    "hiddenpowerdragon": {
-        "name": "Hidden Power Dragon",
-        "type": "Dragon",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0
-    },
-    "hiddenpowerelectric": {
-        "name": "Hidden Power Electric",
-        "type": "Electric",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0
-    },
-    "hiddenpowerfighting": {
-        "name": "Hidden Power Fighting",
-        "type": "Fighting",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0
-    },
-    "hiddenpowerfire": {
-        "name": "Hidden Power Fire",
-        "type": "Fire",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0
-    },
-    "hiddenpowerflying": {
-        "name": "Hidden Power Flying",
-        "type": "Flying",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0
-    },
-    "hiddenpowerghost": {
-        "name": "Hidden Power Ghost",
-        "type": "Ghost",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0
-    },
-    "hiddenpowergrass": {
-        "name": "Hidden Power Grass",
-        "type": "Grass",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0
-    },
-    "hiddenpowerground": {
-        "name": "Hidden Power Ground",
-        "type": "Ground",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0
-    },
-    "hiddenpowerice": {
-        "name": "Hidden Power Ice",
-        "type": "Ice",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0
-    },
-    "hiddenpowerpoison": {
-        "name": "Hidden Power Poison",
-        "type": "Poison",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0
-    },
-    "hiddenpowerpsychic": {
-        "name": "Hidden Power Psychic",
-        "type": "Psychic",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0
-    },
-    "hiddenpowerrock": {
-        "name": "Hidden Power Rock",
-        "type": "Rock",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0
-    },
-    "hiddenpowersteel": {
-        "name": "Hidden Power Steel",
-        "type": "Steel",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0
-    },
-    "hiddenpowerwater": {
-        "name": "Hidden Power Water",
-        "type": "Water",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0
-    },
-    "highhorsepower": {
-        "name": "High Horsepower",
-        "type": "Ground",
-        "power": 95,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "highjumpkick": {
-        "name": "High Jump Kick",
-        "type": "Fighting",
-        "power": 130,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this attack is not successful, the user loses half of its maximum HP, rounded down, as crash damage. Pokemon with the Magic Guard Ability are unaffected by crash damage."
-        }
-    },
-    "holdback": {
-        "name": "Hold Back",
-        "type": "Normal",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Leaves the target with at least 1 HP."
-        }
-    },
-    "holdhands": {
-        "name": "Hold Hands",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "No competitive use. Fails if there is no ally adjacent to the user."
-        }
-    },
-    "honeclaws": {
-        "name": "Hone Claws",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": 1,
-                "accuracy": 1
-            },
-            "desc": "Raises the user's Attack and accuracy by 1 stage."
-        }
-    },
-    "hornattack": {
-        "name": "Horn Attack",
-        "type": "Normal",
-        "power": 65,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "horndrill": {
-        "name": "Horn Drill",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 30,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals damage to the target equal to the target's maximum HP. Ignores accuracy and evasiveness modifiers. This attack's accuracy is equal to (user's level - target's level + 30)%, and fails if the target is at a higher level. Pokemon with the Sturdy Ability are immune."
-        }
-    },
-    "hornleech": {
-        "name": "Horn Leech",
-        "type": "Grass",
-        "power": 75,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "drainPerc": 0.5,
-            "desc": "The user recovers 1/2 the HP lost by the target, rounded half up. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down."
-        }
-    },
-    "howl": {
-        "name": "Howl",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": 1
-            },
-            "desc": "Raises the Attack of the user and all allies 1 stage."
-        }
-    },
-    "hurricane": {
-        "name": "Hurricane",
-        "type": "Flying",
-        "power": 110,
-        "accuracy": 70,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 30% chance to confuse the target. This move can hit a target using Bounce, Fly, or Sky Drop, or is under the effect of Sky Drop. If the weather is Primordial Sea or Rain Dance, this move does not check accuracy. If the weather is Desolate Land or Sunny Day, this move's accuracy is 50%. If this move is used against a Pokemon holding Utility Umbrella, this move's accuracy remains at 70%."
-        }
-    },
-    "hydrocannon": {
-        "name": "Hydro Cannon",
-        "type": "Water",
-        "power": 150,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, the user must recharge on the following turn and cannot select a move."
-        }
-    },
-    "hydropump": {
-        "name": "Hydro Pump",
-        "type": "Water",
-        "power": 110,
-        "accuracy": 80,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "hydrosteam": {
-        "name": "Hydro Steam",
-        "type": "Water",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If the current weather is Sunny Day and the user is not holding Utility Umbrella, this move's damage is multiplied by 1.5 instead of halved for being Water type."
-        }
-    },
-    "hyperbeam": {
-        "name": "Hyper Beam",
-        "type": "Normal",
-        "power": 150,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, the user must recharge on the following turn and cannot select a move."
-        }
-    },
-    "hyperdrill": {
-        "name": "Hyper Drill",
-        "type": "Normal",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Bypasses protection without breaking it."
-        }
-    },
-    "hyperfang": {
-        "name": "Hyper Fang",
-        "type": "Normal",
-        "power": 80,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 10% chance to make the target flinch."
-        }
-    },
-    "hyperspacefury": {
-        "name": "Hyperspace Fury",
-        "type": "Dark",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Lowers the user's Defense by 1 stage. This move cannot be used successfully unless the user's current form, while considering Transform, is Hoopa Unbound. If this move is successful, it breaks through the target's Baneful Bunker, Detect, King's Shield, Protect, or Spiky Shield for this turn, allowing other Pokemon to attack the target normally. If the target's side is protected by Crafty Shield, Mat Block, Quick Guard, or Wide Guard, that protection is also broken for this turn and other Pokemon may attack the target's side normally."
-        }
-    },
-    "hyperspacehole": {
-        "name": "Hyperspace Hole",
-        "type": "Psychic",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, it breaks through the target's Baneful Bunker, Detect, King's Shield, Protect, or Spiky Shield for this turn, allowing other Pokemon to attack the target normally. If the target's side is protected by Crafty Shield, Mat Block, Quick Guard, or Wide Guard, that protection is also broken for this turn and other Pokemon may attack the target's side normally."
-        }
-    },
-    "hypervoice": {
-        "name": "Hyper Voice",
-        "type": "Normal",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "hypnosis": {
-        "name": "Hypnosis",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 60,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "status": "SLP",
-            "desc": "Causes the target to fall asleep."
-        }
-    },
-    "iceball": {
-        "name": "Ice Ball",
-        "type": "Ice",
-        "power": 30,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, the user is locked into this move and cannot make another move until it misses, 5 turns have passed, or the attack cannot be used. Power doubles with each successful hit of this move and doubles again if Defense Curl was used previously by the user. If this move is called by Sleep Talk, the move is used for one turn."
-        }
-    },
-    "icebeam": {
-        "name": "Ice Beam",
-        "type": "Ice",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "FRZ",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to freeze the target."
-        }
-    },
-    "iceburn": {
-        "name": "Ice Burn",
-        "type": "Ice",
-        "power": 140,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to burn the target. This attack charges on the first turn and executes on the second. If the user is holding a Power Herb, the move completes in one turn."
-        }
-    },
-    "icefang": {
-        "name": "Ice Fang",
-        "type": "Ice",
-        "power": 65,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 10% chance to freeze the target and a 10% chance to make it flinch."
-        }
-    },
-    "icehammer": {
-        "name": "Ice Hammer",
-        "type": "Ice",
-        "power": 100,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Lowers the user's Speed by 1 stage."
-        }
-    },
-    "icepunch": {
-        "name": "Ice Punch",
-        "type": "Ice",
-        "power": 75,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "FRZ",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to freeze the target."
-        }
-    },
-    "iceshard": {
-        "name": "Ice Shard",
-        "type": "Ice",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 1,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "icespinner": {
-        "name": "Ice Spinner",
-        "type": "Ice",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Ends the effects of Electric Terrain, Grassy Terrain, Misty Terrain, and Psychic Terrain."
-        }
-    },
-    "iciclecrash": {
-        "name": "Icicle Crash",
-        "type": "Ice",
-        "power": 85,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 30% chance to make the target flinch."
-        }
-    },
-    "iciclespear": {
-        "name": "Icicle Spear",
-        "type": "Ice",
-        "power": 25,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                5
-            ],
-            "desc": "Hits two to five times. Has a 35% chance to hit two or three times and a 15% chance to hit four or five times. If one of the hits breaks the target's substitute, it will take damage for the remaining hits. If the user has the Skill Link Ability, this move will always hit five times. If the user is holding Loaded Dice, this move will hit 4-5 times."
-        }
-    },
-    "icywind": {
-        "name": "Icy Wind",
-        "type": "Ice",
-        "power": 55,
-        "accuracy": 95,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spe": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Speed by 1 stage."
-        }
-    },
-    "imprison": {
-        "name": "Imprison",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user prevents all opposing Pokemon from using any moves that the user also knows as long as the user remains active."
-        }
-    },
-    "incinerate": {
-        "name": "Incinerate",
-        "type": "Fire",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "The target loses its held item if it is a Berry or a Gem. This move cannot cause Pokemon with the Sticky Hold Ability to lose their held item. Items lost to this move cannot be regained with Recycle or the Harvest Ability."
-        }
-    },
-    "infernalparade": {
-        "name": "Infernal Parade",
-        "type": "Ghost",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to burn the target. Power doubles if the target has a non-volatile status condition."
-        }
-    },
-    "inferno": {
-        "name": "Inferno",
-        "type": "Fire",
-        "power": 100,
-        "accuracy": 50,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 100,
-            "desc": "Has a 100% chance to burn the target."
-        }
-    },
-    "infestation": {
-        "name": "Infestation",
-        "type": "Bug",
-        "power": 20,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Prevents the target from switching for four or five turns (seven turns if the user is holding Grip Claw). Causes damage to the target equal to 1/8 of its maximum HP (1/6 if the user is holding Binding Band), rounded down, at the end of each turn during effect. The target can still switch out if it is holding Shed Shell or uses Baton Pass, Flip Turn, Parting Shot, Shed Tail, Teleport, U-turn, or Volt Switch. The effect ends if either the user or the target leaves the field, or if the target uses Mortal Spin, Rapid Spin, or Substitute successfully. This effect is not stackable or reset by using this or another binding move."
-        }
-    },
-    "ingrain": {
-        "name": "Ingrain",
-        "type": "Grass",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user has 1/16 of its maximum HP restored at the end of each turn, but it is prevented from switching out and other Pokemon cannot force the user to switch out. The user can still switch out if it uses Baton Pass, Flip Turn, Parting Shot, Teleport, U-turn, or Volt Switch. If the user leaves the field using Baton Pass, the replacement will remain trapped and still receive the healing effect. During the effect, the user can be hit normally by Ground-type attacks and be affected by Spikes, Toxic Spikes, and Sticky Web, even if the user is a Flying type or has the Levitate Ability."
-        }
-    },
-    "instruct": {
-        "name": "Instruct",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The target immediately uses its last used move. Fails if the target has not made a move, if the move has 0 PP, if the target is preparing to use Beak Blast, Focus Punch, or Shell Trap, or if the move is Assist, Beak Blast, Belch, Bide, Blazing Torque, Celebrate, Chatter, Combat Torque, Copycat, Dynamax Cannon, Focus Punch, Hold Hands, Ice Ball, Instruct, King's Shield, Magical Torque, Me First, Metronome, Mimic, Mirror Move, Nature Power, Noxious Torque, Obstruct, Outrage, Petal Dance, Rollout, Shell Trap, Sketch, Sleep Talk, Struggle, Thrash, Transform, Uproar, Wicked Torque, any two-turn move, or any recharge move."
-        }
-    },
-    "iondeluge": {
-        "name": "Ion Deluge",
-        "type": "Electric",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 1,
-        "effects": {
-            "desc": "Causes Normal-type moves to become Electric type this turn. The effect happens after other effects that change a move's type."
-        }
-    },
-    "irondefense": {
-        "name": "Iron Defense",
-        "type": "Steel",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "def": 2
-            },
-            "desc": "Raises the user's Defense by 2 stages."
-        }
-    },
-    "ironhead": {
-        "name": "Iron Head",
-        "type": "Steel",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 30% chance to make the target flinch."
-        }
-    },
-    "irontail": {
-        "name": "Iron Tail",
-        "type": "Steel",
-        "power": 100,
-        "accuracy": 75,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "def": -1
-            },
-            "dropRate": 30,
-            "desc": "Has a 30% chance to lower the target's Defense by 1 stage."
-        }
-    },
-    "ivycudgel": {
-        "name": "Ivy Cudgel",
-        "type": "Grass",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a higher chance for a critical hit. If the user is an Ogerpon, this move's type changes depending on its form. Water type for Wellspring Mask, Fire type for Hearthflame Mask, and Rock type for Cornerstone Mask."
-        }
-    },
-    "jawlock": {
-        "name": "Jaw Lock",
-        "type": "Dark",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Prevents the user and the target from switching out. The user and the target can still switch out if either of them is holding Shed Shell or uses Baton Pass, Flip Turn, Parting Shot, Teleport, U-turn, or Volt Switch. The effect ends if either the user or the target leaves the field."
-        }
-    },
-    "jetpunch": {
-        "name": "Jet Punch",
-        "type": "Water",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 1,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "judgment": {
-        "name": "Judgment",
-        "type": "Normal",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "This move's type depends on the user's held Plate."
-        }
-    },
-    "jumpkick": {
-        "name": "Jump Kick",
-        "type": "Fighting",
-        "power": 100,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this attack is not successful, the user loses half of its maximum HP, rounded down, as crash damage. Pokemon with the Magic Guard Ability are unaffected by crash damage."
-        }
-    },
-    "junglehealing": {
-        "name": "Jungle Healing",
-        "type": "Grass",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Each Pokemon on the user's side restores 1/4 of its maximum HP, rounded half up, and has its status condition cured."
-        }
-    },
-    "karatechop": {
-        "name": "Karate Chop",
-        "type": "Fighting",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a higher chance for a critical hit."
-        }
-    },
-    "kinesis": {
-        "name": "Kinesis",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 80,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "accuracy": -1
-            },
-            "desc": "Lowers the target's accuracy by 1 stage."
-        }
-    },
-    "kingsshield": {
-        "name": "King's Shield",
-        "type": "Steel",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 4,
-        "effects": {
-            "protect": true,
-            "desc": "The user is protected from most attacks made by other Pokemon during this turn, and Pokemon trying to make contact with the user have their Attack lowered by 1 stage. Non-damaging moves go through this protection. This move has a 1/X chance of being successful, where X starts at 1 and triples each time this move is successfully used. X resets to 1 if this move fails, if the user's last move used is not Baneful Bunker, Burning Bulwark, Detect, Endure, King's Shield, Max Guard, Obstruct, Protect, Quick Guard, Silk Trap, Spiky Shield, or Wide Guard, or if it was one of those moves and the user's protection was broken. Fails if the user moves last this turn."
-        }
-    },
-    "knockoff": {
-        "name": "Knock Off",
-        "type": "Dark",
-        "power": 65,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "removeTargetItem": true,
-            "desc": "If the target is holding an item that can be removed from it, ignoring the Sticky Hold Ability, this move's power is multiplied by 1.5. If the user has not fainted, the target loses its held item. This move cannot cause Pokemon with the Sticky Hold Ability to lose their held item or cause a Kyogre, a Groudon, a Giratina, an Arceus, a Genesect, a Silvally, a Zacian, or a Zamazenta to lose their Blue Orb, Red Orb, Griseous Orb, Plate, Drive, Memory, Rusted Sword, or Rusted Shield respectively. Items lost to this move cannot be regained with Recycle or the Harvest Ability."
-        }
-    },
-    "kowtowcleave": {
-        "name": "Kowtow Cleave",
-        "type": "Dark",
-        "power": 85,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This move does not check accuracy."
-        }
-    },
-    "landswrath": {
-        "name": "Land's Wrath",
-        "type": "Ground",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "laserfocus": {
-        "name": "Laser Focus",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Until the end of the next turn, the user's attacks will be critical hits."
-        }
-    },
-    "lashout": {
-        "name": "Lash Out",
-        "type": "Dark",
-        "power": 75,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power doubles if the user had a stat stage lowered this turn."
-        }
-    },
-    "lastresort": {
-        "name": "Last Resort",
-        "type": "Normal",
-        "power": 140,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This move fails unless the user knows this move and at least one other move, and has used all the other moves it knows at least once each since it became active or Transformed."
-        }
-    },
-    "lastrespects": {
-        "name": "Last Respects",
-        "type": "Ghost",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power is equal to 50+(X*50), where X is the total number of times any Pokemon has fainted on the user's side, and X cannot be greater than 100."
-        }
-    },
-    "lavaplume": {
-        "name": "Lava Plume",
-        "type": "Fire",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to burn the target."
-        }
-    },
-    "leafage": {
-        "name": "Leafage",
-        "type": "Grass",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "leafblade": {
-        "name": "Leaf Blade",
-        "type": "Grass",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a higher chance for a critical hit."
-        }
-    },
-    "leafstorm": {
-        "name": "Leaf Storm",
-        "type": "Grass",
-        "power": 130,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Lowers the user's Special Attack by 2 stages."
-        }
-    },
-    "leaftornado": {
-        "name": "Leaf Tornado",
-        "type": "Grass",
-        "power": 65,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "accuracy": -1
-            },
-            "dropRate": 50,
-            "desc": "Has a 50% chance to lower the target's accuracy by 1 stage."
-        }
-    },
-    "leechlife": {
-        "name": "Leech Life",
-        "type": "Bug",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "drainPerc": 0.5,
-            "desc": "The user recovers 1/2 the HP lost by the target, rounded half up. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down."
-        }
-    },
-    "leechseed": {
-        "name": "Leech Seed",
-        "type": "Grass",
-        "power": 0,
-        "accuracy": 90,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "leechSeed": true,
-            "desc": "The Pokemon at the user's position steals 1/8 of the target's maximum HP, rounded down, at the end of each turn. If Big Root is held by the recipient, the HP recovered is 1.3x normal, rounded half down. If the target uses Baton Pass, the replacement will continue being leeched. If the target switches out or uses Mortal Spin or Rapid Spin successfully, the effect ends. Grass-type Pokemon are immune to this move on use, but not its effect."
-        }
-    },
-    "leer": {
-        "name": "Leer",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "def": -1
-            },
-            "desc": "Lowers the target's Defense by 1 stage."
-        }
-    },
-    "lick": {
-        "name": "Lick",
-        "type": "Ghost",
-        "power": 30,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to paralyze the target."
-        }
-    },
-    "lifedew": {
-        "name": "Life Dew",
-        "type": "Water",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "healPerc": 0.25,
-            "desc": "Each Pokemon on the user's side restores 1/4 of its maximum HP, rounded half up."
-        }
-    },
-    "lightofruin": {
-        "name": "Light of Ruin",
-        "type": "Fairy",
-        "power": 140,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "recoilPerc": 0.5,
-            "desc": "If the target lost HP, the user takes recoil damage equal to 1/2 the HP lost by the target, rounded half up, but not less than 1 HP."
-        }
-    },
-    "lightscreen": {
-        "name": "Light Screen",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "screen": "light-screen",
-            "desc": "For 5 turns, the user and its party members take 0.5x damage from special attacks, or 0.66x damage if in a Double Battle. Damage is not reduced further with Aurora Veil. Critical hits ignore this effect. It is removed from the user's side if the user or an ally is successfully hit by Brick Break, Psychic Fangs, or Defog. Lasts for 8 turns if the user is holding Light Clay. Fails if the effect is already active on the user's side."
-        }
-    },
-    "liquidation": {
-        "name": "Liquidation",
-        "type": "Water",
-        "power": 85,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "def": -1
-            },
-            "dropRate": 20,
-            "desc": "Has a 20% chance to lower the target's Defense by 1 stage."
-        }
-    },
-    "lockon": {
-        "name": "Lock-On",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Until the end of the next turn, the target cannot avoid the user's moves, even if the target is in the middle of a two-turn move. The effect ends if either the user or the target leaves the field. Fails if this effect is active for the user."
-        }
-    },
-    "lovelykiss": {
-        "name": "Lovely Kiss",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 75,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "status": "SLP",
-            "desc": "Causes the target to fall asleep."
-        }
-    },
-    "lowkick": {
-        "name": "Low Kick",
-        "type": "Fighting",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This move's power is 20 if the target weighs less than 10 kg, 40 if less than 25 kg, 60 if less than 50 kg, 80 if less than 100 kg, 100 if less than 200 kg, and 120 if greater than or equal to 200 kg."
-        }
-    },
-    "lowsweep": {
-        "name": "Low Sweep",
-        "type": "Fighting",
-        "power": 65,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spe": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Speed by 1 stage."
-        }
-    },
-    "luckychant": {
-        "name": "Lucky Chant",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "For 5 turns, the user and its party members cannot be struck by a critical hit. Fails if the effect is already active on the user's side."
-        }
-    },
-    "luminacrash": {
-        "name": "Lumina Crash",
-        "type": "Psychic",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spd": -2
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Special Defense by 2 stages."
-        }
-    },
-    "lunarblessing": {
-        "name": "Lunar Blessing",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Each Pokemon on the user's side restores 1/4 of its maximum HP, rounded half up, and has its status condition cured."
-        }
-    },
-    "lunardance": {
-        "name": "Lunar Dance",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "healingWish": true,
-            "desc": "The user faints, and if the Pokemon brought out to replace it does not have full HP or PP, or has a non-volatile status condition, its HP and PP are fully restored along with having any non-volatile status condition cured. The replacement is sent out at the end of the turn, and the healing happens before hazards take effect. This effect continues until a Pokemon that meets any of these conditions switches in at the user's position or gets swapped into the position with Ally Switch. Fails if the user is the last unfainted Pokemon in its party."
-        }
-    },
-    "lunge": {
-        "name": "Lunge",
-        "type": "Bug",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "atk": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Attack by 1 stage."
-        }
-    },
-    "lusterpurge": {
-        "name": "Luster Purge",
-        "type": "Psychic",
-        "power": 95,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spd": -1
-            },
-            "dropRate": 50,
-            "desc": "Has a 50% chance to lower the target's Special Defense by 1 stage."
-        }
-    },
-    "machpunch": {
-        "name": "Mach Punch",
-        "type": "Fighting",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 1,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "magicalleaf": {
-        "name": "Magical Leaf",
-        "type": "Grass",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "This move does not check accuracy."
-        }
-    },
-    "magicaltorque": {
-        "name": "Magical Torque",
-        "type": "Fairy",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 30% chance to confuse the target."
-        }
-    },
-    "magiccoat": {
-        "name": "Magic Coat",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 4,
-        "effects": {
-            "desc": "Until the end of the turn, the user is unaffected by certain non-damaging moves directed at it and will instead use such moves against the original user. Moves reflected in this way are unable to be reflected again by this or the Magic Bounce Ability's effect. Spikes, Stealth Rock, Sticky Web, and Toxic Spikes can only be reflected once per side, by the leftmost Pokemon under this or the Magic Bounce Ability's effect. The Lightning Rod and Storm Drain Abilities redirect their respective moves before this move takes effect."
-        }
-    },
-    "magicpowder": {
-        "name": "Magic Powder",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Causes the target to become a Psychic type. Fails if the target is an Arceus or a Silvally, if the target is already purely Psychic type, or if the target is Terastallized."
-        }
-    },
-    "magicroom": {
-        "name": "Magic Room",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "For 5 turns, the held items of all active Pokemon have no effect. An item's effect of causing forme changes is unaffected, but any other effects from such items are negated. During the effect, Fling and Natural Gift are prevented from being used by all active Pokemon. If this move is used during the effect, the effect ends."
-        }
-    },
-    "magmastorm": {
-        "name": "Magma Storm",
-        "type": "Fire",
-        "power": 100,
-        "accuracy": 75,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Prevents the target from switching for four or five turns (seven turns if the user is holding Grip Claw). Causes damage to the target equal to 1/8 of its maximum HP (1/6 if the user is holding Binding Band), rounded down, at the end of each turn during effect. The target can still switch out if it is holding Shed Shell or uses Baton Pass, Flip Turn, Parting Shot, Shed Tail, Teleport, U-turn, or Volt Switch. The effect ends if either the user or the target leaves the field, or if the target uses Mortal Spin, Rapid Spin, or Substitute successfully. This effect is not stackable or reset by using this or another binding move."
-        }
-    },
-    "magnetbomb": {
-        "name": "Magnet Bomb",
-        "type": "Steel",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This move does not check accuracy."
-        }
-    },
-    "magneticflux": {
-        "name": "Magnetic Flux",
-        "type": "Electric",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Raises the Defense and Special Defense of Pokemon on the user's side with the Plus or Minus Abilities by 1 stage."
-        }
-    },
-    "magnetrise": {
-        "name": "Magnet Rise",
-        "type": "Electric",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "For 5 turns, the user is immune to Ground-type attacks and the effects of Spikes, Toxic Spikes, Sticky Web, and the Arena Trap Ability as long as it remains active. If the user uses Baton Pass, the replacement will gain the effect. Ingrain, Smack Down, Thousand Arrows, and Iron Ball override this move if the user is under any of their effects. Fails if the user is already under this effect or the effects of Ingrain, Smack Down, or Thousand Arrows."
-        }
-    },
-    "magnitude": {
-        "name": "Magnitude",
-        "type": "Ground",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "The power of this move varies; 5% chances for 10 and 150 power, 10% chances for 30 and 110 power, 20% chances for 50 and 90 power, and 30% chance for 70 power. Damage doubles if the target is using Dig."
-        }
-    },
-    "makeitrain": {
-        "name": "Make It Rain",
-        "type": "Steel",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Lowers the user's Special Attack by 1 stage."
-        }
-    },
-    "malignantchain": {
-        "name": "Malignant Chain",
-        "type": "Poison",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "TOX",
-            "statusRate": 50,
-            "desc": "Has a 50% chance to badly poison the target."
-        }
-    },
-    "matblock": {
-        "name": "Mat Block",
-        "type": "Fighting",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user and its party members are protected from damaging attacks made by other Pokemon, including allies, during this turn. Fails unless it is the user's first turn on the field, if the user moves last this turn, or if this move is already in effect for the user's side."
-        }
-    },
-    "matchagotcha": {
-        "name": "Matcha Gotcha",
-        "type": "Grass",
-        "power": 80,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "drainPerc": 0.5,
-            "status": "BRN",
-            "statusRate": 20,
-            "desc": "Has a 20% chance to burn the target. The user recovers 1/2 the HP lost by the target, rounded half up. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down. The target thaws out if it is frozen."
-        }
-    },
-    "meanlook": {
-        "name": "Mean Look",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Prevents the target from switching out. The target can still switch out if it is holding Shed Shell or uses Baton Pass, Flip Turn, Parting Shot, Teleport, U-turn, or Volt Switch. The effect ends if either the user or the target leaves the field."
-        }
-    },
-    "meditate": {
-        "name": "Meditate",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": 1
-            },
-            "desc": "Raises the user's Attack by 1 stage."
-        }
-    },
-    "mefirst": {
-        "name": "Me First",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user uses the move the target chose for use this turn against it, if possible, with its power multiplied by 1.5. The move must be a damaging move other than Beak Blast, Belch, Blazing Torque, Combat Torque, Comeuppance, Counter, Covet, Focus Punch, Magical Torque, Me First, Metal Burst, Mirror Coat, Noxious Torque, Shell Trap, Struggle, Thief, or Wicked Torque. Fails if the target moves before the user. Ignores the target's substitute for the purpose of copying the move."
-        }
-    },
-    "megadrain": {
-        "name": "Mega Drain",
-        "type": "Grass",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "drainPerc": 0.5,
-            "desc": "The user recovers 1/2 the HP lost by the target, rounded half up. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down."
-        }
-    },
-    "megahorn": {
-        "name": "Megahorn",
-        "type": "Bug",
-        "power": 120,
-        "accuracy": 85,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "megakick": {
-        "name": "Mega Kick",
-        "type": "Normal",
-        "power": 120,
-        "accuracy": 75,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "megapunch": {
-        "name": "Mega Punch",
-        "type": "Normal",
-        "power": 80,
-        "accuracy": 85,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "memento": {
-        "name": "Memento",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": -2,
-                "spa": -2
-            },
-            "desc": "Lowers the target's Attack and Special Attack by 2 stages. The user faints unless this move misses or there is no target. Fails entirely if this move hits a substitute, but does not fail if the target's stats cannot be changed."
-        }
-    },
-    "metalburst": {
-        "name": "Metal Burst",
-        "type": "Steel",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals damage to the last opposing Pokemon to hit the user with a physical or special attack this turn equal to 1.5 times the HP lost by the user from that attack, rounded down. If the user did not lose HP from that attack, this move deals 1 HP of damage instead. If that opposing Pokemon's position is no longer in use and there is another opposing Pokemon on the field, the damage is done to it instead. Only the last hit of a multi-hit attack is counted. Fails if the user was not hit by an opposing Pokemon's physical or special attack this turn."
-        }
-    },
-    "metalclaw": {
-        "name": "Metal Claw",
-        "type": "Steel",
-        "power": 50,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 10% chance to raise the user's Attack by 1 stage."
-        }
-    },
-    "metalsound": {
-        "name": "Metal Sound",
-        "type": "Steel",
-        "power": 0,
-        "accuracy": 85,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spd": -2
-            },
-            "desc": "Lowers the target's Special Defense by 2 stages."
-        }
-    },
-    "meteorassault": {
-        "name": "Meteor Assault",
-        "type": "Fighting",
-        "power": 150,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, the user must recharge on the following turn and cannot select a move."
-        }
-    },
-    "meteorbeam": {
-        "name": "Meteor Beam",
-        "type": "Rock",
-        "power": 120,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "This attack charges on the first turn and executes on the second. Raises the user's Special Attack by 1 stage on the first turn. If the user is holding a Power Herb, the move completes in one turn."
-        }
-    },
-    "meteormash": {
-        "name": "Meteor Mash",
-        "type": "Steel",
-        "power": 90,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 20% chance to raise the user's Attack by 1 stage."
-        }
-    },
-    "metronome": {
-        "name": "Metronome",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "A random move is selected for use, other than After You, Apple Acid, Armor Cannon, Assist, Astral Barrage, Aura Wheel, Baneful Bunker, Beak Blast, Behemoth Bash, Behemoth Blade, Belch, Bestow, Blazing Torque, Body Press, Branch Poke, Breaking Swipe, Celebrate, Chatter, Chilling Water, Chilly Reception, Clangorous Soul, Collision Course, Combat Torque, Comeuppance, Copycat, Counter, Covet, Crafty Shield, Decorate, Destiny Bond, Detect, Diamond Storm, Doodle, Double Iron Bash, Double Shock, Dragon Ascent, Dragon Energy, Drum Beating, Dynamax Cannon, Electro Drift, Endure, Eternabeam, False Surrender, Feint, Fiery Wrath, Fillet Away, Fleur Cannon, Focus Punch, Follow Me, Freeze Shock, Freezing Glare, Glacial Lance, Grav Apple, Helping Hand, Hold Hands, Hyper Drill, Hyperspace Fury, Hyperspace Hole, Ice Burn, Instruct, Jet Punch, Jungle Healing, King's Shield, Life Dew, Light of Ruin, Magical Torque, Make It Rain, Mat Block, Me First, Meteor Assault, Metronome, Mimic, Mind Blown, Mirror Coat, Mirror Move, Moongeist Beam, Nature Power, Nature's Madness, Noxious Torque, Obstruct, Order Up, Origin Pulse, Overdrive, Photon Geyser, Plasma Fists, Population Bomb, Pounce, Power Shift, Precipice Blades, Protect, Pyro Ball, Quash, Quick Guard, Rage Fist, Rage Powder, Raging Bull, Raging Fury, Relic Song, Revival Blessing, Ruination, Salt Cure, Secret Sword, Shed Tail, Shell Trap, Silk Trap, Sketch, Sleep Talk, Snap Trap, Snarl, Snatch, Snore, Snowscape, Spectral Thief, Spicy Extract, Spiky Shield, Spirit Break, Spotlight, Springtide Storm, Steam Eruption, Steel Beam, Strange Steam, Struggle, Sunsteel Strike, Surging Strikes, Switcheroo, Techno Blast, Tera Starstorm, Thief, Thousand Arrows, Thousand Waves, Thunder Cage, Thunderous Kick, Tidy Up, Trailblaze, Transform, Trick, Twin Beam, V-create, Wicked Blow, Wicked Torque, or Wide Guard."
-        }
-    },
-    "mightycleave": {
-        "name": "Mighty Cleave",
-        "type": "Rock",
-        "power": 95,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Bypasses protection without breaking it."
-        }
-    },
-    "milkdrink": {
-        "name": "Milk Drink",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "healPerc": 0.5,
-            "desc": "The user restores 1/2 of its maximum HP, rounded half up."
-        }
-    },
-    "mimic": {
-        "name": "Mimic",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "While the user remains active, this move is replaced by the last move used by the target. The copied move has the maximum PP for that move. Fails if the target has not made a move, if the user has Transformed, if the user already knows the move, or if the move is Assist, Behemoth Bash, Behemoth Blade, Belch, Blazing Torque, Celebrate, Chatter, Combat Torque, Copycat, Dynamax Cannon, Hold Hands, Magical Torque, Me First, Metronome, Mimic, Mirror Move, Nature Power, Noxious Torque, Sketch, Sleep Talk, Struggle, Tera Starstorm, Transform, or Wicked Torque."
-        }
-    },
-    "mindblown": {
-        "name": "Mind Blown",
-        "type": "Fire",
-        "power": 150,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Whether or not this move is successful and even if it would cause fainting, the user loses 1/2 of its maximum HP, rounded up, unless the user has the Magic Guard Ability. This move is prevented from executing and the user does not lose HP if any active Pokemon has the Damp Ability, or if this move is Fire type and the user is affected by Powder or the weather is Primordial Sea."
-        }
-    },
-    "mindreader": {
-        "name": "Mind Reader",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Until the end of the next turn, the target cannot avoid the user's moves, even if the target is in the middle of a two-turn move. The effect ends if either the user or the target leaves the field. Fails if this effect is active for the user."
-        }
-    },
-    "minimize": {
-        "name": "Minimize",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "evasion": 2
-            },
-            "desc": "Raises the user's evasiveness by 2 stages. Whether or not the user's evasiveness was changed, Body Slam, Dragon Rush, Flying Press, Heat Crash, Heavy Slam, Malicious Moonsault, Steamroller, Stomp, and Supercell Slam will not check accuracy and have their damage doubled if used against the user while it is active."
-        }
-    },
-    "miracleeye": {
-        "name": "Miracle Eye",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "As long as the target remains active, its evasiveness stat stage is ignored during accuracy checks against it if it is greater than 0, and Psychic-type attacks can hit the target if it is a Dark type. Fails if the target is already affected, or affected by Foresight or Odor Sleuth."
-        }
-    },
-    "mirrorcoat": {
-        "name": "Mirror Coat",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": -5,
-        "effects": {
-            "desc": "Deals damage to the last opposing Pokemon to hit the user with a special attack this turn equal to twice the HP lost by the user from that attack. If the user did not lose HP from the attack, this move deals 1 HP of damage instead. If that opposing Pokemon's position is no longer in use and there is another opposing Pokemon on the field, the damage is done to it instead. Only the last hit of a multi-hit attack is counted. Fails if the user was not hit by an opposing Pokemon's special attack this turn."
-        }
-    },
-    "mirrormove": {
-        "name": "Mirror Move",
-        "type": "Flying",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user uses the last move used by the target. The copied move is used against that target, if possible. Fails if the target has not made a move, or if the last move used cannot be copied by this move."
-        }
-    },
-    "mirrorshot": {
-        "name": "Mirror Shot",
-        "type": "Steel",
-        "power": 65,
-        "accuracy": 85,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "accuracy": -1
-            },
-            "dropRate": 30,
-            "desc": "Has a 30% chance to lower the target's accuracy by 1 stage."
-        }
-    },
-    "mist": {
-        "name": "Mist",
-        "type": "Ice",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "For 5 turns, the user and its party members are protected from having their stat stages lowered by other Pokemon. Fails if the effect is already active on the user's side."
-        }
-    },
-    "mistball": {
-        "name": "Mist Ball",
-        "type": "Psychic",
-        "power": 95,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spa": -1
-            },
-            "dropRate": 50,
-            "desc": "Has a 50% chance to lower the target's Special Attack by 1 stage."
-        }
-    },
-    "mistyexplosion": {
-        "name": "Misty Explosion",
-        "type": "Fairy",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If the current terrain is Misty Terrain and the user is grounded, this move's power is multiplied by 1.5. The user faints after using this move, even if this move fails for having no target. This move is prevented from executing if any active Pokemon has the Damp Ability."
-        }
-    },
-    "mistyterrain": {
-        "name": "Misty Terrain",
-        "type": "Fairy",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "For 5 turns, the terrain becomes Misty Terrain. During the effect, the power of Dragon-type attacks used against grounded Pokemon is multiplied by 0.5 and grounded Pokemon cannot be inflicted with a non-volatile status condition nor confusion. Grounded Pokemon can become affected by Yawn but cannot fall asleep from its effect. Camouflage transforms the user into a Fairy type, Nature Power becomes Moonblast, and Secret Power has a 30% chance to lower Special Attack by 1 stage. Fails if the current terrain is Misty Terrain."
-        }
-    },
-    "moonblast": {
-        "name": "Moonblast",
-        "type": "Fairy",
-        "power": 95,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spa": -1
-            },
-            "dropRate": 30,
-            "desc": "Has a 30% chance to lower the target's Special Attack by 1 stage."
-        }
-    },
-    "moongeistbeam": {
-        "name": "Moongeist Beam",
-        "type": "Ghost",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "This move and its effects ignore the Abilities of other Pokemon."
-        }
-    },
-    "moonlight": {
-        "name": "Moonlight",
-        "type": "Fairy",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user restores 1/2 of its maximum HP if Delta Stream or no weather conditions are in effect or if the user is holding Utility Umbrella, 2/3 of its maximum HP if the weather is Desolate Land or Sunny Day, and 1/4 of its maximum HP if the weather is Primordial Sea, Rain Dance, Sandstorm, or Snow, all rounded half down."
-        }
-    },
-    "morningsun": {
-        "name": "Morning Sun",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user restores 1/2 of its maximum HP if Delta Stream or no weather conditions are in effect or if the user is holding Utility Umbrella, 2/3 of its maximum HP if the weather is Desolate Land or Sunny Day, and 1/4 of its maximum HP if the weather is Primordial Sea, Rain Dance, Sandstorm, or Snow, all rounded half down."
-        }
-    },
-    "mortalspin": {
-        "name": "Mortal Spin",
-        "type": "Poison",
-        "power": 30,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "PSN",
-            "statusRate": 100,
-            "clearMyHazards": true,
-            "desc": "If this move is successful and the user has not fainted, the effects of Leech Seed and binding moves end for the user, and all hazards are removed from the user's side of the field. Has a 100% chance to poison the target."
-        }
-    },
-    "mountaingale": {
-        "name": "Mountain Gale",
-        "type": "Ice",
-        "power": 100,
-        "accuracy": 85,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 30% chance to make the target flinch."
-        }
-    },
-    "mudbomb": {
-        "name": "Mud Bomb",
-        "type": "Ground",
-        "power": 65,
-        "accuracy": 85,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "accuracy": -1
-            },
-            "dropRate": 30,
-            "desc": "Has a 30% chance to lower the target's accuracy by 1 stage."
-        }
-    },
-    "muddywater": {
-        "name": "Muddy Water",
-        "type": "Water",
-        "power": 90,
-        "accuracy": 85,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "accuracy": -1
-            },
-            "dropRate": 30,
-            "desc": "Has a 30% chance to lower the target's accuracy by 1 stage."
-        }
-    },
-    "mudshot": {
-        "name": "Mud Shot",
-        "type": "Ground",
-        "power": 55,
-        "accuracy": 95,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spe": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Speed by 1 stage."
-        }
-    },
-    "mudslap": {
-        "name": "Mud-Slap",
-        "type": "Ground",
-        "power": 20,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "accuracy": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's accuracy by 1 stage."
-        }
-    },
-    "mudsport": {
-        "name": "Mud Sport",
-        "type": "Ground",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "For 5 turns, all Electric-type attacks used by any active Pokemon have their power multiplied by 0.33. Fails if this effect is already active."
-        }
-    },
-    "multiattack": {
-        "name": "Multi-Attack",
-        "type": "Normal",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This move's type depends on the user's held Memory."
-        }
-    },
-    "mysticalfire": {
-        "name": "Mystical Fire",
-        "type": "Fire",
-        "power": 75,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spa": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Special Attack by 1 stage."
-        }
-    },
-    "mysticalpower": {
-        "name": "Mystical Power",
-        "type": "Psychic",
-        "power": 70,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 100% chance to raise the user's Special Attack by 1 stage."
-        }
-    },
-    "nastyplot": {
-        "name": "Nasty Plot",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spa": 2
-            },
-            "desc": "Raises the user's Special Attack by 2 stages."
-        }
-    },
-    "naturalgift": {
-        "name": "Natural Gift",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "The type and power of this move depend on the user's held Berry, and the Berry is lost. Fails if the user is not holding a Berry, if the user has the Klutz Ability, or if Embargo or Magic Room is in effect for the user."
-        }
-    },
-    "naturepower": {
-        "name": "Nature Power",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "This move calls another move for use based on the battle terrain. Tri Attack on the regular Wi-Fi terrain, Thunderbolt during Electric Terrain, Moonblast during Misty Terrain, Energy Ball during Grassy Terrain, and Psychic during Psychic Terrain."
-        }
-    },
-    "naturesmadness": {
-        "name": "Nature's Madness",
-        "type": "Fairy",
-        "power": 0,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals damage to the target equal to half of its current HP, rounded down, but not less than 1 HP."
-        }
-    },
-    "needlearm": {
-        "name": "Needle Arm",
-        "type": "Grass",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 30% chance to make the target flinch."
-        }
-    },
-    "nightdaze": {
-        "name": "Night Daze",
-        "type": "Dark",
-        "power": 85,
-        "accuracy": 95,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "accuracy": -1
-            },
-            "dropRate": 40,
-            "desc": "Has a 40% chance to lower the target's accuracy by 1 stage."
-        }
-    },
-    "nightmare": {
-        "name": "Nightmare",
-        "type": "Ghost",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Causes the target to lose 1/4 of its maximum HP, rounded down, at the end of each turn as long as it is asleep. This move does not affect the target unless it is asleep. The effect ends when the target wakes up, even if it falls asleep again in the same turn."
-        }
-    },
-    "nightshade": {
-        "name": "Night Shade",
-        "type": "Ghost",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals damage to the target equal to the user's level."
-        }
-    },
-    "nightslash": {
-        "name": "Night Slash",
-        "type": "Dark",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a higher chance for a critical hit."
-        }
-    },
-    "nihillight": {
-        "name": "Nihil Light",
-        "type": "Dragon",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0
-    },
-    "nobleroar": {
-        "name": "Noble Roar",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": -1,
-                "spa": -1
-            },
-            "desc": "Lowers the target's Attack and Special Attack by 1 stage."
-        }
-    },
-    "noretreat": {
-        "name": "No Retreat",
-        "type": "Fighting",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": 1,
-                "def": 1,
-                "spa": 1,
-                "spd": 1,
-                "spe": 1
-            },
-            "desc": "Raises the user's Attack, Defense, Special Attack, Special Defense, and Speed by 1 stage, but it becomes prevented from switching out. The user can still switch out if it uses Baton Pass, Flip Turn, Parting Shot, Teleport, U-turn, or Volt Switch. Fails if the user has already been prevented from switching by this effect."
-        }
-    },
-    "noxioustorque": {
-        "name": "Noxious Torque",
-        "type": "Poison",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "PSN",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to poison the target."
-        }
-    },
-    "nuzzle": {
-        "name": "Nuzzle",
-        "type": "Electric",
-        "power": 20,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "statusRate": 100,
-            "desc": "Has a 100% chance to paralyze the target."
-        }
-    },
-    "oblivionwing": {
-        "name": "Oblivion Wing",
-        "type": "Flying",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "drainPerc": 0.75,
-            "desc": "The user recovers 3/4 the HP lost by the target, rounded half up. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down."
-        }
-    },
-    "obstruct": {
-        "name": "Obstruct",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 4,
-        "effects": {
-            "desc": "The user is protected from most attacks made by other Pokemon during this turn, and Pokemon trying to make contact with the user have their Defense lowered by 2 stages. Non-damaging moves go through this protection. This move has a 1/X chance of being successful, where X starts at 1 and triples each time this move is successfully used. X resets to 1 if this move fails, if the user's last move used is not Baneful Bunker, Burning Bulwark, Detect, Endure, King's Shield, Max Guard, Obstruct, Protect, Quick Guard, Silk Trap, Spiky Shield, or Wide Guard, or if it was one of those moves and the user's protection was broken. Fails if the user moves last this turn."
-        }
-    },
-    "octazooka": {
-        "name": "Octazooka",
-        "type": "Water",
-        "power": 65,
-        "accuracy": 85,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "accuracy": -1
-            },
-            "dropRate": 50,
-            "desc": "Has a 50% chance to lower the target's accuracy by 1 stage."
-        }
-    },
-    "octolock": {
-        "name": "Octolock",
-        "type": "Fighting",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Prevents the target from switching out. At the end of each turn during effect, the target's Defense and Special Defense are lowered by 1 stage. The target can still switch out if it is holding Shed Shell or uses Baton Pass, Flip Turn, Parting Shot, Teleport, U-turn, or Volt Switch. The effect ends if either the user or the target leaves the field."
-        }
-    },
-    "odorsleuth": {
-        "name": "Odor Sleuth",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "As long as the target remains active, its evasiveness stat stage is ignored during accuracy checks against it if it is greater than 0, and Normal- and Fighting-type attacks can hit the target if it is a Ghost type. Fails if the target is already affected, or affected by Foresight or Miracle Eye."
-        }
-    },
-    "ominouswind": {
-        "name": "Ominous Wind",
-        "type": "Ghost",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 10% chance to raise the user's Attack, Defense, Special Attack, Special Defense, and Speed by 1 stage."
-        }
-    },
-    "orderup": {
-        "name": "Order Up",
-        "type": "Dragon",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If an ally Tatsugiri has activated its Commander Ability, this move raises the user's Attack by 1 stage if the Tatsugiri is Curly Form, Defense by 1 stage if Droopy Form, or Speed by 1 stage if Stretchy Form. The effect happens even if the Tatsugiri that activated the effect has since fainted."
-        }
-    },
-    "originpulse": {
-        "name": "Origin Pulse",
-        "type": "Water",
-        "power": 110,
-        "accuracy": 85,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "outrage": {
-        "name": "Outrage",
-        "type": "Dragon",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "The user spends two or three turns locked into this move and becomes confused immediately after its move on the last turn of the effect if it is not already. This move targets an opposing Pokemon at random on each turn. If the user is prevented from moving, is asleep at the beginning of a turn, or the attack is not successful against the target on the first turn of the effect or the second turn of a three-turn effect, the effect ends without causing confusion. If this move is called by Sleep Talk and the user is asleep, the move is used for one turn and does not confuse the user."
-        }
-    },
-    "overdrive": {
-        "name": "Overdrive",
-        "type": "Electric",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "overheat": {
-        "name": "Overheat",
-        "type": "Fire",
-        "power": 130,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Lowers the user's Special Attack by 2 stages."
-        }
-    },
-    "painsplit": {
-        "name": "Pain Split",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "painSplit": true,
-            "desc": "The user and the target's HP become the average of their current HP, rounded down, but not more than the maximum HP of either one."
-        }
-    },
-    "paraboliccharge": {
-        "name": "Parabolic Charge",
-        "type": "Electric",
-        "power": 65,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "drainPerc": 0.5,
-            "desc": "The user recovers 1/2 the HP lost by the target, rounded half up. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down."
-        }
-    },
-    "partingshot": {
-        "name": "Parting Shot",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "pivot": true,
-            "desc": "Lowers the target's Attack and Special Attack by 1 stage. If this move is successful, the user switches out even if it is trapped and is replaced immediately by a selected party member. The user does not switch out if the target's Attack and Special Attack stat stages were both unchanged, or if there are no unfainted party members."
-        }
-    },
-    "payback": {
-        "name": "Payback",
-        "type": "Dark",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power doubles if the user moves after the target this turn, including actions taken through Instruct or the Dancer Ability. Switching in does not count as an action."
-        }
-    },
-    "payday": {
-        "name": "Pay Day",
-        "type": "Normal",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "peck": {
-        "name": "Peck",
-        "type": "Flying",
-        "power": 35,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "perishsong": {
-        "name": "Perish Song",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Each active Pokemon receives a perish count of 4 if it doesn't already have a perish count. At the end of each turn including the turn used, the perish count of all active Pokemon lowers by 1 and Pokemon faint if the number reaches 0. The perish count is removed from Pokemon that switch out. If a Pokemon uses Baton Pass while it has a perish count, the replacement will gain the perish count and continue to count down."
-        }
-    },
-    "petalblizzard": {
-        "name": "Petal Blizzard",
-        "type": "Grass",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "petaldance": {
-        "name": "Petal Dance",
-        "type": "Grass",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "The user spends two or three turns locked into this move and becomes confused immediately after its move on the last turn of the effect if it is not already. This move targets an opposing Pokemon at random on each turn. If the user is prevented from moving, is asleep at the beginning of a turn, or the attack is not successful against the target on the first turn of the effect or the second turn of a three-turn effect, the effect ends without causing confusion. If this move is called by Sleep Talk and the user is asleep, the move is used for one turn and does not confuse the user."
-        }
-    },
-    "phantomforce": {
-        "name": "Phantom Force",
-        "type": "Ghost",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, it breaks through the target's Baneful Bunker, Detect, King's Shield, Protect, or Spiky Shield for this turn, allowing other Pokemon to attack the target normally. If the target's side is protected by Crafty Shield, Mat Block, Quick Guard, or Wide Guard, that protection is also broken for this turn and other Pokemon may attack the target's side normally. This attack charges on the first turn and executes on the second. On the first turn, the user avoids all attacks. If the user is holding a Power Herb, the move completes in one turn."
-        }
-    },
-    "photongeyser": {
-        "name": "Photon Geyser",
-        "type": "Psychic",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "This move becomes a physical attack if the user's Attack is greater than its Special Attack, including stat stage changes. This move and its effects ignore the Abilities of other Pokemon."
-        }
-    },
-    "pikapapow": {
-        "name": "Pika Papow",
-        "type": "Electric",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Power is equal to the greater of (user's Happiness * 2/5), rounded down, or 1."
-        }
-    },
-    "pinmissile": {
-        "name": "Pin Missile",
-        "type": "Bug",
-        "power": 25,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                5
-            ],
-            "desc": "Hits two to five times. Has a 35% chance to hit two or three times and a 15% chance to hit four or five times. If one of the hits breaks the target's substitute, it will take damage for the remaining hits. If the user has the Skill Link Ability, this move will always hit five times. If the user is holding Loaded Dice, this move will hit 4-5 times."
-        }
-    },
-    "plasmafists": {
-        "name": "Plasma Fists",
-        "type": "Electric",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, causes Normal-type moves to become Electric type this turn."
-        }
-    },
-    "playnice": {
-        "name": "Play Nice",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": -1
-            },
-            "desc": "Lowers the target's Attack by 1 stage."
-        }
-    },
-    "playrough": {
-        "name": "Play Rough",
-        "type": "Fairy",
-        "power": 90,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "atk": -1
-            },
-            "dropRate": 10,
-            "desc": "Has a 10% chance to lower the target's Attack by 1 stage."
-        }
-    },
-    "pluck": {
-        "name": "Pluck",
-        "type": "Flying",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful and the user has not fainted, it steals the target's held Berry if it is holding one and eats it immediately, gaining its effects even if the user's item is being ignored. Items lost to this move cannot be regained with Recycle or the Harvest Ability."
-        }
-    },
-    "poisonfang": {
-        "name": "Poison Fang",
-        "type": "Poison",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "TOX",
-            "statusRate": 50,
-            "desc": "Has a 50% chance to badly poison the target."
-        }
-    },
-    "poisongas": {
-        "name": "Poison Gas",
-        "type": "Poison",
-        "power": 0,
-        "accuracy": 90,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "status": "PSN",
-            "desc": "Poisons the target."
-        }
-    },
-    "poisonjab": {
-        "name": "Poison Jab",
-        "type": "Poison",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "PSN",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to poison the target."
-        }
-    },
-    "poisonpowder": {
-        "name": "Poison Powder",
-        "type": "Poison",
-        "power": 0,
-        "accuracy": 75,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "status": "PSN",
-            "desc": "Poisons the target."
-        }
-    },
-    "poisonsting": {
-        "name": "Poison Sting",
-        "type": "Poison",
-        "power": 15,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "PSN",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to poison the target."
-        }
-    },
-    "poisontail": {
-        "name": "Poison Tail",
-        "type": "Poison",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "PSN",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to poison the target and a higher chance for a critical hit."
-        }
-    },
-    "pollenpuff": {
-        "name": "Pollen Puff",
-        "type": "Bug",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If the target is an ally, this move restores 1/2 of its maximum HP, rounded down, instead of dealing damage."
-        }
-    },
-    "poltergeist": {
-        "name": "Poltergeist",
-        "type": "Ghost",
-        "power": 110,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Fails if the target has no held item."
-        }
-    },
-    "populationbomb": {
-        "name": "Population Bomb",
-        "type": "Normal",
-        "power": 20,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                10,
-                10
-            ],
-            "desc": "Hits ten times. This move checks accuracy for each hit, and the attack ends if the target avoids a hit. If one of the hits breaks the target's substitute, it will take damage for the remaining hits. If the user has the Skill Link Ability, this move will always hit ten times. If the user is holding Loaded Dice, this move hits four to ten times at random without checking accuracy between hits."
-        }
-    },
-    "pounce": {
-        "name": "Pounce",
-        "type": "Bug",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spe": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Speed by 1 stage."
-        }
-    },
-    "pound": {
-        "name": "Pound",
-        "type": "Normal",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "powder": {
-        "name": "Powder",
-        "type": "Bug",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 1,
-        "effects": {
-            "desc": "If the target uses a Fire-type move this turn, it is prevented from executing and the target loses 1/4 of its maximum HP, rounded half up. This effect does not happen if the Fire-type move is prevented by Primordial Sea."
-        }
-    },
-    "powdersnow": {
-        "name": "Powder Snow",
-        "type": "Ice",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "FRZ",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to freeze the target."
-        }
-    },
-    "powergem": {
-        "name": "Power Gem",
-        "type": "Rock",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "powershift": {
-        "name": "Power Shift",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user swaps its Attack and Defense stats, and stat stage changes remain on their respective stats. This move can be used again to swap the stats back. If the user uses Baton Pass, the replacement will have its Attack and Defense stats swapped if the effect is active. If the user has its stats recalculated by changing forme while its stats are swapped, this effect is ignored but is still active for the purposes of Baton Pass."
-        }
-    },
-    "powersplit": {
-        "name": "Power Split",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user and the target have their Attack and Special Attack stats set to be equal to the average of the user and the target's Attack and Special Attack stats, respectively, rounded down. Stat stage changes are unaffected."
-        }
-    },
-    "powerswap": {
-        "name": "Power Swap",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user swaps its Attack and Special Attack stat stage changes with the target."
-        }
-    },
-    "powertrick": {
-        "name": "Power Trick",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user swaps its Attack and Defense stats, and stat stage changes remain on their respective stats. This move can be used again to swap the stats back. If the user uses Baton Pass, the replacement will have its Attack and Defense stats swapped if the effect is active. If the user has its stats recalculated by changing forme while its stats are swapped, this effect is ignored but is still active for the purposes of Baton Pass."
-        }
-    },
-    "powertrip": {
-        "name": "Power Trip",
-        "type": "Dark",
-        "power": 20,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power is equal to 20+(X*20), where X is the user's total stat stage changes that are greater than 0."
-        }
-    },
-    "poweruppunch": {
-        "name": "Power-Up Punch",
-        "type": "Fighting",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 100% chance to raise the user's Attack by 1 stage."
-        }
-    },
-    "powerwhip": {
-        "name": "Power Whip",
-        "type": "Grass",
-        "power": 120,
-        "accuracy": 85,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "precipiceblades": {
-        "name": "Precipice Blades",
-        "type": "Ground",
-        "power": 120,
-        "accuracy": 85,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "present": {
-        "name": "Present",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, it deals damage or heals the target. 40% chance for 40 power, 30% chance for 80 power, 10% chance for 120 power, and 20% chance to heal the target by 1/4 of its maximum HP, rounded down."
-        }
-    },
-    "prismaticlaser": {
-        "name": "Prismatic Laser",
-        "type": "Psychic",
-        "power": 160,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, the user must recharge on the following turn and cannot select a move."
-        }
-    },
-    "protect": {
-        "name": "Protect",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 4,
-        "effects": {
-            "protect": true,
-            "desc": "The user is protected from most attacks made by other Pokemon during this turn. This move has a 1/X chance of being successful, where X starts at 1 and triples each time this move is successfully used. X resets to 1 if this move fails, if the user's last move used is not Baneful Bunker, Burning Bulwark, Detect, Endure, King's Shield, Max Guard, Obstruct, Protect, Quick Guard, Silk Trap, Spiky Shield, or Wide Guard, or if it was one of those moves and the user's protection was broken. Fails if the user moves last this turn."
-        }
-    },
-    "psybeam": {
-        "name": "Psybeam",
-        "type": "Psychic",
-        "power": 65,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 10% chance to confuse the target."
-        }
-    },
-    "psyblade": {
-        "name": "Psyblade",
-        "type": "Psychic",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If the current terrain is Electric Terrain, this move's power is multiplied by 1.5."
-        }
-    },
-    "psychic": {
-        "name": "Psychic",
-        "type": "Psychic",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spd": -1
-            },
-            "dropRate": 10,
-            "desc": "Has a 10% chance to lower the target's Special Defense by 1 stage."
-        }
-    },
-    "psychicfangs": {
-        "name": "Psychic Fangs",
-        "type": "Psychic",
-        "power": 85,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this attack does not miss, the effects of Reflect, Light Screen, and Aurora Veil end for the target's side of the field before damage is calculated."
-        }
-    },
-    "psychicnoise": {
-        "name": "Psychic Noise",
-        "type": "Psychic",
-        "power": 75,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "For 2 turns, the target is prevented from restoring any HP as long as it remains active. During the effect, healing and draining moves are unusable, and Abilities and items that grant healing will not heal the user. If an affected Pokemon uses Baton Pass, the replacement will remain unable to restore its HP. Pain Split and the Regenerator Ability are unaffected."
-        }
-    },
-    "psychicterrain": {
-        "name": "Psychic Terrain",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "For 5 turns, the terrain becomes Psychic Terrain. During the effect, the power of Psychic-type attacks made by grounded Pokemon is multiplied by 1.3 and grounded Pokemon cannot be hit by moves with priority greater than 0, unless the target is an ally. Camouflage transforms the user into a Psychic type, Nature Power becomes Psychic, and Secret Power has a 30% chance to lower the target's Speed by 1 stage. Fails if the current terrain is Psychic Terrain."
-        }
-    },
-    "psychoboost": {
-        "name": "Psycho Boost",
-        "type": "Psychic",
-        "power": 140,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Lowers the user's Special Attack by 2 stages."
-        }
-    },
-    "psychocut": {
-        "name": "Psycho Cut",
-        "type": "Psychic",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a higher chance for a critical hit."
-        }
-    },
-    "psychoshift": {
-        "name": "Psycho Shift",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user's non-volatile status condition is transferred to the target, and the user is then cured. Fails if the user has no non-volatile status condition or if the target already has one."
-        }
-    },
-    "psychup": {
-        "name": "Psych Up",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user copies all of the target's current stat stage changes."
-        }
-    },
-    "psyshieldbash": {
-        "name": "Psyshield Bash",
-        "type": "Psychic",
-        "power": 70,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 100% chance to raise the user's Defense by 1 stage."
-        }
-    },
-    "psyshock": {
-        "name": "Psyshock",
-        "type": "Psychic",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals damage to the target based on its Defense instead of Special Defense."
-        }
-    },
-    "psystrike": {
-        "name": "Psystrike",
-        "type": "Psychic",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals damage to the target based on its Defense instead of Special Defense."
-        }
-    },
-    "psywave": {
-        "name": "Psywave",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals damage to the target equal to (user's level) * (X + 50) / 100, where X is a random number from 0 to 100, rounded down, but not less than 1 HP."
-        }
-    },
-    "punishment": {
-        "name": "Punishment",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power is equal to 60+(X*20), where X is the target's total stat stage changes that are greater than 0, but not more than 200 power."
-        }
-    },
-    "purify": {
-        "name": "Purify",
-        "type": "Poison",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The target is cured if it has a non-volatile status condition. If the target was cured, the user restores 1/2 of its maximum HP, rounded down."
-        }
-    },
-    "pursuit": {
-        "name": "Pursuit",
-        "type": "Dark",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If an opposing Pokemon switches out this turn, this move hits that Pokemon before it leaves the field, even if it was not the original target. If the user moves after an opponent using Flip Turn, Parting Shot, Teleport, U-turn, or Volt Switch, but not Baton Pass, it will hit that opponent before it leaves the field. Power doubles and no accuracy check is done if the user hits an opponent switching out, and the user's turn is over; if an opponent faints from this, the replacement Pokemon does not become active until the end of the turn."
-        }
-    },
-    "pyroball": {
-        "name": "Pyro Ball",
-        "type": "Fire",
-        "power": 120,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to burn the target."
-        }
-    },
-    "quash": {
-        "name": "Quash",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Causes the target to take its turn after all other Pokemon this turn, no matter the priority of its selected move. Fails if the target already moved this turn."
-        }
-    },
-    "quickattack": {
-        "name": "Quick Attack",
-        "type": "Normal",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 1,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "quickguard": {
-        "name": "Quick Guard",
-        "type": "Fighting",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 3,
-        "effects": {
-            "desc": "The user and its party members are protected from attacks with original or altered priority greater than 0 made by other Pokemon, including allies, during this turn. This move modifies the same 1/X chance of being successful used by other protection moves, where X starts at 1 and triples each time this move is successfully used, but does not use the chance to check for failure. X resets to 1 if this move fails, if the user's last move used is not Baneful Bunker, Burning Bulwark, Detect, Endure, King's Shield, Max Guard, Obstruct, Protect, Quick Guard, Silk Trap, Spiky Shield, or Wide Guard, or if it was one of those moves and the user's protection was broken. Fails if the user moves last this turn or if this move is already in effect for the user's side."
-        }
-    },
-    "quiverdance": {
-        "name": "Quiver Dance",
-        "type": "Bug",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spa": 1,
-                "spd": 1,
-                "spe": 1
-            },
-            "desc": "Raises the user's Special Attack, Special Defense, and Speed by 1 stage."
-        }
-    },
-    "rage": {
-        "name": "Rage",
-        "type": "Normal",
-        "power": 20,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Once this move is successfully used, the user's Attack is raised by 1 stage every time it is hit by another Pokemon's attack as long as this move is chosen for use."
-        }
-    },
-    "ragefist": {
-        "name": "Rage Fist",
-        "type": "Ghost",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power is equal to 50+(X*50), where X is the total number of times the user has been hit by a damaging attack during the battle, even if the user did not lose HP from the attack. X cannot be greater than 6 and does not reset upon switching out or fainting. Each hit of a multi-hit attack is counted, but confusion damage is not counted."
-        }
-    },
-    "ragepowder": {
-        "name": "Rage Powder",
-        "type": "Bug",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 2,
-        "effects": {
-            "desc": "Until the end of the turn, all single-target attacks from the opposing side are redirected to the user. Such attacks are redirected to the user before they can be reflected by Magic Coat or the Magic Bounce Ability, or drawn in by the Lightning Rod or Storm Drain Abilities. Fails if it is not a Double Battle or Battle Royal. This effect is ignored while the user is under the effect of Sky Drop."
-        }
-    },
-    "ragingbull": {
-        "name": "Raging Bull",
-        "type": "Normal",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this attack does not miss, the effects of Reflect, Light Screen, and Aurora Veil end for the target's side of the field before damage is calculated. If the user's current form is a Paldean Tauros, this move's type changes to match. Fighting type for Combat Breed, Fire type for Blaze Breed, and Water type for Aqua Breed."
-        }
-    },
-    "ragingfury": {
-        "name": "Raging Fury",
-        "type": "Fire",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "The user spends two or three turns locked into this move and becomes confused immediately after its move on the last turn of the effect if it is not already. This move targets an opposing Pokemon at random on each turn. If the user is prevented from moving, is asleep at the beginning of a turn, or the attack is not successful against the target on the first turn of the effect or the second turn of a three-turn effect, the effect ends without causing confusion. If this move is called by Sleep Talk and the user is asleep, the move is used for one turn and does not confuse the user."
-        }
-    },
-    "raindance": {
-        "name": "Rain Dance",
-        "type": "Water",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "weather": "RainDance",
-            "desc": "For 5 turns, the weather becomes Rain Dance. The damage of Water-type attacks is multiplied by 1.5 and the damage of Fire-type attacks is multiplied by 0.5 during the effect. Lasts for 8 turns if the user is holding Damp Rock. Fails if the current weather is Rain Dance."
-        }
-    },
-    "rapidspin": {
-        "name": "Rapid Spin",
-        "type": "Normal",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "clearMyHazards": true,
-            "desc": "If this move is successful and the user has not fainted, the effects of Leech Seed and binding moves end for the user, and all hazards are removed from the user's side of the field. Has a 100% chance to raise the user's Speed by 1 stage."
-        }
-    },
-    "razorleaf": {
-        "name": "Razor Leaf",
-        "type": "Grass",
-        "power": 55,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a higher chance for a critical hit."
-        }
-    },
-    "razorshell": {
-        "name": "Razor Shell",
-        "type": "Water",
-        "power": 75,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "def": -1
-            },
-            "dropRate": 50,
-            "desc": "Has a 50% chance to lower the target's Defense by 1 stage."
-        }
-    },
-    "razorwind": {
-        "name": "Razor Wind",
-        "type": "Normal",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a higher chance for a critical hit. This attack charges on the first turn and executes on the second. If the user is holding a Power Herb, the move completes in one turn."
-        }
-    },
-    "recover": {
-        "name": "Recover",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "healPerc": 0.5,
-            "desc": "The user restores 1/2 of its maximum HP, rounded half up."
-        }
-    },
-    "recycle": {
-        "name": "Recycle",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user regains the item it last used. Fails if the user is holding an item, if the user has not held an item, if the item was a popped Air Balloon, if the item was picked up by a Pokemon with the Pickup Ability, or if the item was lost to Bug Bite, Corrosive Gas, Covet, Incinerate, Knock Off, Pluck, or Thief. Items thrown with Fling can be regained."
-        }
-    },
-    "reflect": {
-        "name": "Reflect",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "screen": "reflect",
-            "desc": "For 5 turns, the user and its party members take 0.5x damage from physical attacks, or 0.66x damage if in a Double Battle. Damage is not reduced further with Aurora Veil. Critical hits ignore this effect. It is removed from the user's side if the user or an ally is successfully hit by Brick Break, Psychic Fangs, or Defog. Lasts for 8 turns if the user is holding Light Clay. Fails if the effect is already active on the user's side."
-        }
-    },
-    "reflecttype": {
-        "name": "Reflect Type",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Causes the user's types to become the same as the current types of the target. If the target's current types include typeless and a non-added type, typeless is ignored. If the target's current types include typeless and an added type from Forest's Curse or Trick-or-Treat, typeless is copied as the Normal type instead. Fails if the user is an Arceus or a Silvally, if the user is Terastallized, or if the target's current type is typeless alone."
-        }
-    },
-    "refresh": {
-        "name": "Refresh",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user cures its burn, poison, or paralysis. Fails if the user is not burned, poisoned, or paralyzed."
-        }
-    },
-    "relicsong": {
-        "name": "Relic Song",
-        "type": "Normal",
-        "power": 75,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "SLP",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to cause the target to fall asleep. If this move is successful on at least one target and the user is a Meloetta, it changes to Pirouette Forme if it is currently in Aria Forme, or changes to Aria Forme if it is currently in Pirouette Forme. This forme change does not happen if the Meloetta has the Sheer Force Ability. The Pirouette Forme reverts to Aria Forme when Meloetta is not active."
-        }
-    },
-    "rest": {
-        "name": "Rest",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user falls asleep for the next two turns and restores all of its HP, curing itself of any non-volatile status condition in the process. Fails if the user has full HP, is already asleep, or if another effect is preventing sleep."
-        }
-    },
-    "retaliate": {
-        "name": "Retaliate",
-        "type": "Normal",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power doubles if one of the user's party members fainted last turn."
-        }
-    },
-    "return": {
-        "name": "Return",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power is equal to the greater of (user's Happiness * 2/5), rounded down, or 1."
-        }
-    },
-    "revelationdance": {
-        "name": "Revelation Dance",
-        "type": "Normal",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "This move's type depends on the user's primary type. If the user's primary type is typeless, this move's type is the user's secondary type if it has one, otherwise the added type from Forest's Curse or Trick-or-Treat. This move is typeless if the user's type is typeless alone."
-        }
-    },
-    "revenge": {
-        "name": "Revenge",
-        "type": "Fighting",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": -4,
-        "effects": {
-            "desc": "Power doubles if the user was hit by the target this turn."
-        }
-    },
-    "reversal": {
-        "name": "Reversal",
-        "type": "Fighting",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "The power of this move is 20 if X is 33 to 48, 40 if X is 17 to 32, 80 if X is 10 to 16, 100 if X is 5 to 9, 150 if X is 2 to 4, and 200 if X is 0 or 1, where X is equal to (user's current HP * 48 / user's maximum HP), rounded down."
-        }
-    },
-    "revivalblessing": {
-        "name": "Revival Blessing",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "A fainted party member is selected and revived with 1/2 its max HP, rounded down. Fails if there are no fainted party members."
-        }
-    },
-    "risingvoltage": {
-        "name": "Rising Voltage",
-        "type": "Electric",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If the current terrain is Electric Terrain and the target is grounded, this move's power is doubled."
-        }
-    },
-    "roar": {
-        "name": "Roar",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": -6,
-        "effects": {
-            "forceSwitch": true,
-            "desc": "The target is forced to switch out and be replaced with a random unfainted ally. Fails if the target is the last unfainted Pokemon in its party, or if the target used Ingrain previously or has the Suction Cups Ability."
-        }
-    },
-    "roaroftime": {
-        "name": "Roar of Time",
-        "type": "Dragon",
-        "power": 150,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, the user must recharge on the following turn and cannot select a move."
-        }
-    },
-    "rockblast": {
-        "name": "Rock Blast",
-        "type": "Rock",
-        "power": 25,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                5
-            ],
-            "desc": "Hits two to five times. Has a 35% chance to hit two or three times and a 15% chance to hit four or five times. If one of the hits breaks the target's substitute, it will take damage for the remaining hits. If the user has the Skill Link Ability, this move will always hit five times. If the user is holding Loaded Dice, this move will hit 4-5 times."
-        }
-    },
-    "rockclimb": {
-        "name": "Rock Climb",
-        "type": "Normal",
-        "power": 90,
-        "accuracy": 85,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 20% chance to confuse the target."
-        }
-    },
-    "rockpolish": {
-        "name": "Rock Polish",
-        "type": "Rock",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spe": 2
-            },
-            "desc": "Raises the user's Speed by 2 stages."
-        }
-    },
-    "rockslide": {
-        "name": "Rock Slide",
-        "type": "Rock",
-        "power": 75,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 30% chance to make the target flinch."
-        }
-    },
-    "rocksmash": {
-        "name": "Rock Smash",
-        "type": "Fighting",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "def": -1
-            },
-            "dropRate": 50,
-            "desc": "Has a 50% chance to lower the target's Defense by 1 stage."
-        }
-    },
-    "rockthrow": {
-        "name": "Rock Throw",
-        "type": "Rock",
-        "power": 50,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "rocktomb": {
-        "name": "Rock Tomb",
-        "type": "Rock",
-        "power": 60,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spe": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Speed by 1 stage."
-        }
-    },
-    "rockwrecker": {
-        "name": "Rock Wrecker",
-        "type": "Rock",
-        "power": 150,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, the user must recharge on the following turn and cannot select a move."
-        }
-    },
-    "roleplay": {
-        "name": "Role Play",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user's Ability changes to match the target's Ability. Fails if the user's Ability is As One, Battle Bond, Comatose, Disguise, Gulp Missile, Ice Face, Multitype, Power Construct, RKS System, Schooling, Shields Down, Stance Change, Tera Shift, Zen Mode, Zero to Hero, or already matches the target, or if the target's Ability is As One, Battle Bond, Comatose, Commander, Disguise, Embody Aspect, Flower Gift, Forecast, Hunger Switch, Ice Face, Illusion, Imposter, Multitype, Neutralizing Gas, Poison Puppeteer, Power Construct, Power of Alchemy, Protosynthesis, Quark Drive, Receiver, RKS System, Schooling, Shields Down, Stance Change, Tera Shell, Tera Shift, Teraform Zero, Trace, Wonder Guard, Zen Mode, or Zero to Hero."
-        }
-    },
-    "rollingkick": {
-        "name": "Rolling Kick",
-        "type": "Fighting",
-        "power": 60,
-        "accuracy": 85,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 30% chance to make the target flinch."
-        }
-    },
-    "rollout": {
-        "name": "Rollout",
-        "type": "Rock",
-        "power": 30,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, the user is locked into this move and cannot make another move until it misses, 5 turns have passed, or the attack cannot be used. Power doubles with each successful hit of this move and doubles again if Defense Curl was used previously by the user. If this move is called by Sleep Talk, the move is used for one turn."
-        }
-    },
-    "roost": {
-        "name": "Roost",
-        "type": "Flying",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "healPerc": 0.5,
-            "desc": "The user restores 1/2 of its maximum HP, rounded half up. If the user is not Terastallized, until the end of the turn Flying-type users lose their Flying type and pure Flying-type users become Normal type. Does nothing if the user's HP is full."
-        }
-    },
-    "rototiller": {
-        "name": "Rototiller",
-        "type": "Ground",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Raises the Attack and Special Attack of all grounded Grass-type Pokemon on the field by 1 stage."
-        }
-    },
-    "round": {
-        "name": "Round",
-        "type": "Normal",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If there are other active Pokemon that chose this move for use this turn, those Pokemon take their turn immediately after the user, in Speed order, and this move's power is 120 for each other user."
-        }
-    },
-    "ruination": {
-        "name": "Ruination",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals damage to the target equal to half of its current HP, rounded down, but not less than 1 HP."
-        }
-    },
-    "sacredfire": {
-        "name": "Sacred Fire",
-        "type": "Fire",
-        "power": 100,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 50,
-            "desc": "Has a 50% chance to burn the target."
-        }
-    },
-    "sacredsword": {
-        "name": "Sacred Sword",
-        "type": "Fighting",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Ignores the target's stat stage changes, including evasiveness."
-        }
-    },
-    "safeguard": {
-        "name": "Safeguard",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "For 5 turns, the user and its party members cannot have non-volatile status conditions or confusion inflicted on them by other Pokemon. Pokemon on the user's side cannot become affected by Yawn but can fall asleep from its effect. It is removed from the user's side if the user or an ally is successfully hit by Defog. Fails if the effect is already active on the user's side."
-        }
-    },
-    "saltcure": {
-        "name": "Salt Cure",
-        "type": "Rock",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Causes damage to the target equal to 1/8 of its maximum HP (1/4 if the target is Steel or Water type), rounded down, at the end of each turn during effect. This effect ends when the target is no longer active."
-        }
-    },
-    "sandattack": {
-        "name": "Sand Attack",
-        "type": "Ground",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "accuracy": -1
-            },
-            "desc": "Lowers the target's accuracy by 1 stage."
-        }
-    },
-    "sandsearstorm": {
-        "name": "Sandsear Storm",
-        "type": "Ground",
-        "power": 100,
-        "accuracy": 80,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 20,
-            "desc": "Has a 20% chance to burn the target. If the weather is Primordial Sea or Rain Dance, this move does not check accuracy. If this move is used against a Pokemon holding Utility Umbrella, this move's accuracy remains at 80%."
-        }
-    },
-    "sandstorm": {
-        "name": "Sandstorm",
-        "type": "Rock",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "weather": "Sandstorm",
-            "desc": "For 5 turns, the weather becomes Sandstorm. At the end of each turn except the last, all active Pokemon lose 1/16 of their maximum HP, rounded down, unless they are a Ground, Rock, or Steel type, or have the Magic Guard, Overcoat, Sand Force, Sand Rush, or Sand Veil Abilities. During the effect, the Special Defense of Rock-type Pokemon is multiplied by 1.5 when taking damage from a special attack. Lasts for 8 turns if the user is holding Smooth Rock. Fails if the current weather is Sandstorm."
-        }
-    },
-    "sandtomb": {
-        "name": "Sand Tomb",
-        "type": "Ground",
-        "power": 35,
-        "accuracy": 85,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Prevents the target from switching for four or five turns (seven turns if the user is holding Grip Claw). Causes damage to the target equal to 1/8 of its maximum HP (1/6 if the user is holding Binding Band), rounded down, at the end of each turn during effect. The target can still switch out if it is holding Shed Shell or uses Baton Pass, Flip Turn, Parting Shot, Shed Tail, Teleport, U-turn, or Volt Switch. The effect ends if either the user or the target leaves the field, or if the target uses Mortal Spin, Rapid Spin, or Substitute successfully. This effect is not stackable or reset by using this or another binding move."
-        }
-    },
-    "sappyseed": {
-        "name": "Sappy Seed",
-        "type": "Grass",
-        "power": 100,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This move summons Leech Seed on the foe."
-        }
-    },
-    "scald": {
-        "name": "Scald",
-        "type": "Water",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to burn the target. The target thaws out if it is frozen."
-        }
-    },
-    "scaleshot": {
-        "name": "Scale Shot",
-        "type": "Dragon",
-        "power": 25,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                5
-            ],
-            "desc": "Hits two to five times. Lowers the user's Defense by 1 stage and raises the user's Speed by 1 stage after the last hit. Has a 35% chance to hit two or three times and a 15% chance to hit four or five times. If one of the hits breaks the target's substitute, it will take damage for the remaining hits. If the user has the Skill Link Ability, this move will always hit five times. If the user is holding Loaded Dice, this move will hit 4-5 times."
-        }
-    },
-    "scaryface": {
-        "name": "Scary Face",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spe": -2
-            },
-            "desc": "Lowers the target's Speed by 2 stages."
-        }
-    },
-    "scorchingsands": {
-        "name": "Scorching Sands",
-        "type": "Ground",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to burn the target. The target thaws out if it is frozen."
-        }
-    },
-    "scratch": {
-        "name": "Scratch",
-        "type": "Normal",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "screech": {
-        "name": "Screech",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 85,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "def": -2
-            },
-            "desc": "Lowers the target's Defense by 2 stages."
-        }
-    },
-    "searingshot": {
-        "name": "Searing Shot",
-        "type": "Fire",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to burn the target."
-        }
-    },
-    "secretpower": {
-        "name": "Secret Power",
-        "type": "Normal",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to cause a secondary effect on the target based on the battle terrain. Causes paralysis on the regular Wi-Fi terrain, causes paralysis during Electric Terrain, lowers Special Attack by 1 stage during Misty Terrain, causes sleep during Grassy Terrain and lowers Speed by 1 stage during Psychic Terrain."
-        }
-    },
-    "secretsword": {
-        "name": "Secret Sword",
-        "type": "Fighting",
-        "power": 85,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals damage to the target based on its Defense instead of Special Defense."
-        }
-    },
-    "seedbomb": {
-        "name": "Seed Bomb",
-        "type": "Grass",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "seedflare": {
-        "name": "Seed Flare",
-        "type": "Grass",
-        "power": 120,
-        "accuracy": 85,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spd": -2
-            },
-            "dropRate": 40,
-            "desc": "Has a 40% chance to lower the target's Special Defense by 2 stages."
-        }
-    },
-    "seismictoss": {
-        "name": "Seismic Toss",
-        "type": "Fighting",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals damage to the target equal to the user's level."
-        }
-    },
-    "selfdestruct": {
-        "name": "Self-Destruct",
-        "type": "Normal",
-        "power": 200,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "The user faints after using this move, even if this move fails for having no target. This move is prevented from executing if any active Pokemon has the Damp Ability."
-        }
-    },
-    "shadowball": {
-        "name": "Shadow Ball",
-        "type": "Ghost",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spd": -1
-            },
-            "dropRate": 20,
-            "desc": "Has a 20% chance to lower the target's Special Defense by 1 stage."
-        }
-    },
-    "shadowbone": {
-        "name": "Shadow Bone",
-        "type": "Ghost",
-        "power": 85,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "def": -1
-            },
-            "dropRate": 20,
-            "desc": "Has a 20% chance to lower the target's Defense by 1 stage."
-        }
-    },
-    "shadowclaw": {
-        "name": "Shadow Claw",
-        "type": "Ghost",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a higher chance for a critical hit."
-        }
-    },
-    "shadowforce": {
-        "name": "Shadow Force",
-        "type": "Ghost",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, it breaks through the target's Baneful Bunker, Detect, King's Shield, Protect, or Spiky Shield for this turn, allowing other Pokemon to attack the target normally. If the target's side is protected by Crafty Shield, Mat Block, Quick Guard, or Wide Guard, that protection is also broken for this turn and other Pokemon may attack the target's side normally. This attack charges on the first turn and executes on the second. On the first turn, the user avoids all attacks. If the user is holding a Power Herb, the move completes in one turn."
-        }
-    },
-    "shadowpunch": {
-        "name": "Shadow Punch",
-        "type": "Ghost",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This move does not check accuracy."
-        }
-    },
-    "shadowsneak": {
-        "name": "Shadow Sneak",
-        "type": "Ghost",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 1,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "sharpen": {
-        "name": "Sharpen",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": 1
-            },
-            "desc": "Raises the user's Attack by 1 stage."
-        }
-    },
-    "shedtail": {
-        "name": "Shed Tail",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "substitute": true,
-            "desc": "The user takes 1/2 of its maximum HP, rounded up, and creates a substitute that has 1/4 of the user's maximum HP, rounded down. The user is replaced with another Pokemon in its party and the selected Pokemon has the substitute transferred to it. Fails if the user would faint, or if there are no unfainted party members."
-        }
-    },
-    "sheercold": {
-        "name": "Sheer Cold",
-        "type": "Ice",
-        "power": 0,
-        "accuracy": 30,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals damage to the target equal to the target's maximum HP. Ignores accuracy and evasiveness modifiers. This attack's accuracy is equal to (user's level - target's level + X)%, where X is 30 if the user is an Ice type and 20 otherwise, and fails if the target is at a higher level. Ice-type Pokemon and Pokemon with the Sturdy Ability are immune."
-        }
-    },
-    "shellsidearm": {
-        "name": "Shell Side Arm",
-        "type": "Poison",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "PSN",
-            "statusRate": 20,
-            "desc": "Has a 20% chance to poison the target. This move becomes a physical attack that makes contact if the value of ((((2 * the user's level / 5 + 2) * 90 * X) / Y) / 50), where X is the user's Attack stat and Y is the target's Defense stat, is greater than the same value where X is the user's Special Attack stat and Y is the target's Special Defense stat. No stat modifiers other than stat stage changes are considered for this purpose. If the two values are equal, this move chooses a damage category at random."
-        }
-    },
-    "shellsmash": {
-        "name": "Shell Smash",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "def": -1,
-                "spd": -1,
-                "atk": 2,
-                "spa": 2,
-                "spe": 2
-            },
-            "desc": "Lowers the user's Defense and Special Defense by 1 stage. Raises the user's Attack, Special Attack, and Speed by 2 stages."
-        }
-    },
-    "shelltrap": {
-        "name": "Shell Trap",
-        "type": "Fire",
-        "power": 150,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": -3,
-        "effects": {
-            "desc": "Fails unless the user is hit by a physical attack from an opponent this turn before it can execute the move. If the user was hit and has not fainted, it attacks immediately after being hit, and the effect ends. If the opponent's physical attack had a secondary effect removed by the Sheer Force Ability, it does not count for the purposes of this effect."
-        }
-    },
-    "shelter": {
-        "name": "Shelter",
-        "type": "Steel",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "def": 2
-            },
-            "desc": "Raises the user's Defense by 2 stages."
-        }
-    },
-    "shiftgear": {
-        "name": "Shift Gear",
-        "type": "Steel",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spe": 2,
-                "atk": 1
-            },
-            "desc": "Raises the user's Speed by 2 stages and its Attack by 1 stage."
-        }
-    },
-    "shockwave": {
-        "name": "Shock Wave",
-        "type": "Electric",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "This move does not check accuracy."
-        }
-    },
-    "shoreup": {
-        "name": "Shore Up",
-        "type": "Ground",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user restores 1/2 of its maximum HP, rounded half down. If the weather is Sandstorm, the user instead restores 2/3 of its maximum HP, rounded half down."
-        }
-    },
-    "signalbeam": {
-        "name": "Signal Beam",
-        "type": "Bug",
-        "power": 75,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 10% chance to confuse the target."
-        }
-    },
-    "silktrap": {
-        "name": "Silk Trap",
-        "type": "Bug",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 4,
-        "effects": {
-            "desc": "The user is protected from most attacks made by other Pokemon during this turn, and Pokemon trying to make contact with the user have their Speed lowered by 1 stage. Non-damaging moves go through this protection. This move has a 1/X chance of being successful, where X starts at 1 and triples each time this move is successfully used. X resets to 1 if this move fails, if the user's last move used is not Baneful Bunker, Burning Bulwark, Detect, Endure, King's Shield, Max Guard, Obstruct, Protect, Quick Guard, Silk Trap, Spiky Shield, or Wide Guard, or if it was one of those moves and the user's protection was broken. Fails if the user moves last this turn."
-        }
-    },
-    "silverwind": {
-        "name": "Silver Wind",
-        "type": "Bug",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 10% chance to raise the user's Attack, Defense, Special Attack, Special Defense, and Speed by 1 stage."
-        }
-    },
-    "simplebeam": {
-        "name": "Simple Beam",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Causes the target's Ability to become Simple. Fails if the target's Ability is As One, Battle Bond, Comatose, Disguise, Gulp Missile, Ice Face, Multitype, Power Construct, RKS System, Schooling, Shields Down, Simple, Stance Change, Tera Shift, Truant, Zen Mode, or Zero to Hero."
-        }
-    },
-    "sing": {
-        "name": "Sing",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 55,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "status": "SLP",
-            "desc": "Causes the target to fall asleep."
-        }
-    },
-    "sizzlyslide": {
-        "name": "Sizzly Slide",
-        "type": "Fire",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 100,
-            "desc": "Has a 100% chance to burn the foe."
-        }
-    },
-    "sketch": {
-        "name": "Sketch",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "This move is permanently replaced by the last move used by the target. The copied move has the maximum PP for that move. Fails if the target has not made a move, if the user has Transformed, or if the move is Blazing Torque, Combat Torque, Dark Void, Hyperspace Fury, Magical Torque, Noxious Torque, Revival Blessing, Sketch, Struggle, Tera Starstorm, Wicked Torque, or any move the user knows."
-        }
-    },
-    "skillswap": {
-        "name": "Skill Swap",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user swaps its Ability with the target's Ability. Fails if either the user or the target's Ability is As One, Battle Bond, Comatose, Commander, Disguise, Embody Aspect, Hunger Switch, Ice Face, Illusion, Multitype, Neutralizing Gas, Poison Puppeteer, Power Construct, Protosynthesis, Quark Drive, RKS System, Schooling, Shields Down, Stance Change, Tera Shell, Tera Shift, Teraform Zero, Wonder Guard, Zen Mode, or Zero to Hero."
-        }
-    },
-    "skittersmack": {
-        "name": "Skitter Smack",
-        "type": "Bug",
-        "power": 70,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spa": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Special Attack by 1 stage."
-        }
-    },
-    "skullbash": {
-        "name": "Skull Bash",
-        "type": "Normal",
-        "power": 130,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This attack charges on the first turn and executes on the second. Raises the user's Defense by 1 stage on the first turn. If the user is holding a Power Herb, the move completes in one turn."
-        }
-    },
-    "skyattack": {
-        "name": "Sky Attack",
-        "type": "Flying",
-        "power": 140,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 30% chance to make the target flinch and a higher chance for a critical hit. This attack charges on the first turn and executes on the second. If the user is holding a Power Herb, the move completes in one turn."
-        }
-    },
-    "skydrop": {
-        "name": "Sky Drop",
-        "type": "Flying",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This attack takes the target into the air with the user on the first turn and executes on the second. Pokemon weighing 200 kg or more cannot be lifted. On the first turn, the user and the target avoid all attacks other than Gust, Hurricane, Sky Uppercut, Smack Down, Thousand Arrows, Thunder, and Twister. The user and the target cannot make a move between turns, but the target can select a move to use. This move cannot damage Flying-type Pokemon. Fails on the first turn if the target is an ally, if the target has a substitute, or if the target is using Bounce, Dig, Dive, Fly, Phantom Force, Shadow Force, or Sky Drop."
-        }
-    },
-    "skyuppercut": {
-        "name": "Sky Uppercut",
-        "type": "Fighting",
-        "power": 85,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This move can hit a target using Bounce, Fly, or Sky Drop, or is under the effect of Sky Drop."
-        }
-    },
-    "slackoff": {
-        "name": "Slack Off",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "healPerc": 0.5,
-            "desc": "The user restores 1/2 of its maximum HP, rounded half up."
-        }
-    },
-    "slam": {
-        "name": "Slam",
-        "type": "Normal",
-        "power": 80,
-        "accuracy": 75,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "slash": {
-        "name": "Slash",
-        "type": "Normal",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a higher chance for a critical hit."
-        }
-    },
-    "sleeppowder": {
-        "name": "Sleep Powder",
-        "type": "Grass",
-        "power": 0,
-        "accuracy": 75,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "status": "SLP",
-            "desc": "Causes the target to fall asleep."
-        }
-    },
-    "sleeptalk": {
-        "name": "Sleep Talk",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "One of the user's known moves, besides this move, is selected for use at random. Fails if the user is not asleep. The selected move does not have PP deducted from it, and can currently have 0 PP. This move cannot select Assist, Beak Blast, Belch, Bide, Blazing Torque, Celebrate, Chatter, Combat Torque, Copycat, Dynamax Cannon, Focus Punch, Hold Hands, Magical Torque, Me First, Metronome, Mimic, Mirror Move, Nature Power, Noxious Torque, Shell Trap, Sketch, Sleep Talk, Struggle, Uproar, Wicked Torque, or any two-turn move."
-        }
-    },
-    "sludge": {
-        "name": "Sludge",
-        "type": "Poison",
-        "power": 65,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "PSN",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to poison the target."
-        }
-    },
-    "sludgebomb": {
-        "name": "Sludge Bomb",
-        "type": "Poison",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "PSN",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to poison the target."
-        }
-    },
-    "sludgewave": {
-        "name": "Sludge Wave",
-        "type": "Poison",
-        "power": 95,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "PSN",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to poison the target."
-        }
-    },
-    "smackdown": {
-        "name": "Smack Down",
-        "type": "Rock",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This move can hit a target using Bounce, Fly, or Sky Drop, or is under the effect of Sky Drop. If this move hits a target under the effect of Bounce, Fly, Magnet Rise, or Telekinesis, the effect ends. If the target is a Flying type that has not used Roost this turn or a Pokemon with the Levitate Ability, it loses its immunity to Ground-type attacks and the Arena Trap Ability as long as it remains active. During the effect, Magnet Rise fails for the target and Telekinesis fails against the target."
-        }
-    },
-    "smartstrike": {
-        "name": "Smart Strike",
-        "type": "Steel",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This move does not check accuracy."
-        }
-    },
-    "smellingsalts": {
-        "name": "Smelling Salts",
-        "type": "Normal",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power doubles if the target is paralyzed. If the user has not fainted, the target is cured of paralysis."
-        }
-    },
-    "smog": {
-        "name": "Smog",
-        "type": "Poison",
-        "power": 30,
-        "accuracy": 70,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "PSN",
-            "statusRate": 40,
-            "desc": "Has a 40% chance to poison the target."
-        }
-    },
-    "smokescreen": {
-        "name": "Smokescreen",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "accuracy": -1
-            },
-            "desc": "Lowers the target's accuracy by 1 stage."
-        }
-    },
-    "snaptrap": {
-        "name": "Snap Trap",
-        "type": "Grass",
-        "power": 35,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Prevents the target from switching for four or five turns (seven turns if the user is holding Grip Claw). Causes damage to the target equal to 1/8 of its maximum HP (1/6 if the user is holding Binding Band), rounded down, at the end of each turn during effect. The target can still switch out if it is holding Shed Shell or uses Baton Pass, Flip Turn, Parting Shot, Shed Tail, Teleport, U-turn, or Volt Switch. The effect ends if either the user or the target leaves the field, or if the target uses Mortal Spin, Rapid Spin, or Substitute successfully. This effect is not stackable or reset by using this or another binding move."
-        }
-    },
-    "snarl": {
-        "name": "Snarl",
-        "type": "Dark",
-        "power": 55,
-        "accuracy": 95,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spa": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Special Attack by 1 stage."
-        }
-    },
-    "snatch": {
-        "name": "Snatch",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 4,
-        "effects": {
-            "desc": "If another Pokemon uses certain non-damaging moves this turn, the user steals that move to use itself. If multiple Pokemon use one of those moves this turn, the applicable moves are all stolen by the first Pokemon in turn order that used this move this turn. This effect is ignored while the user is under the effect of Sky Drop."
-        }
-    },
-    "snipeshot": {
-        "name": "Snipe Shot",
-        "type": "Water",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a higher chance for a critical hit. This move cannot be redirected to a different target by any effect."
-        }
-    },
-    "snore": {
-        "name": "Snore",
-        "type": "Normal",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 30% chance to make the target flinch. Fails if the user is not asleep."
-        }
-    },
-    "snowscape": {
-        "name": "Snowscape",
-        "type": "Ice",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "weather": "Snowscape",
-            "desc": "For 5 turns, the weather becomes Snow. During the effect, the Defense of Ice-type Pokemon is multiplied by 1.5 when taking damage from a physical attack. Lasts for 8 turns if the user is holding Icy Rock. Fails if the current weather is Snow."
-        }
-    },
-    "soak": {
-        "name": "Soak",
-        "type": "Water",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Causes the target to become a Water type. Fails if the target is an Arceus or a Silvally, if the target is already purely Water type, or if the target is Terastallized."
-        }
-    },
-    "softboiled": {
-        "name": "Soft-Boiled",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "healPerc": 0.5,
-            "desc": "The user restores 1/2 of its maximum HP, rounded half up."
-        }
-    },
-    "solarbeam": {
-        "name": "Solar Beam",
-        "type": "Grass",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "This attack charges on the first turn and executes on the second. Power is halved if the weather is Primordial Sea, Rain Dance, Sandstorm, or Snow and the user is not holding Utility Umbrella. If the user is holding a Power Herb or the weather is Desolate Land or Sunny Day, the move completes in one turn. If the user is holding Utility Umbrella and the weather is Desolate Land or Sunny Day, the move still requires a turn to charge."
-        }
-    },
-    "solarblade": {
-        "name": "Solar Blade",
-        "type": "Grass",
-        "power": 125,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This attack charges on the first turn and executes on the second. Power is halved if the weather is Hail, Primordial Sea, Rain Dance, or Sandstorm and the user is not holding Utility Umbrella. If the user is holding a Power Herb or the weather is Desolate Land or Sunny Day, the move completes in one turn. If the user is holding Utility Umbrella and the weather is Desolate Land or Sunny Day, the move still requires a turn to charge."
-        }
-    },
-    "sonicboom": {
-        "name": "Sonic Boom",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals 20 HP of damage to the target."
-        }
-    },
-    "spacialrend": {
-        "name": "Spacial Rend",
-        "type": "Dragon",
-        "power": 100,
-        "accuracy": 95,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a higher chance for a critical hit."
-        }
-    },
-    "spark": {
-        "name": "Spark",
-        "type": "Electric",
-        "power": 65,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to paralyze the target."
-        }
-    },
-    "sparklingaria": {
-        "name": "Sparkling Aria",
-        "type": "Water",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If the user has not fainted, the target is cured of its burn."
-        }
-    },
-    "sparklyswirl": {
-        "name": "Sparkly Swirl",
-        "type": "Fairy",
-        "power": 120,
-        "accuracy": 85,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Every Pokemon in the user's party is cured of its non-volatile status condition."
-        }
-    },
-    "spectralthief": {
-        "name": "Spectral Thief",
-        "type": "Ghost",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "The target's stat stages greater than 0 are stolen from it and applied to the user before dealing damage."
-        }
-    },
-    "speedswap": {
-        "name": "Speed Swap",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user swaps its Speed stat with the target. Stat stage changes are unaffected."
-        }
-    },
-    "spicyextract": {
-        "name": "Spicy Extract",
-        "type": "Grass",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": 2,
-                "def": -2
-            },
-            "desc": "Raises the target's Attack by 2 stages and lowers its Defense by 2 stages."
-        }
-    },
-    "spiderweb": {
-        "name": "Spider Web",
-        "type": "Bug",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Prevents the target from switching out. The target can still switch out if it is holding Shed Shell or uses Baton Pass, Flip Turn, Parting Shot, Teleport, U-turn, or Volt Switch. The effect ends if either the user or the target leaves the field."
-        }
-    },
-    "spikecannon": {
-        "name": "Spike Cannon",
-        "type": "Normal",
-        "power": 20,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                5
-            ],
-            "desc": "Hits two to five times. Has a 35% chance to hit two or three times and a 15% chance to hit four or five times. If one of the hits breaks the target's substitute, it will take damage for the remaining hits. If the user has the Skill Link Ability, this move will always hit five times."
-        }
-    },
-    "spikes": {
-        "name": "Spikes",
-        "type": "Ground",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "hazards": "spikes",
-            "desc": "Sets up a hazard on the opposing side of the field, damaging each opposing Pokemon that switches in, unless it is a Flying-type Pokemon or has the Levitate Ability. Can be used up to three times before failing. Opponents lose 1/8 of their maximum HP with one layer, 1/6 of their maximum HP with two layers, and 1/4 of their maximum HP with three layers, all rounded down. Can be removed from the opposing side if any Pokemon uses Tidy Up, or if any opposing Pokemon uses Mortal Spin, Rapid Spin, or Defog successfully, or is hit by Defog."
-        }
-    },
-    "spikyshield": {
-        "name": "Spiky Shield",
-        "type": "Grass",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 4,
-        "effects": {
-            "protect": true,
-            "desc": "The user is protected from most attacks made by other Pokemon during this turn, and Pokemon making contact with the user lose 1/8 of their maximum HP, rounded down. This move has a 1/X chance of being successful, where X starts at 1 and triples each time this move is successfully used. X resets to 1 if this move fails, if the user's last move used is not Baneful Bunker, Burning Bulwark, Detect, Endure, King's Shield, Max Guard, Obstruct, Protect, Quick Guard, Silk Trap, Spiky Shield, or Wide Guard, or if it was one of those moves and the user's protection was broken. Fails if the user moves last this turn."
-        }
-    },
-    "spinout": {
-        "name": "Spin Out",
-        "type": "Steel",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Lowers the user's Speed by 2 stages."
-        }
-    },
-    "spiritbreak": {
-        "name": "Spirit Break",
-        "type": "Fairy",
-        "power": 75,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spa": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Special Attack by 1 stage."
-        }
-    },
-    "spiritshackle": {
-        "name": "Spirit Shackle",
-        "type": "Ghost",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Prevents the target from switching out. The target can still switch out if it is holding Shed Shell or uses Baton Pass, Flip Turn, Parting Shot, Teleport, U-turn, or Volt Switch. The effect ends if either the user or the target leaves the field."
-        }
-    },
-    "spite": {
-        "name": "Spite",
-        "type": "Ghost",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Causes the target's last move used to lose 4 PP. Fails if the target has not made a move, if the move has 0 PP, or if it no longer knows the move."
-        }
-    },
-    "spitup": {
-        "name": "Spit Up",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Power is equal to 100 times the user's Stockpile count. Fails if the user's Stockpile count is 0. Whether or not this move is successful, the user's Defense and Special Defense decrease by as many stages as Stockpile had increased them, and the user's Stockpile count resets to 0."
-        }
-    },
-    "splash": {
-        "name": "Splash",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "No competitive use."
-        }
-    },
-    "splishysplash": {
-        "name": "Splishy Splash",
-        "type": "Water",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to paralyze the target."
-        }
-    },
-    "spore": {
-        "name": "Spore",
-        "type": "Grass",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "status": "SLP",
-            "desc": "Causes the target to fall asleep."
-        }
-    },
-    "spotlight": {
-        "name": "Spotlight",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 3,
-        "effects": {
-            "desc": "Until the end of the turn, all single-target attacks from opponents of the target are redirected to the target. Such attacks are redirected to the target before they can be reflected by Magic Coat or the Magic Bounce Ability, or drawn in by the Lightning Rod or Storm Drain Abilities. Fails if it is not a Double Battle or Battle Royal."
-        }
-    },
-    "springtidestorm": {
-        "name": "Springtide Storm",
-        "type": "Fairy",
-        "power": 100,
-        "accuracy": 80,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "atk": -1
-            },
-            "dropRate": 30,
-            "desc": "Has a 30% chance to lower the target's Attack by 1 stage."
-        }
-    },
-    "stealthrock": {
-        "name": "Stealth Rock",
-        "type": "Rock",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "hazards": "stealth-rock",
-            "desc": "Sets up a hazard on the opposing side of the field, damaging each opposing Pokemon that switches in. Fails if the effect is already active on the opposing side. Foes lose 1/32, 1/16, 1/8, 1/4, or 1/2 of their maximum HP, rounded down, based on their weakness to the Rock type; 0.25x, 0.5x, neutral, 2x, or 4x, respectively. Can be removed from the opposing side if any Pokemon uses Tidy Up, or if any opposing Pokemon uses Mortal Spin, Rapid Spin, or Defog successfully, or is hit by Defog."
-        }
-    },
-    "steameruption": {
-        "name": "Steam Eruption",
-        "type": "Water",
-        "power": 110,
-        "accuracy": 95,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to burn the target. The target thaws out if it is frozen."
-        }
-    },
-    "steamroller": {
-        "name": "Steamroller",
-        "type": "Bug",
-        "power": 65,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 30% chance to make the target flinch. Damage doubles and no accuracy check is done if the target has used Minimize while active."
-        }
-    },
-    "steelbeam": {
-        "name": "Steel Beam",
-        "type": "Steel",
-        "power": 140,
-        "accuracy": 95,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Whether or not this move is successful and even if it would cause fainting, the user loses 1/2 of its maximum HP, rounded up, unless the user has the Magic Guard Ability."
-        }
-    },
-    "steelroller": {
-        "name": "Steel Roller",
-        "type": "Steel",
-        "power": 130,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Fails if there is no terrain active. Ends the effects of Electric Terrain, Grassy Terrain, Misty Terrain, and Psychic Terrain."
-        }
-    },
-    "steelwing": {
-        "name": "Steel Wing",
-        "type": "Steel",
-        "power": 70,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 10% chance to raise the user's Defense by 1 stage."
-        }
-    },
-    "stickyweb": {
-        "name": "Sticky Web",
-        "type": "Bug",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "hazards": "sticky-web",
-            "desc": "Sets up a hazard on the opposing side of the field, lowering the Speed by 1 stage of each opposing Pokemon that switches in, unless it is a Flying-type Pokemon or has the Levitate Ability. Fails if the effect is already active on the opposing side. Can be removed from the opposing side if any Pokemon uses Tidy Up, or if any opposing Pokemon uses Mortal Spin, Rapid Spin, or Defog successfully, or is hit by Defog."
-        }
-    },
-    "stockpile": {
-        "name": "Stockpile",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Raises the user's Defense and Special Defense by 1 stage. The user's Stockpile count increases by 1. Fails if the user's Stockpile count is 3. The user's Stockpile count is reset to 0 when it is no longer active."
-        }
-    },
-    "stomp": {
-        "name": "Stomp",
-        "type": "Normal",
-        "power": 65,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 30% chance to make the target flinch. Damage doubles and no accuracy check is done if the target has used Minimize while active."
-        }
-    },
-    "stompingtantrum": {
-        "name": "Stomping Tantrum",
-        "type": "Ground",
-        "power": 75,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power doubles if the user's last move on the previous turn, including moves called by other moves or those used through Instruct, Magic Coat, Snatch, or the Dancer or Magic Bounce Abilities, failed to do any of its normal effects, not including damage from an unsuccessful High Jump Kick, Jump Kick, or Mind Blown, or if the user was prevented from moving by any effect other than recharging or Sky Drop. A move that was blocked by Baneful Bunker, Detect, King's Shield, Protect, Spiky Shield, Crafty Shield, Mat Block, Quick Guard, or Wide Guard will not double this move's power, nor will Bounce or Fly ending early due to the effect of Gravity, Smack Down, or Thousand Arrows."
-        }
-    },
-    "stoneaxe": {
-        "name": "Stone Axe",
-        "type": "Rock",
-        "power": 65,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, it sets up a hazard on the opposing side of the field, damaging each opposing Pokemon that switches in. Foes lose 1/32, 1/16, 1/8, 1/4, or 1/2 of their maximum HP, rounded down, based on their weakness to the Rock type; 0.25x, 0.5x, neutral, 2x, or 4x, respectively. Can be removed from the opposing side if any Pokemon uses Tidy Up, or if any opposing Pokemon uses Mortal Spin, Rapid Spin, or Defog successfully, or is hit by Defog."
-        }
-    },
-    "stoneedge": {
-        "name": "Stone Edge",
-        "type": "Rock",
-        "power": 100,
-        "accuracy": 80,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a higher chance for a critical hit."
-        }
-    },
-    "storedpower": {
-        "name": "Stored Power",
-        "type": "Psychic",
-        "power": 20,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Power is equal to 20+(X*20), where X is the user's total stat stage changes that are greater than 0."
-        }
-    },
-    "stormthrow": {
-        "name": "Storm Throw",
-        "type": "Fighting",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This move is always a critical hit unless the target is under the effect of Lucky Chant or has the Battle Armor or Shell Armor Abilities."
-        }
-    },
-    "strangesteam": {
-        "name": "Strange Steam",
-        "type": "Fairy",
-        "power": 90,
-        "accuracy": 95,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 20% chance to confuse the target."
-        }
-    },
-    "strength": {
-        "name": "Strength",
-        "type": "Normal",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "strengthsap": {
-        "name": "Strength Sap",
-        "type": "Grass",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Lowers the target's Attack by 1 stage. The user restores its HP equal to the target's Attack stat calculated with its stat stage before this move was used. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down. Fails if the target's Attack stat stage is -6."
-        }
-    },
-    "stringshot": {
-        "name": "String Shot",
-        "type": "Bug",
-        "power": 0,
-        "accuracy": 95,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spe": -2
-            },
-            "desc": "Lowers the target's Speed by 2 stages."
-        }
-    },
-    "struggle": {
-        "name": "Struggle",
-        "type": "Normal",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals typeless damage to a random opposing Pokemon. If this move was successful, the user loses 1/4 of its maximum HP, rounded half up, and the Rock Head Ability does not prevent this. This move is automatically used if none of the user's known moves can be selected."
-        }
-    },
-    "strugglebug": {
-        "name": "Struggle Bug",
-        "type": "Bug",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "spa": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Special Attack by 1 stage."
-        }
-    },
-    "stuffcheeks": {
-        "name": "Stuff Cheeks",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "This move cannot be selected unless the user is holding a Berry. The user eats its Berry and raises its Defense by 2 stages. This effect is not prevented by the Klutz or Unnerve Abilities, or the effects of Embargo or Magic Room. Fails if the user is not holding a Berry."
-        }
-    },
-    "stunspore": {
-        "name": "Stun Spore",
-        "type": "Grass",
-        "power": 0,
-        "accuracy": 75,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "desc": "Paralyzes the target."
-        }
-    },
-    "submission": {
-        "name": "Submission",
-        "type": "Fighting",
-        "power": 80,
-        "accuracy": 80,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "recoilPerc": 0.25,
-            "desc": "If the target lost HP, the user takes recoil damage equal to 1/4 the HP lost by the target, rounded half up, but not less than 1 HP."
-        }
-    },
-    "substitute": {
-        "name": "Substitute",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "substitute": true,
-            "desc": "The user takes 1/4 of its maximum HP, rounded down, and puts it into a substitute to take its place in battle. The substitute is removed once enough damage is inflicted on it, if the user switches out or faints, or if any Pokemon uses Tidy Up. Baton Pass can be used to transfer the substitute to an ally, and the substitute will keep its remaining HP. Until the substitute is broken, it receives damage from all attacks made by other Pokemon and shields the user from status effects and stat stage changes caused by other Pokemon. Sound-based moves and Pokemon with the Infiltrator Ability ignore substitutes. The user still takes normal damage from weather and status effects while behind its substitute. If the substitute breaks during a multi-hit attack, the user will take damage from any remaining hits. If a substitute is created while the user is trapped by a binding move, the binding effect ends immediately. Fails if the user does not have enough HP remaining to create a substitute without fainting, or if it already has a substitute."
-        }
-    },
-    "suckerpunch": {
-        "name": "Sucker Punch",
-        "type": "Dark",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 1,
-        "effects": {
-            "desc": "Fails if the target did not select a physical attack, special attack, or Me First for use this turn, or if the target moves before the user."
-        }
-    },
-    "sunnyday": {
-        "name": "Sunny Day",
-        "type": "Fire",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "weather": "Sunnyday",
-            "desc": "For 5 turns, the weather becomes Sunny Day. The damage of Fire-type attacks is multiplied by 1.5 and the damage of Water-type attacks is multiplied by 0.5 during the effect. Lasts for 8 turns if the user is holding Heat Rock. Fails if the current weather is Sunny Day."
-        }
-    },
-    "sunsteelstrike": {
-        "name": "Sunsteel Strike",
-        "type": "Steel",
-        "power": 100,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This move and its effects ignore the Abilities of other Pokemon."
-        }
-    },
-    "supercellslam": {
-        "name": "Supercell Slam",
-        "type": "Electric",
-        "power": 100,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this attack is not successful, the user loses half of its maximum HP, rounded down, as crash damage. Pokemon with the Magic Guard Ability are unaffected by crash damage. Damage doubles and no accuracy check is done if the target has used Minimize while active."
-        }
-    },
-    "superfang": {
-        "name": "Super Fang",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Deals damage to the target equal to half of its current HP, rounded down, but not less than 1 HP."
-        }
-    },
-    "superpower": {
-        "name": "Superpower",
-        "type": "Fighting",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Lowers the user's Attack and Defense by 1 stage."
-        }
-    },
-    "supersonic": {
-        "name": "Supersonic",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 55,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Causes the target to become confused."
-        }
-    },
-    "surf": {
-        "name": "Surf",
-        "type": "Water",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Damage doubles if the target is using Dive."
-        }
-    },
-    "surgingstrikes": {
-        "name": "Surging Strikes",
-        "type": "Water",
-        "power": 25,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                3,
-                3
-            ],
-            "desc": "Hits three times. This move is always a critical hit unless the target is under the effect of Lucky Chant or has the Battle Armor or Shell Armor Abilities."
-        }
-    },
-    "swagger": {
-        "name": "Swagger",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 85,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": 2
-            },
-            "desc": "Raises the target's Attack by 2 stages and confuses it."
-        }
-    },
-    "swallow": {
-        "name": "Swallow",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user restores its HP based on its Stockpile count. Restores 1/4 of its maximum HP if it's 1, 1/2 of its maximum HP if it's 2, both rounded half down, and all of its HP if it's 3. Fails if the user's Stockpile count is 0. The user's Defense and Special Defense decrease by as many stages as Stockpile had increased them, and the user's Stockpile count resets to 0."
-        }
-    },
-    "sweetkiss": {
-        "name": "Sweet Kiss",
-        "type": "Fairy",
-        "power": 0,
-        "accuracy": 75,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Causes the target to become confused."
-        }
-    },
-    "sweetscent": {
-        "name": "Sweet Scent",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "evasion": -2
-            },
-            "desc": "Lowers the target's evasiveness by 2 stages."
-        }
-    },
-    "swift": {
-        "name": "Swift",
-        "type": "Normal",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "This move does not check accuracy."
-        }
-    },
-    "switcheroo": {
-        "name": "Switcheroo",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "trick": true,
-            "desc": "The user swaps its held item with the target's held item. Fails if either the user or the target is holding a Mail or Z-Crystal, if neither is holding an item, if the user is trying to give or take a Mega Stone to or from the species that can Mega Evolve with it, or if the user is trying to give or take a Blue Orb, a Red Orb, a Griseous Orb, a Plate, a Drive, or a Memory to or from a Kyogre, a Groudon, a Giratina, an Arceus, a Genesect, or a Silvally, respectively. The target is immune to this move if it has the Sticky Hold Ability."
-        }
-    },
-    "swordsdance": {
-        "name": "Swords Dance",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": 2
-            },
-            "desc": "Raises the user's Attack by 2 stages."
-        }
-    },
-    "synchronoise": {
-        "name": "Synchronoise",
-        "type": "Psychic",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "The target is immune if it does not share a type with the user."
-        }
-    },
-    "synthesis": {
-        "name": "Synthesis",
-        "type": "Grass",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user restores 1/2 of its maximum HP if Delta Stream or no weather conditions are in effect or if the user is holding Utility Umbrella, 2/3 of its maximum HP if the weather is Desolate Land or Sunny Day, and 1/4 of its maximum HP if the weather is Primordial Sea, Rain Dance, Sandstorm, or Snow, all rounded half down."
-        }
-    },
-    "syrupbomb": {
-        "name": "Syrup Bomb",
-        "type": "Grass",
-        "power": 60,
-        "accuracy": 85,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If this move is successful, it causes the target's Speed to be lowered by 1 stage at the end of each turn for 3 turns."
-        }
-    },
-    "tachyoncutter": {
-        "name": "Tachyon Cutter",
-        "type": "Steel",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                2
-            ],
-            "desc": "Hits twice. If the first hit breaks the target's substitute, it will take damage for the second hit. This move does not check accuracy."
-        }
-    },
-    "tackle": {
-        "name": "Tackle",
-        "type": "Normal",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "tailglow": {
-        "name": "Tail Glow",
-        "type": "Bug",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spa": 3
-            },
-            "desc": "Raises the user's Special Attack by 3 stages."
-        }
-    },
-    "tailslap": {
-        "name": "Tail Slap",
-        "type": "Normal",
-        "power": 25,
-        "accuracy": 85,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                5
-            ],
-            "desc": "Hits two to five times. Has a 35% chance to hit two or three times and a 15% chance to hit four or five times. If one of the hits breaks the target's substitute, it will take damage for the remaining hits. If the user has the Skill Link Ability, this move will always hit five times. If the user is holding Loaded Dice, this move will hit 4-5 times."
-        }
-    },
-    "tailwhip": {
-        "name": "Tail Whip",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "def": -1
-            },
-            "desc": "Lowers the target's Defense by 1 stage."
-        }
-    },
-    "tailwind": {
-        "name": "Tailwind",
-        "type": "Flying",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "For 4 turns, the user and its party members have their Speed doubled. Fails if this move is already in effect for the user's side."
-        }
-    },
-    "takedown": {
-        "name": "Take Down",
-        "type": "Normal",
-        "power": 90,
-        "accuracy": 85,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "recoilPerc": 0.25,
-            "desc": "If the target lost HP, the user takes recoil damage equal to 1/4 the HP lost by the target, rounded half up, but not less than 1 HP."
-        }
-    },
-    "takeheart": {
-        "name": "Take Heart",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user cures its non-volatile status condition. Raises the user's Special Attack and Special Defense by 1 stage."
-        }
-    },
-    "tarshot": {
-        "name": "Tar Shot",
-        "type": "Rock",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spe": -1
-            },
-            "desc": "Lowers the target's Speed by 1 stage. Until the target switches out, the effectiveness of Fire-type moves is doubled against it."
-        }
-    },
-    "taunt": {
-        "name": "Taunt",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "taunt": 3,
-            "desc": "Prevents the target from using non-damaging moves for its next three turns. Pokemon with the Oblivious Ability or protected by the Aroma Veil Ability are immune."
-        }
-    },
-    "tearfullook": {
-        "name": "Tearful Look",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": -1,
-                "spa": -1
-            },
-            "desc": "Lowers the target's Attack and Special Attack by 1 stage."
-        }
-    },
-    "teatime": {
-        "name": "Teatime",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "All active Pokemon consume their held Berries. This effect is not prevented by substitutes, the Klutz or Unnerve Abilities, or the effects of Embargo or Magic Room. Fails if no active Pokemon is holding a Berry."
-        }
-    },
-    "technoblast": {
-        "name": "Techno Blast",
-        "type": "Normal",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "This move's type depends on the user's held Drive."
-        }
-    },
-    "teeterdance": {
-        "name": "Teeter Dance",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Causes the target to become confused."
-        }
-    },
-    "telekinesis": {
-        "name": "Telekinesis",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "For 3 turns, the target cannot avoid any attacks made against it, other than OHKO moves, as long as it remains active. During the effect, the target is immune to Ground-type attacks and the effects of Spikes, Toxic Spikes, Sticky Web, and the Arena Trap Ability as long as it remains active. If the target uses Baton Pass, the replacement will gain the effect. Ingrain, Smack Down, Thousand Arrows, and Iron Ball override this move if the target is under any of their effects. Fails if the target is already under this effect or the effects of Ingrain, Smack Down, or Thousand Arrows. The target is immune to this move on use if its species is Diglett, Dugtrio, Alolan Diglett, Alolan Dugtrio, Sandygast, Palossand, or Gengar while Mega-Evolved. Mega Gengar cannot be under this effect by any means."
-        }
-    },
-    "teleport": {
-        "name": "Teleport",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": -6,
-        "effects": {
-            "pivot": true,
-            "desc": "If this move is successful and the user has not fainted, the user switches out even if it is trapped and is replaced immediately by a selected party member. The user does not switch out if there are no unfainted party members."
-        }
-    },
-    "temperflare": {
-        "name": "Temper Flare",
-        "type": "Fire",
-        "power": 75,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power doubles if the user's last move on the previous turn, including moves called by other moves or those used through Instruct, Magic Coat, Snatch, or the Dancer or Magic Bounce Abilities, failed to do any of its normal effects, not including damage from an unsuccessful High Jump Kick, Jump Kick, or Mind Blown, or if the user was prevented from moving by any effect other than recharging or Sky Drop. A move that was blocked by Baneful Bunker, Detect, King's Shield, Protect, Spiky Shield, Crafty Shield, Mat Block, Quick Guard, or Wide Guard will not double this move's power, nor will Bounce or Fly ending early due to the effect of Gravity, Smack Down, or Thousand Arrows."
-        }
-    },
-    "terablast": {
-        "name": "Tera Blast",
-        "type": "Normal",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If the user is Terastallized, this move becomes a physical attack if the user's Attack is greater than its Special Attack, including stat stage changes, and this move's type becomes the same as the user's Tera Type. In addition, if the user's Tera Type is Stellar, this move has 100 power, is super effective against Terastallized targets and neutral against other targets, and lowers the user's Attack and Special Attack by 1 stage."
-        }
-    },
-    "terastarstorm": {
-        "name": "Tera Starstorm",
-        "type": "Normal",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If the user is a Terapagos in Stellar Form, this move's type becomes Stellar, hits all opposing Pokemon, and becomes a physical attack if the user's Attack is greater than its Special Attack, including stat stage changes."
-        }
-    },
-    "terrainpulse": {
-        "name": "Terrain Pulse",
-        "type": "Normal",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Power doubles if the user is grounded and a terrain is active, and this move's type changes to match. Electric type during Electric Terrain, Grass type during Grassy Terrain, Fairy type during Misty Terrain, and Psychic type during Psychic Terrain."
-        }
-    },
-    "thief": {
-        "name": "Thief",
-        "type": "Dark",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "If this attack was successful and the user has not fainted, it steals the target's held item if the user is not holding one. The target's item is not stolen if it is a Mail or Z-Crystal, or if the target is a Kyogre holding a Blue Orb, a Groudon holding a Red Orb, a Giratina holding a Griseous Orb, an Arceus holding a Plate, a Genesect holding a Drive, a Silvally holding a Memory, or a Pokemon that can Mega Evolve holding the Mega Stone for its species. Items lost to this move cannot be regained with Recycle or the Harvest Ability."
-        }
-    },
-    "thousandarrows": {
-        "name": "Thousand Arrows",
-        "type": "Ground",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This move can hit airborne Pokemon, which includes Flying-type Pokemon, Pokemon with the Levitate Ability, Pokemon holding an Air Balloon, and Pokemon under the effect of Magnet Rise or Telekinesis. If the target is a Flying type and is not already grounded, this move deals neutral damage regardless of its other type(s). This move can hit a target using Bounce, Fly, or Sky Drop. If this move hits a target under the effect of Bounce, Fly, Magnet Rise, or Telekinesis, the effect ends. If the target is a Flying type that has not used Roost this turn or a Pokemon with the Levitate Ability, it loses its immunity to Ground-type attacks and the Arena Trap Ability as long as it remains active. During the effect, Magnet Rise fails for the target and Telekinesis fails against the target."
-        }
-    },
-    "thousandwaves": {
-        "name": "Thousand Waves",
-        "type": "Ground",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Prevents the target from switching out. The target can still switch out if it is holding Shed Shell or uses Baton Pass, Flip Turn, Parting Shot, Teleport, U-turn, or Volt Switch. The effect ends if either the user or the target leaves the field."
-        }
-    },
-    "thrash": {
-        "name": "Thrash",
-        "type": "Normal",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "The user spends two or three turns locked into this move and becomes confused immediately after its move on the last turn of the effect if it is not already. This move targets an opposing Pokemon at random on each turn. If the user is prevented from moving, is asleep at the beginning of a turn, or the attack is not successful against the target on the first turn of the effect or the second turn of a three-turn effect, the effect ends without causing confusion. If this move is called by Sleep Talk and the user is asleep, the move is used for one turn and does not confuse the user."
-        }
-    },
-    "throatchop": {
-        "name": "Throat Chop",
-        "type": "Dark",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "For 2 turns, the target cannot use sound-based moves."
-        }
-    },
-    "thunder": {
-        "name": "Thunder",
-        "type": "Electric",
-        "power": 110,
-        "accuracy": 70,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "statusRate": 30,
-            "desc": "Has a 30% chance to paralyze the target. This move can hit a target using Bounce, Fly, or Sky Drop, or is under the effect of Sky Drop. If the weather is Primordial Sea or Rain Dance, this move does not check accuracy. If the weather is Desolate Land or Sunny Day, this move's accuracy is 50%. If this move is used against a Pokemon holding Utility Umbrella, this move's accuracy remains at 70%."
-        }
-    },
-    "thunderbolt": {
-        "name": "Thunderbolt",
-        "type": "Electric",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to paralyze the target."
-        }
-    },
-    "thundercage": {
-        "name": "Thunder Cage",
-        "type": "Electric",
-        "power": 80,
-        "accuracy": 90,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Prevents the target from switching for four or five turns (seven turns if the user is holding Grip Claw). Causes damage to the target equal to 1/8 of its maximum HP (1/6 if the user is holding Binding Band), rounded down, at the end of each turn during effect. The target can still switch out if it is holding Shed Shell or uses Baton Pass, Flip Turn, Parting Shot, Shed Tail, Teleport, U-turn, or Volt Switch. The effect ends if either the user or the target leaves the field, or if the target uses Mortal Spin, Rapid Spin, or Substitute successfully. This effect is not stackable or reset by using this or another binding move."
-        }
-    },
-    "thunderclap": {
-        "name": "Thunderclap",
-        "type": "Electric",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 1,
-        "effects": {
-            "desc": "Fails if the target did not select a physical attack, special attack, or Me First for use this turn, or if the target moves before the user."
-        }
-    },
-    "thunderfang": {
-        "name": "Thunder Fang",
-        "type": "Electric",
-        "power": 65,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 10% chance to paralyze the target and a 10% chance to make it flinch."
-        }
-    },
-    "thunderouskick": {
-        "name": "Thunderous Kick",
-        "type": "Fighting",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "def": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Defense by 1 stage."
-        }
-    },
-    "thunderpunch": {
-        "name": "Thunder Punch",
-        "type": "Electric",
-        "power": 75,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to paralyze the target."
-        }
-    },
-    "thundershock": {
-        "name": "Thunder Shock",
-        "type": "Electric",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to paralyze the target."
-        }
-    },
-    "thunderwave": {
-        "name": "Thunder Wave",
-        "type": "Electric",
-        "power": 0,
-        "accuracy": 90,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "desc": "Paralyzes the target. This move does not ignore type immunity."
-        }
-    },
-    "tickle": {
-        "name": "Tickle",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": -1,
-                "def": -1
-            },
-            "desc": "Lowers the target's Attack and Defense by 1 stage."
-        }
-    },
-    "tidyup": {
-        "name": "Tidy Up",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Raises the user's Attack and Speed by 1 stage. Removes substitutes from all active Pokemon and ends the effects of Spikes, Stealth Rock, Sticky Web, and Toxic Spikes for both sides."
-        }
-    },
-    "topsyturvy": {
-        "name": "Topsy-Turvy",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The target's positive stat stages become negative and vice versa. Fails if all of the target's stat stages are 0."
-        }
-    },
-    "torchsong": {
-        "name": "Torch Song",
-        "type": "Fire",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 100% chance to raise the user's Special Attack by 1 stage."
-        }
-    },
-    "torment": {
-        "name": "Torment",
-        "type": "Dark",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Prevents the target from selecting the same move for use two turns in a row. This effect ends when the target is no longer active."
-        }
-    },
-    "toxic": {
-        "name": "Toxic",
-        "type": "Poison",
-        "power": 0,
-        "accuracy": 90,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "status": "TOX",
-            "desc": "Badly poisons the target. If a Poison-type Pokemon uses this move, the target cannot avoid the attack, even if the target is in the middle of a two-turn move."
-        }
-    },
-    "toxicspikes": {
-        "name": "Toxic Spikes",
-        "type": "Poison",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "hazards": "toxic-spikes",
-            "desc": "Sets up a hazard on the opposing side of the field, poisoning each opposing Pokemon that switches in, unless it is a Flying-type Pokemon or has the Levitate Ability. Can be used up to two times before failing. Opposing Pokemon become poisoned with one layer and badly poisoned with two layers. Can be removed from the opposing side if any Pokemon uses Tidy Up, or if any opposing Pokemon uses Mortal Spin, Rapid Spin, or Defog successfully, is hit by Defog, or a grounded Poison-type Pokemon switches in. Safeguard prevents the opposing party from being poisoned on switch-in, but a substitute does not."
-        }
-    },
-    "toxicthread": {
-        "name": "Toxic Thread",
-        "type": "Poison",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "spe": -1
-            },
-            "status": "PSN",
-            "desc": "Lowers the target's Speed by 1 stage and poisons it."
-        }
-    },
-    "trailblaze": {
-        "name": "Trailblaze",
-        "type": "Grass",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 100% chance to raise the user's Speed by 1 stage."
-        }
-    },
-    "transform": {
-        "name": "Transform",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "The user transforms into the target. The target's current stats, stat stages, types, moves, Ability, weight, gender, and sprite are copied. The user's level and HP remain the same and each copied move receives only 5 PP, with a maximum of 5 PP each. The user can no longer change formes if it would have the ability to do so. This move fails if it hits a substitute, if either the user or the target is already transformed, or if either is behind an Illusion."
-        }
-    },
-    "triattack": {
-        "name": "Tri Attack",
-        "type": "Normal",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 20% chance to either burn, freeze, or paralyze the target."
-        }
-    },
-    "trick": {
-        "name": "Trick",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "trick": true,
-            "desc": "The user swaps its held item with the target's held item. Fails if either the user or the target is holding a Mail or Z-Crystal, if neither is holding an item, if the user is trying to give or take a Mega Stone to or from the species that can Mega Evolve with it, or if the user is trying to give or take a Blue Orb, a Red Orb, a Griseous Orb, a Plate, a Drive, or a Memory to or from a Kyogre, a Groudon, a Giratina, an Arceus, a Genesect, or a Silvally, respectively. The target is immune to this move if it has the Sticky Hold Ability."
-        }
-    },
-    "trickortreat": {
-        "name": "Trick-or-Treat",
-        "type": "Ghost",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Causes the Ghost type to be added to the target, effectively making it have two or three types. Fails if the target is already a Ghost type. If Forest's Curse adds a type to the target, it replaces the type added by this move and vice versa."
-        }
-    },
-    "trickroom": {
-        "name": "Trick Room",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": -7,
-        "effects": {
-            "desc": "For 5 turns, the Speed of every Pokemon is recalculated for the purposes of determining turn order. During the effect, each Pokemon's Speed is considered to be (10000 - its normal Speed), and if this value is greater than 8191, 8192 is subtracted from it. If this move is used during the effect, the effect ends."
-        }
-    },
-    "triplearrows": {
-        "name": "Triple Arrows",
-        "type": "Fighting",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 50% chance to lower the target's Defense by 1 stage, a 30% chance to make it flinch, and a higher chance for a critical hit."
-        }
-    },
-    "tripleaxel": {
-        "name": "Triple Axel",
-        "type": "Ice",
-        "power": 20,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                3,
-                3
-            ],
-            "desc": "Hits three times. Power increases to 40 for the second hit and 60 for the third. This move checks accuracy for each hit, and the attack ends if the target avoids a hit. If one of the hits breaks the target's substitute, it will take damage for the remaining hits. If the user has the Skill Link Ability, this move will always hit three times."
-        }
-    },
-    "tripledive": {
-        "name": "Triple Dive",
-        "type": "Water",
-        "power": 30,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                3,
-                3
-            ],
-            "desc": "Hits three times."
-        }
-    },
-    "triplekick": {
-        "name": "Triple Kick",
-        "type": "Fighting",
-        "power": 10,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                3,
-                3
-            ],
-            "desc": "Hits three times. Power increases to 20 for the second hit and 30 for the third. This move checks accuracy for each hit, and the attack ends if the target avoids a hit. If one of the hits breaks the target's substitute, it will take damage for the remaining hits. If the user has the Skill Link Ability, this move will always hit three times."
-        }
-    },
-    "tropkick": {
-        "name": "Trop Kick",
-        "type": "Grass",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "enemyDrop": {
-                "atk": -1
-            },
-            "dropRate": 100,
-            "desc": "Has a 100% chance to lower the target's Attack by 1 stage."
-        }
-    },
-    "trumpcard": {
-        "name": "Trump Card",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "The power of this move is based on the amount of PP remaining after normal PP reduction and the Pressure Ability resolve. 200 power for 0 PP, 80 power for 1 PP, 60 power for 2 PP, 50 power for 3 PP, and 40 power for 4 or more PP."
-        }
-    },
-    "twinbeam": {
-        "name": "Twin Beam",
-        "type": "Psychic",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "multiHit": [
-                2,
-                2
-            ],
-            "desc": "Hits twice. If the first hit breaks the target's substitute, it will take damage for the second hit."
-        }
-    },
-    "twineedle": {
-        "name": "Twineedle",
-        "type": "Bug",
-        "power": 25,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "PSN",
-            "statusRate": 20,
-            "multiHit": [
-                2,
-                2
-            ],
-            "desc": "Hits twice, with each hit having a 20% chance to poison the target. If the first hit breaks the target's substitute, it will take damage for the second hit."
-        }
-    },
-    "twister": {
-        "name": "Twister",
-        "type": "Dragon",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 20% chance to make the target flinch. Power doubles if the target is using Bounce, Fly, or Sky Drop, or is under the effect of Sky Drop."
-        }
-    },
-    "upperhand": {
-        "name": "Upper Hand",
-        "type": "Fighting",
-        "power": 65,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 3,
-        "effects": {
-            "desc": "Has a 100% chance to make the target flinch. Fails if the target did not select a priority move for use this turn, or if the target moves before the user."
-        }
-    },
-    "uproar": {
-        "name": "Uproar",
-        "type": "Normal",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "The user spends three turns locked into this move. This move targets an opponent at random on each turn. On the first of the three turns, all sleeping active Pokemon wake up. During the three turns, no active Pokemon can fall asleep by any means, and Pokemon switched in during the effect do not wake up. If the user is prevented from moving or the attack is not successful against the target during one of the turns, the effect ends."
-        }
-    },
-    "uturn": {
-        "name": "U-turn",
-        "type": "Bug",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "pivot": true,
-            "desc": "If this move is successful and the user has not fainted, the user switches out even if it is trapped and is replaced immediately by a selected party member. The user does not switch out if there are no unfainted party members, or if the target switched out using an Eject Button or through the effect of the Emergency Exit or Wimp Out Abilities."
-        }
-    },
-    "vacuumwave": {
-        "name": "Vacuum Wave",
-        "type": "Fighting",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 1,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "vcreate": {
-        "name": "V-create",
-        "type": "Fire",
-        "power": 180,
-        "accuracy": 95,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Lowers the user's Speed, Defense, and Special Defense by 1 stage."
-        }
-    },
-    "veeveevolley": {
-        "name": "Veevee Volley",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power is equal to the greater of (user's Happiness * 2/5), rounded down, or 1."
-        }
-    },
-    "venomdrench": {
-        "name": "Venom Drench",
-        "type": "Poison",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Lowers the target's Attack, Special Attack, and Speed by 1 stage if the target is poisoned. Fails if the target is not poisoned."
-        }
-    },
-    "venoshock": {
-        "name": "Venoshock",
-        "type": "Poison",
-        "power": 65,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Power doubles if the target is poisoned."
-        }
-    },
-    "victorydance": {
-        "name": "Victory Dance",
-        "type": "Fighting",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": 1,
-                "def": 1,
-                "spe": 1
-            },
-            "desc": "Raises the user's Attack, Defense, and Speed by 1 stage."
-        }
-    },
-    "vinewhip": {
-        "name": "Vine Whip",
-        "type": "Grass",
-        "power": 45,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "visegrip": {
-        "name": "Vise Grip",
-        "type": "Normal",
-        "power": 55,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "vitalthrow": {
-        "name": "Vital Throw",
-        "type": "Fighting",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": -1,
-        "effects": {
-            "desc": "This move does not check accuracy."
-        }
-    },
-    "voltswitch": {
-        "name": "Volt Switch",
-        "type": "Electric",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "pivot": true,
-            "desc": "If this move is successful and the user has not fainted, the user switches out even if it is trapped and is replaced immediately by a selected party member. The user does not switch out if there are no unfainted party members, or if the target switched out using an Eject Button or through the effect of the Emergency Exit or Wimp Out Abilities."
-        }
-    },
-    "volttackle": {
-        "name": "Volt Tackle",
-        "type": "Electric",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "recoilPerc": 0.33,
-            "status": "PAR",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to paralyze the target. If the target lost HP, the user takes recoil damage equal to 33% the HP lost by the target, rounded half up, but not less than 1 HP."
-        }
-    },
-    "wakeupslap": {
-        "name": "Wake-Up Slap",
-        "type": "Fighting",
-        "power": 70,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Power doubles if the target is asleep. If the user has not fainted, the target wakes up."
-        }
-    },
-    "waterfall": {
-        "name": "Waterfall",
-        "type": "Water",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 20% chance to make the target flinch."
-        }
-    },
-    "watergun": {
-        "name": "Water Gun",
-        "type": "Water",
-        "power": 40,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "waterpledge": {
-        "name": "Water Pledge",
-        "type": "Water",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "If one of the user's allies chose to use Fire Pledge or Grass Pledge this turn and has not moved yet, it takes its turn immediately after the user and the user's move does nothing. If combined with Fire Pledge, the ally uses Water Pledge with 150 power and a rainbow appears on the user's side for 4 turns, which doubles secondary effect chances and stacks with the Serene Grace Ability, except effects that cause flinching can only have their chance doubled once. If combined with Grass Pledge, the ally uses Grass Pledge with 150 power and a swamp appears on the target's side for 4 turns, which quarters the Speed of each Pokemon on that side. When used as a combined move, this move gains STAB no matter what the user's type is. This move does not consume the user's Water Gem, and cannot be redirected by the Storm Drain Ability."
-        }
-    },
-    "waterpulse": {
-        "name": "Water Pulse",
-        "type": "Water",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 20% chance to confuse the target."
-        }
-    },
-    "watershuriken": {
-        "name": "Water Shuriken",
-        "type": "Water",
-        "power": 15,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 1,
-        "effects": {
-            "multiHit": [
-                2,
-                5
-            ],
-            "desc": "Hits two to five times. Has a 35% chance to hit two or three times and a 15% chance to hit four or five times. If one of the hits breaks the target's substitute, it will take damage for the remaining hits. If the user has the Skill Link Ability, this move will always hit five times. If the user is an Ash-Greninja with the Battle Bond Ability, this move has a power of 20 and always hits three times. If the user is holding Loaded Dice, this move will hit 4-5 times."
-        }
-    },
-    "watersport": {
-        "name": "Water Sport",
-        "type": "Water",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "For 5 turns, all Fire-type attacks used by any active Pokemon have their power multiplied by 0.33. Fails if this effect is already active."
-        }
-    },
-    "waterspout": {
-        "name": "Water Spout",
-        "type": "Water",
-        "power": 150,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Power is equal to (user's current HP * 150 / user's maximum HP), rounded down, but not less than 1."
-        }
-    },
-    "wavecrash": {
-        "name": "Wave Crash",
-        "type": "Water",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "recoilPerc": 0.33,
-            "desc": "If the target lost HP, the user takes recoil damage equal to 33% the HP lost by the target, rounded half up, but not less than 1 HP."
-        }
-    },
-    "weatherball": {
-        "name": "Weather Ball",
-        "type": "Normal",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Power doubles if a weather condition other than Delta Stream is active, and this move's type changes to match. Ice type during Snow, Water type during Primordial Sea or Rain Dance, Rock type during Sandstorm, and Fire type during Desolate Land or Sunny Day. If the user is holding Utility Umbrella and uses Weather Ball during Primordial Sea, Rain Dance, Desolate Land, or Sunny Day, this move remains Normal type and does not double in power."
-        }
-    },
-    "whirlpool": {
-        "name": "Whirlpool",
-        "type": "Water",
-        "power": 35,
-        "accuracy": 85,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Prevents the target from switching for four or five turns (seven turns if the user is holding Grip Claw). Causes damage to the target equal to 1/8 of its maximum HP (1/6 if the user is holding Binding Band), rounded down, at the end of each turn during effect. The target can still switch out if it is holding Shed Shell or uses Baton Pass, Flip Turn, Parting Shot, Shed Tail, Teleport, U-turn, or Volt Switch. The effect ends if either the user or the target leaves the field, or if the target uses Mortal Spin, Rapid Spin, or Substitute successfully. This effect is not stackable or reset by using this or another binding move."
-        }
-    },
-    "whirlwind": {
-        "name": "Whirlwind",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": -6,
-        "effects": {
-            "forceSwitch": true,
-            "desc": "The target is forced to switch out and be replaced with a random unfainted ally. Fails if the target is the last unfainted Pokemon in its party, or if the target used Ingrain previously or has the Suction Cups Ability."
-        }
-    },
-    "wickedblow": {
-        "name": "Wicked Blow",
-        "type": "Dark",
-        "power": 75,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "This move is always a critical hit unless the target is under the effect of Lucky Chant or has the Battle Armor or Shell Armor Abilities."
-        }
-    },
-    "wickedtorque": {
-        "name": "Wicked Torque",
-        "type": "Dark",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "status": "SLP",
-            "statusRate": 10,
-            "desc": "Has a 10% chance to cause the target to fall asleep."
-        }
-    },
-    "wideguard": {
-        "name": "Wide Guard",
-        "type": "Rock",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 3,
-        "effects": {
-            "desc": "The user and its party members are protected from moves made by other Pokemon, including allies, during this turn that target all adjacent foes or all adjacent Pokemon. This move modifies the same 1/X chance of being successful used by other protection moves, where X starts at 1 and triples each time this move is successfully used, but does not use the chance to check for failure. X resets to 1 if this move fails, if the user's last move used is not Baneful Bunker, Burning Bulwark, Detect, Endure, King's Shield, Max Guard, Obstruct, Protect, Quick Guard, Silk Trap, Spiky Shield, or Wide Guard, or if it was one of those moves and the user's protection was broken. Fails if the user moves last this turn or if this move is already in effect for the user's side."
-        }
-    },
-    "wildboltstorm": {
-        "name": "Wildbolt Storm",
-        "type": "Electric",
-        "power": 100,
-        "accuracy": 80,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "statusRate": 20,
-            "desc": "Has a 20% chance to paralyze the target. If the weather is Primordial Sea or Rain Dance, this move does not check accuracy. If this move is used against a Pokemon holding Utility Umbrella, this move's accuracy remains at 80%."
-        }
-    },
-    "wildcharge": {
-        "name": "Wild Charge",
-        "type": "Electric",
-        "power": 90,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "recoilPerc": 0.25,
-            "desc": "If the target lost HP, the user takes recoil damage equal to 1/4 the HP lost by the target, rounded half up, but not less than 1 HP."
-        }
-    },
-    "willowisp": {
-        "name": "Will-O-Wisp",
-        "type": "Fire",
-        "power": 0,
-        "accuracy": 85,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "status": "BRN",
-            "desc": "Burns the target."
-        }
-    },
-    "wingattack": {
-        "name": "Wing Attack",
-        "type": "Flying",
-        "power": 60,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "wish": {
-        "name": "Wish",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "wish": true,
-            "desc": "At the end of the next turn, the Pokemon at the user's position has 1/2 of the user's maximum HP restored to it, rounded down. Fails if this move is already in effect for the user's position."
-        }
-    },
-    "withdraw": {
-        "name": "Withdraw",
-        "type": "Water",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "def": 1
-            },
-            "desc": "Raises the user's Defense by 1 stage."
-        }
-    },
-    "wonderroom": {
-        "name": "Wonder Room",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "For 5 turns, all active Pokemon have their Defense and Special Defense stats swapped. Stat stage changes are unaffected. If this move is used during the effect, the effect ends."
-        }
-    },
-    "woodhammer": {
-        "name": "Wood Hammer",
-        "type": "Grass",
-        "power": 120,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "recoilPerc": 0.33,
-            "desc": "If the target lost HP, the user takes recoil damage equal to 33% the HP lost by the target, rounded half up, but not less than 1 HP."
-        }
-    },
-    "workup": {
-        "name": "Work Up",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "selfBoost": {
-                "atk": 1,
-                "spa": 1
-            },
-            "desc": "Raises the user's Attack and Special Attack by 1 stage."
-        }
-    },
-    "worryseed": {
-        "name": "Worry Seed",
-        "type": "Grass",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Causes the target's Ability to become Insomnia. Fails if the target's Ability is As One, Battle Bond, Comatose, Disguise, Gulp Missile, Ice Face, Insomnia, Multitype, Power Construct, RKS System, Schooling, Shields Down, Stance Change, Tera Shift, Truant, Zen Mode, or Zero to Hero."
-        }
-    },
-    "wrap": {
-        "name": "Wrap",
-        "type": "Normal",
-        "power": 15,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Prevents the target from switching for four or five turns (seven turns if the user is holding Grip Claw). Causes damage to the target equal to 1/8 of its maximum HP (1/6 if the user is holding Binding Band), rounded down, at the end of each turn during effect. The target can still switch out if it is holding Shed Shell or uses Baton Pass, Flip Turn, Parting Shot, Shed Tail, Teleport, U-turn, or Volt Switch. The effect ends if either the user or the target leaves the field, or if the target uses Mortal Spin, Rapid Spin, or Substitute successfully. This effect is not stackable or reset by using this or another binding move."
-        }
-    },
-    "wringout": {
-        "name": "Wring Out",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "desc": "Power is equal to 120 * (target's current HP / target's maximum HP), rounded half down, but not less than 1."
-        }
-    },
-    "xscissor": {
-        "name": "X-Scissor",
-        "type": "Bug",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "No additional effect."
-        }
-    },
-    "yawn": {
-        "name": "Yawn",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Causes the target to fall asleep at the end of the next turn. Fails when used if the target cannot fall asleep or if it already has a non-volatile status condition. At the end of the next turn, if the target is still active, does not have a non-volatile status condition, and can fall asleep, it falls asleep. If the target becomes affected, this effect cannot be prevented by Safeguard or a substitute, or by falling asleep and waking up during the effect."
-        }
-    },
-    "zapcannon": {
-        "name": "Zap Cannon",
-        "type": "Electric",
-        "power": 120,
-        "accuracy": 50,
-        "category": "Special",
-        "priority": 0,
-        "effects": {
-            "status": "PAR",
-            "statusRate": 100,
-            "desc": "Has a 100% chance to paralyze the target."
-        }
-    },
-    "zenheadbutt": {
-        "name": "Zen Headbutt",
-        "type": "Psychic",
-        "power": 80,
-        "accuracy": 90,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 20% chance to make the target flinch."
-        }
-    },
-    "zingzap": {
-        "name": "Zing Zap",
-        "type": "Electric",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "desc": "Has a 30% chance to make the target flinch."
-        }
-    },
-    "zippyzap": {
-        "name": "Zippy Zap",
-        "type": "Electric",
-        "power": 80,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 2,
-        "effects": {
-            "desc": "Has a 100% chance to raise the user's evasion by 1 stage."
-        }
-    }
-};
-
-// Overwrite existing MOVES with exhaustive list while keeping existing structure intact where merged
-for (let key in GENERATED_MOVES) {
-    if (!globalThis.MOVES) globalThis.MOVES = {};
-    if (!MOVES[key]) {
-        MOVES[key] = GENERATED_MOVES[key];
-    } else {
-        // Keep existing handcrafted logic where it might be better, or overwrite. Let's overwrite safely.
-        Object.assign(MOVES[key], GENERATED_MOVES[key]);
-    }
-}
-
-const GENERATED_ITEMS = {
-    "abilityshield": {
-        "name": "Ability Shield",
-        "desc": "Holder's Ability cannot be changed, suppressed, or ignored by any effect."
-    },
-    "abomasite": {
-        "name": "Abomasite",
-        "desc": "If held by an Abomasnow, this item allows it to Mega Evolve in battle."
-    },
-    "absolite": {
-        "name": "Absolite",
-        "desc": "If held by an Absol, this item allows it to Mega Evolve in battle."
-    },
-    "absolitez": {
-        "name": "Absolite Z",
-        "desc": ""
-    },
-    "absorbbulb": {
-        "name": "Absorb Bulb",
-        "desc": "Raises holder's Sp. Atk by 1 stage if hit by a Water-type attack. Single use."
-    },
-    "adamantcrystal": {
-        "name": "Adamant Crystal",
-        "desc": "If held by a Dialga, its Steel- and Dragon-type attacks have 1.2x power."
-    },
-    "adamantorb": {
-        "name": "Adamant Orb",
-        "desc": "If held by a Dialga, its Steel- and Dragon-type attacks have 1.2x power."
-    },
-    "adrenalineorb": {
-        "name": "Adrenaline Orb",
-        "desc": "Raises holder's Speed by 1 stage if it gets affected by Intimidate. Single use."
-    },
-    "aerodactylite": {
-        "name": "Aerodactylite",
-        "desc": "If held by an Aerodactyl, this item allows it to Mega Evolve in battle."
-    },
-    "aggronite": {
-        "name": "Aggronite",
-        "desc": "If held by an Aggron, this item allows it to Mega Evolve in battle."
-    },
-    "aguavberry": {
-        "name": "Aguav Berry",
-        "desc": "Restores 1/3 max HP at 1/4 max HP or less; confuses if -SpD Nature. Single use."
-    },
-    "airballoon": {
-        "name": "Air Balloon",
-        "desc": "Holder is immune to Ground-type attacks. Pops when holder is hit."
-    },
-    "alakazite": {
-        "name": "Alakazite",
-        "desc": "If held by an Alakazam, this item allows it to Mega Evolve in battle."
-    },
-    "aloraichiumz": {
-        "name": "Aloraichium Z",
-        "desc": "If held by an Alolan Raichu with Thunderbolt, it can use Stoked Sparksurfer."
-    },
-    "altarianite": {
-        "name": "Altarianite",
-        "desc": "If held by an Altaria, this item allows it to Mega Evolve in battle."
-    },
-    "ampharosite": {
-        "name": "Ampharosite",
-        "desc": "If held by an Ampharos, this item allows it to Mega Evolve in battle."
-    },
-    "apicotberry": {
-        "name": "Apicot Berry",
-        "desc": "Raises holder's Sp. Def by 1 stage when at 1/4 max HP or less. Single use."
-    },
-    "armorfossil": {
-        "name": "Armor Fossil",
-        "desc": "Can be revived into Shieldon."
-    },
-    "aspearberry": {
-        "name": "Aspear Berry",
-        "desc": "Holder is cured if it is frozen. Single use."
-    },
-    "assaultvest": {
-        "name": "Assault Vest",
-        "desc": "Holder's Sp. Def is 1.5x, but it can only select damaging moves."
-    },
-    "audinite": {
-        "name": "Audinite",
-        "desc": "If held by an Audino, this item allows it to Mega Evolve in battle."
-    },
-    "auspiciousarmor": {
-        "name": "Auspicious Armor",
-        "desc": "Evolves Charcadet into Armarouge when used."
-    },
-    "babiriberry": {
-        "name": "Babiri Berry",
-        "desc": "Halves damage taken from a supereffective Steel-type attack. Single use."
-    },
-    "banettite": {
-        "name": "Banettite",
-        "desc": "If held by a Banette, this item allows it to Mega Evolve in battle."
-    },
-    "barbaracite": {
-        "name": "Barbaracite",
-        "desc": "If held by a Barbaracle, this item allows it to Mega Evolve in battle."
-    },
-    "baxcalibrite": {
-        "name": "Baxcalibrite",
-        "desc": ""
-    },
-    "beastball": {
-        "name": "Beast Ball",
-        "desc": "A special Poke Ball designed to catch Ultra Beasts."
-    },
-    "beedrillite": {
-        "name": "Beedrillite",
-        "desc": "If held by a Beedrill, this item allows it to Mega Evolve in battle."
-    },
-    "belueberry": {
-        "name": "Belue Berry",
-        "desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck."
-    },
-    "berryjuice": {
-        "name": "Berry Juice",
-        "desc": "Restores 20 HP when at 1/2 max HP or less. Single use."
-    },
-    "berrysweet": {
-        "name": "Berry Sweet",
-        "desc": "Evolves Milcery into Alcremie when held and spun around."
-    },
-    "bignugget": {
-        "name": "Big Nugget",
-        "desc": "A big nugget of pure gold that gives off a lustrous gleam."
-    },
-    "bigroot": {
-        "name": "Big Root",
-        "desc": "Holder gains 1.3x HP from draining/Aqua Ring/Ingrain/Leech Seed/Strength Sap."
-    },
-    "bindingband": {
-        "name": "Binding Band",
-        "desc": "Holder's partial-trapping moves deal 1/6 max HP per turn instead of 1/8."
-    },
-    "blackbelt": {
-        "name": "Black Belt",
-        "desc": "Holder's Fighting-type attacks have 1.2x power."
-    },
-    "blackglasses": {
-        "name": "Black Glasses",
-        "desc": "Holder's Dark-type attacks have 1.2x power."
-    },
-    "blacksludge": {
-        "name": "Black Sludge",
-        "desc": "Each turn, if holder is a Poison type, restores 1/16 max HP; loses 1/8 if not."
-    },
-    "blastoisinite": {
-        "name": "Blastoisinite",
-        "desc": "If held by a Blastoise, this item allows it to Mega Evolve in battle."
-    },
-    "blazikenite": {
-        "name": "Blazikenite",
-        "desc": "If held by a Blaziken, this item allows it to Mega Evolve in battle."
-    },
-    "blueorb": {
-        "name": "Blue Orb",
-        "desc": "If held by a Kyogre, this item triggers its Primal Reversion in battle."
-    },
-    "blukberry": {
-        "name": "Bluk Berry",
-        "desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck."
-    },
-    "blunderpolicy": {
-        "name": "Blunder Policy",
-        "desc": "If the holder misses due to accuracy, its Speed is raised by 2 stages. Single use."
-    },
-    "boosterenergy": {
-        "name": "Booster Energy",
-        "desc": "Activates the Protosynthesis or Quark Drive Abilities. Single use."
-    },
-    "bottlecap": {
-        "name": "Bottle Cap",
-        "desc": "Used for Hyper Training. One of a Pokemon's stats is calculated with an IV of 31."
-    },
-    "brightpowder": {
-        "name": "Bright Powder",
-        "desc": "The accuracy of attacks against the holder is 0.9x."
-    },
-    "buggem": {
-        "name": "Bug Gem",
-        "desc": "Holder's first successful Bug-type attack will have 1.3x power. Single use."
-    },
-    "buginiumz": {
-        "name": "Buginium Z",
-        "desc": "If holder has a Bug move, this item allows it to use a Bug Z-Move."
-    },
-    "bugmemory": {
-        "name": "Bug Memory",
-        "desc": "Holder's Multi-Attack is Bug type."
-    },
-    "burndrive": {
-        "name": "Burn Drive",
-        "desc": "Holder's Techno Blast is Fire type."
-    },
-    "cameruptite": {
-        "name": "Cameruptite",
-        "desc": "If held by a Camerupt, this item allows it to Mega Evolve in battle."
-    },
-    "cellbattery": {
-        "name": "Cell Battery",
-        "desc": "Raises holder's Attack by 1 if hit by an Electric-type attack. Single use."
-    },
-    "chandelurite": {
-        "name": "Chandelurite",
-        "desc": "If held by a Chandelure, this item allows it to Mega Evolve in battle."
-    },
-    "charcoal": {
-        "name": "Charcoal",
-        "desc": "Holder's Fire-type attacks have 1.2x power."
-    },
-    "charizarditex": {
-        "name": "Charizardite X",
-        "desc": "If held by a Charizard, this item allows it to Mega Evolve in battle."
-    },
-    "charizarditey": {
-        "name": "Charizardite Y",
-        "desc": "If held by a Charizard, this item allows it to Mega Evolve in battle."
-    },
-    "chartiberry": {
-        "name": "Charti Berry",
-        "desc": "Halves damage taken from a supereffective Rock-type attack. Single use."
-    },
-    "cheriberry": {
-        "name": "Cheri Berry",
-        "desc": "Holder cures itself if it is paralyzed. Single use."
-    },
-    "cherishball": {
-        "name": "Cherish Ball",
-        "desc": "A rare Poke Ball that has been crafted to commemorate an occasion."
-    },
-    "chesnaughtite": {
-        "name": "Chesnaughtite",
-        "desc": "If held by a Chesnaught, this item allows it to Mega Evolve in battle."
-    },
-    "chestoberry": {
-        "name": "Chesto Berry",
-        "desc": "Holder wakes up if it is asleep. Single use."
-    },
-    "chilanberry": {
-        "name": "Chilan Berry",
-        "desc": "Halves damage taken from a Normal-type attack. Single use."
-    },
-    "chilldrive": {
-        "name": "Chill Drive",
-        "desc": "Holder's Techno Blast is Ice type."
-    },
-    "chimechite": {
-        "name": "Chimechite",
-        "desc": ""
-    },
-    "chippedpot": {
-        "name": "Chipped Pot",
-        "desc": "Evolves Sinistea-Antique into Polteageist-Antique when used."
-    },
-    "choiceband": {
-        "name": "Choice Band",
-        "desc": "Holder's Attack is 1.5x, but it can only select the first move it executes."
-    },
-    "choicescarf": {
-        "name": "Choice Scarf",
-        "desc": "Holder's Speed is 1.5x, but it can only select the first move it executes."
-    },
-    "choicespecs": {
-        "name": "Choice Specs",
-        "desc": "Holder's Sp. Atk is 1.5x, but it can only select the first move it executes."
-    },
-    "chopleberry": {
-        "name": "Chople Berry",
-        "desc": "Halves damage taken from a supereffective Fighting-type attack. Single use."
-    },
-    "clawfossil": {
-        "name": "Claw Fossil",
-        "desc": "Can be revived into Anorith."
-    },
-    "clearamulet": {
-        "name": "Clear Amulet",
-        "desc": "Prevents other Pokemon from lowering the holder's stat stages."
-    },
-    "clefablite": {
-        "name": "Clefablite",
-        "desc": "If held by a Clefable, this item allows it to Mega Evolve in battle."
-    },
-    "cloversweet": {
-        "name": "Clover Sweet",
-        "desc": "Evolves Milcery into Alcremie when held and spun around."
-    },
-    "cobaberry": {
-        "name": "Coba Berry",
-        "desc": "Halves damage taken from a supereffective Flying-type attack. Single use."
-    },
-    "colburberry": {
-        "name": "Colbur Berry",
-        "desc": "Halves damage taken from a supereffective Dark-type attack. Single use."
-    },
-    "cornerstonemask": {
-        "name": "Cornerstone Mask",
-        "desc": "Ogerpon-Cornerstone: 1.2x power attacks; Terastallize to gain Embody Aspect."
-    },
-    "cornnberry": {
-        "name": "Cornn Berry",
-        "desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck."
-    },
-    "coverfossil": {
-        "name": "Cover Fossil",
-        "desc": "Can be revived into Tirtouga."
-    },
-    "covertcloak": {
-        "name": "Covert Cloak",
-        "desc": "The holder is not affected by the secondary effect of another Pokemon's attack. Attacks with secondary effects that are prevented include those with a chance (even 100%) to paralyze, sleep, freeze, burn, poison, confuse, cause the holder to flinch, cause the holder's stat stages to be lowered, as well as Anchor Shot, Eerie Spell, Fling, Psychic Noise, Salt Cure, Spirit Shackle, Syrup Bomb, and Throat Chop. The effect of Sparkling Aria is prevented if the holder is the only target. Secondary effects added by King's Rock, Razor Fang, and the Poison Touch, Stench, and Toxic Chain Abilities are also prevented against the holder."
-    },
-    "crabominite": {
-        "name": "Crabominite",
-        "desc": ""
-    },
-    "crackedpot": {
-        "name": "Cracked Pot",
-        "desc": "Evolves Sinistea into Polteageist when used."
-    },
-    "custapberry": {
-        "name": "Custap Berry",
-        "desc": "Holder moves first in its priority bracket when at 1/4 max HP or less. Single use."
-    },
-    "damprock": {
-        "name": "Damp Rock",
-        "desc": "Holder's use of Rain Dance lasts 8 turns instead of 5."
-    },
-    "darkgem": {
-        "name": "Dark Gem",
-        "desc": "Holder's first successful Dark-type attack will have 1.3x power. Single use."
-    },
-    "darkiniumz": {
-        "name": "Darkinium Z",
-        "desc": "If holder has a Dark move, this item allows it to use a Dark Z-Move."
-    },
-    "darkmemory": {
-        "name": "Dark Memory",
-        "desc": "Holder's Multi-Attack is Dark type."
-    },
-    "darkranite": {
-        "name": "Darkranite",
-        "desc": ""
-    },
-    "dawnstone": {
-        "name": "Dawn Stone",
-        "desc": "Evolves male Kirlia into Gallade and female Snorunt into Froslass when used."
-    },
-    "decidiumz": {
-        "name": "Decidium Z",
-        "desc": "If held by a Decidueye with Spirit Shackle, it can use Sinister Arrow Raid."
-    },
-    "deepseascale": {
-        "name": "Deep Sea Scale",
-        "desc": "If held by a Clamperl, its Sp. Def is doubled. Evolves Clamperl into Gorebyss when traded."
-    },
-    "deepseatooth": {
-        "name": "Deep Sea Tooth",
-        "desc": "If held by a Clamperl, its Sp. Atk is doubled. Evolves Clamperl into Huntail when traded."
-    },
-    "delphoxite": {
-        "name": "Delphoxite",
-        "desc": "If held by a Delphox, this item allows it to Mega Evolve in battle."
-    },
-    "destinyknot": {
-        "name": "Destiny Knot",
-        "desc": "If holder becomes infatuated, the other Pokemon also becomes infatuated."
-    },
-    "diancite": {
-        "name": "Diancite",
-        "desc": "If held by a Diancie, this item allows it to Mega Evolve in battle."
-    },
-    "diveball": {
-        "name": "Dive Ball",
-        "desc": "A Poke Ball that works especially well on Pokemon that live underwater."
-    },
-    "domefossil": {
-        "name": "Dome Fossil",
-        "desc": "Can be revived into Kabuto."
-    },
-    "dousedrive": {
-        "name": "Douse Drive",
-        "desc": "Holder's Techno Blast is Water type."
-    },
-    "dracoplate": {
-        "name": "Draco Plate",
-        "desc": "Holder's Dragon-type attacks have 1.2x power. Judgment is Dragon type."
-    },
-    "dragalgite": {
-        "name": "Dragalgite",
-        "desc": "If held by a Dragalge, this item allows it to Mega Evolve in battle."
-    },
-    "dragonfang": {
-        "name": "Dragon Fang",
-        "desc": "Holder's Dragon-type attacks have 1.2x power."
-    },
-    "dragongem": {
-        "name": "Dragon Gem",
-        "desc": "Holder's first successful Dragon-type attack will have 1.3x power. Single use."
-    },
-    "dragoninite": {
-        "name": "Dragoninite",
-        "desc": "If held by a Dragonite, this item allows it to Mega Evolve in battle."
-    },
-    "dragoniumz": {
-        "name": "Dragonium Z",
-        "desc": "If holder has a Dragon move, this item allows it to use a Dragon Z-Move."
-    },
-    "dragonmemory": {
-        "name": "Dragon Memory",
-        "desc": "Holder's Multi-Attack is Dragon type."
-    },
-    "dragonscale": {
-        "name": "Dragon Scale",
-        "desc": "Evolves Seadra into Kingdra when traded."
-    },
-    "drampanite": {
-        "name": "Drampanite",
-        "desc": "If held by a Drampa, this item allows it to Mega Evolve in battle."
-    },
-    "dreadplate": {
-        "name": "Dread Plate",
-        "desc": "Holder's Dark-type attacks have 1.2x power. Judgment is Dark type."
-    },
-    "dreamball": {
-        "name": "Dream Ball",
-        "desc": "A Poke Ball that makes it easier to catch wild Pokémon while they're asleep."
-    },
-    "dubiousdisc": {
-        "name": "Dubious Disc",
-        "desc": "Evolves Porygon2 into Porygon-Z when traded."
-    },
-    "durinberry": {
-        "name": "Durin Berry",
-        "desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck."
-    },
-    "duskball": {
-        "name": "Dusk Ball",
-        "desc": "A Poke Ball that makes it easier to catch wild Pokemon at night or in caves."
-    },
-    "duskstone": {
-        "name": "Dusk Stone",
-        "desc": "Evolves Murkrow into Honchkrow, Misdreavus into Mismagius, Lampent into Chandelure, and Doublade into Aegislash when used."
-    },
-    "earthplate": {
-        "name": "Earth Plate",
-        "desc": "Holder's Ground-type attacks have 1.2x power. Judgment is Ground type."
-    },
-    "eelektrossite": {
-        "name": "Eelektrossite",
-        "desc": "If held by an Eelektross, this item allows it to Mega Evolve in battle."
-    },
-    "eeviumz": {
-        "name": "Eevium Z",
-        "desc": "If held by an Eevee with Last Resort, it can use Extreme Evoboost."
-    },
-    "ejectbutton": {
-        "name": "Eject Button",
-        "desc": "If holder survives a hit, it immediately switches out to a chosen ally. Single use."
-    },
-    "ejectpack": {
-        "name": "Eject Pack",
-        "desc": "If the holder's stat stages are lowered, it switches to a chosen ally. Single use."
-    },
-    "electirizer": {
-        "name": "Electirizer",
-        "desc": "Evolves Electabuzz into Electivire when traded."
-    },
-    "electricgem": {
-        "name": "Electric Gem",
-        "desc": "Holder's first successful Electric-type attack will have 1.3x power. Single use."
-    },
-    "electricmemory": {
-        "name": "Electric Memory",
-        "desc": "Holder's Multi-Attack is Electric type."
-    },
-    "electricseed": {
-        "name": "Electric Seed",
-        "desc": "If the terrain is Electric Terrain, raises holder's Defense by 1 stage. Single use."
-    },
-    "electriumz": {
-        "name": "Electrium Z",
-        "desc": "If holder has an Electric move, this item allows it to use an Electric Z-Move."
-    },
-    "emboarite": {
-        "name": "Emboarite",
-        "desc": "If held by an Emboar, this item allows it to Mega Evolve in battle."
-    },
-    "enigmaberry": {
-        "name": "Enigma Berry",
-        "desc": "Restores 1/4 max HP after holder is hit by a supereffective move. Single use."
-    },
-    "eviolite": {
-        "name": "Eviolite",
-        "desc": "If holder's species can evolve, its Defense and Sp. Def are 1.5x."
-    },
-    "excadrite": {
-        "name": "Excadrite",
-        "desc": "If held by an Excadrill, this item allows it to Mega Evolve in battle."
-    },
-    "expertbelt": {
-        "name": "Expert Belt",
-        "desc": "Holder's attacks that are super effective against the target do 1.2x damage."
-    },
-    "fairiumz": {
-        "name": "Fairium Z",
-        "desc": "If holder has a Fairy move, this item allows it to use a Fairy Z-Move."
-    },
-    "fairyfeather": {
-        "name": "Fairy Feather",
-        "desc": "Holder's Fairy-type attacks have 1.2x power."
-    },
-    "fairygem": {
-        "name": "Fairy Gem",
-        "desc": "Holder's first successful Fairy-type attack will have 1.3x power. Single use."
-    },
-    "fairymemory": {
-        "name": "Fairy Memory",
-        "desc": "Holder's Multi-Attack is Fairy type."
-    },
-    "falinksite": {
-        "name": "Falinksite",
-        "desc": "If held by a Falinks, this item allows it to Mega Evolve in battle."
-    },
-    "fastball": {
-        "name": "Fast Ball",
-        "desc": "A Poke Ball that makes it easier to catch Pokemon which are quick to run away."
-    },
-    "feraligite": {
-        "name": "Feraligite",
-        "desc": "If held by a Feraligatr, this item allows it to Mega Evolve in battle."
-    },
-    "fightinggem": {
-        "name": "Fighting Gem",
-        "desc": "Holder's first successful Fighting-type attack will have 1.3x power. Single use."
-    },
-    "fightingmemory": {
-        "name": "Fighting Memory",
-        "desc": "Holder's Multi-Attack is Fighting type."
-    },
-    "fightiniumz": {
-        "name": "Fightinium Z",
-        "desc": "If holder has a Fighting move, this item allows it to use a Fighting Z-Move."
-    },
-    "figyberry": {
-        "name": "Figy Berry",
-        "desc": "Restores 1/3 max HP at 1/4 max HP or less; confuses if -Atk Nature. Single use."
-    },
-    "firegem": {
-        "name": "Fire Gem",
-        "desc": "Holder's first successful Fire-type attack will have 1.3x power. Single use."
-    },
-    "firememory": {
-        "name": "Fire Memory",
-        "desc": "Holder's Multi-Attack is Fire type."
-    },
-    "firestone": {
-        "name": "Fire Stone",
-        "desc": "Evolves Vulpix into Ninetales, Growlithe into Arcanine, Eevee into Flareon, and Pansear into Simisear when used."
-    },
-    "firiumz": {
-        "name": "Firium Z",
-        "desc": "If holder has a Fire move, this item allows it to use a Fire Z-Move."
-    },
-    "fistplate": {
-        "name": "Fist Plate",
-        "desc": "Holder's Fighting-type attacks have 1.2x power. Judgment is Fighting type."
-    },
-    "flameorb": {
-        "name": "Flame Orb",
-        "desc": "At the end of every turn, this item attempts to burn the holder."
-    },
-    "flameplate": {
-        "name": "Flame Plate",
-        "desc": "Holder's Fire-type attacks have 1.2x power. Judgment is Fire type."
-    },
-    "floatstone": {
-        "name": "Float Stone",
-        "desc": "Holder's weight is halved."
-    },
-    "floettite": {
-        "name": "Floettite",
-        "desc": "If held by an Eternal Flower Floette, this item allows it to Mega Evolve in battle."
-    },
-    "flowersweet": {
-        "name": "Flower Sweet",
-        "desc": "Evolves Milcery into Alcremie when held and spun around."
-    },
-    "flyinggem": {
-        "name": "Flying Gem",
-        "desc": "Holder's first successful Flying-type attack will have 1.3x power. Single use."
-    },
-    "flyingmemory": {
-        "name": "Flying Memory",
-        "desc": "Holder's Multi-Attack is Flying type."
-    },
-    "flyiniumz": {
-        "name": "Flyinium Z",
-        "desc": "If holder has a Flying move, this item allows it to use a Flying Z-Move."
-    },
-    "focusband": {
-        "name": "Focus Band",
-        "desc": "Holder has a 10% chance to survive an attack that would KO it with 1 HP."
-    },
-    "focussash": {
-        "name": "Focus Sash",
-        "desc": "If holder's HP is full, will survive an attack that would KO it with 1 HP. Single use."
-    },
-    "fossilizedbird": {
-        "name": "Fossilized Bird",
-        "desc": "Can revive into Dracozolt with Fossilized Drake or Arctozolt with Fossilized Dino."
-    },
-    "fossilizeddino": {
-        "name": "Fossilized Dino",
-        "desc": "Can revive into Arctovish with Fossilized Fish or Arctozolt with Fossilized Bird."
-    },
-    "fossilizeddrake": {
-        "name": "Fossilized Drake",
-        "desc": "Can revive into Dracozolt with Fossilized Bird or Dracovish with Fossilized Fish."
-    },
-    "fossilizedfish": {
-        "name": "Fossilized Fish",
-        "desc": "Can revive into Dracovish with Fossilized Drake or Arctovish with Fossilized Dino."
-    },
-    "friendball": {
-        "name": "Friend Ball",
-        "desc": "A Poke Ball that makes caught Pokemon more friendly."
-    },
-    "froslassite": {
-        "name": "Froslassite",
-        "desc": "If held by a Froslass, this item allows it to Mega Evolve in battle."
-    },
-    "fullincense": {
-        "name": "Full Incense",
-        "desc": "Holder moves last in its priority bracket."
-    },
-    "galaricacuff": {
-        "name": "Galarica Cuff",
-        "desc": "Evolves Galarian Slowpoke into Galarian Slowbro when used."
-    },
-    "galaricawreath": {
-        "name": "Galarica Wreath",
-        "desc": "Evolves Galarian Slowpoke into Galarian Slowking when used."
-    },
-    "galladite": {
-        "name": "Galladite",
-        "desc": "If held by a Gallade, this item allows it to Mega Evolve in battle."
-    },
-    "ganlonberry": {
-        "name": "Ganlon Berry",
-        "desc": "Raises holder's Defense by 1 stage when at 1/4 max HP or less. Single use."
-    },
-    "garchompite": {
-        "name": "Garchompite",
-        "desc": "If held by a Garchomp, this item allows it to Mega Evolve in battle."
-    },
-    "garchompitez": {
-        "name": "Garchompite Z",
-        "desc": ""
-    },
-    "gardevoirite": {
-        "name": "Gardevoirite",
-        "desc": "If held by a Gardevoir, this item allows it to Mega Evolve in battle."
-    },
-    "gengarite": {
-        "name": "Gengarite",
-        "desc": "If held by a Gengar, this item allows it to Mega Evolve in battle."
-    },
-    "ghostgem": {
-        "name": "Ghost Gem",
-        "desc": "Holder's first successful Ghost-type attack will have 1.3x power. Single use."
-    },
-    "ghostiumz": {
-        "name": "Ghostium Z",
-        "desc": "If holder has a Ghost move, this item allows it to use a Ghost Z-Move."
-    },
-    "ghostmemory": {
-        "name": "Ghost Memory",
-        "desc": "Holder's Multi-Attack is Ghost type."
-    },
-    "glalitite": {
-        "name": "Glalitite",
-        "desc": "If held by a Glalie, this item allows it to Mega Evolve in battle."
-    },
-    "glimmoranite": {
-        "name": "Glimmoranite",
-        "desc": ""
-    },
-    "goldbottlecap": {
-        "name": "Gold Bottle Cap",
-        "desc": "Used for Hyper Training. All of a Pokemon's stats are calculated with an IV of 31."
-    },
-    "golisopite": {
-        "name": "Golisopite",
-        "desc": ""
-    },
-    "golurkite": {
-        "name": "Golurkite",
-        "desc": ""
-    },
-    "grassgem": {
-        "name": "Grass Gem",
-        "desc": "Holder's first successful Grass-type attack will have 1.3x power. Single use."
-    },
-    "grassiumz": {
-        "name": "Grassium Z",
-        "desc": "If holder has a Grass move, this item allows it to use a Grass Z-Move."
-    },
-    "grassmemory": {
-        "name": "Grass Memory",
-        "desc": "Holder's Multi-Attack is Grass type."
-    },
-    "grassyseed": {
-        "name": "Grassy Seed",
-        "desc": "If the terrain is Grassy Terrain, raises holder's Defense by 1 stage. Single use."
-    },
-    "greatball": {
-        "name": "Great Ball",
-        "desc": "A high-performance Ball that provides a higher catch rate than a Poke Ball."
-    },
-    "greninjite": {
-        "name": "Greninjite",
-        "desc": "If held by a Greninja, this item allows it to Mega Evolve in battle."
-    },
-    "grepaberry": {
-        "name": "Grepa Berry",
-        "desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck."
-    },
-    "gripclaw": {
-        "name": "Grip Claw",
-        "desc": "Holder's partial-trapping moves always last 7 turns."
-    },
-    "griseouscore": {
-        "name": "Griseous Core",
-        "desc": "If held by a Giratina, its Ghost- and Dragon-type attacks have 1.2x power."
-    },
-    "griseousorb": {
-        "name": "Griseous Orb",
-        "desc": "If held by a Giratina, its Ghost- and Dragon-type attacks have 1.2x power."
-    },
-    "groundgem": {
-        "name": "Ground Gem",
-        "desc": "Holder's first successful Ground-type attack will have 1.3x power. Single use."
-    },
-    "groundiumz": {
-        "name": "Groundium Z",
-        "desc": "If holder has a Ground move, this item allows it to use a Ground Z-Move."
-    },
-    "groundmemory": {
-        "name": "Ground Memory",
-        "desc": "Holder's Multi-Attack is Ground type."
-    },
-    "gyaradosite": {
-        "name": "Gyaradosite",
-        "desc": "If held by a Gyarados, this item allows it to Mega Evolve in battle."
-    },
-    "habanberry": {
-        "name": "Haban Berry",
-        "desc": "Halves damage taken from a supereffective Dragon-type attack. Single use."
-    },
-    "hardstone": {
-        "name": "Hard Stone",
-        "desc": "Holder's Rock-type attacks have 1.2x power."
-    },
-    "hawluchanite": {
-        "name": "Hawluchanite",
-        "desc": "If held by a Hawlucha, this item allows it to Mega Evolve in battle."
-    },
-    "healball": {
-        "name": "Heal Ball",
-        "desc": "A remedial Poke Ball that restores the caught Pokemon's HP and status problem."
-    },
-    "hearthflamemask": {
-        "name": "Hearthflame Mask",
-        "desc": "Ogerpon-Hearthflame: 1.2x power attacks; Terastallize to gain Embody Aspect."
-    },
-    "heatranite": {
-        "name": "Heatranite",
-        "desc": ""
-    },
-    "heatrock": {
-        "name": "Heat Rock",
-        "desc": "Holder's use of Sunny Day lasts 8 turns instead of 5."
-    },
-    "heavyball": {
-        "name": "Heavy Ball",
-        "desc": "A Poke Ball for catching very heavy Pokemon."
-    },
-    "heavydutyboots": {
-        "name": "Heavy-Duty Boots",
-        "desc": "When switching in, the holder is unaffected by hazards on its side of the field."
-    },
-    "helixfossil": {
-        "name": "Helix Fossil",
-        "desc": "Can be revived into Omanyte."
-    },
-    "heracronite": {
-        "name": "Heracronite",
-        "desc": "If held by a Heracross, this item allows it to Mega Evolve in battle."
-    },
-    "hondewberry": {
-        "name": "Hondew Berry",
-        "desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck."
-    },
-    "houndoominite": {
-        "name": "Houndoominite",
-        "desc": "If held by a Houndoom, this item allows it to Mega Evolve in battle."
-    },
-    "iapapaberry": {
-        "name": "Iapapa Berry",
-        "desc": "Restores 1/3 max HP at 1/4 max HP or less; confuses if -Def Nature. Single use."
-    },
-    "icegem": {
-        "name": "Ice Gem",
-        "desc": "Holder's first successful Ice-type attack will have 1.3x power. Single use."
-    },
-    "icememory": {
-        "name": "Ice Memory",
-        "desc": "Holder's Multi-Attack is Ice type."
-    },
-    "icestone": {
-        "name": "Ice Stone",
-        "desc": "Evolves Alolan Sandshrew into Alolan Sandslash, Alolan Vulpix into Alolan Ninetales, Eevee into Glaceon, and Galarian Darumaka into Galarian Darmanitan when used."
-    },
-    "icicleplate": {
-        "name": "Icicle Plate",
-        "desc": "Holder's Ice-type attacks have 1.2x power. Judgment is Ice type."
-    },
-    "iciumz": {
-        "name": "Icium Z",
-        "desc": "If holder has an Ice move, this item allows it to use an Ice Z-Move."
-    },
-    "icyrock": {
-        "name": "Icy Rock",
-        "desc": "Holder's use of Snowscape lasts 8 turns instead of 5."
-    },
-    "inciniumz": {
-        "name": "Incinium Z",
-        "desc": "If held by an Incineroar with Darkest Lariat, it can use Malicious Moonsault."
-    },
-    "insectplate": {
-        "name": "Insect Plate",
-        "desc": "Holder's Bug-type attacks have 1.2x power. Judgment is Bug type."
-    },
-    "ironball": {
-        "name": "Iron Ball",
-        "desc": "Holder is grounded, Speed halved. If Flying type, takes neutral Ground damage."
-    },
-    "ironplate": {
-        "name": "Iron Plate",
-        "desc": "Holder's Steel-type attacks have 1.2x power. Judgment is Steel type."
-    },
-    "jabocaberry": {
-        "name": "Jaboca Berry",
-        "desc": "If holder is hit by a physical move, attacker loses 1/8 of its max HP. Single use."
-    },
-    "jawfossil": {
-        "name": "Jaw Fossil",
-        "desc": "Can be revived into Tyrunt."
-    },
-    "kangaskhanite": {
-        "name": "Kangaskhanite",
-        "desc": "If held by a Kangaskhan, this item allows it to Mega Evolve in battle."
-    },
-    "kasibberry": {
-        "name": "Kasib Berry",
-        "desc": "Halves damage taken from a supereffective Ghost-type attack. Single use."
-    },
-    "kebiaberry": {
-        "name": "Kebia Berry",
-        "desc": "Halves damage taken from a supereffective Poison-type attack. Single use."
-    },
-    "keeberry": {
-        "name": "Kee Berry",
-        "desc": "Raises holder's Defense by 1 stage after it is hit by a physical attack. Single use."
-    },
-    "kelpsyberry": {
-        "name": "Kelpsy Berry",
-        "desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck."
-    },
-    "kingsrock": {
-        "name": "King's Rock",
-        "desc": "Holder's attacks without a chance to make the target flinch gain a 10% chance to make the target flinch. Evolves Poliwhirl into Politoed and Slowpoke into Slowking when traded."
-    },
-    "kommoniumz": {
-        "name": "Kommonium Z",
-        "desc": "If held by a Kommo-o with Clanging Scales, it can use Clangorous Soulblaze."
-    },
-    "laggingtail": {
-        "name": "Lagging Tail",
-        "desc": "Holder moves last in its priority bracket."
-    },
-    "lansatberry": {
-        "name": "Lansat Berry",
-        "desc": "Holder gains the Focus Energy effect when at 1/4 max HP or less. Single use."
-    },
-    "latiasite": {
-        "name": "Latiasite",
-        "desc": "If held by a Latias, this item allows it to Mega Evolve in battle."
-    },
-    "latiosite": {
-        "name": "Latiosite",
-        "desc": "If held by a Latios, this item allows it to Mega Evolve in battle."
-    },
-    "laxincense": {
-        "name": "Lax Incense",
-        "desc": "The accuracy of attacks against the holder is 0.9x."
-    },
-    "leafstone": {
-        "name": "Leaf Stone",
-        "desc": "Evolves Gloom into Vileplume, Weepinbell into Victreebel, Exeggcute into Exeggutor or Alolan Exeggutor, Eevee into Leafeon, Nuzleaf into Shiftry, and Pansage into Simisage when used."
-    },
-    "leek": {
-        "name": "Leek",
-        "desc": "If held by a Farfetch’d or Sirfetch’d, its critical hit ratio is raised by 2 stages."
-    },
-    "leftovers": {
-        "name": "Leftovers",
-        "desc": "At the end of every turn, holder restores 1/16 of its max HP."
-    },
-    "leppaberry": {
-        "name": "Leppa Berry",
-        "desc": "Restores 10 PP to the first of the holder's moves to reach 0 PP. Single use."
-    },
-    "levelball": {
-        "name": "Level Ball",
-        "desc": "A Poke Ball for catching Pokemon that are a lower level than your own."
-    },
-    "liechiberry": {
-        "name": "Liechi Berry",
-        "desc": "Raises holder's Attack by 1 stage when at 1/4 max HP or less. Single use."
-    },
-    "lifeorb": {
-        "name": "Life Orb",
-        "desc": "Holder's attacks do 1.3x damage, and it loses 1/10 its max HP after the attack."
-    },
-    "lightball": {
-        "name": "Light Ball",
-        "desc": "If held by a Pikachu, its Attack and Sp. Atk are doubled."
-    },
-    "lightclay": {
-        "name": "Light Clay",
-        "desc": "Holder's use of Aurora Veil, Light Screen, or Reflect lasts 8 turns instead of 5."
-    },
-    "loadeddice": {
-        "name": "Loaded Dice",
-        "desc": "The holder's moves that normally hit 2 to 5 times instead hit 4 or 5 times. If the first hit is successful, the holder's use of Triple Kick or Triple Axel hits 3 times, and Population Bomb hits 4 to 10 times, at random."
-    },
-    "lopunnite": {
-        "name": "Lopunnite",
-        "desc": "If held by a Lopunny, this item allows it to Mega Evolve in battle."
-    },
-    "loveball": {
-        "name": "Love Ball",
-        "desc": "Poke Ball for catching Pokemon that are the opposite gender of your Pokemon."
-    },
-    "lovesweet": {
-        "name": "Love Sweet",
-        "desc": "Evolves Milcery into Alcremie when held and spun around."
-    },
-    "lucarionite": {
-        "name": "Lucarionite",
-        "desc": "If held by a Lucario, this item allows it to Mega Evolve in battle."
-    },
-    "lucarionitez": {
-        "name": "Lucarionite Z",
-        "desc": ""
-    },
-    "luckypunch": {
-        "name": "Lucky Punch",
-        "desc": "If held by a Chansey, its critical hit ratio is raised by 2 stages."
-    },
-    "lumberry": {
-        "name": "Lum Berry",
-        "desc": "Holder cures itself if it has a non-volatile status or is confused. Single use."
-    },
-    "luminousmoss": {
-        "name": "Luminous Moss",
-        "desc": "Raises holder's Sp. Def by 1 stage if hit by a Water-type attack. Single use."
-    },
-    "lunaliumz": {
-        "name": "Lunalium Z",
-        "desc": "Lunala or Dawn Wings Necrozma with Moongeist Beam can use a special Z-Move."
-    },
-    "lureball": {
-        "name": "Lure Ball",
-        "desc": "A Poke Ball for catching Pokemon hooked by a Rod when fishing."
-    },
-    "lustrousglobe": {
-        "name": "Lustrous Globe",
-        "desc": "If held by a Palkia, its Water- and Dragon-type attacks have 1.2x power."
-    },
-    "lustrousorb": {
-        "name": "Lustrous Orb",
-        "desc": "If held by a Palkia, its Water- and Dragon-type attacks have 1.2x power."
-    },
-    "luxuryball": {
-        "name": "Luxury Ball",
-        "desc": "A comfortable Poke Ball that makes a caught wild Pokemon quickly grow friendly."
-    },
-    "lycaniumz": {
-        "name": "Lycanium Z",
-        "desc": "If held by a Lycanroc forme with Stone Edge, it can use Splintered Stormshards."
-    },
-    "machobrace": {
-        "name": "Macho Brace",
-        "desc": "Holder's Speed is halved. The Klutz Ability does not ignore this effect."
-    },
-    "magearnite": {
-        "name": "Magearnite",
-        "desc": ""
-    },
-    "magmarizer": {
-        "name": "Magmarizer",
-        "desc": "Evolves Magmar into Magmortar when traded."
-    },
-    "magnet": {
-        "name": "Magnet",
-        "desc": "Holder's Electric-type attacks have 1.2x power."
-    },
-    "magoberry": {
-        "name": "Mago Berry",
-        "desc": "Restores 1/3 max HP at 1/4 max HP or less; confuses if -Spe Nature. Single use."
-    },
-    "magostberry": {
-        "name": "Magost Berry",
-        "desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck."
-    },
-    "mail": {
-        "name": "Mail",
-        "desc": "Cannot be given to or taken from a Pokemon, except by Covet/Knock Off/Thief."
-    },
-    "malamarite": {
-        "name": "Malamarite",
-        "desc": "If held by a Malamar, this item allows it to Mega Evolve in battle."
-    },
-    "maliciousarmor": {
-        "name": "Malicious Armor",
-        "desc": "Evolves Charcadet into Ceruledge when used."
-    },
-    "manectite": {
-        "name": "Manectite",
-        "desc": "If held by a Manectric, this item allows it to Mega Evolve in battle."
-    },
-    "marangaberry": {
-        "name": "Maranga Berry",
-        "desc": "Raises holder's Sp. Def by 1 stage after it is hit by a special attack. Single use."
-    },
-    "marshadiumz": {
-        "name": "Marshadium Z",
-        "desc": "If held by Marshadow with Spectral Thief, it can use Soul-Stealing 7-Star Strike."
-    },
-    "masterball": {
-        "name": "Master Ball",
-        "desc": "The best Ball with the ultimate performance. It will catch any wild Pokemon."
-    },
-    "masterpieceteacup": {
-        "name": "Masterpiece Teacup",
-        "desc": "Evolves Poltchageist-Artisan into Sinistcha-Masterpiece when used."
-    },
-    "mawilite": {
-        "name": "Mawilite",
-        "desc": "If held by a Mawile, this item allows it to Mega Evolve in battle."
-    },
-    "meadowplate": {
-        "name": "Meadow Plate",
-        "desc": "Holder's Grass-type attacks have 1.2x power. Judgment is Grass type."
-    },
-    "medichamite": {
-        "name": "Medichamite",
-        "desc": "If held by a Medicham, this item allows it to Mega Evolve in battle."
-    },
-    "meganiumite": {
-        "name": "Meganiumite",
-        "desc": "If held by a Meganium, this item allows it to Mega Evolve in battle."
-    },
-    "mentalherb": {
-        "name": "Mental Herb",
-        "desc": "Cures holder of Attract, Disable, Encore, Heal Block, Taunt, Torment. Single use."
-    },
-    "meowsticite": {
-        "name": "Meowsticite",
-        "desc": ""
-    },
-    "metagrossite": {
-        "name": "Metagrossite",
-        "desc": "If held by a Metagross, this item allows it to Mega Evolve in battle."
-    },
-    "metalalloy": {
-        "name": "Metal Alloy",
-        "desc": "Evolves Duraludon into Archaludon when used."
-    },
-    "metalcoat": {
-        "name": "Metal Coat",
-        "desc": "Holder's Steel-type attacks have 1.2x power. Evolves Onix into Steelix and Scyther into Scizor when traded."
-    },
-    "metalpowder": {
-        "name": "Metal Powder",
-        "desc": "If held by a Ditto that hasn't Transformed, its Defense is doubled."
-    },
-    "metronome": {
-        "name": "Metronome",
-        "desc": "Damage of moves used on consecutive turns is increased. Max 2x after 5 turns."
-    },
-    "mewniumz": {
-        "name": "Mewnium Z",
-        "desc": "If held by a Mew with Psychic, it can use Genesis Supernova."
-    },
-    "mewtwonitex": {
-        "name": "Mewtwonite X",
-        "desc": "If held by a Mewtwo, this item allows it to Mega Evolve in battle."
-    },
-    "mewtwonitey": {
-        "name": "Mewtwonite Y",
-        "desc": "If held by a Mewtwo, this item allows it to Mega Evolve in battle."
-    },
-    "micleberry": {
-        "name": "Micle Berry",
-        "desc": "Holder's next move has 1.2x accuracy when at 1/4 max HP or less. Single use."
-    },
-    "mimikiumz": {
-        "name": "Mimikium Z",
-        "desc": "If held by a Mimikyu with Play Rough, it can use Let's Snuggle Forever."
-    },
-    "mindplate": {
-        "name": "Mind Plate",
-        "desc": "Holder's Psychic-type attacks have 1.2x power. Judgment is Psychic type."
-    },
-    "miracleseed": {
-        "name": "Miracle Seed",
-        "desc": "Holder's Grass-type attacks have 1.2x power."
-    },
-    "mirrorherb": {
-        "name": "Mirror Herb",
-        "desc": "When an opposing Pokemon raises a stat stage, the holder copies it. Single use."
-    },
-    "mistyseed": {
-        "name": "Misty Seed",
-        "desc": "If the terrain is Misty Terrain, raises holder's Sp. Def by 1 stage. Single use."
-    },
-    "moonball": {
-        "name": "Moon Ball",
-        "desc": "A Poke Ball for catching Pokemon that evolve using the Moon Stone."
-    },
-    "moonstone": {
-        "name": "Moon Stone",
-        "desc": "Evolves Nidorina into Nidoqueen, Nidorino into Nidoking, Clefairy into Clefable, Jigglypuff into Wigglytuff, Skitty into Delcatty, and Munna into Musharna when used."
-    },
-    "muscleband": {
-        "name": "Muscle Band",
-        "desc": "Holder's physical attacks have 1.1x power."
-    },
-    "mysticwater": {
-        "name": "Mystic Water",
-        "desc": "Holder's Water-type attacks have 1.2x power."
-    },
-    "nanabberry": {
-        "name": "Nanab Berry",
-        "desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck."
-    },
-    "nestball": {
-        "name": "Nest Ball",
-        "desc": "A Poke Ball that works especially well on weaker Pokemon in the wild."
-    },
-    "netball": {
-        "name": "Net Ball",
-        "desc": "A Poke Ball that works especially well on Water- and Bug-type Pokemon."
-    },
-    "nevermeltice": {
-        "name": "Never-Melt Ice",
-        "desc": "Holder's Ice-type attacks have 1.2x power."
-    },
-    "nomelberry": {
-        "name": "Nomel Berry",
-        "desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck."
-    },
-    "normalgem": {
-        "name": "Normal Gem",
-        "desc": "Holder's first successful Normal-type attack will have 1.3x power. Single use."
-    },
-    "normaliumz": {
-        "name": "Normalium Z",
-        "desc": "If holder has a Normal move, this item allows it to use a Normal Z-Move."
-    },
-    "occaberry": {
-        "name": "Occa Berry",
-        "desc": "Halves damage taken from a supereffective Fire-type attack. Single use."
-    },
-    "oddincense": {
-        "name": "Odd Incense",
-        "desc": "Holder's Psychic-type attacks have 1.2x power."
-    },
-    "oldamber": {
-        "name": "Old Amber",
-        "desc": "Can be revived into Aerodactyl."
-    },
-    "oranberry": {
-        "name": "Oran Berry",
-        "desc": "Restores 10 HP when at 1/2 max HP or less. Single use."
-    },
-    "ovalstone": {
-        "name": "Oval Stone",
-        "desc": "Evolves Happiny into Chansey when held and leveled up during the day."
-    },
-    "pamtreberry": {
-        "name": "Pamtre Berry",
-        "desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck."
-    },
-    "parkball": {
-        "name": "Park Ball",
-        "desc": "A special Poke Ball for the Pal Park."
-    },
-    "passhoberry": {
-        "name": "Passho Berry",
-        "desc": "Halves damage taken from a supereffective Water-type attack. Single use."
-    },
-    "payapaberry": {
-        "name": "Payapa Berry",
-        "desc": "Halves damage taken from a supereffective Psychic-type attack. Single use."
-    },
-    "pechaberry": {
-        "name": "Pecha Berry",
-        "desc": "Holder is cured if it is poisoned. Single use."
-    },
-    "persimberry": {
-        "name": "Persim Berry",
-        "desc": "Holder is cured if it is confused. Single use."
-    },
-    "petayaberry": {
-        "name": "Petaya Berry",
-        "desc": "Raises holder's Sp. Atk by 1 stage when at 1/4 max HP or less. Single use."
-    },
-    "pidgeotite": {
-        "name": "Pidgeotite",
-        "desc": "If held by a Pidgeot, this item allows it to Mega Evolve in battle."
-    },
-    "pikaniumz": {
-        "name": "Pikanium Z",
-        "desc": "If held by a Pikachu with Volt Tackle, it can use Catastropika."
-    },
-    "pikashuniumz": {
-        "name": "Pikashunium Z",
-        "desc": "If held by cap Pikachu with Thunderbolt, it can use 10,000,000 Volt Thunderbolt."
-    },
-    "pinapberry": {
-        "name": "Pinap Berry",
-        "desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck."
-    },
-    "pinsirite": {
-        "name": "Pinsirite",
-        "desc": "If held by a Pinsir, this item allows it to Mega Evolve in battle."
-    },
-    "pixieplate": {
-        "name": "Pixie Plate",
-        "desc": "Holder's Fairy-type attacks have 1.2x power. Judgment is Fairy type."
-    },
-    "plumefossil": {
-        "name": "Plume Fossil",
-        "desc": "Can be revived into Archen."
-    },
-    "poisonbarb": {
-        "name": "Poison Barb",
-        "desc": "Holder's Poison-type attacks have 1.2x power."
-    },
-    "poisongem": {
-        "name": "Poison Gem",
-        "desc": "Holder's first successful Poison-type attack will have 1.3x power. Single use."
-    },
-    "poisoniumz": {
-        "name": "Poisonium Z",
-        "desc": "If holder has a Poison move, this item allows it to use a Poison Z-Move."
-    },
-    "poisonmemory": {
-        "name": "Poison Memory",
-        "desc": "Holder's Multi-Attack is Poison type."
-    },
-    "pokeball": {
-        "name": "Poke Ball",
-        "desc": "A device for catching wild Pokemon. It is designed as a capsule system."
-    },
-    "pomegberry": {
-        "name": "Pomeg Berry",
-        "desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck."
-    },
-    "poweranklet": {
-        "name": "Power Anklet",
-        "desc": "Holder's Speed is halved. The Klutz Ability does not ignore this effect."
-    },
-    "powerband": {
-        "name": "Power Band",
-        "desc": "Holder's Speed is halved. The Klutz Ability does not ignore this effect."
-    },
-    "powerbelt": {
-        "name": "Power Belt",
-        "desc": "Holder's Speed is halved. The Klutz Ability does not ignore this effect."
-    },
-    "powerbracer": {
-        "name": "Power Bracer",
-        "desc": "Holder's Speed is halved. The Klutz Ability does not ignore this effect."
-    },
-    "powerherb": {
-        "name": "Power Herb",
-        "desc": "Holder's two-turn moves complete in one turn (except Sky Drop). Single use."
-    },
-    "powerlens": {
-        "name": "Power Lens",
-        "desc": "Holder's Speed is halved. The Klutz Ability does not ignore this effect."
-    },
-    "powerweight": {
-        "name": "Power Weight",
-        "desc": "Holder's Speed is halved. The Klutz Ability does not ignore this effect."
-    },
-    "premierball": {
-        "name": "Premier Ball",
-        "desc": "A rare Poke Ball that has been crafted to commemorate an event."
-    },
-    "prettyfeather": {
-        "name": "Pretty Feather",
-        "desc": "Though this feather is beautiful, it's just a regular feather and has no effect."
-    },
-    "primariumz": {
-        "name": "Primarium Z",
-        "desc": "If held by a Primarina with Sparkling Aria, it can use Oceanic Operetta."
-    },
-    "prismscale": {
-        "name": "Prism Scale",
-        "desc": "Evolves Feebas into Milotic when traded."
-    },
-    "protectivepads": {
-        "name": "Protective Pads",
-        "desc": "Holder's moves are protected from adverse contact effects, except Pickpocket."
-    },
-    "protector": {
-        "name": "Protector",
-        "desc": "Evolves Rhydon into Rhyperior when traded."
-    },
-    "psychicgem": {
-        "name": "Psychic Gem",
-        "desc": "Holder's first successful Psychic-type attack will have 1.3x power. Single use."
-    },
-    "psychicmemory": {
-        "name": "Psychic Memory",
-        "desc": "Holder's Multi-Attack is Psychic type."
-    },
-    "psychicseed": {
-        "name": "Psychic Seed",
-        "desc": "If the terrain is Psychic Terrain, raises holder's Sp. Def by 1 stage. Single use."
-    },
-    "psychiumz": {
-        "name": "Psychium Z",
-        "desc": "If holder has a Psychic move, this item allows it to use a Psychic Z-Move."
-    },
-    "punchingglove": {
-        "name": "Punching Glove",
-        "desc": "Holder's punch-based attacks have 1.1x power and do not make contact."
-    },
-    "pyroarite": {
-        "name": "Pyroarite",
-        "desc": "If held by a Pyroar, this item allows it to Mega Evolve in battle."
-    },
-    "qualotberry": {
-        "name": "Qualot Berry",
-        "desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck."
-    },
-    "quickball": {
-        "name": "Quick Ball",
-        "desc": "A Poke Ball that provides a better catch rate at the start of a wild encounter."
-    },
-    "quickclaw": {
-        "name": "Quick Claw",
-        "desc": "Each turn, holder has a 20% chance to move first in its priority bracket."
-    },
-    "quickpowder": {
-        "name": "Quick Powder",
-        "desc": "If held by a Ditto that hasn't Transformed, its Speed is doubled."
-    },
-    "rabutaberry": {
-        "name": "Rabuta Berry",
-        "desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck."
-    },
-    "raichunitex": {
-        "name": "Raichunite X",
-        "desc": ""
-    },
-    "raichunitey": {
-        "name": "Raichunite Y",
-        "desc": ""
-    },
-    "rarebone": {
-        "name": "Rare Bone",
-        "desc": "No competitive use other than when used with Fling."
-    },
-    "rawstberry": {
-        "name": "Rawst Berry",
-        "desc": "Holder is cured if it is burned. Single use."
-    },
-    "razorclaw": {
-        "name": "Razor Claw",
-        "desc": "Holder's critical hit ratio is raised by 1 stage. Evolves Sneasel into Weavile when held and leveled up during the night."
-    },
-    "razorfang": {
-        "name": "Razor Fang",
-        "desc": "Holder's attacks without a chance to make the target flinch gain a 10% chance to make the target flinch. Evolves Gligar into Gliscor when held and leveled up during the night."
-    },
-    "razzberry": {
-        "name": "Razz Berry",
-        "desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck."
-    },
-    "reapercloth": {
-        "name": "Reaper Cloth",
-        "desc": "Evolves Dusclops into Dusknoir when traded."
-    },
-    "redcard": {
-        "name": "Red Card",
-        "desc": "If holder survives a hit, attacker is forced to switch to a random ally. Single use."
-    },
-    "redorb": {
-        "name": "Red Orb",
-        "desc": "If held by a Groudon, this item triggers its Primal Reversion in battle."
-    },
-    "repeatball": {
-        "name": "Repeat Ball",
-        "desc": "A Poke Ball that works well on Pokemon species that were previously caught."
-    },
-    "ribbonsweet": {
-        "name": "Ribbon Sweet",
-        "desc": "Evolves Milcery into Alcremie when held and spun around."
-    },
-    "rindoberry": {
-        "name": "Rindo Berry",
-        "desc": "Halves damage taken from a supereffective Grass-type attack. Single use."
-    },
-    "ringtarget": {
-        "name": "Ring Target",
-        "desc": "The holder's type immunities granted solely by its typing are negated."
-    },
-    "rockgem": {
-        "name": "Rock Gem",
-        "desc": "Holder's first successful Rock-type attack will have 1.3x power. Single use."
-    },
-    "rockincense": {
-        "name": "Rock Incense",
-        "desc": "Holder's Rock-type attacks have 1.2x power."
-    },
-    "rockiumz": {
-        "name": "Rockium Z",
-        "desc": "If holder has a Rock move, this item allows it to use a Rock Z-Move."
-    },
-    "rockmemory": {
-        "name": "Rock Memory",
-        "desc": "Holder's Multi-Attack is Rock type."
-    },
-    "rockyhelmet": {
-        "name": "Rocky Helmet",
-        "desc": "If holder is hit by a contact move, the attacker loses 1/6 of its max HP."
-    },
-    "roomservice": {
-        "name": "Room Service",
-        "desc": "If Trick Room is active, the holder's Speed is lowered by 1 stage. Single use."
-    },
-    "rootfossil": {
-        "name": "Root Fossil",
-        "desc": "Can be revived into Lileep."
-    },
-    "roseincense": {
-        "name": "Rose Incense",
-        "desc": "Holder's Grass-type attacks have 1.2x power."
-    },
-    "roseliberry": {
-        "name": "Roseli Berry",
-        "desc": "Halves damage taken from a supereffective Fairy-type attack. Single use."
-    },
-    "rowapberry": {
-        "name": "Rowap Berry",
-        "desc": "If holder is hit by a special move, attacker loses 1/8 of its max HP. Single use."
-    },
-    "rustedshield": {
-        "name": "Rusted Shield",
-        "desc": "If held by a Zamazenta, this item changes its forme to Crowned Shield."
-    },
-    "rustedsword": {
-        "name": "Rusted Sword",
-        "desc": "If held by a Zacian, this item changes its forme to Crowned Sword."
-    },
-    "sablenite": {
-        "name": "Sablenite",
-        "desc": "If held by a Sableye, this item allows it to Mega Evolve in battle."
-    },
-    "sachet": {
-        "name": "Sachet",
-        "desc": "Evolves Spritzee into Aromatisse when traded."
-    },
-    "safariball": {
-        "name": "Safari Ball",
-        "desc": "A special Poke Ball that is used only in the Safari Zone and Great Marsh."
-    },
-    "safetygoggles": {
-        "name": "Safety Goggles",
-        "desc": "Holder is immune to powder moves and damage from Sandstorm or Hail."
-    },
-    "sailfossil": {
-        "name": "Sail Fossil",
-        "desc": "Can be revived into Amaura."
-    },
-    "salacberry": {
-        "name": "Salac Berry",
-        "desc": "Raises holder's Speed by 1 stage when at 1/4 max HP or less. Single use."
-    },
-    "salamencite": {
-        "name": "Salamencite",
-        "desc": "If held by a Salamence, this item allows it to Mega Evolve in battle."
-    },
-    "sceptilite": {
-        "name": "Sceptilite",
-        "desc": "If held by a Sceptile, this item allows it to Mega Evolve in battle."
-    },
-    "scizorite": {
-        "name": "Scizorite",
-        "desc": "If held by a Scizor, this item allows it to Mega Evolve in battle."
-    },
-    "scolipite": {
-        "name": "Scolipite",
-        "desc": "If held by a Scolipede, this item allows it to Mega Evolve in battle."
-    },
-    "scopelens": {
-        "name": "Scope Lens",
-        "desc": "Holder's critical hit ratio is raised by 1 stage."
-    },
-    "scovillainite": {
-        "name": "Scovillainite",
-        "desc": ""
-    },
-    "scraftinite": {
-        "name": "Scraftinite",
-        "desc": "If held by a Scrafty, this item allows it to Mega Evolve in battle."
-    },
-    "seaincense": {
-        "name": "Sea Incense",
-        "desc": "Holder's Water-type attacks have 1.2x power."
-    },
-    "sharpbeak": {
-        "name": "Sharp Beak",
-        "desc": "Holder's Flying-type attacks have 1.2x power."
-    },
-    "sharpedonite": {
-        "name": "Sharpedonite",
-        "desc": "If held by a Sharpedo, this item allows it to Mega Evolve in battle."
-    },
-    "shedshell": {
-        "name": "Shed Shell",
-        "desc": "Holder cannot be prevented from choosing to switch out by any effect."
-    },
-    "shellbell": {
-        "name": "Shell Bell",
-        "desc": "After an attack, holder gains 1/8 of the damage in HP dealt to other Pokemon."
-    },
-    "shinystone": {
-        "name": "Shiny Stone",
-        "desc": "Evolves Togetic into Togekiss, Roselia into Roserade, Minccino into Cinccino, and Floette into Florges when used."
-    },
-    "shockdrive": {
-        "name": "Shock Drive",
-        "desc": "Holder's Techno Blast is Electric type."
-    },
-    "shucaberry": {
-        "name": "Shuca Berry",
-        "desc": "Halves damage taken from a supereffective Ground-type attack. Single use."
-    },
-    "silkscarf": {
-        "name": "Silk Scarf",
-        "desc": "Holder's Normal-type attacks have 1.2x power."
-    },
-    "silverpowder": {
-        "name": "Silver Powder",
-        "desc": "Holder's Bug-type attacks have 1.2x power."
-    },
-    "sitrusberry": {
-        "name": "Sitrus Berry",
-        "desc": "Restores 1/4 max HP when at 1/2 max HP or less. Single use."
-    },
-    "skarmorite": {
-        "name": "Skarmorite",
-        "desc": "If held by a Skarmory, this item allows it to Mega Evolve in battle."
-    },
-    "skullfossil": {
-        "name": "Skull Fossil",
-        "desc": "Can be revived into Cranidos."
-    },
-    "skyplate": {
-        "name": "Sky Plate",
-        "desc": "Holder's Flying-type attacks have 1.2x power. Judgment is Flying type."
-    },
-    "slowbronite": {
-        "name": "Slowbronite",
-        "desc": "If held by a Slowbro, this item allows it to Mega Evolve in battle."
-    },
-    "smoothrock": {
-        "name": "Smooth Rock",
-        "desc": "Holder's use of Sandstorm lasts 8 turns instead of 5."
-    },
-    "snorliumz": {
-        "name": "Snorlium Z",
-        "desc": "If held by a Snorlax with Giga Impact, it can use Pulverizing Pancake."
-    },
-    "snowball": {
-        "name": "Snowball",
-        "desc": "Raises holder's Attack by 1 if hit by an Ice-type attack. Single use."
-    },
-    "softsand": {
-        "name": "Soft Sand",
-        "desc": "Holder's Ground-type attacks have 1.2x power."
-    },
-    "solganiumz": {
-        "name": "Solganium Z",
-        "desc": "Solgaleo or Dusk Mane Necrozma with Sunsteel Strike can use a special Z-Move."
-    },
-    "souldew": {
-        "name": "Soul Dew",
-        "desc": "If held by a Latias/Latios, its Dragon- and Psychic-type moves have 1.2x power."
-    },
-    "spelltag": {
-        "name": "Spell Tag",
-        "desc": "Holder's Ghost-type attacks have 1.2x power."
-    },
-    "spelonberry": {
-        "name": "Spelon Berry",
-        "desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck."
-    },
-    "splashplate": {
-        "name": "Splash Plate",
-        "desc": "Holder's Water-type attacks have 1.2x power. Judgment is Water type."
-    },
-    "spookyplate": {
-        "name": "Spooky Plate",
-        "desc": "Holder's Ghost-type attacks have 1.2x power. Judgment is Ghost type."
-    },
-    "sportball": {
-        "name": "Sport Ball",
-        "desc": "A special Poke Ball for the Bug-Catching Contest."
-    },
-    "staraptite": {
-        "name": "Staraptite",
-        "desc": ""
-    },
-    "starfberry": {
-        "name": "Starf Berry",
-        "desc": "Raises a random stat by 2 when at 1/4 max HP or less (not acc/eva). Single use."
-    },
-    "starminite": {
-        "name": "Starminite",
-        "desc": "If held by a Starmie, this item allows it to Mega Evolve in battle."
-    },
-    "starsweet": {
-        "name": "Star Sweet",
-        "desc": "Evolves Milcery into Alcremie when held and spun around."
-    },
-    "steelgem": {
-        "name": "Steel Gem",
-        "desc": "Holder's first successful Steel-type attack will have 1.3x power. Single use."
-    },
-    "steeliumz": {
-        "name": "Steelium Z",
-        "desc": "If holder has a Steel move, this item allows it to use a Steel Z-Move."
-    },
-    "steelixite": {
-        "name": "Steelixite",
-        "desc": "If held by a Steelix, this item allows it to Mega Evolve in battle."
-    },
-    "steelmemory": {
-        "name": "Steel Memory",
-        "desc": "Holder's Multi-Attack is Steel type."
-    },
-    "stick": {
-        "name": "Stick",
-        "desc": "If held by a Farfetch’d, its critical hit ratio is raised by 2 stages."
-    },
-    "stickybarb": {
-        "name": "Sticky Barb",
-        "desc": "Each turn, holder loses 1/8 max HP. An attacker making contact can receive it."
-    },
-    "stoneplate": {
-        "name": "Stone Plate",
-        "desc": "Holder's Rock-type attacks have 1.2x power. Judgment is Rock type."
-    },
-    "strangeball": {
-        "name": "Strange Ball",
-        "desc": "Placeholder if caught in Poke Ball not in current game."
-    },
-    "strawberrysweet": {
-        "name": "Strawberry Sweet",
-        "desc": "Evolves Milcery into Alcremie when held and spun around."
-    },
-    "sunstone": {
-        "name": "Sun Stone",
-        "desc": "Evolves Gloom into Bellossom, Sunkern into Sunflora, Cottonee into Whimsicott, Petilil into Lilligant, and Helioptile into Heliolisk when used."
-    },
-    "swampertite": {
-        "name": "Swampertite",
-        "desc": "If held by a Swampert, this item allows it to Mega Evolve in battle."
-    },
-    "sweetapple": {
-        "name": "Sweet Apple",
-        "desc": "Evolves Applin into Appletun when used."
-    },
-    "syrupyapple": {
-        "name": "Syrupy Apple",
-        "desc": "Evolves Applin into Dipplin when used."
-    },
-    "tamatoberry": {
-        "name": "Tamato Berry",
-        "desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck."
-    },
-    "tangaberry": {
-        "name": "Tanga Berry",
-        "desc": "Halves damage taken from a supereffective Bug-type attack. Single use."
-    },
-    "tapuniumz": {
-        "name": "Tapunium Z",
-        "desc": "If held by a Tapu with Nature's Madness, it can use Guardian of Alola."
-    },
-    "tartapple": {
-        "name": "Tart Apple",
-        "desc": "Evolves Applin into Flapple when used."
-    },
-    "tatsugirinite": {
-        "name": "Tatsugirinite",
-        "desc": ""
-    },
-    "terrainextender": {
-        "name": "Terrain Extender",
-        "desc": "Holder's use of Electric/Grassy/Misty/Psychic Terrain lasts 8 turns instead of 5."
-    },
-    "thickclub": {
-        "name": "Thick Club",
-        "desc": "If held by a Cubone or a Marowak, its Attack is doubled."
-    },
-    "throatspray": {
-        "name": "Throat Spray",
-        "desc": "Raises holder's Special Attack by 1 stage after it uses a sound move. Single use."
-    },
-    "thunderstone": {
-        "name": "Thunder Stone",
-        "desc": "Evolves Pikachu into Raichu or Alolan Raichu, Eevee into Jolteon, Eelektrik into Eelektross, and Charjabug into Vikavolt when used."
-    },
-    "timerball": {
-        "name": "Timer Ball",
-        "desc": "A Poke Ball that becomes better the more turns there are in a battle."
-    },
-    "toxicorb": {
-        "name": "Toxic Orb",
-        "desc": "At the end of every turn, this item attempts to badly poison the holder."
-    },
-    "toxicplate": {
-        "name": "Toxic Plate",
-        "desc": "Holder's Poison-type attacks have 1.2x power. Judgment is Poison type."
-    },
-    "tr00": {
-        "name": "TR00",
-        "desc": "Teaches certain Pokemon the move Swords Dance. One use."
-    },
-    "tr01": {
-        "name": "TR01",
-        "desc": "Teaches certain Pokemon the move Body Slam. One use."
-    },
-    "tr02": {
-        "name": "TR02",
-        "desc": "Teaches certain Pokemon the move Flamethrower. One use."
-    },
-    "tr03": {
-        "name": "TR03",
-        "desc": "Teaches certain Pokemon the move Hydro Pump. One use."
-    },
-    "tr04": {
-        "name": "TR04",
-        "desc": "Teaches certain Pokemon the move Surf. One use."
-    },
-    "tr05": {
-        "name": "TR05",
-        "desc": "Teaches certain Pokemon the move Ice Beam. One use."
-    },
-    "tr06": {
-        "name": "TR06",
-        "desc": "Teaches certain Pokemon the move Blizzard. One use."
-    },
-    "tr07": {
-        "name": "TR07",
-        "desc": "Teaches certain Pokemon the move Low Kick. One use."
-    },
-    "tr08": {
-        "name": "TR08",
-        "desc": "Teaches certain Pokemon the move Thunderbolt. One use."
-    },
-    "tr09": {
-        "name": "TR09",
-        "desc": "Teaches certain Pokemon the move Thunder. One use."
-    },
-    "tr10": {
-        "name": "TR10",
-        "desc": "Teaches certain Pokemon the move Earthquake. One use."
-    },
-    "tr11": {
-        "name": "TR11",
-        "desc": "Teaches certain Pokemon the move Psychic. One use."
-    },
-    "tr12": {
-        "name": "TR12",
-        "desc": "Teaches certain Pokemon the move Agility. One use."
-    },
-    "tr13": {
-        "name": "TR13",
-        "desc": "Teaches certain Pokemon the move Focus Energy. One use."
-    },
-    "tr14": {
-        "name": "TR14",
-        "desc": "Teaches certain Pokemon the move Metronome. One use."
-    },
-    "tr15": {
-        "name": "TR15",
-        "desc": "Teaches certain Pokemon the move Fire Blast. One use."
-    },
-    "tr16": {
-        "name": "TR16",
-        "desc": "Teaches certain Pokemon the move Waterfall. One use."
-    },
-    "tr17": {
-        "name": "TR17",
-        "desc": "Teaches certain Pokemon the move Amnesia. One use."
-    },
-    "tr18": {
-        "name": "TR18",
-        "desc": "Teaches certain Pokemon the move Leech Life. One use."
-    },
-    "tr19": {
-        "name": "TR19",
-        "desc": "Teaches certain Pokemon the move Tri Attack. One use."
-    },
-    "tr20": {
-        "name": "TR20",
-        "desc": "Teaches certain Pokemon the move Substitute. One use."
-    },
-    "tr21": {
-        "name": "TR21",
-        "desc": "Teaches certain Pokemon the move Reversal. One use."
-    },
-    "tr22": {
-        "name": "TR22",
-        "desc": "Teaches certain Pokemon the move Sludge Bomb. One use."
-    },
-    "tr23": {
-        "name": "TR23",
-        "desc": "Teaches certain Pokemon the move Spikes. One use."
-    },
-    "tr24": {
-        "name": "TR24",
-        "desc": "Teaches certain Pokemon the move Outrage. One use."
-    },
-    "tr25": {
-        "name": "TR25",
-        "desc": "Teaches certain Pokemon the move Psyshock. One use."
-    },
-    "tr26": {
-        "name": "TR26",
-        "desc": "Teaches certain Pokemon the move Endure. One use."
-    },
-    "tr27": {
-        "name": "TR27",
-        "desc": "Teaches certain Pokemon the move Sleep Talk. One use."
-    },
-    "tr28": {
-        "name": "TR28",
-        "desc": "Teaches certain Pokemon the move Megahorn. One use."
-    },
-    "tr29": {
-        "name": "TR29",
-        "desc": "Teaches certain Pokemon the move Baton Pass. One use."
-    },
-    "tr30": {
-        "name": "TR30",
-        "desc": "Teaches certain Pokemon the move Encore. One use."
-    },
-    "tr31": {
-        "name": "TR31",
-        "desc": "Teaches certain Pokemon the move Iron Tail. One use."
-    },
-    "tr32": {
-        "name": "TR32",
-        "desc": "Teaches certain Pokemon the move Crunch. One use."
-    },
-    "tr33": {
-        "name": "TR33",
-        "desc": "Teaches certain Pokemon the move Shadow Ball. One use."
-    },
-    "tr34": {
-        "name": "TR34",
-        "desc": "Teaches certain Pokemon the move Future Sight. One use."
-    },
-    "tr35": {
-        "name": "TR35",
-        "desc": "Teaches certain Pokemon the move Uproar. One use."
-    },
-    "tr36": {
-        "name": "TR36",
-        "desc": "Teaches certain Pokemon the move Heat Wave. One use."
-    },
-    "tr37": {
-        "name": "TR37",
-        "desc": "Teaches certain Pokemon the move Taunt. One use."
-    },
-    "tr38": {
-        "name": "TR38",
-        "desc": "Teaches certain Pokemon the move Trick. One use."
-    },
-    "tr39": {
-        "name": "TR39",
-        "desc": "Teaches certain Pokemon the move Superpower. One use."
-    },
-    "tr40": {
-        "name": "TR40",
-        "desc": "Teaches certain Pokemon the move Skill Swap. One use."
-    },
-    "tr41": {
-        "name": "TR41",
-        "desc": "Teaches certain Pokemon the move Blaze Kick. One use."
-    },
-    "tr42": {
-        "name": "TR42",
-        "desc": "Teaches certain Pokemon the move Hyper Voice. One use."
-    },
-    "tr43": {
-        "name": "TR43",
-        "desc": "Teaches certain Pokemon the move Overheat. One use."
-    },
-    "tr44": {
-        "name": "TR44",
-        "desc": "Teaches certain Pokemon the move Cosmic Power. One use."
-    },
-    "tr45": {
-        "name": "TR45",
-        "desc": "Teaches certain Pokemon the move Muddy Water. One use."
-    },
-    "tr46": {
-        "name": "TR46",
-        "desc": "Teaches certain Pokemon the move Iron Defense. One use."
-    },
-    "tr47": {
-        "name": "TR47",
-        "desc": "Teaches certain Pokemon the move Dragon Claw. One use."
-    },
-    "tr48": {
-        "name": "TR48",
-        "desc": "Teaches certain Pokemon the move Bulk Up. One use."
-    },
-    "tr49": {
-        "name": "TR49",
-        "desc": "Teaches certain Pokemon the move Calm Mind. One use."
-    },
-    "tr50": {
-        "name": "TR50",
-        "desc": "Teaches certain Pokemon the move Leaf Blade. One use."
-    },
-    "tr51": {
-        "name": "TR51",
-        "desc": "Teaches certain Pokemon the move Dragon Dance. One use."
-    },
-    "tr52": {
-        "name": "TR52",
-        "desc": "Teaches certain Pokemon the move Gyro Ball. One use."
-    },
-    "tr53": {
-        "name": "TR53",
-        "desc": "Teaches certain Pokemon the move Close Combat. One use."
-    },
-    "tr54": {
-        "name": "TR54",
-        "desc": "Teaches certain Pokemon the move Toxic Spikes. One use."
-    },
-    "tr55": {
-        "name": "TR55",
-        "desc": "Teaches certain Pokemon the move Flare Blitz. One use."
-    },
-    "tr56": {
-        "name": "TR56",
-        "desc": "Teaches certain Pokemon the move Aura Sphere. One use."
-    },
-    "tr57": {
-        "name": "TR57",
-        "desc": "Teaches certain Pokemon the move Poison Jab. One use."
-    },
-    "tr58": {
-        "name": "TR58",
-        "desc": "Teaches certain Pokemon the move Dark Pulse. One use."
-    },
-    "tr59": {
-        "name": "TR59",
-        "desc": "Teaches certain Pokemon the move Seed Bomb. One use."
-    },
-    "tr60": {
-        "name": "TR60",
-        "desc": "Teaches certain Pokemon the move X-Scissor. One use."
-    },
-    "tr61": {
-        "name": "TR61",
-        "desc": "Teaches certain Pokemon the move Bug Buzz. One use."
-    },
-    "tr62": {
-        "name": "TR62",
-        "desc": "Teaches certain Pokemon the move Dragon Pulse. One use."
-    },
-    "tr63": {
-        "name": "TR63",
-        "desc": "Teaches certain Pokemon the move Power Gem. One use."
-    },
-    "tr64": {
-        "name": "TR64",
-        "desc": "Teaches certain Pokemon the move Focus Blast. One use."
-    },
-    "tr65": {
-        "name": "TR65",
-        "desc": "Teaches certain Pokemon the move Energy Ball. One use."
-    },
-    "tr66": {
-        "name": "TR66",
-        "desc": "Teaches certain Pokemon the move Brave Bird. One use."
-    },
-    "tr67": {
-        "name": "TR67",
-        "desc": "Teaches certain Pokemon the move Earth Power. One use."
-    },
-    "tr68": {
-        "name": "TR68",
-        "desc": "Teaches certain Pokemon the move Nasty Plot. One use."
-    },
-    "tr69": {
-        "name": "TR69",
-        "desc": "Teaches certain Pokemon the move Zen Headbutt. One use."
-    },
-    "tr70": {
-        "name": "TR70",
-        "desc": "Teaches certain Pokemon the move Flash Cannon. One use."
-    },
-    "tr71": {
-        "name": "TR71",
-        "desc": "Teaches certain Pokemon the move Leaf Storm. One use."
-    },
-    "tr72": {
-        "name": "TR72",
-        "desc": "Teaches certain Pokemon the move Power Whip. One use."
-    },
-    "tr73": {
-        "name": "TR73",
-        "desc": "Teaches certain Pokemon the move Gunk Shot. One use."
-    },
-    "tr74": {
-        "name": "TR74",
-        "desc": "Teaches certain Pokemon the move Iron Head. One use."
-    },
-    "tr75": {
-        "name": "TR75",
-        "desc": "Teaches certain Pokemon the move Stone Edge. One use."
-    },
-    "tr76": {
-        "name": "TR76",
-        "desc": "Teaches certain Pokemon the move Stealth Rock. One use."
-    },
-    "tr77": {
-        "name": "TR77",
-        "desc": "Teaches certain Pokemon the move Grass Knot. One use."
-    },
-    "tr78": {
-        "name": "TR78",
-        "desc": "Teaches certain Pokemon the move Sludge Wave. One use."
-    },
-    "tr79": {
-        "name": "TR79",
-        "desc": "Teaches certain Pokemon the move Heavy Slam. One use."
-    },
-    "tr80": {
-        "name": "TR80",
-        "desc": "Teaches certain Pokemon the move Electro Ball. One use."
-    },
-    "tr81": {
-        "name": "TR81",
-        "desc": "Teaches certain Pokemon the move Foul Play. One use."
-    },
-    "tr82": {
-        "name": "TR82",
-        "desc": "Teaches certain Pokemon the move Stored Power. One use."
-    },
-    "tr83": {
-        "name": "TR83",
-        "desc": "Teaches certain Pokemon the move Ally Switch. One use."
-    },
-    "tr84": {
-        "name": "TR84",
-        "desc": "Teaches certain Pokemon the move Scald. One use."
-    },
-    "tr85": {
-        "name": "TR85",
-        "desc": "Teaches certain Pokemon the move Work Up. One use."
-    },
-    "tr86": {
-        "name": "TR86",
-        "desc": "Teaches certain Pokemon the move Wild Charge. One use."
-    },
-    "tr87": {
-        "name": "TR87",
-        "desc": "Teaches certain Pokemon the move Drill Run. One use."
-    },
-    "tr88": {
-        "name": "TR88",
-        "desc": "Teaches certain Pokemon the move Heat Crash. One use."
-    },
-    "tr89": {
-        "name": "TR89",
-        "desc": "Teaches certain Pokemon the move Hurricane. One use."
-    },
-    "tr90": {
-        "name": "TR90",
-        "desc": "Teaches certain Pokemon the move Play Rough. One use."
-    },
-    "tr91": {
-        "name": "TR91",
-        "desc": "Teaches certain Pokemon the move Venom Drench. One use."
-    },
-    "tr92": {
-        "name": "TR92",
-        "desc": "Teaches certain Pokemon the move Dazzling Gleam. One use."
-    },
-    "tr93": {
-        "name": "TR93",
-        "desc": "Teaches certain Pokemon the move Darkest Lariat. One use."
-    },
-    "tr94": {
-        "name": "TR94",
-        "desc": "Teaches certain Pokemon the move High Horsepower. One use."
-    },
-    "tr95": {
-        "name": "TR95",
-        "desc": "Teaches certain Pokemon the move Throat Chop. One use."
-    },
-    "tr96": {
-        "name": "TR96",
-        "desc": "Teaches certain Pokemon the move Pollen Puff. One use."
-    },
-    "tr97": {
-        "name": "TR97",
-        "desc": "Teaches certain Pokemon the move Psychic Fangs. One use."
-    },
-    "tr98": {
-        "name": "TR98",
-        "desc": "Teaches certain Pokemon the move Liquidation. One use."
-    },
-    "tr99": {
-        "name": "TR99",
-        "desc": "Teaches certain Pokemon the move Body Press. One use."
-    },
-    "twistedspoon": {
-        "name": "Twisted Spoon",
-        "desc": "Holder's Psychic-type attacks have 1.2x power."
-    },
-    "tyranitarite": {
-        "name": "Tyranitarite",
-        "desc": "If held by a Tyranitar, this item allows it to Mega Evolve in battle."
-    },
-    "ultraball": {
-        "name": "Ultra Ball",
-        "desc": "An ultra-performance Ball that provides a higher catch rate than a Great Ball."
-    },
-    "ultranecroziumz": {
-        "name": "Ultranecrozium Z",
-        "desc": "Dusk Mane/Dawn Wings Necrozma: Ultra Burst, then Z-Move w/ Photon Geyser."
-    },
-    "unremarkableteacup": {
-        "name": "Unremarkable Teacup",
-        "desc": "Evolves Poltchageist into Sinistcha when used."
-    },
-    "upgrade": {
-        "name": "Up-Grade",
-        "desc": "Evolves Porygon into Porygon2 when traded."
-    },
-    "utilityumbrella": {
-        "name": "Utility Umbrella",
-        "desc": "The holder ignores rain- and sun-based effects, including those of its Ability unless it is Orichalcum Pulse or Protosynthesis. Damage and accuracy calculations from attacks used by the holder are affected by rain and sun, but not attacks used against the holder."
-    },
-    "venusaurite": {
-        "name": "Venusaurite",
-        "desc": "If held by a Venusaur, this item allows it to Mega Evolve in battle."
-    },
-    "victreebelite": {
-        "name": "Victreebelite",
-        "desc": "If held by a Victreebel, this item allows it to Mega Evolve in battle."
-    },
-    "wacanberry": {
-        "name": "Wacan Berry",
-        "desc": "Halves damage taken from a supereffective Electric-type attack. Single use."
-    },
-    "watergem": {
-        "name": "Water Gem",
-        "desc": "Holder's first successful Water-type attack will have 1.3x power. Single use."
-    },
-    "wateriumz": {
-        "name": "Waterium Z",
-        "desc": "If holder has a Water move, this item allows it to use a Water Z-Move."
-    },
-    "watermemory": {
-        "name": "Water Memory",
-        "desc": "Holder's Multi-Attack is Water type."
-    },
-    "waterstone": {
-        "name": "Water Stone",
-        "desc": "Evolves Poliwhirl into Poliwrath, Shellder into Cloyster, Staryu into Starmie, Eevee into Vaporeon, Lombre into Ludicolo, and Panpour into Simipour when used."
-    },
-    "watmelberry": {
-        "name": "Watmel Berry",
-        "desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck."
-    },
-    "waveincense": {
-        "name": "Wave Incense",
-        "desc": "Holder's Water-type attacks have 1.2x power."
-    },
-    "weaknesspolicy": {
-        "name": "Weakness Policy",
-        "desc": "If holder is hit super effectively, raises Attack, Sp. Atk by 2 stages. Single use."
-    },
-    "wellspringmask": {
-        "name": "Wellspring Mask",
-        "desc": "Ogerpon-Wellspring: 1.2x power attacks; Terastallize to gain Embody Aspect."
-    },
-    "wepearberry": {
-        "name": "Wepear Berry",
-        "desc": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck."
-    },
-    "whippeddream": {
-        "name": "Whipped Dream",
-        "desc": "Evolves Swirlix into Slurpuff when traded."
-    },
-    "whiteherb": {
-        "name": "White Herb",
-        "desc": "Restores all lowered stat stages to 0 when one is less than 0. Single use."
-    },
-    "widelens": {
-        "name": "Wide Lens",
-        "desc": "The accuracy of attacks by the holder is 1.1x."
-    },
-    "wikiberry": {
-        "name": "Wiki Berry",
-        "desc": "Restores 1/3 max HP at 1/4 max HP or less; confuses if -SpA Nature. Single use."
-    },
-    "wiseglasses": {
-        "name": "Wise Glasses",
-        "desc": "Holder's special attacks have 1.1x power."
-    },
-    "yacheberry": {
-        "name": "Yache Berry",
-        "desc": "Halves damage taken from a supereffective Ice-type attack. Single use."
-    },
-    "zapplate": {
-        "name": "Zap Plate",
-        "desc": "Holder's Electric-type attacks have 1.2x power. Judgment is Electric type."
-    },
-    "zeraorite": {
-        "name": "Zeraorite",
-        "desc": ""
-    },
-    "zoomlens": {
-        "name": "Zoom Lens",
-        "desc": "The accuracy of attacks by the holder is 1.2x if it moves after its target."
-    },
-    "zygardite": {
-        "name": "Zygardite",
-        "desc": "If held by a Zygarde in Complete Forme, this item allows it to Mega Evolve in battle."
-    },
-    "berry": {
-        "name": "Berry",
-        "desc": "(Gen 2) Restores 10 HP when at 1/2 max HP or less. Single use."
-    },
-    "bitterberry": {
-        "name": "Bitter Berry",
-        "desc": "(Gen 2) Holder is cured if it is confused. Single use."
-    },
-    "burntberry": {
-        "name": "Burnt Berry",
-        "desc": "(Gen 2) Holder is cured if it is frozen. Single use."
-    },
-    "goldberry": {
-        "name": "Gold Berry",
-        "desc": "(Gen 2) Restores 30 HP when at 1/2 max HP or less. Single use."
-    },
-    "iceberry": {
-        "name": "Ice Berry",
-        "desc": "(Gen 2) Holder is cured if it is burned. Single use."
-    },
-    "mintberry": {
-        "name": "Mint Berry",
-        "desc": "(Gen 2) Holder wakes up if it is asleep. Single use."
-    },
-    "miracleberry": {
-        "name": "Miracle Berry",
-        "desc": "(Gen 2) Holder cures itself if it is confused or has a status condition. Single use."
-    },
-    "mysteryberry": {
-        "name": "Mystery Berry",
-        "desc": "(Gen 2) Restores 5 PP to the first of the holder's moves to reach 0 PP. Single use."
-    },
-    "pinkbow": {
-        "name": "Pink Bow",
-        "desc": "(Gen 2) Holder's Normal-type attacks have 1.1x power."
-    },
-    "polkadotbow": {
-        "name": "Polkadot Bow",
-        "desc": "(Gen 2) Holder's Normal-type attacks have 1.1x power."
-    },
-    "przcureberry": {
-        "name": "PRZ Cure Berry",
-        "desc": "(Gen 2) Holder cures itself if it is paralyzed. Single use."
-    },
-    "psncureberry": {
-        "name": "PSN Cure Berry",
-        "desc": "(Gen 2) Holder is cured if it is poisoned. Single use."
-    }
-};
-for (let key in GENERATED_ITEMS) {
-    // Showdown item keys are lowercase with no spaces. Existing data uses capitalized names.
-    // We will save them as capitalized names to match existing engine logic (e.g. 'Leftovers')
-    let itemKey = GENERATED_ITEMS[key].name;
-    if (!globalThis.ITEMS) globalThis.ITEMS = {};
-    ITEMS[itemKey] = GENERATED_ITEMS[key];
-}
-// -------------------------------------------------------------
