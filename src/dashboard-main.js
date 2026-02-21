@@ -16,7 +16,8 @@ import {
     createChat, getChats, getMessages, sendMessage, updateUserRole,
     addParticipantToChat, removeParticipantFromChat,
     getAllFolders, getAllItems,
-    createGameRoom, joinGameRoom, listenToGameRoom, getActiveGameRooms
+    createGameRoom, joinGameRoom, listenToGameRoom, getActiveGameRooms,
+    getAllGameRooms, deleteGameRoom
 } from './db.js';
 import { db, auth } from './firebase-init.js';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
@@ -526,6 +527,47 @@ async function loadAdmin() {
     } catch (e) {
         console.error('[donmitx] Admin items error:', e);
         itemTbody.innerHTML = '<tr><td colspan="5" class="error-cell">Failed to load items</td></tr>';
+    }
+
+    // Load Game Rooms for admin management
+    const roomTbody = document.getElementById('admin-gameroom-list');
+    roomTbody.innerHTML = '<tr><td colspan="7" class="loading-cell">Loading game rooms...</td></tr>';
+    try {
+        const rooms = await getAllGameRooms();
+        roomTbody.innerHTML = '';
+        if (rooms.length === 0) {
+            roomTbody.innerHTML = '<tr><td colspan="7" class="loading-cell">No game rooms found</td></tr>';
+        }
+        rooms.forEach(room => {
+            const tr = document.createElement('tr');
+            const playerCount = Object.keys(room.players || {}).length;
+            const hostName = room.players?.[room.hostUid]?.name || room.hostUid?.slice(0, 8) || '—';
+            const statusColors = { lobby: '#6366f1', playing: '#10b981', finished: '#64748b' };
+            tr.innerHTML = `
+                <td><code style="font-size:0.8rem">${room.id.slice(0, 8)}…</code></td>
+                <td>${escapeHtml(room.gameId || '—')}</td>
+                <td>${escapeHtml(hostName)}</td>
+                <td>${playerCount}</td>
+                <td><span class="badge" style="background:${statusColors[room.status] || '#64748b'}; color:white; padding:2px 8px; border-radius:8px; font-size:0.75rem;">${room.status || '—'}</span></td>
+                <td>${room.createdAt ? timeAgo(room.createdAt) : '—'}</td>
+                <td>
+                    <button class="btn-xs btn-outline btn-admin-delete-room" data-id="${room.id}">🗑️ Delete</button>
+                </td>
+            `;
+            roomTbody.appendChild(tr);
+        });
+        document.querySelectorAll('.btn-admin-delete-room').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                if (!confirm('Delete this game room permanently?')) return;
+                try {
+                    await deleteGameRoom(btn.dataset.id);
+                    btn.closest('tr').remove();
+                } catch (err) { alert('Delete failed: ' + err.message); }
+            });
+        });
+    } catch (e) {
+        console.error('[donmitx] Admin game rooms error:', e);
+        roomTbody.innerHTML = '<tr><td colspan="7" class="error-cell">Failed to load game rooms</td></tr>';
     }
 }
 

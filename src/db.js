@@ -662,3 +662,23 @@ export async function getActiveGameRooms(gameId) {
     const snap = await getDocs(q);
     return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
+
+/**
+ * Get ALL game rooms (admin only)
+ */
+export async function getAllGameRooms() {
+    const q = query(
+        collection(db, COL.GAME_ROOMS),
+        orderBy('createdAt', 'desc'),
+        limit(100)
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
+/**
+ * Delete a game room (admin only)
+ */
+export async function deleteGameRoom(roomId) {
+    await deleteDoc(doc(db, COL.GAME_ROOMS, roomId));
+}
