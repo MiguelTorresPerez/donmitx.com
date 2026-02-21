@@ -967,7 +967,7 @@ function setupEventListeners() {
                 if (hasMe) {
                     actionBtn = `<button class="btn-primary btn-sm btn-join-room" data-room-id="${room.id}" data-rejoin="true">Rejoin</button>`;
                 } else if (isStarted) {
-                    actionBtn = `<span class="badge" style="background:var(--primary); color:white; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem;">In Progress</span>`;
+                    actionBtn = `<button class="btn-secondary btn-sm btn-join-room" data-room-id="${room.id}" data-spectator="true" style="background:var(--primary); color:white;">Spectate</button>`;
                 } else if (playerCount < (room.config?.maxPlayers || 6)) {
                     actionBtn = `<button class="btn-primary btn-sm btn-join-room" data-room-id="${room.id}">Join</button>`;
                 } else {
@@ -989,19 +989,24 @@ function setupEventListeners() {
                 btn.addEventListener('click', async (joinEvent) => {
                     const roomId = joinEvent.target.dataset.roomId;
                     const isRejoin = joinEvent.target.dataset.rejoin === 'true';
+                    const isSpectator = joinEvent.target.dataset.spectator === 'true';
+
                     try {
-                        joinEvent.target.textContent = isRejoin ? 'Rejoining...' : 'Joining...';
+                        joinEvent.target.textContent = isRejoin ? 'Rejoining...' : isSpectator ? 'Loading...' : 'Joining...';
                         joinEvent.target.disabled = true;
-                        if (!isRejoin) {
+
+                        // Don't actually "join" if we are purely spectating an active game
+                        if (!isRejoin && !isSpectator) {
                             await joinGameRoom(roomId, currentUser);
                         }
+
                         closeModal('modal-game-lobby');
                         document.getElementById('game-iframe').src = `${currentLobbyAppUrl}?roomId=${roomId}`;
                         openModal('modal-play-game');
                     } catch (err) {
                         console.error('Failed to join:', err);
                         alert('Could not join room.');
-                        joinEvent.target.textContent = isRejoin ? 'Rejoin' : 'Join';
+                        joinEvent.target.textContent = isRejoin ? 'Rejoin' : isSpectator ? 'Spectate' : 'Join';
                         joinEvent.target.disabled = false;
                     }
                 });

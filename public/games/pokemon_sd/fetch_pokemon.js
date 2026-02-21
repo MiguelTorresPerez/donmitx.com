@@ -16,6 +16,11 @@ query fetchPokemon {
         name
       }
     }
+    pokemon_v2_pokemonabilities {
+      pokemon_v2_ability {
+        name
+      }
+    }
     pokemon_v2_pokemonmoves(where: {pokemon_v2_move: {power: {_gt: 0}}}, distinct_on: move_id) {
       pokemon_v2_move {
         name
@@ -42,7 +47,103 @@ async function buildData() {
   const MOVES_DB = {};
   const POKEMON_DB = [];
 
-  MOVES_DB['struggle'] = { name: 'Struggle', type: 'Normal', power: 50, accuracy: 100, category: 'Physical', priority: 0 };
+  const MOVE_EFFECTS = {
+    // RECHARGE
+    'Hyper Beam': { recharge: true, desc: 'User must recharge next turn.' },
+    'Giga Impact': { recharge: true, desc: 'User must recharge next turn.' },
+    'Frenzy Plant': { recharge: true, desc: 'User must recharge next turn.' },
+    'Blast Burn': { recharge: true, desc: 'User must recharge next turn.' },
+    'Hydro Cannon': { recharge: true, desc: 'User must recharge next turn.' },
+    'Roar Of Time': { recharge: true, desc: 'User must recharge next turn.' },
+    'Meteor Assault': { recharge: true, desc: 'User must recharge next turn.' },
+
+    // RECOIL
+    'Brave Bird': { recoilPerc: 0.33, desc: 'User takes 33% recoil damage.' },
+    'Flare Blitz': { recoilPerc: 0.33, statusRate: 10, status: 'BRN', desc: 'User takes 33% recoil damage. 10% Burn.' },
+    'Wood Hammer': { recoilPerc: 0.33, desc: 'User takes 33% recoil damage.' },
+    'Double Edge': { recoilPerc: 0.33, desc: 'User takes 33% recoil damage.' },
+    'Volt Tackle': { recoilPerc: 0.33, statusRate: 10, status: 'PAR', desc: 'User takes 33% recoil damage. 10% Paralyze.' },
+    'Chloroblast': { recoilPerc: 0.5, desc: 'User takes 50% max HP recoil damage.' },
+
+    // STAT BOOSTS (SELF)
+    'Swords Dance': { selfBoost: { atk: 2 }, desc: 'Raises Attack by 2.' },
+    'Dragon Dance': { selfBoost: { atk: 1, spe: 1 }, desc: 'Raises Attack and Speed by 1.' },
+    'Nasty Plot': { selfBoost: { spa: 2 }, desc: 'Raises Sp. Atk by 2.' },
+    'Agility': { selfBoost: { spe: 2 }, desc: 'Raises Speed by 2.' },
+    'Calm Mind': { selfBoost: { spa: 1, spd: 1 }, desc: 'Raises Sp. Atk and Sp. Def by 1.' },
+    'Bulk Up': { selfBoost: { atk: 1, def: 1 }, desc: 'Raises Attack and Defense by 1.' },
+    'Shell Smash': { selfBoost: { atk: 2, spa: 2, spe: 2 }, selfDrop: { def: -1, spd: -1 }, desc: 'Raises Atk, SpA, Spe by 2. Lowers Def, SpD by 1.' },
+    'Quiver Dance': { selfBoost: { spa: 1, spd: 1, spe: 1 }, desc: 'Raises Sp. Atk, Sp. Def, Speed by 1.' },
+    'Geomancy': { selfBoost: { spa: 2, spd: 2, spe: 2 }, desc: 'Raises Sp. Atk, Sp. Def, Speed by 2.' }, // Assume herb active for simplicity
+
+    // STAT DROPS (SELF - NASTY MOVES)
+    'Superpower': { selfDrop: { atk: -1, def: -1 }, desc: 'Lowers Attack and Defense by 1.' },
+    'Close Combat': { selfDrop: { def: -1, spd: -1 }, desc: 'Lowers Defense and Sp. Def by 1.' },
+    'Overheat': { selfDrop: { spa: -2 }, desc: 'Lowers Sp. Atk by 2.' },
+    'Draco Meteor': { selfDrop: { spa: -2 }, desc: 'Lowers Sp. Atk by 2.' },
+    'Leaf Storm': { selfDrop: { spa: -2 }, desc: 'Lowers Sp. Atk by 2.' },
+    'Fleur Cannon': { selfDrop: { spa: -2 }, desc: 'Lowers Sp. Atk by 2.' },
+    'Make It Rain': { selfDrop: { spa: -1 }, desc: 'Lowers Sp. Atk by 1.' },
+
+    // STAT BOOSTS (EFFECTIVE)
+    'Meteor Mash': { boostRate: 20, selfBoost: { atk: 1 }, desc: '20% chance to raise Attack.' },
+    'Power Up Punch': { boostRate: 100, selfBoost: { atk: 1 }, desc: '100% chance to raise Attack.' },
+    'Trailblaze': { boostRate: 100, selfBoost: { spe: 1 }, desc: '100% chance to raise Speed.' },
+    'Flame Charge': { boostRate: 100, selfBoost: { spe: 1 }, desc: '100% chance to raise Speed.' },
+
+    // STAT DROPS (ENEMY)
+    'Shadow Ball': { dropRate: 20, enemyDrop: { spd: -1 }, desc: '20% chance to lower target Sp. Def.' },
+    'Psychic': { dropRate: 10, enemyDrop: { spd: -1 }, desc: '10% chance to lower target Sp. Def.' },
+    'Earth Power': { dropRate: 10, enemyDrop: { spd: -1 }, desc: '10% chance to lower target Sp. Def.' },
+    'Crunch': { dropRate: 20, enemyDrop: { def: -1 }, desc: '20% chance to lower target Defense.' },
+    'Play Rough': { dropRate: 10, enemyDrop: { atk: -1 }, desc: '10% chance to lower target Attack.' },
+    'Moonblast': { dropRate: 30, enemyDrop: { spa: -1 }, desc: '30% chance to lower target Sp. Atk.' },
+
+    // HEALING
+    'Roost': { healPerc: 0.5, desc: 'Heals 50% max HP.' },
+    'Recover': { healPerc: 0.5, desc: 'Heals 50% max HP.' },
+    'Soft Boiled': { healPerc: 0.5, desc: 'Heals 50% max HP.' },
+    'Synthesis': { healPerc: 0.5, desc: 'Heals 50% max HP.' },
+    'Morning Sun': { healPerc: 0.5, desc: 'Heals 50% max HP.' },
+    'Moonlight': { healPerc: 0.5, desc: 'Heals 50% max HP.' },
+
+    // STATUS (PRIMARY)
+    'Spore': { status: 'SLP', desc: 'Puts target to sleep.' },
+    'Sleep Powder': { status: 'SLP', desc: 'Puts target to sleep.' },
+    'Hypnosis': { status: 'SLP', desc: 'Puts target to sleep.' },
+    'Yawn': { status: 'SLP', desc: 'Puts target to sleep.' }, // simplified to instasleep for engine simplicity
+    'Will O Wisp': { status: 'BRN', desc: 'Burns the target.' },
+    'Toxic': { status: 'TOX', desc: 'Badly poisons the target.' },
+    'Thunder Wave': { status: 'PAR', desc: 'Paralyzes the target.' },
+
+    // STATUS (SECONDARY)
+    'Thunderbolt': { statusRate: 10, status: 'PAR', desc: '10% chance to Paralyze.' },
+    'Flamethrower': { statusRate: 10, status: 'BRN', desc: '10% chance to Burn.' },
+    'Ice Beam': { statusRate: 10, status: 'FRZ', desc: '10% chance to Freeze.' },
+    'Sludge Bomb': { statusRate: 30, status: 'PSN', desc: '30% chance to Poison.' },
+    'Scald': { statusRate: 30, status: 'BRN', desc: '30% chance to Burn.' },
+    'Discharge': { statusRate: 30, status: 'PAR', desc: '30% chance to Paralyze.' },
+    'Lava Plume': { statusRate: 30, status: 'BRN', desc: '30% chance to Burn.' },
+    'Body Slam': { statusRate: 30, status: 'PAR', desc: '30% chance to Paralyze.' },
+    'Tri Attack': { statusRate: 20, status: 'rnd', desc: '20% chance to Burn/Par/Frz.' }, // Note: Needs custom logic in engine if wanted
+
+    // DRAIN
+    'Giga Drain': { drainPerc: 0.5, desc: 'Recovers 50% of damage dealt.' },
+    'Drain Punch': { drainPerc: 0.5, desc: 'Recovers 50% of damage dealt.' },
+    'Horn Leech': { drainPerc: 0.5, desc: 'Recovers 50% of damage dealt.' },
+    'Bitter Blade': { drainPerc: 0.5, desc: 'Recovers 50% of damage dealt.' },
+
+    // PRIORITY
+    'Extreme Speed': { priority: 2, desc: 'Strikes first.' },
+    'Sucker Punch': { priority: 1, desc: 'Strikes first (fails if target status moves).' },
+    'Aqua Jet': { priority: 1, desc: 'Strikes first.' },
+    'Mach Punch': { priority: 1, desc: 'Strikes first.' },
+    'Bullet Punch': { priority: 1, desc: 'Strikes first.' },
+    'Ice Shard': { priority: 1, desc: 'Strikes first.' },
+    'Fake Out': { priority: 3, flinchRate: 100, desc: 'Strikes first and flinches. Only works first turn.' }
+  };
+
+  MOVES_DB['struggle'] = { name: 'Struggle', type: 'Normal', power: 50, accuracy: 100, category: 'Physical', priority: 0, recoilPerc: 0.25, desc: 'User takes 25% recoil damage.' };
 
   for (const p of pokemons) {
     // Types
@@ -63,6 +164,12 @@ async function buildData() {
       base[n] = s.base_stat;
     });
 
+    // Abilities
+    const abilities = p.pokemon_v2_pokemonabilities.map(a => {
+      const n = a.pokemon_v2_ability.name;
+      return n.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    });
+
     // Moves
     const moves = [];
     p.pokemon_v2_pokemonmoves.forEach(m => {
@@ -75,13 +182,16 @@ async function buildData() {
         if (!MOVES_DB[mName]) {
           const typeName = md.pokemon_v2_type?.name || 'normal';
           const catName = md.pokemon_v2_movedamageclass?.name || 'physical';
+          const formalName = mName.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
           MOVES_DB[mName] = {
-            name: mName.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+            name: formalName,
             type: typeName.charAt(0).toUpperCase() + typeName.slice(1),
             power: md.power,
             accuracy: md.accuracy || 100,
             category: catName.charAt(0).toUpperCase() + catName.slice(1),
-            priority: md.priority || 0
+            priority: md.priority || 0,
+            effects: MOVE_EFFECTS[formalName] || null
           };
         }
       }
@@ -97,6 +207,7 @@ async function buildData() {
       id: pName,
       name: capName,
       types,
+      abilities: [...new Set(abilities)],
       hp: base.hp * 2 + 110,
       atk: base.atk * 2 + 5,
       def: base.def * 2 + 5,
@@ -159,10 +270,10 @@ export const ITEMS = {
 };
 
 export const FORMATS = [
-    { id: 'gen9random', name: '[Gen 9] Random Battle', warning: 'Pokemon, moves, and items are completely randomized.' },
-    { id: 'gen9ou', name: '[Gen 9] OU', warning: '' },
-    { id: 'gen9anythinggoes', name: '[Gen 9] Anything Goes', warning: 'WARNING: Anything Goes format allows teams of identical Pokémon.' },
-    { id: 'gen9hackmons', name: '[Gen 9] Unlimited Hackmons', warning: 'WARNING: Pure Chaos!' }
+    { id: 'gen9random', name: '[Gen 9] Random Battle', clauses: ['Sleep Clause Mod', 'HP Percentage Mod', 'Cancel Mod'], warning: 'Pokemon, moves, and items are completely randomized.' },
+    { id: 'gen9ou', name: '[Gen 9] OU', clauses: ['Sleep Clause Mod', 'Species Clause', 'OHKO Clause', 'Evasion Moves Clause', 'Endless Battle Clause', 'HP Percentage Mod', 'Cancel Mod'], warning: '' },
+    { id: 'gen9anythinggoes', name: '[Gen 9] Anything Goes', clauses: ['Endless Battle Clause', 'HP Percentage Mod', 'Cancel Mod'], warning: 'WARNING: Anything Goes format allows teams of identical Pokémon.' },
+    { id: 'gen9hackmons', name: '[Gen 9] Unlimited Hackmons', clauses: ['HP Percentage Mod', 'Cancel Mod'], warning: 'WARNING: Pure Chaos!' }
 ];
 `;
 

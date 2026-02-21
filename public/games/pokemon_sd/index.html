@@ -785,6 +785,13 @@
         </div>
     </div>
 
+    <!-- Active Pokémon Info Modal -->
+    <div class="modal-overlay" id="modal-mon-info" style="display:none; z-index:9999;">
+        <div class="modal" id="mon-info-content">
+            <!-- Injected dynamically -->
+        </div>
+    </div>
+
     <!-- AUDIO ELEMENTS -->
     <!-- (Optional: you can dynamically create Audio objects, omitted here for brevity) -->
 
@@ -1096,6 +1103,10 @@
                     p.moves = window.getSmartMoves(p);
                     const itemKeys = Object.keys(ITEMS);
                     p.item = itemKeys[Math.floor(Math.random() * itemKeys.length)];
+                    p.ability = p.abilities[Math.floor(Math.random() * p.abilities.length)] || '';
+                    p.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
+                    p.status = null; // 'SLP', 'BRN', 'PAR', 'TOX', 'PSN', 'FRZ'
+                    p.recharging = false;
                     fullTeam.push(p);
                 }
                 await updateDoc(roomRef, {
@@ -1113,6 +1124,10 @@
                 let p = JSON.parse(JSON.stringify(base));
                 p.currentHp = p.hp;
                 p.item = tData.item || 'None';
+                p.ability = p.abilities[Math.floor(Math.random() * p.abilities.length)] || '';
+                p.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
+                p.status = null;
+                p.recharging = false;
 
                 if (tData.moves && tData.moves.length > 0) {
                     p.moves = [...tData.moves];
@@ -1253,11 +1268,54 @@
             // 2. Determine Attack Order based on Priority and Speed
             let attackers = [];
             for (const uid of [p1Uid, p2Uid]) {
-                if (actions[uid].type === 'move' && getMon(uid).currentHp > 0) {
+                const mon = getMon(uid);
+                if (actions[uid].type === 'move' && mon.currentHp > 0) {
                     const move = MOVES[actions[uid].val];
-                    let speed = getMon(uid).spe;
-                    if (getMon(uid).item === 'Choice Scarf') speed = Math.floor(speed * 1.5);
-                    attackers.push({ uid, mon: getMon(uid), move, priority: move.priority || 0, speed });
+
+                    if (mon.recharging) {
+                        log.push(`${mon.name} must recharge!`);
+                        mon.recharging = false;
+                        continue;
+                    }
+
+                    // Paralyze skip
+                    if (mon.status === 'PAR' && Math.random() < 0.25) {
+                        log.push(`${mon.name} is fully paralyzed!`);
+                        continue;
+                    }
+                    // Sleep skip
+                    if (mon.status === 'SLP') {
+                        // Wake up chance 33%
+                        if (Math.random() < 0.33) {
+                            mon.status = null;
+                            log.push(`${mon.name} woke up!`);
+                        } else {
+                            log.push(`${mon.name} is fast asleep.`);
+                            continue;
+                        }
+                    }
+                    // Freeze skip
+                    if (mon.status === 'FRZ') {
+                        if (Math.random() < 0.2) {
+                            mon.status = null;
+                            log.push(`${mon.name} thawed out!`);
+                        } else {
+                            log.push(`${mon.name} is frozen solid!`);
+                            continue;
+                        }
+                    }
+
+                    // Stat calculation function with boosts
+                    const calcStat = (base, boost) => {
+                        if (boost >= 0) return Math.floor(base * ((2 + boost) / 2));
+                        return Math.floor(base * (2 / (2 - boost)));
+                    };
+
+                    let speed = calcStat(mon.spe, mon.boosts.spe);
+                    if (mon.item === 'Choice Scarf') speed = Math.floor(speed * 1.5);
+                    if (mon.status === 'PAR') speed = Math.floor(speed * 0.5);
+
+                    attackers.push({ uid, mon, move, priority: move.priority || 0, speed });
                 }
             }
 
@@ -1275,62 +1333,147 @@
                 const defUid = uid === p1Uid ? p2Uid : p1Uid;
                 const defMon = getMon(defUid);
 
-                if (mon.currentHp <= 0 || defMon.currentHp <= 0) continue;
+                if (mon.currentHp <= 0) continue; // Attacker might have died to recoil/status
 
                 log.push(`${mon.name} used ${move.name}!`);
 
-                if (Math.random() * 100 > move.accuracy) {
-                    log.push(`> It's an <span class="notvery">avoided</span> miss!`);
-                    continue;
-                }
+                const calcStat = (base, boost) => boost >= 0 ? Math.floor(base * ((2 + boost) / 2)) : Math.floor(base * (2 / (2 - boost)));
 
-                const level = 100;
-                const isChoiceBand = mon.item === 'Choice Band' && move.category === 'Physical' ? 1.5 : 1;
-                const isChoiceSpecs = mon.item === 'Choice Specs' && move.category === 'Special' ? 1.5 : 1;
-                const isLifeOrb = mon.item === 'Life Orb' ? 1.3 : 1;
-
-                let statA = move.category === 'Special' ? mon.spa : mon.atk;
-                statA = Math.floor(statA * isChoiceBand * isChoiceSpecs);
-                let statD = move.category === 'Special' ? defMon.spd : defMon.def;
-
-                let damage = Math.floor((((2 * level / 5 + 2) * move.power * statA / statD) / 50) + 2);
-
-                const isSTAB = mon.types.includes(move.type) ? 1.5 : 1;
-                const effectiveness = getEffectiveness(move.type, defMon.types);
-
-                let isCrit = false;
-                if (Math.random() < (move.critRate ? 0.12 : 0.04)) {
-                    isCrit = true;
-                    damage *= 1.5;
-                }
-
-                const rng = (85 + Math.random() * 15) / 100;
-                damage = Math.floor(damage * isSTAB * effectiveness * rng * isLifeOrb);
-
-                if (effectiveness > 1) log.push(`> It's <span class="super">super effective!</span>`);
-                if (effectiveness < 1 && effectiveness > 0) log.push(`> It's <span class="notvery">not very effective...</span>`);
-                if (effectiveness === 0) {
-                    log.push(`> It had <span class="notvery">no effect</span> on ${defMon.name}!`);
-                    damage = 0;
-                }
-                if (isCrit && damage > 0) log.push(`> <span class="crit">A critical hit!</span>`);
-
-                // Apply Damage
-                if (damage > 0) {
-                    if (defMon.item === 'Focus Sash' && defMon.currentHp === defMon.hp && damage >= defMon.currentHp) {
-                        defMon.currentHp = 1;
-                        defMon.item = 'None';
-                        log.push(`<span class="item-text">${defMon.name} hung on using its Focus Sash!</span>`);
+                if (defMon.currentHp > 0 && move.category !== 'Status') {
+                    if (Math.random() * 100 > move.accuracy) {
+                        log.push(`> It's an <span class="notvery">avoided</span> miss!`);
                     } else {
-                        defMon.currentHp = Math.max(0, defMon.currentHp - damage);
-                    }
-                    if (defMon.currentHp === 0) log.push(`<span class="fainted-text">${defMon.name} fainted!</span>`);
+                        const level = 100;
+                        const isChoiceBand = mon.item === 'Choice Band' && move.category === 'Physical' ? 1.5 : 1;
+                        const isChoiceSpecs = mon.item === 'Choice Specs' && move.category === 'Special' ? 1.5 : 1;
+                        const isLifeOrb = mon.item === 'Life Orb' ? 1.3 : 1;
 
-                    if (mon.item === 'Life Orb' && mon.currentHp > 0) {
-                        const recoil = Math.floor(mon.hp / 10) || 1;
-                        mon.currentHp = Math.max(0, mon.currentHp - recoil);
-                        log.push(`<span class="item-text">${mon.name} lost some of its HP!</span>`);
-                        if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
+                        let statA = move.category === 'Special' ? calcStat(mon.spa, mon.boosts.spa) : calcStat(mon.atk, mon.boosts.atk);
+                        if (mon.status === 'BRN' && move.category === 'Physical') statA = Math.floor(statA * 0.5);
+                        statA = Math.floor(statA * isChoiceBand * isChoiceSpecs);
+
+                        let statD = move.category === 'Special' ? calcStat(defMon.spd, defMon.boosts.spd) : calcStat(defMon.def, defMon.boosts.def);
+
+                        let damage = Math.floor((((2 * level / 5 + 2) * move.power * statA / statD) / 50) + 2);
+
+                        const isSTAB = mon.types.includes(move.type) ? 1.5 : 1;
+                        const effectiveness = getEffectiveness(move.type, defMon.types);
+
+                        let isCrit = false;
+                        if (Math.random() < (move.critRate ? 0.12 : 0.04)) {
+                            isCrit = true;
+                            damage *= 1.5;
+                        }
+
+                        const rng = (85 + Math.random() * 15) / 100;
+                        damage = Math.floor(damage * isSTAB * effectiveness * rng * isLifeOrb);
+
+                        if (effectiveness > 1) log.push(`> It's <span class="super">super effective!</span>`);
+                        if (effectiveness < 1 && effectiveness > 0) log.push(`> It's <span class="notvery">not very effective...</span>`);
+                        if (effectiveness === 0) {
+                            log.push(`> It had <span class="notvery">no effect</span> on ${defMon.name}!`);
+                            damage = 0;
+                        }
+                        if (isCrit && damage > 0) log.push(`> <span class="crit">A critical hit!</span>`);
+
+                        // Apply Damage
+                        if (damage > 0) {
+                            let dmgDealt = Math.min(defMon.currentHp, damage);
+                            if (defMon.item === 'Focus Sash' && defMon.currentHp === defMon.hp && damage >= defMon.currentHp) {
+                                defMon.currentHp = 1;
+                                defMon.item = 'None';
+                                log.push(`<span class="item-text">${defMon.name} hung on using its Focus Sash!</span>`);
+                            } else {
+                                defMon.currentHp = Math.max(0, defMon.currentHp - damage);
+                            }
+                            if (defMon.currentHp === 0) log.push(`<span class="fainted-text">${defMon.name} fainted!</span>`);
+
+                            if (mon.item === 'Life Orb' && mon.currentHp > 0) {
+                                const recoil = Math.floor(mon.hp / 10) || 1;
+                                mon.currentHp = Math.max(0, mon.currentHp - recoil);
+                                log.push(`<span class="item-text">${mon.name} lost some of its HP due to Life Orb!</span>`);
+                                if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
+                            }
+
+                            // Evaluate custom damage effects
+                            if (move.effects) {
+                                const fx = move.effects;
+                                if (fx.recharge) mon.recharging = true;
+                                if (fx.recoilPerc && mon.currentHp > 0) {
+                                    const r = Math.floor(dmgDealt * fx.recoilPerc) || 1;
+                                    mon.currentHp = Math.max(0, mon.currentHp - r);
+                                    log.push(`<span class="item-text">${mon.name} is damaged by recoil!</span>`);
+                                }
+                                if (fx.drainPerc && mon.currentHp > 0) {
+                                    const h = Math.floor(dmgDealt * fx.drainPerc) || 1;
+                                    mon.currentHp = Math.min(mon.hp, mon.currentHp + h);
+                                    log.push(`<span class="item-text">${mon.name} had its energy drained!</span>`);
+                                }
+                                if (fx.enemyDrop && defMon.currentHp > 0 && Math.random() * 100 < (fx.dropRate || 100)) {
+                                    for (const [s, amt] of Object.entries(fx.enemyDrop)) {
+                                        defMon.boosts[s] = Math.max(-6, Math.min(6, defMon.boosts[s] + amt));
+                                        log.push(`<span class="notvery">${defMon.name}'s stats fell!</span>`);
+                                    }
+                                }
+                                if (fx.selfBoost && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100)) {
+                                    for (const [s, amt] of Object.entries(fx.selfBoost)) {
+                                        mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
+                                        log.push(`<span class="super">${mon.name}'s stats rose!</span>`);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Process Status & Non-Damaging Move Effects
+                if (move.category === 'Status' || (move.effects && move.category !== 'Status' && defMon.currentHp > 0)) {
+                    const fx = move.effects;
+                    if (fx) {
+                        if (fx.selfBoost && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100)) {
+                            for (const [s, amt] of Object.entries(fx.selfBoost)) {
+                                mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
+                                log.push(`<span class="super">${mon.name}'s stats rose!</span>`);
+                            }
+                        }
+                        if (fx.selfDrop && mon.currentHp > 0 && Math.random() * 100 < (fx.dropRate || 100)) {
+                            for (const [s, amt] of Object.entries(fx.selfDrop)) {
+                                mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
+                                log.push(`<span class="notvery">${mon.name}'s stats fell!</span>`);
+                            }
+                        }
+                        if (fx.enemyDrop && defMon.currentHp > 0 && Math.random() * 100 < (fx.dropRate || 100)) {
+                            for (const [s, amt] of Object.entries(fx.enemyDrop)) {
+                                defMon.boosts[s] = Math.max(-6, Math.min(6, defMon.boosts[s] + amt));
+                                log.push(`<span class="notvery">${defMon.name}'s stats fell!</span>`);
+                            }
+                        }
+                        if (fx.healPerc && mon.currentHp > 0) {
+                            const heal = Math.floor(mon.hp * fx.healPerc);
+                            mon.currentHp = Math.min(mon.hp, mon.currentHp + heal);
+                            log.push(`<span class="item-text">${mon.name} recovered HP!</span>`);
+                        }
+                        // Applying Status Conditions
+                        if (fx.status && defMon.currentHp > 0 && !defMon.status && Math.random() * 100 < (fx.statusRate || 100)) {
+                            let canApply = true;
+                            // Sleep Clause Mod check
+                            if (fx.status === 'SLP' && state.format.clauses?.includes('Sleep Clause Mod')) {
+                                const oppTeam = teams[defUid];
+                                if (oppTeam.some(p => p.status === 'SLP')) {
+                                    canApply = false;
+                                    log.push(`> Sleep Clause Mod activated (Immune).`);
+                                }
+                            }
+                            // Type immunities
+                            if (fx.status === 'PAR' && defMon.types.includes('Electric')) canApply = false;
+                            if (fx.status === 'BRN' && defMon.types.includes('Fire')) canApply = false;
+                            if (fx.status === 'PSN' && (defMon.types.includes('Poison') || defMon.types.includes('Steel'))) canApply = false;
+
+                            if (canApply) {
+                                defMon.status = fx.status;
+                                log.push(`<span class="status-${fx.status}">${defMon.name} was afflicted with ${fx.status}!</span>`);
+                            }
+                        }
                     }
                 }
             }
@@ -1338,11 +1481,19 @@
             // 4. End of turn effects
             for (const uid of [p1Uid, p2Uid]) {
                 const mon = getMon(uid);
-                if (mon.currentHp > 0 && mon.item === 'Leftovers') {
-                    const heal = Math.floor(mon.hp / 16) || 1;
-                    if (mon.currentHp < mon.hp) {
-                        mon.currentHp = Math.min(mon.hp, mon.currentHp + heal);
-                        log.push(`<span class="item-text">${mon.name} restored a little HP using its Leftovers!</span>`);
+                if (mon.currentHp > 0) {
+                    if (mon.item === 'Leftovers') {
+                        const heal = Math.floor(mon.hp / 16) || 1;
+                        if (mon.currentHp < mon.hp) {
+                            mon.currentHp = Math.min(mon.hp, mon.currentHp + heal);
+                            log.push(`<span class="item-text">${mon.name} restored a little HP using its Leftovers!</span>`);
+                        }
+                    }
+                    if (mon.status === 'BRN' || mon.status === 'PSN') {
+                        const dmg = Math.floor(mon.hp / 8) || 1;
+                        mon.currentHp = Math.max(0, mon.currentHp - dmg);
+                        log.push(`<span class="notvery">${mon.name} was hurt by its condition!</span>`);
+                        if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
                     }
                 }
             }
@@ -1401,6 +1552,44 @@
             return 'var(--danger)';
         }
 
+        window.showMonInfo = function (uid) {
+            const state = roomState.state;
+            const activeIdx = state.active[uid] ?? 0;
+            const mon = roomState.players[uid].team[activeIdx];
+            if (!mon) return;
+
+            const calcStat = (base, boost) => boost >= 0 ? Math.floor(base * ((2 + boost) / 2)) : Math.floor(base * (2 / (2 - boost)));
+
+            const html = `
+                <div style="display:flex; gap:15px; align-items:flex-start;">
+                    <img src="${mon.sprite}" style="width:80px; height:80px; object-fit:contain;">
+                    <div style="flex:1;">
+                        <h3 style="margin:0 0 5px;">${esc(mon.name)}</h3>
+                        <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">
+                            <div><b>Types:</b> ${mon.types.join(' / ')}</div>
+                            <div><b>Ability:</b> ${mon.ability || 'Unknown'}</div>
+                            <div><b>Item:</b> ${mon.item || 'None'}</div>
+                            ${mon.status ? `<div><b>Status:</b> <span class="status-${mon.status}">${mon.status}</span></div>` : ''}
+                        </div>
+                    </div>
+                </div>
+                <hr style="border-color:rgba(255,255,255,0.1); margin:10px 0;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:0.85rem;">
+                    <div><b>HP:</b> ${mon.currentHp}/${mon.hp}</div>
+                    <div><b>Attack:</b> <span style="color:${mon.boosts.atk > 0 ? 'var(--success)' : mon.boosts.atk < 0 ? 'var(--danger)' : 'inherit'}">${calcStat(mon.atk, mon.boosts.atk)}</span> ${mon.boosts.atk !== 0 ? `(${mon.boosts.atk > 0 ? '+' : ''}${mon.boosts.atk})` : ''}</div>
+                    <div><b>Defense:</b> <span style="color:${mon.boosts.def > 0 ? 'var(--success)' : mon.boosts.def < 0 ? 'var(--danger)' : 'inherit'}">${calcStat(mon.def, mon.boosts.def)}</span> ${mon.boosts.def !== 0 ? `(${mon.boosts.def > 0 ? '+' : ''}${mon.boosts.def})` : ''}</div>
+                    <div><b>Sp. Atk:</b> <span style="color:${mon.boosts.spa > 0 ? 'var(--success)' : mon.boosts.spa < 0 ? 'var(--danger)' : 'inherit'}">${calcStat(mon.spa, mon.boosts.spa)}</span> ${mon.boosts.spa !== 0 ? `(${mon.boosts.spa > 0 ? '+' : ''}${mon.boosts.spa})` : ''}</div>
+                    <div><b>Sp. Def:</b> <span style="color:${mon.boosts.spd > 0 ? 'var(--success)' : mon.boosts.spd < 0 ? 'var(--danger)' : 'inherit'}">${calcStat(mon.spd, mon.boosts.spd)}</span> ${mon.boosts.spd !== 0 ? `(${mon.boosts.spd > 0 ? '+' : ''}${mon.boosts.spd})` : ''}</div>
+                    <div><b>Speed:</b> <span style="color:${mon.boosts.spe > 0 ? 'var(--success)' : mon.boosts.spe < 0 ? 'var(--danger)' : 'inherit'}">${calcStat(mon.spe, mon.boosts.spe)}</span> ${mon.boosts.spe !== 0 ? `(${mon.boosts.spe > 0 ? '+' : ''}${mon.boosts.spe})` : ''}</div>
+                </div>
+                <div style="margin-top:15px; text-align:right;">
+                    <button class="btn btn-sm" onclick="document.getElementById('modal-mon-info').style.display='none'">Close</button>
+                </div>
+            `;
+            document.getElementById('mon-info-content').innerHTML = html;
+            document.getElementById('modal-mon-info').style.display = 'flex';
+        }
+
         function renderBattle() {
             const state = roomState.state;
             const uids = Object.keys(roomState.players || {});
@@ -1450,17 +1639,42 @@
             const amIWaiting = isSpectator ? true : ((state.actions && !!state.actions[myUid]) || state.resolving);
             const activeIsFainted = myActive.currentHp <= 0;
 
+            const renderStatusBadges = (mon) => {
+                let s = '';
+                if (mon.status) {
+                    s += `<span class="badge" style="background:var(--${mon.status === 'BRN' || Math.random() < 0 ? 'danger' : 'warning'}); color:white; margin-left:5px;">${mon.status}</span>`;
+                }
+                const statMap = { atk: 'Atk', def: 'Def', spa: 'SpA', spd: 'SpD', spe: 'Spe' };
+                if (mon.boosts) {
+                    for (const [k, v] of Object.entries(mon.boosts)) {
+                        if (v !== 0 && statMap[k]) {
+                            const sym = v > 0 ? '+' : '';
+                            s += `<span class="badge" style="background:${v > 0 ? 'var(--success)' : 'var(--danger)'}; color:white; margin-left:5px; font-size: 0.7rem;">${sym}${v} ${statMap[k]}</span>`;
+                        }
+                    }
+                }
+                return s;
+            };
+
             let html = `
                 <!-- Scene -->
                 <div class="battle-scene">
                     <div class="hud opponent">
-                        <div class="hud-name">${esc(oppActive.name)} <span class="level">Lv100</span></div>
+                        <div class="hud-name">
+                            ${esc(oppActive.name)} <span class="level">Lv100</span>
+                            ${renderStatusBadges(oppActive)}
+                            <button class="btn btn-sm text-muted" style="padding:0px 4px; float:right;" onclick="window.showMonInfo('${oppUid}')">ℹ️</button>
+                        </div>
                         <div class="hp-bar-bg"><div class="hp-bar-fill" style="width:${oppHpPct * 100}%; background-color:${getHpColor(oppHpPct)}"></div></div>
                         <div class="hp-text">${oppActive.currentHp}/${oppActive.hp}</div>
                     </div>
                     
                     <div class="hud player">
-                        <div class="hud-name">${esc(myActive.name)} <span class="level">Lv100</span></div>
+                        <div class="hud-name">
+                            ${esc(myActive.name)} <span class="level">Lv100</span>
+                            ${renderStatusBadges(myActive)}
+                            <button class="btn btn-sm text-muted" style="padding:0px 4px; float:right;" onclick="window.showMonInfo('${myUid}')">ℹ️</button>
+                        </div>
                         <div class="hp-bar-bg"><div class="hp-bar-fill" style="width:${myHpPct * 100}%; background-color:${getHpColor(myHpPct)}"></div></div>
                         <div class="hp-text">${myActive.currentHp}/${myActive.hp}</div>
                     </div>
@@ -1515,9 +1729,11 @@
                     else if (eff <= 0.25 && eff > 0) { effColor = '#94a3b8'; effText = '(0.25x)'; }
                     else if (eff === 0) { effColor = '#475569'; effText = '(0x)'; }
                 }
-                return `<button class="btn-move bg-${m.type}" onclick="window.sendAction('move', '${moveId}')">
+                let fxText = m.effects && m.effects.desc ? `<div style="font-size:0.65rem; color: rgba(255,255,255,0.8); margin-top:2px; line-height:1;">${m.effects.desc}</div>` : '';
+                return `<button class="btn-move bg-${m.type}" onclick="window.sendAction('move', '${moveId}')" style="display:flex; flex-direction:column; justify-content:center;">
                                             <div class="move-name" style="color: ${effColor}; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">${esc(m.name)} ${effText}</div>
                                             <div class="move-meta type-${m.type}">${m.type} / Pow: ${m.power} / Acc: ${m.accuracy}</div>
+                                            ${fxText}
                                         </button>`;
             }).join('')}
                             </div>

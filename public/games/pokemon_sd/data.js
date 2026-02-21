@@ -36,7 +36,9 @@ export const MOVES = {
         "power": 50,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "recoilPerc": 0.25,
+        "desc": "User takes 25% recoil damage."
     },
     "razor-wind": {
         "name": "Razor Wind",
@@ -44,7 +46,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "headbutt": {
         "name": "Headbutt",
@@ -52,7 +55,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "body-slam": {
         "name": "Body Slam",
@@ -60,7 +64,12 @@ export const MOVES = {
         "power": 85,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "statusRate": 30,
+            "status": "PAR",
+            "desc": "30% chance to Paralyze."
+        }
     },
     "take-down": {
         "name": "Take Down",
@@ -68,7 +77,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 85,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "double-edge": {
         "name": "Double Edge",
@@ -76,7 +86,11 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "recoilPerc": 0.33,
+            "desc": "User takes 33% recoil damage."
+        }
     },
     "strength": {
         "name": "Strength",
@@ -84,7 +98,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "razor-leaf": {
         "name": "Razor Leaf",
@@ -92,7 +107,8 @@ export const MOVES = {
         "power": 55,
         "accuracy": 95,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "solar-beam": {
         "name": "Solar Beam",
@@ -100,7 +116,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "petal-dance": {
         "name": "Petal Dance",
@@ -108,7 +125,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "sludge": {
         "name": "Sludge",
@@ -116,7 +134,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "skull-bash": {
         "name": "Skull Bash",
@@ -124,7 +143,8 @@ export const MOVES = {
         "power": 130,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "sludge-bomb": {
         "name": "Sludge Bomb",
@@ -132,7 +152,12 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "statusRate": 30,
+            "status": "PSN",
+            "desc": "30% chance to Poison."
+        }
     },
     "outrage": {
         "name": "Outrage",
@@ -140,7 +165,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "giga-drain": {
         "name": "Giga Drain",
@@ -148,7 +174,11 @@ export const MOVES = {
         "power": 75,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "drainPerc": 0.5,
+            "desc": "Recovers 50% of damage dealt."
+        }
     },
     "hidden-power": {
         "name": "Hidden Power",
@@ -156,7 +186,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "facade": {
         "name": "Facade",
@@ -164,7 +195,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "knock-off": {
         "name": "Knock Off",
@@ -172,7 +204,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "secret-power": {
         "name": "Secret Power",
@@ -180,7 +213,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "magical-leaf": {
         "name": "Magical Leaf",
@@ -188,7 +222,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "seed-bomb": {
         "name": "Seed Bomb",
@@ -196,7 +231,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "energy-ball": {
         "name": "Energy Ball",
@@ -204,7 +240,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "leaf-storm": {
         "name": "Leaf Storm",
@@ -212,7 +249,13 @@ export const MOVES = {
         "power": 130,
         "accuracy": 90,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "selfDrop": {
+                "spa": -2
+            },
+            "desc": "Lowers Sp. Atk by 2."
+        }
     },
     "power-whip": {
         "name": "Power Whip",
@@ -220,7 +263,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 85,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "venoshock": {
         "name": "Venoshock",
@@ -228,7 +272,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "round": {
         "name": "Round",
@@ -236,7 +281,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "grass-pledge": {
         "name": "Grass Pledge",
@@ -244,7 +290,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "grassy-glide": {
         "name": "Grassy Glide",
@@ -252,7 +299,8 @@ export const MOVES = {
         "power": 55,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "tera-blast": {
         "name": "Tera Blast",
@@ -260,7 +308,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "hyper-beam": {
         "name": "Hyper Beam",
@@ -268,7 +317,11 @@ export const MOVES = {
         "power": 150,
         "accuracy": 90,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "recharge": true,
+            "desc": "User must recharge next turn."
+        }
     },
     "earthquake": {
         "name": "Earthquake",
@@ -276,7 +329,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "frenzy-plant": {
         "name": "Frenzy Plant",
@@ -284,7 +338,11 @@ export const MOVES = {
         "power": 150,
         "accuracy": 90,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "recharge": true,
+            "desc": "User must recharge next turn."
+        }
     },
     "poison-jab": {
         "name": "Poison Jab",
@@ -292,7 +350,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "earth-power": {
         "name": "Earth Power",
@@ -300,7 +359,14 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "dropRate": 10,
+            "enemyDrop": {
+                "spd": -1
+            },
+            "desc": "10% chance to lower target Sp. Def."
+        }
     },
     "giga-impact": {
         "name": "Giga Impact",
@@ -308,7 +374,11 @@ export const MOVES = {
         "power": 150,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "recharge": true,
+            "desc": "User must recharge next turn."
+        }
     },
     "rock-climb": {
         "name": "Rock Climb",
@@ -316,7 +386,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 85,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "bulldoze": {
         "name": "Bulldoze",
@@ -324,7 +395,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "petal-blizzard": {
         "name": "Petal Blizzard",
@@ -332,7 +404,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "stomping-tantrum": {
         "name": "Stomping Tantrum",
@@ -340,7 +413,8 @@ export const MOVES = {
         "power": 75,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "mega-punch": {
         "name": "Mega Punch",
@@ -348,7 +422,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 85,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "fire-punch": {
         "name": "Fire Punch",
@@ -356,7 +431,8 @@ export const MOVES = {
         "power": 75,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "thunder-punch": {
         "name": "Thunder Punch",
@@ -364,7 +440,8 @@ export const MOVES = {
         "power": 75,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "wing-attack": {
         "name": "Wing Attack",
@@ -372,7 +449,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "mega-kick": {
         "name": "Mega Kick",
@@ -380,7 +458,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 75,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "bite": {
         "name": "Bite",
@@ -388,7 +467,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "flamethrower": {
         "name": "Flamethrower",
@@ -396,7 +476,12 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "statusRate": 10,
+            "status": "BRN",
+            "desc": "10% chance to Burn."
+        }
     },
     "submission": {
         "name": "Submission",
@@ -404,7 +489,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 80,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "dig": {
         "name": "Dig",
@@ -412,7 +498,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "fire-blast": {
         "name": "Fire Blast",
@@ -420,7 +507,8 @@ export const MOVES = {
         "power": 110,
         "accuracy": 85,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "swift": {
         "name": "Swift",
@@ -428,7 +516,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "rock-slide": {
         "name": "Rock Slide",
@@ -436,7 +525,8 @@ export const MOVES = {
         "power": 75,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "slash": {
         "name": "Slash",
@@ -444,7 +534,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "dynamic-punch": {
         "name": "Dynamic Punch",
@@ -452,7 +543,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 50,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "dragon-breath": {
         "name": "Dragon Breath",
@@ -460,7 +552,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "iron-tail": {
         "name": "Iron Tail",
@@ -468,7 +561,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 75,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "crunch": {
         "name": "Crunch",
@@ -476,7 +570,14 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "dropRate": 20,
+            "enemyDrop": {
+                "def": -1
+            },
+            "desc": "20% chance to lower target Defense."
+        }
     },
     "ancient-power": {
         "name": "Ancient Power",
@@ -484,7 +585,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "heat-wave": {
         "name": "Heat Wave",
@@ -492,7 +594,8 @@ export const MOVES = {
         "power": 95,
         "accuracy": 90,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "focus-punch": {
         "name": "Focus Punch",
@@ -500,7 +603,8 @@ export const MOVES = {
         "power": 150,
         "accuracy": 100,
         "category": "Physical",
-        "priority": -3
+        "priority": -3,
+        "effects": null
     },
     "brick-break": {
         "name": "Brick Break",
@@ -508,7 +612,8 @@ export const MOVES = {
         "power": 75,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "air-cutter": {
         "name": "Air Cutter",
@@ -516,7 +621,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 95,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "overheat": {
         "name": "Overheat",
@@ -524,7 +630,13 @@ export const MOVES = {
         "power": 130,
         "accuracy": 90,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "selfDrop": {
+                "spa": -2
+            },
+            "desc": "Lowers Sp. Atk by 2."
+        }
     },
     "rock-tomb": {
         "name": "Rock Tomb",
@@ -532,7 +644,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 95,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "aerial-ace": {
         "name": "Aerial Ace",
@@ -540,7 +653,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "dragon-claw": {
         "name": "Dragon Claw",
@@ -548,7 +662,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "flare-blitz": {
         "name": "Flare Blitz",
@@ -556,7 +671,13 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "recoilPerc": 0.33,
+            "statusRate": 10,
+            "status": "BRN",
+            "desc": "User takes 33% recoil damage. 10% Burn."
+        }
     },
     "dragon-pulse": {
         "name": "Dragon Pulse",
@@ -564,7 +685,8 @@ export const MOVES = {
         "power": 85,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "dragon-rush": {
         "name": "Dragon Rush",
@@ -572,7 +694,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 75,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "focus-blast": {
         "name": "Focus Blast",
@@ -580,7 +703,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 70,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "shadow-claw": {
         "name": "Shadow Claw",
@@ -588,7 +712,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "fire-fang": {
         "name": "Fire Fang",
@@ -596,7 +721,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 95,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "flame-burst": {
         "name": "Flame Burst",
@@ -604,7 +730,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "incinerate": {
         "name": "Incinerate",
@@ -612,7 +739,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "acrobatics": {
         "name": "Acrobatics",
@@ -620,7 +748,8 @@ export const MOVES = {
         "power": 55,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "inferno": {
         "name": "Inferno",
@@ -628,7 +757,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 50,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "fire-pledge": {
         "name": "Fire Pledge",
@@ -636,7 +766,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "dragon-tail": {
         "name": "Dragon Tail",
@@ -644,7 +775,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 90,
         "category": "Physical",
-        "priority": -6
+        "priority": -6,
+        "effects": null
     },
     "breaking-swipe": {
         "name": "Breaking Swipe",
@@ -652,7 +784,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "temper-flare": {
         "name": "Temper Flare",
@@ -660,7 +793,8 @@ export const MOVES = {
         "power": 75,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "fly": {
         "name": "Fly",
@@ -668,7 +802,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 95,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "steel-wing": {
         "name": "Steel Wing",
@@ -676,7 +811,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "blaze-kick": {
         "name": "Blaze Kick",
@@ -684,7 +820,8 @@ export const MOVES = {
         "power": 85,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "blast-burn": {
         "name": "Blast Burn",
@@ -692,7 +829,11 @@ export const MOVES = {
         "power": 150,
         "accuracy": 90,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "recharge": true,
+            "desc": "User must recharge next turn."
+        }
     },
     "air-slash": {
         "name": "Air Slash",
@@ -700,7 +841,8 @@ export const MOVES = {
         "power": 75,
         "accuracy": 95,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "ominous-wind": {
         "name": "Ominous Wind",
@@ -708,7 +850,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "sky-drop": {
         "name": "Sky Drop",
@@ -716,7 +859,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "hurricane": {
         "name": "Hurricane",
@@ -724,7 +868,8 @@ export const MOVES = {
         "power": 110,
         "accuracy": 70,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "mystical-fire": {
         "name": "Mystical Fire",
@@ -732,7 +877,8 @@ export const MOVES = {
         "power": 75,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "brutal-swing": {
         "name": "Brutal Swing",
@@ -740,7 +886,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "scorching-sands": {
         "name": "Scorching Sands",
@@ -748,7 +895,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "ice-punch": {
         "name": "Ice Punch",
@@ -756,7 +904,8 @@ export const MOVES = {
         "power": 75,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "hydro-pump": {
         "name": "Hydro Pump",
@@ -764,7 +913,8 @@ export const MOVES = {
         "power": 110,
         "accuracy": 80,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "surf": {
         "name": "Surf",
@@ -772,7 +922,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "ice-beam": {
         "name": "Ice Beam",
@@ -780,7 +931,12 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "statusRate": 10,
+            "status": "FRZ",
+            "desc": "10% chance to Freeze."
+        }
     },
     "blizzard": {
         "name": "Blizzard",
@@ -788,7 +944,8 @@ export const MOVES = {
         "power": 110,
         "accuracy": 70,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "bubble-beam": {
         "name": "Bubble Beam",
@@ -796,7 +953,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "waterfall": {
         "name": "Waterfall",
@@ -804,7 +962,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "icy-wind": {
         "name": "Icy Wind",
@@ -812,7 +971,8 @@ export const MOVES = {
         "power": 55,
         "accuracy": 95,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "fake-out": {
         "name": "Fake Out",
@@ -820,7 +980,12 @@ export const MOVES = {
         "power": 40,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 3
+        "priority": 3,
+        "effects": {
+            "priority": 3,
+            "flinchRate": 100,
+            "desc": "Strikes first and flinches. Only works first turn."
+        }
     },
     "dive": {
         "name": "Dive",
@@ -828,7 +993,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "water-spout": {
         "name": "Water Spout",
@@ -836,7 +1002,8 @@ export const MOVES = {
         "power": 150,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "muddy-water": {
         "name": "Muddy Water",
@@ -844,7 +1011,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 85,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "mud-shot": {
         "name": "Mud Shot",
@@ -852,7 +1020,8 @@ export const MOVES = {
         "power": 55,
         "accuracy": 95,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "water-pulse": {
         "name": "Water Pulse",
@@ -860,7 +1029,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "brine": {
         "name": "Brine",
@@ -868,7 +1038,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "aura-sphere": {
         "name": "Aura Sphere",
@@ -876,7 +1047,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "aqua-tail": {
         "name": "Aqua Tail",
@@ -884,7 +1056,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "zen-headbutt": {
         "name": "Zen Headbutt",
@@ -892,7 +1065,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "aqua-jet": {
         "name": "Aqua Jet",
@@ -900,7 +1074,11 @@ export const MOVES = {
         "power": 40,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 1
+        "priority": 1,
+        "effects": {
+            "priority": 1,
+            "desc": "Strikes first."
+        }
     },
     "scald": {
         "name": "Scald",
@@ -908,7 +1086,12 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "statusRate": 30,
+            "status": "BRN",
+            "desc": "30% chance to Burn."
+        }
     },
     "water-pledge": {
         "name": "Water Pledge",
@@ -916,7 +1099,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "liquidation": {
         "name": "Liquidation",
@@ -924,7 +1108,8 @@ export const MOVES = {
         "power": 85,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "flip-turn": {
         "name": "Flip Turn",
@@ -932,7 +1117,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "wave-crash": {
         "name": "Wave Crash",
@@ -940,7 +1126,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "ice-spinner": {
         "name": "Ice Spinner",
@@ -948,7 +1135,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "hydro-cannon": {
         "name": "Hydro Cannon",
@@ -956,7 +1144,11 @@ export const MOVES = {
         "power": 150,
         "accuracy": 90,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "recharge": true,
+            "desc": "User must recharge next turn."
+        }
     },
     "signal-beam": {
         "name": "Signal Beam",
@@ -964,7 +1156,8 @@ export const MOVES = {
         "power": 75,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "dark-pulse": {
         "name": "Dark Pulse",
@@ -972,7 +1165,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "avalanche": {
         "name": "Avalanche",
@@ -980,7 +1174,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": -4
+        "priority": -4,
+        "effects": null
     },
     "flash-cannon": {
         "name": "Flash Cannon",
@@ -988,7 +1183,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "body-press": {
         "name": "Body Press",
@@ -996,7 +1192,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "bug-bite": {
         "name": "Bug Bite",
@@ -1004,7 +1201,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "electroweb": {
         "name": "Electroweb",
@@ -1012,7 +1210,8 @@ export const MOVES = {
         "power": 55,
         "accuracy": 95,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "psybeam": {
         "name": "Psybeam",
@@ -1020,7 +1219,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "psychic": {
         "name": "Psychic",
@@ -1028,7 +1228,14 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "dropRate": 10,
+            "enemyDrop": {
+                "spd": -1
+            },
+            "desc": "10% chance to lower target Sp. Def."
+        }
     },
     "dream-eater": {
         "name": "Dream Eater",
@@ -1036,7 +1243,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "thief": {
         "name": "Thief",
@@ -1044,7 +1252,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "shadow-ball": {
         "name": "Shadow Ball",
@@ -1052,7 +1261,14 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "dropRate": 20,
+            "enemyDrop": {
+                "spd": -1
+            },
+            "desc": "20% chance to lower target Sp. Def."
+        }
     },
     "silver-wind": {
         "name": "Silver Wind",
@@ -1060,7 +1276,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "u-turn": {
         "name": "U Turn",
@@ -1068,7 +1285,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "bug-buzz": {
         "name": "Bug Buzz",
@@ -1076,7 +1294,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "pollen-puff": {
         "name": "Pollen Puff",
@@ -1084,7 +1303,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "assurance": {
         "name": "Assurance",
@@ -1092,7 +1312,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "x-scissor": {
         "name": "X Scissor",
@@ -1100,7 +1321,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "drill-run": {
         "name": "Drill Run",
@@ -1108,7 +1330,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 95,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "throat-chop": {
         "name": "Throat Chop",
@@ -1116,7 +1339,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "quick-attack": {
         "name": "Quick Attack",
@@ -1124,7 +1348,8 @@ export const MOVES = {
         "power": 40,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 1
+        "priority": 1,
+        "effects": null
     },
     "sky-attack": {
         "name": "Sky Attack",
@@ -1132,7 +1357,8 @@ export const MOVES = {
         "power": 140,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "feint-attack": {
         "name": "Feint Attack",
@@ -1140,7 +1366,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "uproar": {
         "name": "Uproar",
@@ -1148,7 +1375,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "pluck": {
         "name": "Pluck",
@@ -1156,7 +1384,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "brave-bird": {
         "name": "Brave Bird",
@@ -1164,7 +1393,11 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "recoilPerc": 0.33,
+            "desc": "User takes 33% recoil damage."
+        }
     },
     "thunderbolt": {
         "name": "Thunderbolt",
@@ -1172,7 +1405,12 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "statusRate": 10,
+            "status": "PAR",
+            "desc": "10% chance to Paralyze."
+        }
     },
     "thunder": {
         "name": "Thunder",
@@ -1180,7 +1418,8 @@ export const MOVES = {
         "power": 110,
         "accuracy": 70,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "hyper-fang": {
         "name": "Hyper Fang",
@@ -1188,7 +1427,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "flame-wheel": {
         "name": "Flame Wheel",
@@ -1196,7 +1436,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "revenge": {
         "name": "Revenge",
@@ -1204,7 +1445,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": -4
+        "priority": -4,
+        "effects": null
     },
     "covet": {
         "name": "Covet",
@@ -1212,7 +1454,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "shock-wave": {
         "name": "Shock Wave",
@@ -1220,7 +1463,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "last-resort": {
         "name": "Last Resort",
@@ -1228,7 +1472,8 @@ export const MOVES = {
         "power": 140,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "sucker-punch": {
         "name": "Sucker Punch",
@@ -1236,7 +1481,11 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 1
+        "priority": 1,
+        "effects": {
+            "priority": 1,
+            "desc": "Strikes first (fails if target status moves)."
+        }
     },
     "retaliate": {
         "name": "Retaliate",
@@ -1244,7 +1493,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "wild-charge": {
         "name": "Wild Charge",
@@ -1252,7 +1502,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "drill-peck": {
         "name": "Drill Peck",
@@ -1260,7 +1511,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "tri-attack": {
         "name": "Tri Attack",
@@ -1268,7 +1520,12 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "statusRate": 20,
+            "status": "rnd",
+            "desc": "20% chance to Burn/Par/Frz."
+        }
     },
     "slam": {
         "name": "Slam",
@@ -1276,7 +1533,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 75,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "leech-life": {
         "name": "Leech Life",
@@ -1284,7 +1542,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "mud-bomb": {
         "name": "Mud Bomb",
@@ -1292,7 +1551,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 85,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "gunk-shot": {
         "name": "Gunk Shot",
@@ -1300,7 +1560,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 80,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "sludge-wave": {
         "name": "Sludge Wave",
@@ -1308,7 +1569,8 @@ export const MOVES = {
         "power": 95,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "snarl": {
         "name": "Snarl",
@@ -1316,7 +1578,8 @@ export const MOVES = {
         "power": 55,
         "accuracy": 95,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "belch": {
         "name": "Belch",
@@ -1324,7 +1587,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 90,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "psychic-fangs": {
         "name": "Psychic Fangs",
@@ -1332,7 +1596,8 @@ export const MOVES = {
         "power": 85,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "skitter-smack": {
         "name": "Skitter Smack",
@@ -1340,7 +1605,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "lash-out": {
         "name": "Lash Out",
@@ -1348,7 +1614,8 @@ export const MOVES = {
         "power": 75,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "thunder-fang": {
         "name": "Thunder Fang",
@@ -1356,7 +1623,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 95,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "ice-fang": {
         "name": "Ice Fang",
@@ -1364,7 +1632,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 95,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "zap-cannon": {
         "name": "Zap Cannon",
@@ -1372,7 +1641,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 50,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "spark": {
         "name": "Spark",
@@ -1380,7 +1650,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "volt-tackle": {
         "name": "Volt Tackle",
@@ -1388,7 +1659,13 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "recoilPerc": 0.33,
+            "statusRate": 10,
+            "status": "PAR",
+            "desc": "User takes 33% recoil damage. 10% Paralyze."
+        }
     },
     "feint": {
         "name": "Feint",
@@ -1396,7 +1673,8 @@ export const MOVES = {
         "power": 30,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 2
+        "priority": 2,
+        "effects": null
     },
     "discharge": {
         "name": "Discharge",
@@ -1404,7 +1682,12 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "statusRate": 30,
+            "status": "PAR",
+            "desc": "30% chance to Paralyze."
+        }
     },
     "volt-switch": {
         "name": "Volt Switch",
@@ -1412,7 +1695,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "play-rough": {
         "name": "Play Rough",
@@ -1420,7 +1704,14 @@ export const MOVES = {
         "power": 90,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "dropRate": 10,
+            "enemyDrop": {
+                "atk": -1
+            },
+            "desc": "10% chance to lower target Attack."
+        }
     },
     "rising-voltage": {
         "name": "Rising Voltage",
@@ -1428,7 +1719,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "alluring-voice": {
         "name": "Alluring Voice",
@@ -1436,7 +1728,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "upper-hand": {
         "name": "Upper Hand",
@@ -1444,7 +1737,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 3
+        "priority": 3,
+        "effects": null
     },
     "crush-claw": {
         "name": "Crush Claw",
@@ -1452,7 +1746,8 @@ export const MOVES = {
         "power": 75,
         "accuracy": 95,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "night-slash": {
         "name": "Night Slash",
@@ -1460,7 +1755,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "stone-edge": {
         "name": "Stone Edge",
@@ -1468,7 +1764,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 80,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "chip-away": {
         "name": "Chip Away",
@@ -1476,7 +1773,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "high-horsepower": {
         "name": "High Horsepower",
@@ -1484,7 +1782,8 @@ export const MOVES = {
         "power": 95,
         "accuracy": 95,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "steel-roller": {
         "name": "Steel Roller",
@@ -1492,7 +1791,8 @@ export const MOVES = {
         "power": 130,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "superpower": {
         "name": "Superpower",
@@ -1500,7 +1800,14 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "selfDrop": {
+                "atk": -1,
+                "def": -1
+            },
+            "desc": "Lowers Attack and Defense by 1."
+        }
     },
     "hex": {
         "name": "Hex",
@@ -1508,7 +1815,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "horn-attack": {
         "name": "Horn Attack",
@@ -1516,7 +1824,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "thrash": {
         "name": "Thrash",
@@ -1524,7 +1833,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "head-smash": {
         "name": "Head Smash",
@@ -1532,7 +1842,8 @@ export const MOVES = {
         "power": 150,
         "accuracy": 80,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "smart-strike": {
         "name": "Smart Strike",
@@ -1540,7 +1851,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "megahorn": {
         "name": "Megahorn",
@@ -1548,7 +1860,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 85,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "hyper-voice": {
         "name": "Hyper Voice",
@@ -1556,7 +1869,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "meteor-mash": {
         "name": "Meteor Mash",
@@ -1564,7 +1878,14 @@ export const MOVES = {
         "power": 90,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "boostRate": 20,
+            "selfBoost": {
+                "atk": 1
+            },
+            "desc": "20% chance to raise Attack."
+        }
     },
     "bounce": {
         "name": "Bounce",
@@ -1572,7 +1893,8 @@ export const MOVES = {
         "power": 85,
         "accuracy": 85,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "wake-up-slap": {
         "name": "Wake Up Slap",
@@ -1580,7 +1902,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "drain-punch": {
         "name": "Drain Punch",
@@ -1588,7 +1911,11 @@ export const MOVES = {
         "power": 75,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "drainPerc": 0.5,
+            "desc": "Recovers 50% of damage dealt."
+        }
     },
     "psyshock": {
         "name": "Psyshock",
@@ -1596,7 +1923,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "moonblast": {
         "name": "Moonblast",
@@ -1604,7 +1932,14 @@ export const MOVES = {
         "power": 95,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "dropRate": 30,
+            "enemyDrop": {
+                "spa": -1
+            },
+            "desc": "30% chance to lower target Sp. Atk."
+        }
     },
     "dazzling-gleam": {
         "name": "Dazzling Gleam",
@@ -1612,7 +1947,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "meteor-beam": {
         "name": "Meteor Beam",
@@ -1620,7 +1956,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 90,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "misty-explosion": {
         "name": "Misty Explosion",
@@ -1628,7 +1965,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "future-sight": {
         "name": "Future Sight",
@@ -1636,7 +1974,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "extrasensory": {
         "name": "Extrasensory",
@@ -1644,7 +1983,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "foul-play": {
         "name": "Foul Play",
@@ -1652,7 +1992,8 @@ export const MOVES = {
         "power": 95,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "burning-jealousy": {
         "name": "Burning Jealousy",
@@ -1660,7 +2001,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "self-destruct": {
         "name": "Self Destruct",
@@ -1668,7 +2010,8 @@ export const MOVES = {
         "power": 200,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "psychic-noise": {
         "name": "Psychic Noise",
@@ -1676,7 +2019,8 @@ export const MOVES = {
         "power": 75,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "expanding-force": {
         "name": "Expanding Force",
@@ -1684,7 +2028,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "cross-poison": {
         "name": "Cross Poison",
@@ -1692,7 +2037,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "solar-blade": {
         "name": "Solar Blade",
@@ -1700,7 +2046,8 @@ export const MOVES = {
         "power": 125,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "lunge": {
         "name": "Lunge",
@@ -1708,7 +2055,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "power-gem": {
         "name": "Power Gem",
@@ -1716,7 +2064,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "cross-chop": {
         "name": "Cross Chop",
@@ -1724,7 +2073,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 80,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "vacuum-wave": {
         "name": "Vacuum Wave",
@@ -1732,7 +2082,8 @@ export const MOVES = {
         "power": 40,
         "accuracy": 100,
         "category": "Special",
-        "priority": 1
+        "priority": 1,
+        "effects": null
     },
     "synchronoise": {
         "name": "Synchronoise",
@@ -1740,7 +2091,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "low-sweep": {
         "name": "Low Sweep",
@@ -1748,7 +2100,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "smelling-salts": {
         "name": "Smelling Salts",
@@ -1756,7 +2109,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "close-combat": {
         "name": "Close Combat",
@@ -1764,7 +2118,14 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "selfDrop": {
+                "def": -1,
+                "spd": -1
+            },
+            "desc": "Lowers Defense and Sp. Def by 1."
+        }
     },
     "burn-up": {
         "name": "Burn Up",
@@ -1772,7 +2133,8 @@ export const MOVES = {
         "power": 130,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "raging-fury": {
         "name": "Raging Fury",
@@ -1780,7 +2142,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "extreme-speed": {
         "name": "Extreme Speed",
@@ -1788,7 +2151,11 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 2
+        "priority": 2,
+        "effects": {
+            "priority": 2,
+            "desc": "Strikes first."
+        }
     },
     "iron-head": {
         "name": "Iron Head",
@@ -1796,7 +2163,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "circle-throw": {
         "name": "Circle Throw",
@@ -1804,7 +2172,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 90,
         "category": "Physical",
-        "priority": -6
+        "priority": -6,
+        "effects": null
     },
     "darkest-lariat": {
         "name": "Darkest Lariat",
@@ -1812,7 +2181,8 @@ export const MOVES = {
         "power": 85,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "psycho-cut": {
         "name": "Psycho Cut",
@@ -1820,7 +2190,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "rolling-kick": {
         "name": "Rolling Kick",
@@ -1828,7 +2199,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 85,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "mach-punch": {
         "name": "Mach Punch",
@@ -1836,7 +2208,11 @@ export const MOVES = {
         "power": 40,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 1
+        "priority": 1,
+        "effects": {
+            "priority": 1,
+            "desc": "Strikes first."
+        }
     },
     "vital-throw": {
         "name": "Vital Throw",
@@ -1844,7 +2220,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Physical",
-        "priority": -1
+        "priority": -1,
+        "effects": null
     },
     "bullet-punch": {
         "name": "Bullet Punch",
@@ -1852,7 +2229,11 @@ export const MOVES = {
         "power": 40,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 1
+        "priority": 1,
+        "effects": {
+            "priority": 1,
+            "desc": "Strikes first."
+        }
     },
     "leaf-blade": {
         "name": "Leaf Blade",
@@ -1860,7 +2241,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "leaf-tornado": {
         "name": "Leaf Tornado",
@@ -1868,7 +2250,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 90,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "aurora-beam": {
         "name": "Aurora Beam",
@@ -1876,7 +2259,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "explosion": {
         "name": "Explosion",
@@ -1884,7 +2268,8 @@ export const MOVES = {
         "power": 250,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "hammer-arm": {
         "name": "Hammer Arm",
@@ -1892,7 +2277,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "steamroller": {
         "name": "Steamroller",
@@ -1900,7 +2286,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "stomp": {
         "name": "Stomp",
@@ -1908,7 +2295,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "razor-shell": {
         "name": "Razor Shell",
@@ -1916,7 +2304,8 @@ export const MOVES = {
         "power": 75,
         "accuracy": 95,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "mirror-shot": {
         "name": "Mirror Shot",
@@ -1924,7 +2313,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 85,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "magnet-bomb": {
         "name": "Magnet Bomb",
@@ -1932,7 +2322,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "steel-beam": {
         "name": "Steel Beam",
@@ -1940,7 +2331,8 @@ export const MOVES = {
         "power": 140,
         "accuracy": 95,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "first-impression": {
         "name": "First Impression",
@@ -1948,7 +2340,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 2
+        "priority": 2,
+        "effects": null
     },
     "jump-kick": {
         "name": "Jump Kick",
@@ -1956,7 +2349,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 95,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "ice-shard": {
         "name": "Ice Shard",
@@ -1964,7 +2358,11 @@ export const MOVES = {
         "power": 40,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 1
+        "priority": 1,
+        "effects": {
+            "priority": 1,
+            "desc": "Strikes first."
+        }
     },
     "frost-breath": {
         "name": "Frost Breath",
@@ -1972,7 +2370,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 90,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "shadow-punch": {
         "name": "Shadow Punch",
@@ -1980,7 +2379,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "shadow-sneak": {
         "name": "Shadow Sneak",
@@ -1988,7 +2388,8 @@ export const MOVES = {
         "power": 40,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 1
+        "priority": 1,
+        "effects": null
     },
     "icicle-crash": {
         "name": "Icicle Crash",
@@ -1996,7 +2397,8 @@ export const MOVES = {
         "power": 85,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "poltergeist": {
         "name": "Poltergeist",
@@ -2004,7 +2406,8 @@ export const MOVES = {
         "power": 110,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "phantom-force": {
         "name": "Phantom Force",
@@ -2012,7 +2415,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "vice-grip": {
         "name": "Vice Grip",
@@ -2020,7 +2424,8 @@ export const MOVES = {
         "power": 55,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "crabhammer": {
         "name": "Crabhammer",
@@ -2028,7 +2433,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "supercell-slam": {
         "name": "Supercell Slam",
@@ -2036,7 +2442,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 95,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "egg-bomb": {
         "name": "Egg Bomb",
@@ -2044,7 +2451,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 75,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "wood-hammer": {
         "name": "Wood Hammer",
@@ -2052,7 +2460,11 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "recoilPerc": 0.33,
+            "desc": "User takes 33% recoil damage."
+        }
     },
     "bone-club": {
         "name": "Bone Club",
@@ -2060,7 +2472,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 85,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "high-jump-kick": {
         "name": "High Jump Kick",
@@ -2068,7 +2481,8 @@ export const MOVES = {
         "power": 130,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "axe-kick": {
         "name": "Axe Kick",
@@ -2076,7 +2490,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "dizzy-punch": {
         "name": "Dizzy Punch",
@@ -2084,7 +2499,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "sky-uppercut": {
         "name": "Sky Uppercut",
@@ -2092,7 +2508,8 @@ export const MOVES = {
         "power": 85,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "octazooka": {
         "name": "Octazooka",
@@ -2100,7 +2517,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 85,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "heart-stamp": {
         "name": "Heart Stamp",
@@ -2108,7 +2526,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "lava-plume": {
         "name": "Lava Plume",
@@ -2116,7 +2535,12 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "statusRate": 30,
+            "status": "BRN",
+            "desc": "30% chance to Burn."
+        }
     },
     "storm-throw": {
         "name": "Storm Throw",
@@ -2124,7 +2548,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "raging-bull": {
         "name": "Raging Bull",
@@ -2132,7 +2557,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "freeze-dry": {
         "name": "Freeze Dry",
@@ -2140,7 +2566,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "sparkling-aria": {
         "name": "Sparkling Aria",
@@ -2148,7 +2575,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "draco-meteor": {
         "name": "Draco Meteor",
@@ -2156,7 +2584,13 @@ export const MOVES = {
         "power": 130,
         "accuracy": 90,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "selfDrop": {
+                "spa": -2
+            },
+            "desc": "Lowers Sp. Atk by 2."
+        }
     },
     "psystrike": {
         "name": "Psystrike",
@@ -2164,7 +2598,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "eruption": {
         "name": "Eruption",
@@ -2172,7 +2607,8 @@ export const MOVES = {
         "power": 150,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "hyper-drill": {
         "name": "Hyper Drill",
@@ -2180,7 +2616,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "barb-barrage": {
         "name": "Barb Barrage",
@@ -2188,7 +2625,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "psyshield-bash": {
         "name": "Psyshield Bash",
@@ -2196,7 +2634,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "sacred-fire": {
         "name": "Sacred Fire",
@@ -2204,7 +2643,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 95,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "aeroblast": {
         "name": "Aeroblast",
@@ -2212,7 +2652,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 95,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "boomburst": {
         "name": "Boomburst",
@@ -2220,7 +2661,8 @@ export const MOVES = {
         "power": 140,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "force-palm": {
         "name": "Force Palm",
@@ -2228,7 +2670,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "headlong-rush": {
         "name": "Headlong Rush",
@@ -2236,7 +2679,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "needle-arm": {
         "name": "Needle Arm",
@@ -2244,7 +2688,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "dragon-hammer": {
         "name": "Dragon Hammer",
@@ -2252,7 +2697,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "mist-ball": {
         "name": "Mist Ball",
@@ -2260,7 +2706,8 @@ export const MOVES = {
         "power": 95,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "luster-purge": {
         "name": "Luster Purge",
@@ -2268,7 +2715,8 @@ export const MOVES = {
         "power": 95,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "origin-pulse": {
         "name": "Origin Pulse",
@@ -2276,7 +2724,8 @@ export const MOVES = {
         "power": 110,
         "accuracy": 85,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "precipice-blades": {
         "name": "Precipice Blades",
@@ -2284,7 +2733,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 85,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "dragon-ascent": {
         "name": "Dragon Ascent",
@@ -2292,7 +2742,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "doom-desire": {
         "name": "Doom Desire",
@@ -2300,7 +2751,8 @@ export const MOVES = {
         "power": 140,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "psycho-boost": {
         "name": "Psycho Boost",
@@ -2308,7 +2760,8 @@ export const MOVES = {
         "power": 140,
         "accuracy": 90,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "attack-order": {
         "name": "Attack Order",
@@ -2316,7 +2769,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "chatter": {
         "name": "Chatter",
@@ -2324,7 +2778,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "rock-wrecker": {
         "name": "Rock Wrecker",
@@ -2332,7 +2787,8 @@ export const MOVES = {
         "power": 150,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "sacred-sword": {
         "name": "Sacred Sword",
@@ -2340,7 +2796,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "aqua-cutter": {
         "name": "Aqua Cutter",
@@ -2348,7 +2805,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "mystical-power": {
         "name": "Mystical Power",
@@ -2356,7 +2814,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 90,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "roar-of-time": {
         "name": "Roar Of Time",
@@ -2364,7 +2823,11 @@ export const MOVES = {
         "power": 150,
         "accuracy": 90,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "recharge": true,
+            "desc": "User must recharge next turn."
+        }
     },
     "spacial-rend": {
         "name": "Spacial Rend",
@@ -2372,7 +2835,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 95,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "magma-storm": {
         "name": "Magma Storm",
@@ -2380,7 +2844,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 75,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "shadow-force": {
         "name": "Shadow Force",
@@ -2388,7 +2853,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "seed-flare": {
         "name": "Seed Flare",
@@ -2396,7 +2862,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 85,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "judgment": {
         "name": "Judgment",
@@ -2404,7 +2871,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "searing-shot": {
         "name": "Searing Shot",
@@ -2412,7 +2880,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "v-create": {
         "name": "V Create",
@@ -2420,7 +2889,8 @@ export const MOVES = {
         "power": 180,
         "accuracy": 95,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "night-daze": {
         "name": "Night Daze",
@@ -2428,7 +2898,8 @@ export const MOVES = {
         "power": 85,
         "accuracy": 95,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "horn-leech": {
         "name": "Horn Leech",
@@ -2436,7 +2907,11 @@ export const MOVES = {
         "power": 75,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "drainPerc": 0.5,
+            "desc": "Recovers 50% of damage dealt."
+        }
     },
     "water-shuriken": {
         "name": "Water Shuriken",
@@ -2444,7 +2919,8 @@ export const MOVES = {
         "power": 15,
         "accuracy": 100,
         "category": "Special",
-        "priority": 1
+        "priority": 1,
+        "effects": null
     },
     "head-charge": {
         "name": "Head Charge",
@@ -2452,7 +2928,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "fire-lash": {
         "name": "Fire Lash",
@@ -2460,7 +2937,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "fiery-dance": {
         "name": "Fiery Dance",
@@ -2468,7 +2946,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "bleakwind-storm": {
         "name": "Bleakwind Storm",
@@ -2476,7 +2955,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 80,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "wildbolt-storm": {
         "name": "Wildbolt Storm",
@@ -2484,7 +2964,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 80,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "blue-flare": {
         "name": "Blue Flare",
@@ -2492,7 +2973,8 @@ export const MOVES = {
         "power": 130,
         "accuracy": 85,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "fusion-flare": {
         "name": "Fusion Flare",
@@ -2500,7 +2982,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "bolt-strike": {
         "name": "Bolt Strike",
@@ -2508,7 +2991,8 @@ export const MOVES = {
         "power": 130,
         "accuracy": 85,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "fusion-bolt": {
         "name": "Fusion Bolt",
@@ -2516,7 +3000,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "sandsear-storm": {
         "name": "Sandsear Storm",
@@ -2524,7 +3009,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 80,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "glaciate": {
         "name": "Glaciate",
@@ -2532,7 +3018,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 95,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "secret-sword": {
         "name": "Secret Sword",
@@ -2540,7 +3027,8 @@ export const MOVES = {
         "power": 85,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "relic-song": {
         "name": "Relic Song",
@@ -2548,7 +3036,8 @@ export const MOVES = {
         "power": 75,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "techno-blast": {
         "name": "Techno Blast",
@@ -2556,7 +3045,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "parabolic-charge": {
         "name": "Parabolic Charge",
@@ -2564,7 +3054,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "flying-press": {
         "name": "Flying Press",
@@ -2572,7 +3063,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 95,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "oblivion-wing": {
         "name": "Oblivion Wing",
@@ -2580,7 +3072,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "thousand-arrows": {
         "name": "Thousand Arrows",
@@ -2588,7 +3081,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "thousand-waves": {
         "name": "Thousand Waves",
@@ -2596,7 +3090,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "lands-wrath": {
         "name": "Lands Wrath",
@@ -2604,7 +3099,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "core-enforcer": {
         "name": "Core Enforcer",
@@ -2612,7 +3108,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "diamond-storm": {
         "name": "Diamond Storm",
@@ -2620,7 +3117,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 95,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "hyperspace-hole": {
         "name": "Hyperspace Hole",
@@ -2628,7 +3126,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "steam-eruption": {
         "name": "Steam Eruption",
@@ -2636,7 +3135,8 @@ export const MOVES = {
         "power": 110,
         "accuracy": 95,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "spirit-shackle": {
         "name": "Spirit Shackle",
@@ -2644,7 +3144,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "beak-blast": {
         "name": "Beak Blast",
@@ -2652,7 +3153,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 100,
         "category": "Physical",
-        "priority": -3
+        "priority": -3,
+        "effects": null
     },
     "ice-hammer": {
         "name": "Ice Hammer",
@@ -2660,7 +3162,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "revelation-dance": {
         "name": "Revelation Dance",
@@ -2668,7 +3171,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "accelerock": {
         "name": "Accelerock",
@@ -2676,7 +3180,8 @@ export const MOVES = {
         "power": 40,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 1
+        "priority": 1,
+        "effects": null
     },
     "trop-kick": {
         "name": "Trop Kick",
@@ -2684,7 +3189,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "multi-attack": {
         "name": "Multi Attack",
@@ -2692,7 +3198,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "shell-trap": {
         "name": "Shell Trap",
@@ -2700,7 +3207,8 @@ export const MOVES = {
         "power": 150,
         "accuracy": 100,
         "category": "Special",
-        "priority": -3
+        "priority": -3,
+        "effects": null
     },
     "zing-zap": {
         "name": "Zing Zap",
@@ -2708,7 +3216,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "anchor-shot": {
         "name": "Anchor Shot",
@@ -2716,7 +3225,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "clanging-scales": {
         "name": "Clanging Scales",
@@ -2724,7 +3234,8 @@ export const MOVES = {
         "power": 110,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "sunsteel-strike": {
         "name": "Sunsteel Strike",
@@ -2732,7 +3243,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "moongeist-beam": {
         "name": "Moongeist Beam",
@@ -2740,7 +3252,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "prismatic-laser": {
         "name": "Prismatic Laser",
@@ -2748,7 +3261,8 @@ export const MOVES = {
         "power": 160,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "photon-geyser": {
         "name": "Photon Geyser",
@@ -2756,7 +3270,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "fleur-cannon": {
         "name": "Fleur Cannon",
@@ -2764,7 +3279,13 @@ export const MOVES = {
         "power": 130,
         "accuracy": 90,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "selfDrop": {
+                "spa": -2
+            },
+            "desc": "Lowers Sp. Atk by 2."
+        }
     },
     "spectral-thief": {
         "name": "Spectral Thief",
@@ -2772,7 +3293,8 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "mind-blown": {
         "name": "Mind Blown",
@@ -2780,7 +3302,8 @@ export const MOVES = {
         "power": 150,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "plasma-fists": {
         "name": "Plasma Fists",
@@ -2788,7 +3311,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "double-iron-bash": {
         "name": "Double Iron Bash",
@@ -2796,7 +3320,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "drum-beating": {
         "name": "Drum Beating",
@@ -2804,7 +3329,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "pyro-ball": {
         "name": "Pyro Ball",
@@ -2812,7 +3338,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "snipe-shot": {
         "name": "Snipe Shot",
@@ -2820,7 +3347,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "jaw-lock": {
         "name": "Jaw Lock",
@@ -2828,7 +3356,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "grav-apple": {
         "name": "Grav Apple",
@@ -2836,7 +3365,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "apple-acid": {
         "name": "Apple Acid",
@@ -2844,7 +3374,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "overdrive": {
         "name": "Overdrive",
@@ -2852,7 +3383,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "false-surrender": {
         "name": "False Surrender",
@@ -2860,7 +3392,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "spirit-break": {
         "name": "Spirit Break",
@@ -2868,7 +3401,8 @@ export const MOVES = {
         "power": 75,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "meteor-assault": {
         "name": "Meteor Assault",
@@ -2876,7 +3410,11 @@ export const MOVES = {
         "power": 150,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "recharge": true,
+            "desc": "User must recharge next turn."
+        }
     },
     "aura-wheel": {
         "name": "Aura Wheel",
@@ -2884,7 +3422,8 @@ export const MOVES = {
         "power": 110,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "bolt-beak": {
         "name": "Bolt Beak",
@@ -2892,7 +3431,8 @@ export const MOVES = {
         "power": 85,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "fishious-rend": {
         "name": "Fishious Rend",
@@ -2900,7 +3440,8 @@ export const MOVES = {
         "power": 85,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "dynamax-cannon": {
         "name": "Dynamax Cannon",
@@ -2908,7 +3449,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "eternabeam": {
         "name": "Eternabeam",
@@ -2916,7 +3458,8 @@ export const MOVES = {
         "power": 160,
         "accuracy": 90,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "wicked-blow": {
         "name": "Wicked Blow",
@@ -2924,7 +3467,8 @@ export const MOVES = {
         "power": 75,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "thunder-cage": {
         "name": "Thunder Cage",
@@ -2932,7 +3476,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 90,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "dragon-energy": {
         "name": "Dragon Energy",
@@ -2940,7 +3485,8 @@ export const MOVES = {
         "power": 150,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "stone-axe": {
         "name": "Stone Axe",
@@ -2948,7 +3494,8 @@ export const MOVES = {
         "power": 65,
         "accuracy": 90,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "dire-claw": {
         "name": "Dire Claw",
@@ -2956,7 +3503,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "springtide-storm": {
         "name": "Springtide Storm",
@@ -2964,7 +3512,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 80,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "flower-trick": {
         "name": "Flower Trick",
@@ -2972,7 +3521,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "torch-song": {
         "name": "Torch Song",
@@ -2980,7 +3530,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "aqua-step": {
         "name": "Aqua Step",
@@ -2988,7 +3539,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "double-shock": {
         "name": "Double Shock",
@@ -2996,7 +3548,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "armor-cannon": {
         "name": "Armor Cannon",
@@ -3004,7 +3557,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "bitter-blade": {
         "name": "Bitter Blade",
@@ -3012,7 +3566,11 @@ export const MOVES = {
         "power": 90,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "drainPerc": 0.5,
+            "desc": "Recovers 50% of damage dealt."
+        }
     },
     "lumina-crash": {
         "name": "Lumina Crash",
@@ -3020,7 +3578,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "gigaton-hammer": {
         "name": "Gigaton Hammer",
@@ -3028,7 +3587,8 @@ export const MOVES = {
         "power": 160,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "jet-punch": {
         "name": "Jet Punch",
@@ -3036,7 +3596,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 1
+        "priority": 1,
+        "effects": null
     },
     "spin-out": {
         "name": "Spin Out",
@@ -3044,7 +3605,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "order-up": {
         "name": "Order Up",
@@ -3052,7 +3614,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "kowtow-cleave": {
         "name": "Kowtow Cleave",
@@ -3060,7 +3623,8 @@ export const MOVES = {
         "power": 85,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "glaive-rush": {
         "name": "Glaive Rush",
@@ -3068,7 +3632,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "make-it-rain": {
         "name": "Make It Rain",
@@ -3076,7 +3641,13 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": {
+            "selfDrop": {
+                "spa": -1
+            },
+            "desc": "Lowers Sp. Atk by 1."
+        }
     },
     "collision-course": {
         "name": "Collision Course",
@@ -3084,7 +3655,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "electro-drift": {
         "name": "Electro Drift",
@@ -3092,7 +3664,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "hydro-steam": {
         "name": "Hydro Steam",
@@ -3100,7 +3673,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "psyblade": {
         "name": "Psyblade",
@@ -3108,7 +3682,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "syrup-bomb": {
         "name": "Syrup Bomb",
@@ -3116,7 +3691,8 @@ export const MOVES = {
         "power": 60,
         "accuracy": 85,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "matcha-gotcha": {
         "name": "Matcha Gotcha",
@@ -3124,7 +3700,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 90,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "ivy-cudgel": {
         "name": "Ivy Cudgel",
@@ -3132,7 +3709,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "electro-shot": {
         "name": "Electro Shot",
@@ -3140,7 +3718,8 @@ export const MOVES = {
         "power": 130,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "fickle-beam": {
         "name": "Fickle Beam",
@@ -3148,7 +3727,8 @@ export const MOVES = {
         "power": 80,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "thunderclap": {
         "name": "Thunderclap",
@@ -3156,7 +3736,8 @@ export const MOVES = {
         "power": 70,
         "accuracy": 100,
         "category": "Special",
-        "priority": 1
+        "priority": 1,
+        "effects": null
     },
     "mighty-cleave": {
         "name": "Mighty Cleave",
@@ -3164,7 +3745,8 @@ export const MOVES = {
         "power": 95,
         "accuracy": 100,
         "category": "Physical",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "tera-starstorm": {
         "name": "Tera Starstorm",
@@ -3172,7 +3754,8 @@ export const MOVES = {
         "power": 120,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     },
     "malignant-chain": {
         "name": "Malignant Chain",
@@ -3180,7 +3763,8 @@ export const MOVES = {
         "power": 100,
         "accuracy": 100,
         "category": "Special",
-        "priority": 0
+        "priority": 0,
+        "effects": null
     }
 };
 
@@ -3191,6 +3775,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Poison"
+        ],
+        "abilities": [
+            "Overgrow",
+            "Chlorophyll"
         ],
         "hp": 200,
         "atk": 103,
@@ -3238,6 +3826,10 @@ export const POKEMON_DB = [
             "Grass",
             "Poison"
         ],
+        "abilities": [
+            "Overgrow",
+            "Chlorophyll"
+        ],
         "hp": 230,
         "atk": 129,
         "def": 131,
@@ -3280,6 +3872,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Poison"
+        ],
+        "abilities": [
+            "Overgrow",
+            "Chlorophyll"
         ],
         "hp": 270,
         "atk": 169,
@@ -3332,6 +3928,10 @@ export const POKEMON_DB = [
         "name": "Charmander",
         "types": [
             "Fire"
+        ],
+        "abilities": [
+            "Blaze",
+            "Solar Power"
         ],
         "hp": 188,
         "atk": 109,
@@ -3402,6 +4002,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire"
         ],
+        "abilities": [
+            "Blaze",
+            "Solar Power"
+        ],
         "hp": 226,
         "atk": 133,
         "def": 121,
@@ -3469,6 +4073,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Flying"
+        ],
+        "abilities": [
+            "Blaze",
+            "Solar Power"
         ],
         "hp": 266,
         "atk": 173,
@@ -3555,6 +4163,10 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Torrent",
+            "Rain Dish"
+        ],
         "hp": 198,
         "atk": 101,
         "def": 135,
@@ -3621,6 +4233,10 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Torrent",
+            "Rain Dish"
+        ],
         "hp": 228,
         "atk": 131,
         "def": 165,
@@ -3686,6 +4302,10 @@ export const POKEMON_DB = [
         "name": "Blastoise",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Torrent",
+            "Rain Dish"
         ],
         "hp": 268,
         "atk": 171,
@@ -3767,6 +4387,10 @@ export const POKEMON_DB = [
         "types": [
             "Bug"
         ],
+        "abilities": [
+            "Shield Dust",
+            "Run Away"
+        ],
         "hp": 200,
         "atk": 65,
         "def": 75,
@@ -3787,6 +4411,9 @@ export const POKEMON_DB = [
         "name": "Metapod",
         "types": [
             "Bug"
+        ],
+        "abilities": [
+            "Shed Skin"
         ],
         "hp": 210,
         "atk": 45,
@@ -3809,6 +4436,10 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Flying"
+        ],
+        "abilities": [
+            "Compound Eyes",
+            "Tinted Lens"
         ],
         "hp": 230,
         "atk": 95,
@@ -3861,6 +4492,10 @@ export const POKEMON_DB = [
             "Bug",
             "Poison"
         ],
+        "abilities": [
+            "Shield Dust",
+            "Run Away"
+        ],
         "hp": 190,
         "atk": 75,
         "def": 65,
@@ -3883,6 +4518,9 @@ export const POKEMON_DB = [
             "Bug",
             "Poison"
         ],
+        "abilities": [
+            "Shed Skin"
+        ],
         "hp": 200,
         "atk": 55,
         "def": 105,
@@ -3904,6 +4542,10 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Poison"
+        ],
+        "abilities": [
+            "Swarm",
+            "Sniper"
         ],
         "hp": 240,
         "atk": 185,
@@ -3956,6 +4598,11 @@ export const POKEMON_DB = [
             "Normal",
             "Flying"
         ],
+        "abilities": [
+            "Keen Eye",
+            "Tangled Feet",
+            "Big Pecks"
+        ],
         "hp": 190,
         "atk": 95,
         "def": 85,
@@ -4000,6 +4647,11 @@ export const POKEMON_DB = [
             "Normal",
             "Flying"
         ],
+        "abilities": [
+            "Keen Eye",
+            "Tangled Feet",
+            "Big Pecks"
+        ],
         "hp": 236,
         "atk": 125,
         "def": 115,
@@ -4041,6 +4693,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Flying"
+        ],
+        "abilities": [
+            "Keen Eye",
+            "Tangled Feet",
+            "Big Pecks"
         ],
         "hp": 276,
         "atk": 165,
@@ -4084,6 +4741,11 @@ export const POKEMON_DB = [
         "name": "Rattata",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Run Away",
+            "Guts",
+            "Hustle"
         ],
         "hp": 170,
         "atk": 117,
@@ -4139,6 +4801,11 @@ export const POKEMON_DB = [
         "name": "Raticate",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Run Away",
+            "Guts",
+            "Hustle"
         ],
         "hp": 220,
         "atk": 167,
@@ -4199,6 +4866,10 @@ export const POKEMON_DB = [
             "Normal",
             "Flying"
         ],
+        "abilities": [
+            "Keen Eye",
+            "Sniper"
+        ],
         "hp": 190,
         "atk": 125,
         "def": 65,
@@ -4243,6 +4914,10 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Flying"
+        ],
+        "abilities": [
+            "Keen Eye",
+            "Sniper"
         ],
         "hp": 240,
         "atk": 185,
@@ -4289,6 +4964,11 @@ export const POKEMON_DB = [
         "name": "Ekans",
         "types": [
             "Poison"
+        ],
+        "abilities": [
+            "Intimidate",
+            "Shed Skin",
+            "Unnerve"
         ],
         "hp": 180,
         "atk": 125,
@@ -4348,6 +5028,11 @@ export const POKEMON_DB = [
         "name": "Arbok",
         "types": [
             "Poison"
+        ],
+        "abilities": [
+            "Intimidate",
+            "Shed Skin",
+            "Unnerve"
         ],
         "hp": 230,
         "atk": 195,
@@ -4416,6 +5101,10 @@ export const POKEMON_DB = [
         "types": [
             "Electric"
         ],
+        "abilities": [
+            "Static",
+            "Lightning Rod"
+        ],
         "hp": 180,
         "atk": 115,
         "def": 85,
@@ -4476,6 +5165,10 @@ export const POKEMON_DB = [
         "name": "Raichu",
         "types": [
             "Electric"
+        ],
+        "abilities": [
+            "Static",
+            "Lightning Rod"
         ],
         "hp": 230,
         "atk": 185,
@@ -4542,6 +5235,10 @@ export const POKEMON_DB = [
         "types": [
             "Ground"
         ],
+        "abilities": [
+            "Sand Veil",
+            "Sand Rush"
+        ],
         "hp": 210,
         "atk": 155,
         "def": 175,
@@ -4601,6 +5298,10 @@ export const POKEMON_DB = [
         "name": "Sandslash",
         "types": [
             "Ground"
+        ],
+        "abilities": [
+            "Sand Veil",
+            "Sand Rush"
         ],
         "hp": 260,
         "atk": 205,
@@ -4666,6 +5367,11 @@ export const POKEMON_DB = [
         "types": [
             "Poison"
         ],
+        "abilities": [
+            "Poison Point",
+            "Rivalry",
+            "Hustle"
+        ],
         "hp": 220,
         "atk": 99,
         "def": 109,
@@ -4710,6 +5416,11 @@ export const POKEMON_DB = [
         "name": "Nidorina",
         "types": [
             "Poison"
+        ],
+        "abilities": [
+            "Poison Point",
+            "Rivalry",
+            "Hustle"
         ],
         "hp": 250,
         "atk": 129,
@@ -4757,6 +5468,11 @@ export const POKEMON_DB = [
         "types": [
             "Poison",
             "Ground"
+        ],
+        "abilities": [
+            "Poison Point",
+            "Rivalry",
+            "Sheer Force"
         ],
         "hp": 290,
         "atk": 189,
@@ -4844,6 +5560,11 @@ export const POKEMON_DB = [
         "types": [
             "Poison"
         ],
+        "abilities": [
+            "Poison Point",
+            "Rivalry",
+            "Hustle"
+        ],
         "hp": 202,
         "atk": 119,
         "def": 85,
@@ -4892,6 +5613,11 @@ export const POKEMON_DB = [
         "types": [
             "Poison"
         ],
+        "abilities": [
+            "Poison Point",
+            "Rivalry",
+            "Hustle"
+        ],
         "hp": 232,
         "atk": 149,
         "def": 119,
@@ -4939,6 +5665,11 @@ export const POKEMON_DB = [
         "types": [
             "Poison",
             "Ground"
+        ],
+        "abilities": [
+            "Poison Point",
+            "Rivalry",
+            "Sheer Force"
         ],
         "hp": 272,
         "atk": 209,
@@ -5028,6 +5759,11 @@ export const POKEMON_DB = [
         "types": [
             "Fairy"
         ],
+        "abilities": [
+            "Cute Charm",
+            "Magic Guard",
+            "Friend Guard"
+        ],
         "hp": 250,
         "atk": 95,
         "def": 101,
@@ -5107,6 +5843,11 @@ export const POKEMON_DB = [
         "name": "Clefable",
         "types": [
             "Fairy"
+        ],
+        "abilities": [
+            "Cute Charm",
+            "Magic Guard",
+            "Unaware"
         ],
         "hp": 300,
         "atk": 145,
@@ -5191,6 +5932,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire"
         ],
+        "abilities": [
+            "Flash Fire",
+            "Drought"
+        ],
         "hp": 186,
         "atk": 87,
         "def": 85,
@@ -5242,6 +5987,10 @@ export const POKEMON_DB = [
         "name": "Ninetales",
         "types": [
             "Fire"
+        ],
+        "abilities": [
+            "Flash Fire",
+            "Drought"
         ],
         "hp": 256,
         "atk": 157,
@@ -5300,6 +6049,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Fairy"
+        ],
+        "abilities": [
+            "Cute Charm",
+            "Competitive",
+            "Friend Guard"
         ],
         "hp": 340,
         "atk": 95,
@@ -5382,6 +6136,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Fairy"
+        ],
+        "abilities": [
+            "Cute Charm",
+            "Competitive",
+            "Frisk"
         ],
         "hp": 390,
         "atk": 145,
@@ -5468,6 +6227,10 @@ export const POKEMON_DB = [
             "Poison",
             "Flying"
         ],
+        "abilities": [
+            "Inner Focus",
+            "Infiltrator"
+        ],
         "hp": 190,
         "atk": 95,
         "def": 75,
@@ -5520,6 +6283,10 @@ export const POKEMON_DB = [
         "types": [
             "Poison",
             "Flying"
+        ],
+        "abilities": [
+            "Inner Focus",
+            "Infiltrator"
         ],
         "hp": 260,
         "atk": 165,
@@ -5575,6 +6342,10 @@ export const POKEMON_DB = [
             "Grass",
             "Poison"
         ],
+        "abilities": [
+            "Chlorophyll",
+            "Run Away"
+        ],
         "hp": 200,
         "atk": 105,
         "def": 115,
@@ -5613,6 +6384,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Poison"
+        ],
+        "abilities": [
+            "Chlorophyll",
+            "Stench"
         ],
         "hp": 230,
         "atk": 135,
@@ -5655,6 +6430,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Poison"
+        ],
+        "abilities": [
+            "Chlorophyll",
+            "Effect Spore"
         ],
         "hp": 260,
         "atk": 165,
@@ -5703,6 +6482,11 @@ export const POKEMON_DB = [
             "Bug",
             "Grass"
         ],
+        "abilities": [
+            "Effect Spore",
+            "Dry Skin",
+            "Damp"
+        ],
         "hp": 180,
         "atk": 145,
         "def": 115,
@@ -5746,6 +6530,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Grass"
+        ],
+        "abilities": [
+            "Effect Spore",
+            "Dry Skin",
+            "Damp"
         ],
         "hp": 230,
         "atk": 195,
@@ -5793,6 +6582,11 @@ export const POKEMON_DB = [
             "Bug",
             "Poison"
         ],
+        "abilities": [
+            "Compound Eyes",
+            "Tinted Lens",
+            "Run Away"
+        ],
         "hp": 230,
         "atk": 115,
         "def": 105,
@@ -5835,6 +6629,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Poison"
+        ],
+        "abilities": [
+            "Shield Dust",
+            "Tinted Lens",
+            "Wonder Skin"
         ],
         "hp": 250,
         "atk": 135,
@@ -5890,6 +6689,11 @@ export const POKEMON_DB = [
         "types": [
             "Ground"
         ],
+        "abilities": [
+            "Sand Veil",
+            "Arena Trap",
+            "Sand Force"
+        ],
         "hp": 130,
         "atk": 115,
         "def": 55,
@@ -5938,6 +6742,11 @@ export const POKEMON_DB = [
         "name": "Dugtrio",
         "types": [
             "Ground"
+        ],
+        "abilities": [
+            "Sand Veil",
+            "Arena Trap",
+            "Sand Force"
         ],
         "hp": 180,
         "atk": 205,
@@ -5991,6 +6800,11 @@ export const POKEMON_DB = [
         "name": "Meowth",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Pickup",
+            "Technician",
+            "Unnerve"
         ],
         "hp": 190,
         "atk": 95,
@@ -6056,6 +6870,11 @@ export const POKEMON_DB = [
         "name": "Persian",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Limber",
+            "Technician",
+            "Unnerve"
         ],
         "hp": 240,
         "atk": 145,
@@ -6124,6 +6943,11 @@ export const POKEMON_DB = [
         "name": "Psyduck",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Damp",
+            "Cloud Nine",
+            "Swift Swim"
         ],
         "hp": 210,
         "atk": 109,
@@ -6194,6 +7018,11 @@ export const POKEMON_DB = [
         "name": "Golduck",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Damp",
+            "Cloud Nine",
+            "Swift Swim"
         ],
         "hp": 270,
         "atk": 169,
@@ -6267,6 +7096,11 @@ export const POKEMON_DB = [
         "name": "Mankey",
         "types": [
             "Fighting"
+        ],
+        "abilities": [
+            "Vital Spirit",
+            "Anger Point",
+            "Defiant"
         ],
         "hp": 190,
         "atk": 165,
@@ -6343,6 +7177,11 @@ export const POKEMON_DB = [
         "types": [
             "Fighting"
         ],
+        "abilities": [
+            "Vital Spirit",
+            "Anger Point",
+            "Defiant"
+        ],
         "hp": 240,
         "atk": 215,
         "def": 125,
@@ -6417,6 +7256,11 @@ export const POKEMON_DB = [
         "types": [
             "Fire"
         ],
+        "abilities": [
+            "Intimidate",
+            "Flash Fire",
+            "Justified"
+        ],
         "hp": 220,
         "atk": 145,
         "def": 95,
@@ -6474,6 +7318,11 @@ export const POKEMON_DB = [
         "name": "Arcanine",
         "types": [
             "Fire"
+        ],
+        "abilities": [
+            "Intimidate",
+            "Flash Fire",
+            "Justified"
         ],
         "hp": 290,
         "atk": 225,
@@ -6541,6 +7390,11 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Water Absorb",
+            "Damp",
+            "Swift Swim"
+        ],
         "hp": 190,
         "atk": 105,
         "def": 85,
@@ -6589,6 +7443,11 @@ export const POKEMON_DB = [
         "name": "Poliwhirl",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Water Absorb",
+            "Damp",
+            "Swift Swim"
         ],
         "hp": 240,
         "atk": 135,
@@ -6647,6 +7506,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Fighting"
+        ],
+        "abilities": [
+            "Water Absorb",
+            "Damp",
+            "Swift Swim"
         ],
         "hp": 290,
         "atk": 195,
@@ -6721,6 +7585,11 @@ export const POKEMON_DB = [
         "types": [
             "Psychic"
         ],
+        "abilities": [
+            "Synchronize",
+            "Inner Focus",
+            "Magic Guard"
+        ],
         "hp": 160,
         "atk": 45,
         "def": 35,
@@ -6771,6 +7640,11 @@ export const POKEMON_DB = [
         "name": "Kadabra",
         "types": [
             "Psychic"
+        ],
+        "abilities": [
+            "Synchronize",
+            "Inner Focus",
+            "Magic Guard"
         ],
         "hp": 190,
         "atk": 75,
@@ -6827,6 +7701,11 @@ export const POKEMON_DB = [
         "name": "Alakazam",
         "types": [
             "Psychic"
+        ],
+        "abilities": [
+            "Synchronize",
+            "Inner Focus",
+            "Magic Guard"
         ],
         "hp": 220,
         "atk": 105,
@@ -6886,6 +7765,11 @@ export const POKEMON_DB = [
         "name": "Machop",
         "types": [
             "Fighting"
+        ],
+        "abilities": [
+            "Guts",
+            "No Guard",
+            "Steadfast"
         ],
         "hp": 250,
         "atk": 165,
@@ -6949,6 +7833,11 @@ export const POKEMON_DB = [
         "types": [
             "Fighting"
         ],
+        "abilities": [
+            "Guts",
+            "No Guard",
+            "Steadfast"
+        ],
         "hp": 270,
         "atk": 205,
         "def": 145,
@@ -7009,6 +7898,11 @@ export const POKEMON_DB = [
         "name": "Machamp",
         "types": [
             "Fighting"
+        ],
+        "abilities": [
+            "Guts",
+            "No Guard",
+            "Steadfast"
         ],
         "hp": 290,
         "atk": 265,
@@ -7081,6 +7975,10 @@ export const POKEMON_DB = [
             "Grass",
             "Poison"
         ],
+        "abilities": [
+            "Chlorophyll",
+            "Gluttony"
+        ],
         "hp": 210,
         "atk": 155,
         "def": 75,
@@ -7126,6 +8024,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Poison"
+        ],
+        "abilities": [
+            "Chlorophyll",
+            "Gluttony"
         ],
         "hp": 240,
         "atk": 185,
@@ -7174,6 +8076,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Poison"
+        ],
+        "abilities": [
+            "Chlorophyll",
+            "Gluttony"
         ],
         "hp": 270,
         "atk": 215,
@@ -7226,6 +8132,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Poison"
+        ],
+        "abilities": [
+            "Clear Body",
+            "Liquid Ooze",
+            "Rain Dish"
         ],
         "hp": 190,
         "atk": 85,
@@ -7283,6 +8194,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Poison"
+        ],
+        "abilities": [
+            "Clear Body",
+            "Liquid Ooze",
+            "Rain Dish"
         ],
         "hp": 270,
         "atk": 145,
@@ -7344,6 +8260,11 @@ export const POKEMON_DB = [
             "Rock",
             "Ground"
         ],
+        "abilities": [
+            "Rock Head",
+            "Sturdy",
+            "Sand Veil"
+        ],
         "hp": 190,
         "atk": 165,
         "def": 205,
@@ -7398,6 +8319,11 @@ export const POKEMON_DB = [
         "types": [
             "Rock",
             "Ground"
+        ],
+        "abilities": [
+            "Rock Head",
+            "Sturdy",
+            "Sand Veil"
         ],
         "hp": 220,
         "atk": 195,
@@ -7456,6 +8382,11 @@ export const POKEMON_DB = [
         "types": [
             "Rock",
             "Ground"
+        ],
+        "abilities": [
+            "Rock Head",
+            "Sturdy",
+            "Sand Veil"
         ],
         "hp": 270,
         "atk": 245,
@@ -7518,6 +8449,11 @@ export const POKEMON_DB = [
         "types": [
             "Fire"
         ],
+        "abilities": [
+            "Run Away",
+            "Flash Fire",
+            "Flame Body"
+        ],
         "hp": 210,
         "atk": 175,
         "def": 115,
@@ -7564,6 +8500,11 @@ export const POKEMON_DB = [
         "name": "Rapidash",
         "types": [
             "Fire"
+        ],
+        "abilities": [
+            "Run Away",
+            "Flash Fire",
+            "Flame Body"
         ],
         "hp": 240,
         "atk": 205,
@@ -7619,6 +8560,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Psychic"
+        ],
+        "abilities": [
+            "Oblivious",
+            "Own Tempo",
+            "Regenerator"
         ],
         "hp": 290,
         "atk": 135,
@@ -7685,6 +8631,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Psychic"
+        ],
+        "abilities": [
+            "Oblivious",
+            "Own Tempo",
+            "Regenerator"
         ],
         "hp": 300,
         "atk": 155,
@@ -7767,6 +8718,11 @@ export const POKEMON_DB = [
             "Electric",
             "Steel"
         ],
+        "abilities": [
+            "Magnet Pull",
+            "Sturdy",
+            "Analytic"
+        ],
         "hp": 160,
         "atk": 75,
         "def": 145,
@@ -7810,6 +8766,11 @@ export const POKEMON_DB = [
         "types": [
             "Electric",
             "Steel"
+        ],
+        "abilities": [
+            "Magnet Pull",
+            "Sturdy",
+            "Analytic"
         ],
         "hp": 210,
         "atk": 125,
@@ -7857,6 +8818,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Flying"
+        ],
+        "abilities": [
+            "Keen Eye",
+            "Inner Focus",
+            "Defiant"
         ],
         "hp": 214,
         "atk": 185,
@@ -7919,6 +8885,11 @@ export const POKEMON_DB = [
             "Normal",
             "Flying"
         ],
+        "abilities": [
+            "Run Away",
+            "Early Bird",
+            "Tangled Feet"
+        ],
         "hp": 180,
         "atk": 175,
         "def": 95,
@@ -7968,6 +8939,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Flying"
+        ],
+        "abilities": [
+            "Run Away",
+            "Early Bird",
+            "Tangled Feet"
         ],
         "hp": 230,
         "atk": 225,
@@ -8020,6 +8996,11 @@ export const POKEMON_DB = [
         "name": "Seel",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Thick Fat",
+            "Hydration",
+            "Ice Body"
         ],
         "hp": 240,
         "atk": 95,
@@ -8077,6 +9058,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Ice"
+        ],
+        "abilities": [
+            "Thick Fat",
+            "Hydration",
+            "Ice Body"
         ],
         "hp": 290,
         "atk": 145,
@@ -8140,6 +9126,11 @@ export const POKEMON_DB = [
         "types": [
             "Poison"
         ],
+        "abilities": [
+            "Stench",
+            "Sticky Hold",
+            "Poison Touch"
+        ],
         "hp": 270,
         "atk": 165,
         "def": 105,
@@ -8198,6 +9189,11 @@ export const POKEMON_DB = [
         "name": "Muk",
         "types": [
             "Poison"
+        ],
+        "abilities": [
+            "Stench",
+            "Sticky Hold",
+            "Poison Touch"
         ],
         "hp": 320,
         "atk": 215,
@@ -8267,6 +9263,11 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Shell Armor",
+            "Skill Link",
+            "Overcoat"
+        ],
         "hp": 170,
         "atk": 135,
         "def": 205,
@@ -8313,6 +9314,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Ice"
+        ],
+        "abilities": [
+            "Shell Armor",
+            "Skill Link",
+            "Overcoat"
         ],
         "hp": 210,
         "atk": 195,
@@ -8371,6 +9377,9 @@ export const POKEMON_DB = [
             "Ghost",
             "Poison"
         ],
+        "abilities": [
+            "Levitate"
+        ],
         "hp": 170,
         "atk": 75,
         "def": 65,
@@ -8424,6 +9433,9 @@ export const POKEMON_DB = [
         "types": [
             "Ghost",
             "Poison"
+        ],
+        "abilities": [
+            "Levitate"
         ],
         "hp": 200,
         "atk": 105,
@@ -8482,6 +9494,9 @@ export const POKEMON_DB = [
         "types": [
             "Ghost",
             "Poison"
+        ],
+        "abilities": [
+            "Cursed Body"
         ],
         "hp": 230,
         "atk": 135,
@@ -8556,6 +9571,11 @@ export const POKEMON_DB = [
             "Rock",
             "Ground"
         ],
+        "abilities": [
+            "Rock Head",
+            "Sturdy",
+            "Weak Armor"
+        ],
         "hp": 180,
         "atk": 95,
         "def": 325,
@@ -8609,6 +9629,11 @@ export const POKEMON_DB = [
         "name": "Drowzee",
         "types": [
             "Psychic"
+        ],
+        "abilities": [
+            "Insomnia",
+            "Forewarn",
+            "Inner Focus"
         ],
         "hp": 230,
         "atk": 101,
@@ -8668,6 +9693,11 @@ export const POKEMON_DB = [
         "name": "Hypno",
         "types": [
             "Psychic"
+        ],
+        "abilities": [
+            "Insomnia",
+            "Forewarn",
+            "Inner Focus"
         ],
         "hp": 280,
         "atk": 151,
@@ -8731,6 +9761,11 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Hyper Cutter",
+            "Shell Armor",
+            "Sheer Force"
+        ],
         "hp": 170,
         "atk": 215,
         "def": 185,
@@ -8785,6 +9820,11 @@ export const POKEMON_DB = [
         "name": "Kingler",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Hyper Cutter",
+            "Shell Armor",
+            "Sheer Force"
         ],
         "hp": 220,
         "atk": 265,
@@ -8844,6 +9884,11 @@ export const POKEMON_DB = [
         "types": [
             "Electric"
         ],
+        "abilities": [
+            "Soundproof",
+            "Static",
+            "Aftermath"
+        ],
         "hp": 190,
         "atk": 65,
         "def": 105,
@@ -8884,6 +9929,11 @@ export const POKEMON_DB = [
         "name": "Electrode",
         "types": [
             "Electric"
+        ],
+        "abilities": [
+            "Soundproof",
+            "Static",
+            "Aftermath"
         ],
         "hp": 230,
         "atk": 105,
@@ -8931,6 +9981,10 @@ export const POKEMON_DB = [
             "Grass",
             "Psychic"
         ],
+        "abilities": [
+            "Chlorophyll",
+            "Harvest"
+        ],
         "hp": 230,
         "atk": 85,
         "def": 165,
@@ -8977,6 +10031,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Psychic"
+        ],
+        "abilities": [
+            "Chlorophyll",
+            "Harvest"
         ],
         "hp": 300,
         "atk": 195,
@@ -9036,6 +10094,11 @@ export const POKEMON_DB = [
         "name": "Cubone",
         "types": [
             "Ground"
+        ],
+        "abilities": [
+            "Rock Head",
+            "Lightning Rod",
+            "Battle Armor"
         ],
         "hp": 210,
         "atk": 105,
@@ -9100,6 +10163,11 @@ export const POKEMON_DB = [
         "name": "Marowak",
         "types": [
             "Ground"
+        ],
+        "abilities": [
+            "Rock Head",
+            "Lightning Rod",
+            "Battle Armor"
         ],
         "hp": 230,
         "atk": 165,
@@ -9168,6 +10236,11 @@ export const POKEMON_DB = [
         "name": "Hitmonlee",
         "types": [
             "Fighting"
+        ],
+        "abilities": [
+            "Limber",
+            "Reckless",
+            "Unburden"
         ],
         "hp": 210,
         "atk": 245,
@@ -9239,6 +10312,11 @@ export const POKEMON_DB = [
         "types": [
             "Fighting"
         ],
+        "abilities": [
+            "Keen Eye",
+            "Iron Fist",
+            "Inner Focus"
+        ],
         "hp": 210,
         "atk": 215,
         "def": 163,
@@ -9305,6 +10383,11 @@ export const POKEMON_DB = [
         "name": "Lickitung",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Own Tempo",
+            "Oblivious",
+            "Cloud Nine"
         ],
         "hp": 290,
         "atk": 115,
@@ -9386,6 +10469,11 @@ export const POKEMON_DB = [
         "types": [
             "Poison"
         ],
+        "abilities": [
+            "Levitate",
+            "Neutralizing Gas",
+            "Stench"
+        ],
         "hp": 190,
         "atk": 135,
         "def": 195,
@@ -9431,6 +10519,11 @@ export const POKEMON_DB = [
         "name": "Weezing",
         "types": [
             "Poison"
+        ],
+        "abilities": [
+            "Levitate",
+            "Neutralizing Gas",
+            "Stench"
         ],
         "hp": 240,
         "atk": 185,
@@ -9481,6 +10574,11 @@ export const POKEMON_DB = [
         "types": [
             "Ground",
             "Rock"
+        ],
+        "abilities": [
+            "Lightning Rod",
+            "Rock Head",
+            "Reckless"
         ],
         "hp": 270,
         "atk": 175,
@@ -9556,6 +10654,11 @@ export const POKEMON_DB = [
         "types": [
             "Ground",
             "Rock"
+        ],
+        "abilities": [
+            "Lightning Rod",
+            "Rock Head",
+            "Reckless"
         ],
         "hp": 320,
         "atk": 265,
@@ -9651,6 +10754,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Natural Cure",
+            "Serene Grace",
+            "Healer"
+        ],
         "hp": 610,
         "atk": 15,
         "def": 15,
@@ -9728,6 +10836,11 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Chlorophyll",
+            "Leaf Guard",
+            "Regenerator"
+        ],
         "hp": 240,
         "atk": 115,
         "def": 235,
@@ -9769,6 +10882,11 @@ export const POKEMON_DB = [
         "name": "Kangaskhan",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Early Bird",
+            "Scrappy",
+            "Inner Focus"
         ],
         "hp": 320,
         "atk": 195,
@@ -9854,6 +10972,11 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Swift Swim",
+            "Sniper",
+            "Damp"
+        ],
         "hp": 170,
         "atk": 85,
         "def": 145,
@@ -9904,6 +11027,11 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Poison Point",
+            "Sniper",
+            "Damp"
+        ],
         "hp": 220,
         "atk": 135,
         "def": 195,
@@ -9953,6 +11081,11 @@ export const POKEMON_DB = [
         "name": "Goldeen",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Swift Swim",
+            "Water Veil",
+            "Lightning Rod"
         ],
         "hp": 200,
         "atk": 139,
@@ -10005,6 +11138,11 @@ export const POKEMON_DB = [
         "name": "Seaking",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Swift Swim",
+            "Water Veil",
+            "Lightning Rod"
         ],
         "hp": 270,
         "atk": 189,
@@ -10060,6 +11198,11 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Illuminate",
+            "Natural Cure",
+            "Analytic"
+        ],
         "hp": 170,
         "atk": 95,
         "def": 115,
@@ -10109,6 +11252,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Psychic"
+        ],
+        "abilities": [
+            "Illuminate",
+            "Natural Cure",
+            "Analytic"
         ],
         "hp": 230,
         "atk": 155,
@@ -10166,6 +11314,11 @@ export const POKEMON_DB = [
         "types": [
             "Psychic",
             "Fairy"
+        ],
+        "abilities": [
+            "Soundproof",
+            "Filter",
+            "Technician"
         ],
         "hp": 190,
         "atk": 95,
@@ -10234,6 +11387,11 @@ export const POKEMON_DB = [
             "Bug",
             "Flying"
         ],
+        "abilities": [
+            "Swarm",
+            "Technician",
+            "Steadfast"
+        ],
         "hp": 250,
         "atk": 225,
         "def": 165,
@@ -10291,6 +11449,11 @@ export const POKEMON_DB = [
         "types": [
             "Ice",
             "Psychic"
+        ],
+        "abilities": [
+            "Oblivious",
+            "Forewarn",
+            "Dry Skin"
         ],
         "hp": 240,
         "atk": 105,
@@ -10352,6 +11515,10 @@ export const POKEMON_DB = [
         "name": "Electabuzz",
         "types": [
             "Electric"
+        ],
+        "abilities": [
+            "Static",
+            "Vital Spirit"
         ],
         "hp": 240,
         "atk": 171,
@@ -10418,6 +11585,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire"
         ],
+        "abilities": [
+            "Flame Body",
+            "Vital Spirit"
+        ],
         "hp": 240,
         "atk": 195,
         "def": 119,
@@ -10482,6 +11653,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug"
         ],
+        "abilities": [
+            "Hyper Cutter",
+            "Mold Breaker",
+            "Moxie"
+        ],
         "hp": 240,
         "atk": 255,
         "def": 205,
@@ -10539,6 +11715,11 @@ export const POKEMON_DB = [
         "name": "Tauros",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Intimidate",
+            "Anger Point",
+            "Sheer Force"
         ],
         "hp": 260,
         "atk": 205,
@@ -10612,6 +11793,10 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Swift Swim",
+            "Rattled"
+        ],
         "hp": 150,
         "atk": 25,
         "def": 115,
@@ -10633,6 +11818,10 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Flying"
+        ],
+        "abilities": [
+            "Intimidate",
+            "Moxie"
         ],
         "hp": 300,
         "atk": 255,
@@ -10705,6 +11894,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Ice"
+        ],
+        "abilities": [
+            "Water Absorb",
+            "Shell Armor",
+            "Hydration"
         ],
         "hp": 370,
         "atk": 175,
@@ -10780,6 +11974,10 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Limber",
+            "Imposter"
+        ],
         "hp": 206,
         "atk": 101,
         "def": 101,
@@ -10800,6 +11998,11 @@ export const POKEMON_DB = [
         "name": "Eevee",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Run Away",
+            "Adaptability",
+            "Anticipation"
         ],
         "hp": 220,
         "atk": 115,
@@ -10839,6 +12042,10 @@ export const POKEMON_DB = [
         "name": "Vaporeon",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Water Absorb",
+            "Hydration"
         ],
         "hp": 370,
         "atk": 135,
@@ -10898,6 +12105,10 @@ export const POKEMON_DB = [
         "types": [
             "Electric"
         ],
+        "abilities": [
+            "Volt Absorb",
+            "Quick Feet"
+        ],
         "hp": 240,
         "atk": 135,
         "def": 125,
@@ -10949,6 +12160,10 @@ export const POKEMON_DB = [
         "name": "Flareon",
         "types": [
             "Fire"
+        ],
+        "abilities": [
+            "Flash Fire",
+            "Guts"
         ],
         "hp": 240,
         "atk": 265,
@@ -11005,6 +12220,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Trace",
+            "Download",
+            "Analytic"
+        ],
         "hp": 240,
         "atk": 125,
         "def": 145,
@@ -11059,6 +12279,11 @@ export const POKEMON_DB = [
             "Rock",
             "Water"
         ],
+        "abilities": [
+            "Swift Swim",
+            "Shell Armor",
+            "Weak Armor"
+        ],
         "hp": 180,
         "atk": 85,
         "def": 205,
@@ -11108,6 +12333,11 @@ export const POKEMON_DB = [
         "types": [
             "Rock",
             "Water"
+        ],
+        "abilities": [
+            "Swift Swim",
+            "Shell Armor",
+            "Weak Armor"
         ],
         "hp": 250,
         "atk": 125,
@@ -11165,6 +12395,11 @@ export const POKEMON_DB = [
             "Rock",
             "Water"
         ],
+        "abilities": [
+            "Swift Swim",
+            "Battle Armor",
+            "Weak Armor"
+        ],
         "hp": 170,
         "atk": 165,
         "def": 185,
@@ -11217,6 +12452,11 @@ export const POKEMON_DB = [
         "types": [
             "Rock",
             "Water"
+        ],
+        "abilities": [
+            "Swift Swim",
+            "Battle Armor",
+            "Weak Armor"
         ],
         "hp": 230,
         "atk": 235,
@@ -11288,6 +12528,11 @@ export const POKEMON_DB = [
             "Rock",
             "Flying"
         ],
+        "abilities": [
+            "Rock Head",
+            "Pressure",
+            "Unnerve"
+        ],
         "hp": 270,
         "atk": 215,
         "def": 135,
@@ -11352,6 +12597,11 @@ export const POKEMON_DB = [
         "name": "Snorlax",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Immunity",
+            "Thick Fat",
+            "Gluttony"
         ],
         "hp": 430,
         "atk": 225,
@@ -11441,6 +12691,10 @@ export const POKEMON_DB = [
             "Ice",
             "Flying"
         ],
+        "abilities": [
+            "Pressure",
+            "Snow Cloak"
+        ],
         "hp": 290,
         "atk": 175,
         "def": 205,
@@ -11494,6 +12748,10 @@ export const POKEMON_DB = [
         "types": [
             "Electric",
             "Flying"
+        ],
+        "abilities": [
+            "Pressure",
+            "Static"
         ],
         "hp": 290,
         "atk": 185,
@@ -11550,6 +12808,10 @@ export const POKEMON_DB = [
             "Fire",
             "Flying"
         ],
+        "abilities": [
+            "Pressure",
+            "Flame Body"
+        ],
         "hp": 290,
         "atk": 205,
         "def": 185,
@@ -11605,6 +12867,10 @@ export const POKEMON_DB = [
         "name": "Dratini",
         "types": [
             "Dragon"
+        ],
+        "abilities": [
+            "Shed Skin",
+            "Marvel Scale"
         ],
         "hp": 192,
         "atk": 133,
@@ -11665,6 +12931,10 @@ export const POKEMON_DB = [
         "types": [
             "Dragon"
         ],
+        "abilities": [
+            "Shed Skin",
+            "Marvel Scale"
+        ],
         "hp": 232,
         "atk": 173,
         "def": 135,
@@ -11722,6 +12992,10 @@ export const POKEMON_DB = [
         "types": [
             "Dragon",
             "Flying"
+        ],
+        "abilities": [
+            "Inner Focus",
+            "Multiscale"
         ],
         "hp": 292,
         "atk": 273,
@@ -11813,6 +13087,10 @@ export const POKEMON_DB = [
         "name": "Mewtwo",
         "types": [
             "Psychic"
+        ],
+        "abilities": [
+            "Pressure",
+            "Unnerve"
         ],
         "hp": 322,
         "atk": 225,
@@ -11908,6 +13186,9 @@ export const POKEMON_DB = [
         "name": "Mew",
         "types": [
             "Psychic"
+        ],
+        "abilities": [
+            "Synchronize"
         ],
         "hp": 310,
         "atk": 205,
@@ -12119,6 +13400,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Overgrow",
+            "Leaf Guard"
+        ],
         "hp": 200,
         "atk": 103,
         "def": 135,
@@ -12156,6 +13441,10 @@ export const POKEMON_DB = [
         "name": "Bayleef",
         "types": [
             "Grass"
+        ],
+        "abilities": [
+            "Overgrow",
+            "Leaf Guard"
         ],
         "hp": 230,
         "atk": 129,
@@ -12197,6 +13486,10 @@ export const POKEMON_DB = [
         "name": "Meganium",
         "types": [
             "Grass"
+        ],
+        "abilities": [
+            "Overgrow",
+            "Leaf Guard"
         ],
         "hp": 270,
         "atk": 169,
@@ -12250,6 +13543,10 @@ export const POKEMON_DB = [
         "name": "Cyndaquil",
         "types": [
             "Fire"
+        ],
+        "abilities": [
+            "Blaze",
+            "Flash Fire"
         ],
         "hp": 188,
         "atk": 109,
@@ -12307,6 +13604,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire"
         ],
+        "abilities": [
+            "Blaze",
+            "Flash Fire"
+        ],
         "hp": 226,
         "atk": 133,
         "def": 121,
@@ -12361,6 +13662,10 @@ export const POKEMON_DB = [
         "name": "Typhlosion",
         "types": [
             "Fire"
+        ],
+        "abilities": [
+            "Blaze",
+            "Flash Fire"
         ],
         "hp": 266,
         "atk": 173,
@@ -12439,6 +13744,10 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Torrent",
+            "Sheer Force"
+        ],
         "hp": 210,
         "atk": 135,
         "def": 133,
@@ -12504,6 +13813,10 @@ export const POKEMON_DB = [
         "name": "Croconaw",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Torrent",
+            "Sheer Force"
         ],
         "hp": 240,
         "atk": 165,
@@ -12571,6 +13884,10 @@ export const POKEMON_DB = [
         "name": "Feraligatr",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Torrent",
+            "Sheer Force"
         ],
         "hp": 280,
         "atk": 215,
@@ -12653,6 +13970,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Run Away",
+            "Keen Eye",
+            "Frisk"
+        ],
         "hp": 180,
         "atk": 97,
         "def": 73,
@@ -12714,6 +14036,11 @@ export const POKEMON_DB = [
         "name": "Furret",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Run Away",
+            "Keen Eye",
+            "Frisk"
         ],
         "hp": 280,
         "atk": 157,
@@ -12783,6 +14110,11 @@ export const POKEMON_DB = [
             "Normal",
             "Flying"
         ],
+        "abilities": [
+            "Insomnia",
+            "Keen Eye",
+            "Tinted Lens"
+        ],
         "hp": 230,
         "atk": 65,
         "def": 65,
@@ -12834,6 +14166,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Flying"
+        ],
+        "abilities": [
+            "Insomnia",
+            "Keen Eye",
+            "Tinted Lens"
         ],
         "hp": 310,
         "atk": 105,
@@ -12891,6 +14228,11 @@ export const POKEMON_DB = [
             "Bug",
             "Flying"
         ],
+        "abilities": [
+            "Swarm",
+            "Early Bird",
+            "Rattled"
+        ],
         "hp": 190,
         "atk": 45,
         "def": 65,
@@ -12940,6 +14282,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Flying"
+        ],
+        "abilities": [
+            "Swarm",
+            "Early Bird",
+            "Iron Fist"
         ],
         "hp": 220,
         "atk": 75,
@@ -12993,6 +14340,11 @@ export const POKEMON_DB = [
             "Bug",
             "Poison"
         ],
+        "abilities": [
+            "Swarm",
+            "Insomnia",
+            "Sniper"
+        ],
         "hp": 190,
         "atk": 125,
         "def": 85,
@@ -13044,6 +14396,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Poison"
+        ],
+        "abilities": [
+            "Swarm",
+            "Insomnia",
+            "Sniper"
         ],
         "hp": 250,
         "atk": 185,
@@ -13101,6 +14458,10 @@ export const POKEMON_DB = [
             "Poison",
             "Flying"
         ],
+        "abilities": [
+            "Inner Focus",
+            "Infiltrator"
+        ],
         "hp": 280,
         "atk": 185,
         "def": 165,
@@ -13156,6 +14517,11 @@ export const POKEMON_DB = [
             "Water",
             "Electric"
         ],
+        "abilities": [
+            "Volt Absorb",
+            "Illuminate",
+            "Water Absorb"
+        ],
         "hp": 260,
         "atk": 81,
         "def": 81,
@@ -13209,6 +14575,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Electric"
+        ],
+        "abilities": [
+            "Volt Absorb",
+            "Illuminate",
+            "Water Absorb"
         ],
         "hp": 360,
         "atk": 121,
@@ -13266,6 +14637,10 @@ export const POKEMON_DB = [
         "types": [
             "Electric"
         ],
+        "abilities": [
+            "Static",
+            "Lightning Rod"
+        ],
         "hp": 150,
         "atk": 85,
         "def": 35,
@@ -13312,6 +14687,11 @@ export const POKEMON_DB = [
         "name": "Cleffa",
         "types": [
             "Fairy"
+        ],
+        "abilities": [
+            "Cute Charm",
+            "Magic Guard",
+            "Friend Guard"
         ],
         "hp": 210,
         "atk": 55,
@@ -13368,6 +14748,11 @@ export const POKEMON_DB = [
             "Normal",
             "Fairy"
         ],
+        "abilities": [
+            "Cute Charm",
+            "Competitive",
+            "Friend Guard"
+        ],
         "hp": 290,
         "atk": 65,
         "def": 35,
@@ -13418,6 +14803,11 @@ export const POKEMON_DB = [
         "name": "Togepi",
         "types": [
             "Fairy"
+        ],
+        "abilities": [
+            "Hustle",
+            "Serene Grace",
+            "Super Luck"
         ],
         "hp": 180,
         "atk": 45,
@@ -13472,6 +14862,11 @@ export const POKEMON_DB = [
         "types": [
             "Fairy",
             "Flying"
+        ],
+        "abilities": [
+            "Hustle",
+            "Serene Grace",
+            "Super Luck"
         ],
         "hp": 220,
         "atk": 85,
@@ -13543,6 +14938,11 @@ export const POKEMON_DB = [
             "Psychic",
             "Flying"
         ],
+        "abilities": [
+            "Synchronize",
+            "Early Bird",
+            "Magic Bounce"
+        ],
         "hp": 190,
         "atk": 105,
         "def": 95,
@@ -13594,6 +14994,11 @@ export const POKEMON_DB = [
             "Psychic",
             "Flying"
         ],
+        "abilities": [
+            "Synchronize",
+            "Early Bird",
+            "Magic Bounce"
+        ],
         "hp": 240,
         "atk": 155,
         "def": 145,
@@ -13644,6 +15049,10 @@ export const POKEMON_DB = [
         "types": [
             "Electric"
         ],
+        "abilities": [
+            "Static",
+            "Plus"
+        ],
         "hp": 220,
         "atk": 85,
         "def": 85,
@@ -13683,6 +15092,10 @@ export const POKEMON_DB = [
         "name": "Flaaffy",
         "types": [
             "Electric"
+        ],
+        "abilities": [
+            "Static",
+            "Plus"
         ],
         "hp": 250,
         "atk": 115,
@@ -13732,6 +15145,10 @@ export const POKEMON_DB = [
         "name": "Ampharos",
         "types": [
             "Electric"
+        ],
+        "abilities": [
+            "Static",
+            "Plus"
         ],
         "hp": 290,
         "atk": 155,
@@ -13795,6 +15212,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Chlorophyll",
+            "Healer"
+        ],
         "hp": 260,
         "atk": 165,
         "def": 195,
@@ -13840,6 +15261,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Fairy"
+        ],
+        "abilities": [
+            "Thick Fat",
+            "Huge Power",
+            "Sap Sipper"
         ],
         "hp": 250,
         "atk": 45,
@@ -13907,6 +15333,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Fairy"
+        ],
+        "abilities": [
+            "Thick Fat",
+            "Huge Power",
+            "Sap Sipper"
         ],
         "hp": 310,
         "atk": 105,
@@ -13976,6 +15407,11 @@ export const POKEMON_DB = [
         "types": [
             "Rock"
         ],
+        "abilities": [
+            "Sturdy",
+            "Rock Head",
+            "Rattled"
+        ],
         "hp": 250,
         "atk": 205,
         "def": 235,
@@ -14040,6 +15476,11 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Water Absorb",
+            "Damp",
+            "Drizzle"
+        ],
         "hp": 290,
         "atk": 155,
         "def": 155,
@@ -14101,6 +15542,11 @@ export const POKEMON_DB = [
             "Grass",
             "Flying"
         ],
+        "abilities": [
+            "Chlorophyll",
+            "Leaf Guard",
+            "Infiltrator"
+        ],
         "hp": 180,
         "atk": 75,
         "def": 85,
@@ -14141,6 +15587,11 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Flying"
+        ],
+        "abilities": [
+            "Chlorophyll",
+            "Leaf Guard",
+            "Infiltrator"
         ],
         "hp": 220,
         "atk": 95,
@@ -14183,6 +15634,11 @@ export const POKEMON_DB = [
             "Grass",
             "Flying"
         ],
+        "abilities": [
+            "Chlorophyll",
+            "Leaf Guard",
+            "Infiltrator"
+        ],
         "hp": 260,
         "atk": 115,
         "def": 145,
@@ -14224,6 +15680,11 @@ export const POKEMON_DB = [
         "name": "Aipom",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Run Away",
+            "Pickup",
+            "Skill Link"
         ],
         "hp": 220,
         "atk": 145,
@@ -14294,6 +15755,11 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Chlorophyll",
+            "Solar Power",
+            "Early Bird"
+        ],
         "hp": 170,
         "atk": 65,
         "def": 65,
@@ -14327,6 +15793,11 @@ export const POKEMON_DB = [
         "name": "Sunflora",
         "types": [
             "Grass"
+        ],
+        "abilities": [
+            "Chlorophyll",
+            "Solar Power",
+            "Early Bird"
         ],
         "hp": 260,
         "atk": 155,
@@ -14368,6 +15839,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Flying"
+        ],
+        "abilities": [
+            "Speed Boost",
+            "Compound Eyes",
+            "Frisk"
         ],
         "hp": 240,
         "atk": 135,
@@ -14421,6 +15897,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Ground"
+        ],
+        "abilities": [
+            "Damp",
+            "Water Absorb",
+            "Unaware"
         ],
         "hp": 220,
         "atk": 95,
@@ -14478,6 +15959,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Ground"
+        ],
+        "abilities": [
+            "Damp",
+            "Water Absorb",
+            "Unaware"
         ],
         "hp": 300,
         "atk": 175,
@@ -14547,6 +16033,10 @@ export const POKEMON_DB = [
         "types": [
             "Psychic"
         ],
+        "abilities": [
+            "Synchronize",
+            "Magic Bounce"
+        ],
         "hp": 240,
         "atk": 135,
         "def": 125,
@@ -14600,6 +16090,10 @@ export const POKEMON_DB = [
         "types": [
             "Dark"
         ],
+        "abilities": [
+            "Synchronize",
+            "Inner Focus"
+        ],
         "hp": 300,
         "atk": 135,
         "def": 225,
@@ -14652,6 +16146,11 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Flying"
+        ],
+        "abilities": [
+            "Insomnia",
+            "Super Luck",
+            "Prankster"
         ],
         "hp": 230,
         "atk": 175,
@@ -14713,6 +16212,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Psychic"
+        ],
+        "abilities": [
+            "Oblivious",
+            "Own Tempo",
+            "Regenerator"
         ],
         "hp": 300,
         "atk": 155,
@@ -14794,6 +16298,9 @@ export const POKEMON_DB = [
         "types": [
             "Ghost"
         ],
+        "abilities": [
+            "Levitate"
+        ],
         "hp": 230,
         "atk": 125,
         "def": 125,
@@ -14851,6 +16358,9 @@ export const POKEMON_DB = [
         "types": [
             "Psychic"
         ],
+        "abilities": [
+            "Levitate"
+        ],
         "hp": 206,
         "atk": 149,
         "def": 101,
@@ -14871,6 +16381,10 @@ export const POKEMON_DB = [
         "name": "Wobbuffet",
         "types": [
             "Psychic"
+        ],
+        "abilities": [
+            "Shadow Tag",
+            "Telepathy"
         ],
         "hp": 490,
         "atk": 71,
@@ -14893,6 +16407,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Psychic"
+        ],
+        "abilities": [
+            "Inner Focus",
+            "Early Bird",
+            "Sap Sipper"
         ],
         "hp": 250,
         "atk": 165,
@@ -14956,6 +16475,10 @@ export const POKEMON_DB = [
         "types": [
             "Bug"
         ],
+        "abilities": [
+            "Sturdy",
+            "Overcoat"
+        ],
         "hp": 210,
         "atk": 135,
         "def": 185,
@@ -15002,6 +16525,10 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Steel"
+        ],
+        "abilities": [
+            "Sturdy",
+            "Overcoat"
         ],
         "hp": 260,
         "atk": 185,
@@ -15060,6 +16587,11 @@ export const POKEMON_DB = [
         "name": "Dunsparce",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Serene Grace",
+            "Run Away",
+            "Rattled"
         ],
         "hp": 310,
         "atk": 145,
@@ -15134,6 +16666,11 @@ export const POKEMON_DB = [
         "types": [
             "Ground",
             "Flying"
+        ],
+        "abilities": [
+            "Hyper Cutter",
+            "Sand Veil",
+            "Immunity"
         ],
         "hp": 240,
         "atk": 155,
@@ -15210,6 +16747,11 @@ export const POKEMON_DB = [
             "Steel",
             "Ground"
         ],
+        "abilities": [
+            "Rock Head",
+            "Sturdy",
+            "Sheer Force"
+        ],
         "hp": 260,
         "atk": 175,
         "def": 405,
@@ -15271,6 +16813,11 @@ export const POKEMON_DB = [
         "name": "Snubbull",
         "types": [
             "Fairy"
+        ],
+        "abilities": [
+            "Intimidate",
+            "Run Away",
+            "Rattled"
         ],
         "hp": 230,
         "atk": 165,
@@ -15344,6 +16891,11 @@ export const POKEMON_DB = [
         "name": "Granbull",
         "types": [
             "Fairy"
+        ],
+        "abilities": [
+            "Intimidate",
+            "Quick Feet",
+            "Rattled"
         ],
         "hp": 290,
         "atk": 245,
@@ -15427,6 +16979,11 @@ export const POKEMON_DB = [
             "Water",
             "Poison"
         ],
+        "abilities": [
+            "Poison Point",
+            "Swift Swim",
+            "Intimidate"
+        ],
         "hp": 240,
         "atk": 195,
         "def": 175,
@@ -15488,6 +17045,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Steel"
+        ],
+        "abilities": [
+            "Swarm",
+            "Technician",
+            "Light Metal"
         ],
         "hp": 250,
         "atk": 265,
@@ -15553,6 +17115,11 @@ export const POKEMON_DB = [
             "Bug",
             "Rock"
         ],
+        "abilities": [
+            "Sturdy",
+            "Gluttony",
+            "Contrary"
+        ],
         "hp": 150,
         "atk": 25,
         "def": 465,
@@ -15596,6 +17163,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Fighting"
+        ],
+        "abilities": [
+            "Swarm",
+            "Guts",
+            "Moxie"
         ],
         "hp": 270,
         "atk": 255,
@@ -15661,6 +17233,11 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Ice"
+        ],
+        "abilities": [
+            "Inner Focus",
+            "Keen Eye",
+            "Pickpocket"
         ],
         "hp": 220,
         "atk": 195,
@@ -15730,6 +17307,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Pickup",
+            "Quick Feet",
+            "Honey Gather"
+        ],
         "hp": 230,
         "atk": 165,
         "def": 105,
@@ -15793,6 +17375,11 @@ export const POKEMON_DB = [
         "name": "Ursaring",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Guts",
+            "Quick Feet",
+            "Unnerve"
         ],
         "hp": 290,
         "atk": 265,
@@ -15863,6 +17450,11 @@ export const POKEMON_DB = [
         "types": [
             "Fire"
         ],
+        "abilities": [
+            "Magma Armor",
+            "Flame Body",
+            "Weak Armor"
+        ],
         "hp": 190,
         "atk": 85,
         "def": 85,
@@ -15908,6 +17500,11 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Rock"
+        ],
+        "abilities": [
+            "Magma Armor",
+            "Flame Body",
+            "Weak Armor"
         ],
         "hp": 230,
         "atk": 105,
@@ -15963,6 +17560,11 @@ export const POKEMON_DB = [
             "Ice",
             "Ground"
         ],
+        "abilities": [
+            "Oblivious",
+            "Snow Cloak",
+            "Thick Fat"
+        ],
         "hp": 210,
         "atk": 105,
         "def": 85,
@@ -16012,6 +17614,11 @@ export const POKEMON_DB = [
         "types": [
             "Ice",
             "Ground"
+        ],
+        "abilities": [
+            "Oblivious",
+            "Snow Cloak",
+            "Thick Fat"
         ],
         "hp": 310,
         "atk": 205,
@@ -16068,6 +17675,11 @@ export const POKEMON_DB = [
             "Water",
             "Rock"
         ],
+        "abilities": [
+            "Hustle",
+            "Natural Cure",
+            "Regenerator"
+        ],
         "hp": 240,
         "atk": 115,
         "def": 195,
@@ -16121,6 +17733,11 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Hustle",
+            "Sniper",
+            "Moody"
+        ],
         "hp": 180,
         "atk": 135,
         "def": 75,
@@ -16170,6 +17787,11 @@ export const POKEMON_DB = [
         "name": "Octillery",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Suction Cups",
+            "Sniper",
+            "Moody"
         ],
         "hp": 260,
         "atk": 215,
@@ -16227,6 +17849,11 @@ export const POKEMON_DB = [
         "types": [
             "Ice",
             "Flying"
+        ],
+        "abilities": [
+            "Vital Spirit",
+            "Hustle",
+            "Insomnia"
         ],
         "hp": 200,
         "atk": 115,
@@ -16295,6 +17922,11 @@ export const POKEMON_DB = [
             "Water",
             "Flying"
         ],
+        "abilities": [
+            "Swift Swim",
+            "Water Absorb",
+            "Water Veil"
+        ],
         "hp": 280,
         "atk": 85,
         "def": 145,
@@ -16356,6 +17988,11 @@ export const POKEMON_DB = [
             "Steel",
             "Flying"
         ],
+        "abilities": [
+            "Keen Eye",
+            "Sturdy",
+            "Weak Armor"
+        ],
         "hp": 240,
         "atk": 165,
         "def": 285,
@@ -16411,6 +18048,11 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Fire"
+        ],
+        "abilities": [
+            "Early Bird",
+            "Flash Fire",
+            "Unnerve"
         ],
         "hp": 200,
         "atk": 125,
@@ -16470,6 +18112,11 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Fire"
+        ],
+        "abilities": [
+            "Early Bird",
+            "Flash Fire",
+            "Unnerve"
         ],
         "hp": 260,
         "atk": 185,
@@ -16533,6 +18180,11 @@ export const POKEMON_DB = [
             "Water",
             "Dragon"
         ],
+        "abilities": [
+            "Swift Swim",
+            "Sniper",
+            "Damp"
+        ],
         "hp": 260,
         "atk": 195,
         "def": 195,
@@ -16588,6 +18240,10 @@ export const POKEMON_DB = [
         "types": [
             "Ground"
         ],
+        "abilities": [
+            "Pickup",
+            "Sand Veil"
+        ],
         "hp": 290,
         "atk": 125,
         "def": 125,
@@ -16638,6 +18294,10 @@ export const POKEMON_DB = [
         "name": "Donphan",
         "types": [
             "Ground"
+        ],
+        "abilities": [
+            "Sturdy",
+            "Sand Veil"
         ],
         "hp": 290,
         "atk": 245,
@@ -16702,6 +18362,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Trace",
+            "Download",
+            "Analytic"
+        ],
         "hp": 280,
         "atk": 165,
         "def": 185,
@@ -16751,6 +18416,11 @@ export const POKEMON_DB = [
         "name": "Stantler",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Intimidate",
+            "Frisk",
+            "Sap Sipper"
         ],
         "hp": 256,
         "atk": 195,
@@ -16815,6 +18485,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Own Tempo",
+            "Technician",
+            "Moody"
+        ],
         "hp": 220,
         "atk": 45,
         "def": 75,
@@ -16835,6 +18510,11 @@ export const POKEMON_DB = [
         "name": "Tyrogue",
         "types": [
             "Fighting"
+        ],
+        "abilities": [
+            "Guts",
+            "Steadfast",
+            "Vital Spirit"
         ],
         "hp": 180,
         "atk": 75,
@@ -16881,6 +18561,11 @@ export const POKEMON_DB = [
         "name": "Hitmontop",
         "types": [
             "Fighting"
+        ],
+        "abilities": [
+            "Intimidate",
+            "Technician",
+            "Steadfast"
         ],
         "hp": 210,
         "atk": 195,
@@ -16942,6 +18627,11 @@ export const POKEMON_DB = [
             "Ice",
             "Psychic"
         ],
+        "abilities": [
+            "Oblivious",
+            "Forewarn",
+            "Hydration"
+        ],
         "hp": 200,
         "atk": 65,
         "def": 35,
@@ -16986,6 +18676,10 @@ export const POKEMON_DB = [
         "name": "Elekid",
         "types": [
             "Electric"
+        ],
+        "abilities": [
+            "Static",
+            "Vital Spirit"
         ],
         "hp": 200,
         "atk": 131,
@@ -17044,6 +18738,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire"
         ],
+        "abilities": [
+            "Flame Body",
+            "Vital Spirit"
+        ],
         "hp": 200,
         "atk": 155,
         "def": 79,
@@ -17097,6 +18795,11 @@ export const POKEMON_DB = [
         "name": "Miltank",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Thick Fat",
+            "Scrappy",
+            "Sap Sipper"
         ],
         "hp": 300,
         "atk": 165,
@@ -17163,6 +18866,11 @@ export const POKEMON_DB = [
         "name": "Blissey",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Natural Cure",
+            "Serene Grace",
+            "Healer"
         ],
         "hp": 620,
         "atk": 25,
@@ -17239,6 +18947,10 @@ export const POKEMON_DB = [
         "types": [
             "Electric"
         ],
+        "abilities": [
+            "Pressure",
+            "Inner Focus"
+        ],
         "hp": 290,
         "atk": 175,
         "def": 155,
@@ -17297,6 +19009,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire"
         ],
+        "abilities": [
+            "Pressure",
+            "Inner Focus"
+        ],
         "hp": 340,
         "atk": 235,
         "def": 175,
@@ -17353,6 +19069,10 @@ export const POKEMON_DB = [
         "name": "Suicune",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Pressure",
+            "Inner Focus"
         ],
         "hp": 310,
         "atk": 155,
@@ -17413,6 +19133,10 @@ export const POKEMON_DB = [
             "Rock",
             "Ground"
         ],
+        "abilities": [
+            "Guts",
+            "Sand Veil"
+        ],
         "hp": 210,
         "atk": 133,
         "def": 105,
@@ -17467,6 +19191,9 @@ export const POKEMON_DB = [
         "types": [
             "Rock",
             "Ground"
+        ],
+        "abilities": [
+            "Shed Skin"
         ],
         "hp": 250,
         "atk": 173,
@@ -17524,6 +19251,10 @@ export const POKEMON_DB = [
         "types": [
             "Rock",
             "Dark"
+        ],
+        "abilities": [
+            "Sand Stream",
+            "Unnerve"
         ],
         "hp": 310,
         "atk": 273,
@@ -17621,6 +19352,10 @@ export const POKEMON_DB = [
             "Psychic",
             "Flying"
         ],
+        "abilities": [
+            "Pressure",
+            "Multiscale"
+        ],
         "hp": 322,
         "atk": 185,
         "def": 265,
@@ -17701,6 +19436,10 @@ export const POKEMON_DB = [
             "Fire",
             "Flying"
         ],
+        "abilities": [
+            "Pressure",
+            "Regenerator"
+        ],
         "hp": 322,
         "atk": 265,
         "def": 185,
@@ -17772,6 +19511,9 @@ export const POKEMON_DB = [
             "Psychic",
             "Grass"
         ],
+        "abilities": [
+            "Natural Cure"
+        ],
         "hp": 310,
         "atk": 205,
         "def": 205,
@@ -17826,6 +19568,10 @@ export const POKEMON_DB = [
         "name": "Treecko",
         "types": [
             "Grass"
+        ],
+        "abilities": [
+            "Overgrow",
+            "Unburden"
         ],
         "hp": 190,
         "atk": 95,
@@ -17888,6 +19634,10 @@ export const POKEMON_DB = [
         "name": "Grovyle",
         "types": [
             "Grass"
+        ],
+        "abilities": [
+            "Overgrow",
+            "Unburden"
         ],
         "hp": 210,
         "atk": 135,
@@ -17953,6 +19703,10 @@ export const POKEMON_DB = [
         "name": "Sceptile",
         "types": [
             "Grass"
+        ],
+        "abilities": [
+            "Overgrow",
+            "Unburden"
         ],
         "hp": 250,
         "atk": 175,
@@ -18032,6 +19786,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire"
         ],
+        "abilities": [
+            "Blaze",
+            "Speed Boost"
+        ],
         "hp": 200,
         "atk": 125,
         "def": 85,
@@ -18086,6 +19844,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Fighting"
+        ],
+        "abilities": [
+            "Blaze",
+            "Speed Boost"
         ],
         "hp": 230,
         "atk": 175,
@@ -18153,6 +19915,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Fighting"
+        ],
+        "abilities": [
+            "Blaze",
+            "Speed Boost"
         ],
         "hp": 270,
         "atk": 245,
@@ -18237,6 +20003,10 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Torrent",
+            "Damp"
+        ],
         "hp": 210,
         "atk": 145,
         "def": 105,
@@ -18292,6 +20062,10 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Ground"
+        ],
+        "abilities": [
+            "Torrent",
+            "Damp"
         ],
         "hp": 250,
         "atk": 175,
@@ -18356,6 +20130,10 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Ground"
+        ],
+        "abilities": [
+            "Torrent",
+            "Damp"
         ],
         "hp": 310,
         "atk": 225,
@@ -18435,6 +20213,11 @@ export const POKEMON_DB = [
         "types": [
             "Dark"
         ],
+        "abilities": [
+            "Run Away",
+            "Quick Feet",
+            "Rattled"
+        ],
         "hp": 180,
         "atk": 115,
         "def": 75,
@@ -18482,6 +20265,11 @@ export const POKEMON_DB = [
         "name": "Mightyena",
         "types": [
             "Dark"
+        ],
+        "abilities": [
+            "Intimidate",
+            "Quick Feet",
+            "Moxie"
         ],
         "hp": 250,
         "atk": 185,
@@ -18535,6 +20323,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Pickup",
+            "Gluttony",
+            "Quick Feet"
+        ],
         "hp": 186,
         "atk": 65,
         "def": 87,
@@ -18581,6 +20374,11 @@ export const POKEMON_DB = [
         "name": "Linoone",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Pickup",
+            "Gluttony",
+            "Quick Feet"
         ],
         "hp": 266,
         "atk": 145,
@@ -18635,6 +20433,10 @@ export const POKEMON_DB = [
         "types": [
             "Bug"
         ],
+        "abilities": [
+            "Shield Dust",
+            "Run Away"
+        ],
         "hp": 200,
         "atk": 95,
         "def": 75,
@@ -18655,6 +20457,9 @@ export const POKEMON_DB = [
         "name": "Silcoon",
         "types": [
             "Bug"
+        ],
+        "abilities": [
+            "Shed Skin"
         ],
         "hp": 210,
         "atk": 75,
@@ -18677,6 +20482,10 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Flying"
+        ],
+        "abilities": [
+            "Swarm",
+            "Rivalry"
         ],
         "hp": 230,
         "atk": 145,
@@ -18722,6 +20531,9 @@ export const POKEMON_DB = [
         "types": [
             "Bug"
         ],
+        "abilities": [
+            "Shed Skin"
+        ],
         "hp": 210,
         "atk": 75,
         "def": 115,
@@ -18743,6 +20555,10 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Poison"
+        ],
+        "abilities": [
+            "Shield Dust",
+            "Compound Eyes"
         ],
         "hp": 230,
         "atk": 105,
@@ -18791,6 +20607,11 @@ export const POKEMON_DB = [
             "Water",
             "Grass"
         ],
+        "abilities": [
+            "Swift Swim",
+            "Rain Dish",
+            "Own Tempo"
+        ],
         "hp": 190,
         "atk": 65,
         "def": 65,
@@ -18835,6 +20656,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Grass"
+        ],
+        "abilities": [
+            "Swift Swim",
+            "Rain Dish",
+            "Own Tempo"
         ],
         "hp": 230,
         "atk": 105,
@@ -18896,6 +20722,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Grass"
+        ],
+        "abilities": [
+            "Swift Swim",
+            "Rain Dish",
+            "Own Tempo"
         ],
         "hp": 270,
         "atk": 145,
@@ -18965,6 +20796,11 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Chlorophyll",
+            "Early Bird",
+            "Pickpocket"
+        ],
         "hp": 190,
         "atk": 85,
         "def": 105,
@@ -19008,6 +20844,11 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Dark"
+        ],
+        "abilities": [
+            "Chlorophyll",
+            "Early Bird",
+            "Pickpocket"
         ],
         "hp": 250,
         "atk": 145,
@@ -19074,6 +20915,11 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Dark"
+        ],
+        "abilities": [
+            "Chlorophyll",
+            "Wind Rider",
+            "Pickpocket"
         ],
         "hp": 290,
         "atk": 205,
@@ -19159,6 +21005,10 @@ export const POKEMON_DB = [
             "Normal",
             "Flying"
         ],
+        "abilities": [
+            "Guts",
+            "Scrappy"
+        ],
         "hp": 190,
         "atk": 115,
         "def": 65,
@@ -19199,6 +21049,10 @@ export const POKEMON_DB = [
             "Normal",
             "Flying"
         ],
+        "abilities": [
+            "Guts",
+            "Scrappy"
+        ],
         "hp": 230,
         "atk": 175,
         "def": 125,
@@ -19238,6 +21092,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Flying"
+        ],
+        "abilities": [
+            "Keen Eye",
+            "Hydration",
+            "Rain Dish"
         ],
         "hp": 190,
         "atk": 65,
@@ -19293,6 +21152,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Flying"
+        ],
+        "abilities": [
+            "Keen Eye",
+            "Drizzle",
+            "Rain Dish"
         ],
         "hp": 230,
         "atk": 105,
@@ -19355,6 +21219,11 @@ export const POKEMON_DB = [
             "Psychic",
             "Fairy"
         ],
+        "abilities": [
+            "Synchronize",
+            "Trace",
+            "Telepathy"
+        ],
         "hp": 166,
         "atk": 55,
         "def": 55,
@@ -19408,6 +21277,11 @@ export const POKEMON_DB = [
             "Psychic",
             "Fairy"
         ],
+        "abilities": [
+            "Synchronize",
+            "Trace",
+            "Telepathy"
+        ],
         "hp": 186,
         "atk": 75,
         "def": 75,
@@ -19458,6 +21332,11 @@ export const POKEMON_DB = [
         "types": [
             "Psychic",
             "Fairy"
+        ],
+        "abilities": [
+            "Synchronize",
+            "Trace",
+            "Telepathy"
         ],
         "hp": 246,
         "atk": 135,
@@ -19519,6 +21398,10 @@ export const POKEMON_DB = [
             "Bug",
             "Water"
         ],
+        "abilities": [
+            "Swift Swim",
+            "Rain Dish"
+        ],
         "hp": 190,
         "atk": 65,
         "def": 69,
@@ -19569,6 +21452,10 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Flying"
+        ],
+        "abilities": [
+            "Intimidate",
+            "Unnerve"
         ],
         "hp": 250,
         "atk": 125,
@@ -19631,6 +21518,11 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Effect Spore",
+            "Poison Heal",
+            "Quick Feet"
+        ],
         "hp": 230,
         "atk": 85,
         "def": 125,
@@ -19670,6 +21562,11 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Fighting"
+        ],
+        "abilities": [
+            "Effect Spore",
+            "Poison Heal",
+            "Technician"
         ],
         "hp": 230,
         "atk": 265,
@@ -19736,6 +21633,9 @@ export const POKEMON_DB = [
         "name": "Slakoth",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Truant"
         ],
         "hp": 230,
         "atk": 125,
@@ -19805,6 +21705,9 @@ export const POKEMON_DB = [
         "name": "Vigoroth",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Vital Spirit"
         ],
         "hp": 270,
         "atk": 165,
@@ -19883,6 +21786,9 @@ export const POKEMON_DB = [
         "name": "Slaking",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Truant"
         ],
         "hp": 410,
         "atk": 325,
@@ -19970,6 +21876,10 @@ export const POKEMON_DB = [
             "Bug",
             "Ground"
         ],
+        "abilities": [
+            "Compound Eyes",
+            "Run Away"
+        ],
         "hp": 172,
         "atk": 95,
         "def": 185,
@@ -20005,6 +21915,10 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Flying"
+        ],
+        "abilities": [
+            "Speed Boost",
+            "Infiltrator"
         ],
         "hp": 232,
         "atk": 185,
@@ -20051,6 +21965,9 @@ export const POKEMON_DB = [
             "Bug",
             "Ghost"
         ],
+        "abilities": [
+            "Wonder Guard"
+        ],
         "hp": 112,
         "atk": 185,
         "def": 95,
@@ -20092,6 +22009,10 @@ export const POKEMON_DB = [
         "name": "Whismur",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Soundproof",
+            "Rattled"
         ],
         "hp": 238,
         "atk": 107,
@@ -20143,6 +22064,10 @@ export const POKEMON_DB = [
         "name": "Loudred",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Soundproof",
+            "Scrappy"
         ],
         "hp": 278,
         "atk": 147,
@@ -20198,6 +22123,10 @@ export const POKEMON_DB = [
         "name": "Exploud",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Soundproof",
+            "Scrappy"
         ],
         "hp": 318,
         "atk": 187,
@@ -20266,6 +22195,11 @@ export const POKEMON_DB = [
         "name": "Makuhita",
         "types": [
             "Fighting"
+        ],
+        "abilities": [
+            "Thick Fat",
+            "Guts",
+            "Sheer Force"
         ],
         "hp": 254,
         "atk": 125,
@@ -20336,6 +22270,11 @@ export const POKEMON_DB = [
         "name": "Hariyama",
         "types": [
             "Fighting"
+        ],
+        "abilities": [
+            "Thick Fat",
+            "Guts",
+            "Sheer Force"
         ],
         "hp": 398,
         "atk": 245,
@@ -20409,6 +22348,11 @@ export const POKEMON_DB = [
             "Normal",
             "Fairy"
         ],
+        "abilities": [
+            "Thick Fat",
+            "Huge Power",
+            "Sap Sipper"
+        ],
         "hp": 210,
         "atk": 45,
         "def": 85,
@@ -20455,6 +22399,11 @@ export const POKEMON_DB = [
         "name": "Nosepass",
         "types": [
             "Rock"
+        ],
+        "abilities": [
+            "Sturdy",
+            "Magnet Pull",
+            "Sand Force"
         ],
         "hp": 170,
         "atk": 95,
@@ -20512,6 +22461,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Cute Charm",
+            "Normalize",
+            "Wonder Skin"
+        ],
         "hp": 210,
         "atk": 95,
         "def": 95,
@@ -20561,6 +22515,11 @@ export const POKEMON_DB = [
         "name": "Delcatty",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Cute Charm",
+            "Normalize",
+            "Wonder Skin"
         ],
         "hp": 250,
         "atk": 135,
@@ -20613,6 +22572,11 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Ghost"
+        ],
+        "abilities": [
+            "Keen Eye",
+            "Stall",
+            "Prankster"
         ],
         "hp": 210,
         "atk": 155,
@@ -20692,6 +22656,11 @@ export const POKEMON_DB = [
             "Steel",
             "Fairy"
         ],
+        "abilities": [
+            "Hyper Cutter",
+            "Intimidate",
+            "Sheer Force"
+        ],
         "hp": 210,
         "atk": 175,
         "def": 175,
@@ -20760,6 +22729,11 @@ export const POKEMON_DB = [
             "Steel",
             "Rock"
         ],
+        "abilities": [
+            "Sturdy",
+            "Rock Head",
+            "Heavy Metal"
+        ],
         "hp": 210,
         "atk": 145,
         "def": 205,
@@ -20809,6 +22783,11 @@ export const POKEMON_DB = [
             "Steel",
             "Rock"
         ],
+        "abilities": [
+            "Sturdy",
+            "Rock Head",
+            "Heavy Metal"
+        ],
         "hp": 230,
         "atk": 185,
         "def": 285,
@@ -20855,6 +22834,11 @@ export const POKEMON_DB = [
         "types": [
             "Steel",
             "Rock"
+        ],
+        "abilities": [
+            "Sturdy",
+            "Rock Head",
+            "Heavy Metal"
         ],
         "hp": 250,
         "atk": 225,
@@ -20939,6 +22923,10 @@ export const POKEMON_DB = [
             "Fighting",
             "Psychic"
         ],
+        "abilities": [
+            "Pure Power",
+            "Telepathy"
+        ],
         "hp": 170,
         "atk": 85,
         "def": 115,
@@ -21001,6 +22989,10 @@ export const POKEMON_DB = [
         "types": [
             "Fighting",
             "Psychic"
+        ],
+        "abilities": [
+            "Pure Power",
+            "Telepathy"
         ],
         "hp": 230,
         "atk": 125,
@@ -21066,6 +23058,11 @@ export const POKEMON_DB = [
         "types": [
             "Electric"
         ],
+        "abilities": [
+            "Static",
+            "Lightning Rod",
+            "Minus"
+        ],
         "hp": 190,
         "atk": 95,
         "def": 85,
@@ -21113,6 +23110,11 @@ export const POKEMON_DB = [
         "name": "Manectric",
         "types": [
             "Electric"
+        ],
+        "abilities": [
+            "Static",
+            "Lightning Rod",
+            "Minus"
         ],
         "hp": 250,
         "atk": 155,
@@ -21165,6 +23167,10 @@ export const POKEMON_DB = [
         "types": [
             "Electric"
         ],
+        "abilities": [
+            "Plus",
+            "Lightning Rod"
+        ],
         "hp": 230,
         "atk": 105,
         "def": 85,
@@ -21211,6 +23217,10 @@ export const POKEMON_DB = [
         "types": [
             "Electric"
         ],
+        "abilities": [
+            "Minus",
+            "Volt Absorb"
+        ],
         "hp": 230,
         "atk": 85,
         "def": 105,
@@ -21256,6 +23266,11 @@ export const POKEMON_DB = [
         "name": "Volbeat",
         "types": [
             "Bug"
+        ],
+        "abilities": [
+            "Illuminate",
+            "Swarm",
+            "Prankster"
         ],
         "hp": 240,
         "atk": 151,
@@ -21315,6 +23330,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug"
         ],
+        "abilities": [
+            "Oblivious",
+            "Tinted Lens",
+            "Prankster"
+        ],
         "hp": 240,
         "atk": 99,
         "def": 155,
@@ -21372,6 +23392,11 @@ export const POKEMON_DB = [
             "Grass",
             "Poison"
         ],
+        "abilities": [
+            "Natural Cure",
+            "Poison Point",
+            "Leaf Guard"
+        ],
         "hp": 210,
         "atk": 125,
         "def": 95,
@@ -21414,6 +23439,11 @@ export const POKEMON_DB = [
         "name": "Gulpin",
         "types": [
             "Poison"
+        ],
+        "abilities": [
+            "Liquid Ooze",
+            "Sticky Hold",
+            "Gluttony"
         ],
         "hp": 250,
         "atk": 91,
@@ -21464,6 +23494,11 @@ export const POKEMON_DB = [
         "name": "Swalot",
         "types": [
             "Poison"
+        ],
+        "abilities": [
+            "Liquid Ooze",
+            "Sticky Hold",
+            "Gluttony"
         ],
         "hp": 310,
         "atk": 151,
@@ -21524,6 +23559,10 @@ export const POKEMON_DB = [
             "Water",
             "Dark"
         ],
+        "abilities": [
+            "Rough Skin",
+            "Speed Boost"
+        ],
         "hp": 200,
         "atk": 185,
         "def": 45,
@@ -21575,6 +23614,10 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Dark"
+        ],
+        "abilities": [
+            "Rough Skin",
+            "Speed Boost"
         ],
         "hp": 250,
         "atk": 245,
@@ -21639,6 +23682,11 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Water Veil",
+            "Oblivious",
+            "Pressure"
+        ],
         "hp": 370,
         "atk": 145,
         "def": 75,
@@ -21685,6 +23733,11 @@ export const POKEMON_DB = [
         "name": "Wailord",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Water Veil",
+            "Oblivious",
+            "Pressure"
         ],
         "hp": 450,
         "atk": 185,
@@ -21736,6 +23789,11 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Ground"
+        ],
+        "abilities": [
+            "Oblivious",
+            "Simple",
+            "Own Tempo"
         ],
         "hp": 230,
         "atk": 125,
@@ -21793,6 +23851,11 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Ground"
+        ],
+        "abilities": [
+            "Magma Armor",
+            "Solid Rock",
+            "Anger Point"
         ],
         "hp": 250,
         "atk": 205,
@@ -21852,6 +23915,11 @@ export const POKEMON_DB = [
         "name": "Torkoal",
         "types": [
             "Fire"
+        ],
+        "abilities": [
+            "White Smoke",
+            "Drought",
+            "Shell Armor"
         ],
         "hp": 250,
         "atk": 175,
@@ -21913,6 +23981,11 @@ export const POKEMON_DB = [
         "types": [
             "Psychic"
         ],
+        "abilities": [
+            "Thick Fat",
+            "Own Tempo",
+            "Gluttony"
+        ],
         "hp": 230,
         "atk": 55,
         "def": 75,
@@ -21961,6 +24034,11 @@ export const POKEMON_DB = [
         "name": "Grumpig",
         "types": [
             "Psychic"
+        ],
+        "abilities": [
+            "Thick Fat",
+            "Own Tempo",
+            "Gluttony"
         ],
         "hp": 270,
         "atk": 95,
@@ -22034,6 +24112,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Own Tempo",
+            "Tangled Feet",
+            "Contrary"
+        ],
         "hp": 230,
         "atk": 125,
         "def": 125,
@@ -22095,6 +24178,11 @@ export const POKEMON_DB = [
         "types": [
             "Ground"
         ],
+        "abilities": [
+            "Hyper Cutter",
+            "Arena Trap",
+            "Sheer Force"
+        ],
         "hp": 200,
         "atk": 205,
         "def": 95,
@@ -22143,6 +24231,9 @@ export const POKEMON_DB = [
         "types": [
             "Ground",
             "Dragon"
+        ],
+        "abilities": [
+            "Levitate"
         ],
         "hp": 210,
         "atk": 145,
@@ -22214,6 +24305,9 @@ export const POKEMON_DB = [
         "types": [
             "Ground",
             "Dragon"
+        ],
+        "abilities": [
+            "Levitate"
         ],
         "hp": 270,
         "atk": 205,
@@ -22298,6 +24392,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Sand Veil",
+            "Water Absorb"
+        ],
         "hp": 210,
         "atk": 175,
         "def": 85,
@@ -22353,6 +24451,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Dark"
+        ],
+        "abilities": [
+            "Sand Veil",
+            "Water Absorb"
         ],
         "hp": 250,
         "atk": 235,
@@ -22422,6 +24524,10 @@ export const POKEMON_DB = [
             "Normal",
             "Flying"
         ],
+        "abilities": [
+            "Natural Cure",
+            "Cloud Nine"
+        ],
         "hp": 200,
         "atk": 85,
         "def": 125,
@@ -22472,6 +24578,10 @@ export const POKEMON_DB = [
         "types": [
             "Dragon",
             "Flying"
+        ],
+        "abilities": [
+            "Natural Cure",
+            "Cloud Nine"
         ],
         "hp": 260,
         "atk": 145,
@@ -22533,6 +24643,10 @@ export const POKEMON_DB = [
         "name": "Zangoose",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Immunity",
+            "Toxic Boost"
         ],
         "hp": 256,
         "atk": 235,
@@ -22615,6 +24729,10 @@ export const POKEMON_DB = [
         "types": [
             "Poison"
         ],
+        "abilities": [
+            "Shed Skin",
+            "Infiltrator"
+        ],
         "hp": 256,
         "atk": 205,
         "def": 125,
@@ -22685,6 +24803,9 @@ export const POKEMON_DB = [
             "Rock",
             "Psychic"
         ],
+        "abilities": [
+            "Levitate"
+        ],
         "hp": 290,
         "atk": 115,
         "def": 135,
@@ -22736,6 +24857,9 @@ export const POKEMON_DB = [
         "types": [
             "Rock",
             "Psychic"
+        ],
+        "abilities": [
+            "Levitate"
         ],
         "hp": 290,
         "atk": 195,
@@ -22789,6 +24913,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Ground"
+        ],
+        "abilities": [
+            "Oblivious",
+            "Anticipation",
+            "Hydration"
         ],
         "hp": 210,
         "atk": 101,
@@ -22844,6 +24973,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Ground"
+        ],
+        "abilities": [
+            "Oblivious",
+            "Anticipation",
+            "Hydration"
         ],
         "hp": 330,
         "atk": 161,
@@ -22904,6 +25038,11 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Hyper Cutter",
+            "Shell Armor",
+            "Adaptability"
+        ],
         "hp": 196,
         "atk": 165,
         "def": 135,
@@ -22961,6 +25100,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Dark"
+        ],
+        "abilities": [
+            "Hyper Cutter",
+            "Shell Armor",
+            "Adaptability"
         ],
         "hp": 236,
         "atk": 245,
@@ -23031,6 +25175,9 @@ export const POKEMON_DB = [
             "Ground",
             "Psychic"
         ],
+        "abilities": [
+            "Levitate"
+        ],
         "hp": 190,
         "atk": 85,
         "def": 115,
@@ -23078,6 +25225,9 @@ export const POKEMON_DB = [
         "types": [
             "Ground",
             "Psychic"
+        ],
+        "abilities": [
+            "Levitate"
         ],
         "hp": 230,
         "atk": 145,
@@ -23133,6 +25283,10 @@ export const POKEMON_DB = [
             "Rock",
             "Grass"
         ],
+        "abilities": [
+            "Suction Cups",
+            "Storm Drain"
+        ],
         "hp": 242,
         "atk": 87,
         "def": 159,
@@ -23168,6 +25322,10 @@ export const POKEMON_DB = [
         "types": [
             "Rock",
             "Grass"
+        ],
+        "abilities": [
+            "Suction Cups",
+            "Storm Drain"
         ],
         "hp": 282,
         "atk": 167,
@@ -23215,6 +25373,10 @@ export const POKEMON_DB = [
             "Rock",
             "Bug"
         ],
+        "abilities": [
+            "Battle Armor",
+            "Swift Swim"
+        ],
         "hp": 200,
         "atk": 195,
         "def": 105,
@@ -23257,6 +25419,10 @@ export const POKEMON_DB = [
         "types": [
             "Rock",
             "Bug"
+        ],
+        "abilities": [
+            "Battle Armor",
+            "Swift Swim"
         ],
         "hp": 260,
         "atk": 255,
@@ -23313,6 +25479,11 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Swift Swim",
+            "Oblivious",
+            "Adaptability"
+        ],
         "hp": 150,
         "atk": 35,
         "def": 45,
@@ -23350,6 +25521,11 @@ export const POKEMON_DB = [
         "name": "Milotic",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Marvel Scale",
+            "Competitive",
+            "Cute Charm"
         ],
         "hp": 300,
         "atk": 125,
@@ -23404,6 +25580,9 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Forecast"
+        ],
         "hp": 250,
         "atk": 145,
         "def": 145,
@@ -23451,6 +25630,10 @@ export const POKEMON_DB = [
         "name": "Kecleon",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Color Change",
+            "Protean"
         ],
         "hp": 230,
         "atk": 185,
@@ -23521,6 +25704,11 @@ export const POKEMON_DB = [
         "types": [
             "Ghost"
         ],
+        "abilities": [
+            "Insomnia",
+            "Frisk",
+            "Cursed Body"
+        ],
         "hp": 198,
         "atk": 155,
         "def": 75,
@@ -23568,6 +25756,11 @@ export const POKEMON_DB = [
         "name": "Banette",
         "types": [
             "Ghost"
+        ],
+        "abilities": [
+            "Insomnia",
+            "Frisk",
+            "Cursed Body"
         ],
         "hp": 238,
         "atk": 235,
@@ -23622,6 +25815,10 @@ export const POKEMON_DB = [
         "types": [
             "Ghost"
         ],
+        "abilities": [
+            "Levitate",
+            "Frisk"
+        ],
         "hp": 150,
         "atk": 85,
         "def": 185,
@@ -23665,6 +25862,10 @@ export const POKEMON_DB = [
         "name": "Dusclops",
         "types": [
             "Ghost"
+        ],
+        "abilities": [
+            "Pressure",
+            "Frisk"
         ],
         "hp": 190,
         "atk": 145,
@@ -23725,6 +25926,11 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Flying"
+        ],
+        "abilities": [
+            "Chlorophyll",
+            "Solar Power",
+            "Harvest"
         ],
         "hp": 308,
         "atk": 141,
@@ -23788,6 +25994,9 @@ export const POKEMON_DB = [
         "types": [
             "Psychic"
         ],
+        "abilities": [
+            "Levitate"
+        ],
         "hp": 260,
         "atk": 105,
         "def": 165,
@@ -23834,6 +26043,11 @@ export const POKEMON_DB = [
         "name": "Absol",
         "types": [
             "Dark"
+        ],
+        "abilities": [
+            "Pressure",
+            "Super Luck",
+            "Justified"
         ],
         "hp": 240,
         "atk": 265,
@@ -23909,6 +26123,10 @@ export const POKEMON_DB = [
         "types": [
             "Psychic"
         ],
+        "abilities": [
+            "Shadow Tag",
+            "Telepathy"
+        ],
         "hp": 300,
         "atk": 51,
         "def": 101,
@@ -23929,6 +26147,11 @@ export const POKEMON_DB = [
         "name": "Snorunt",
         "types": [
             "Ice"
+        ],
+        "abilities": [
+            "Inner Focus",
+            "Ice Body",
+            "Moody"
         ],
         "hp": 210,
         "atk": 105,
@@ -23969,6 +26192,11 @@ export const POKEMON_DB = [
         "name": "Glalie",
         "types": [
             "Ice"
+        ],
+        "abilities": [
+            "Inner Focus",
+            "Ice Body",
+            "Moody"
         ],
         "hp": 270,
         "atk": 165,
@@ -24023,6 +26251,11 @@ export const POKEMON_DB = [
             "Ice",
             "Water"
         ],
+        "abilities": [
+            "Thick Fat",
+            "Ice Body",
+            "Oblivious"
+        ],
         "hp": 250,
         "atk": 85,
         "def": 105,
@@ -24068,6 +26301,11 @@ export const POKEMON_DB = [
             "Ice",
             "Water"
         ],
+        "abilities": [
+            "Thick Fat",
+            "Ice Body",
+            "Oblivious"
+        ],
         "hp": 290,
         "atk": 125,
         "def": 145,
@@ -24112,6 +26350,11 @@ export const POKEMON_DB = [
         "types": [
             "Ice",
             "Water"
+        ],
+        "abilities": [
+            "Thick Fat",
+            "Ice Body",
+            "Oblivious"
         ],
         "hp": 330,
         "atk": 165,
@@ -24166,6 +26409,10 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Shell Armor",
+            "Rattled"
+        ],
         "hp": 180,
         "atk": 133,
         "def": 175,
@@ -24198,6 +26445,10 @@ export const POKEMON_DB = [
         "name": "Huntail",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Swift Swim",
+            "Water Veil"
         ],
         "hp": 220,
         "atk": 213,
@@ -24243,6 +26494,10 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Swift Swim",
+            "Hydration"
+        ],
         "hp": 220,
         "atk": 173,
         "def": 215,
@@ -24284,6 +26539,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Rock"
+        ],
+        "abilities": [
+            "Swift Swim",
+            "Rock Head",
+            "Sturdy"
         ],
         "hp": 310,
         "atk": 185,
@@ -24340,6 +26600,10 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Swift Swim",
+            "Hydration"
+        ],
         "hp": 196,
         "atk": 65,
         "def": 115,
@@ -24379,6 +26643,10 @@ export const POKEMON_DB = [
         "name": "Bagon",
         "types": [
             "Dragon"
+        ],
+        "abilities": [
+            "Rock Head",
+            "Sheer Force"
         ],
         "hp": 200,
         "atk": 155,
@@ -24431,6 +26699,10 @@ export const POKEMON_DB = [
         "types": [
             "Dragon"
         ],
+        "abilities": [
+            "Rock Head",
+            "Overcoat"
+        ],
         "hp": 240,
         "atk": 195,
         "def": 205,
@@ -24481,6 +26753,10 @@ export const POKEMON_DB = [
         "types": [
             "Dragon",
             "Flying"
+        ],
+        "abilities": [
+            "Intimidate",
+            "Moxie"
         ],
         "hp": 300,
         "atk": 275,
@@ -24551,6 +26827,10 @@ export const POKEMON_DB = [
             "Steel",
             "Psychic"
         ],
+        "abilities": [
+            "Clear Body",
+            "Light Metal"
+        ],
         "hp": 190,
         "atk": 115,
         "def": 165,
@@ -24574,6 +26854,10 @@ export const POKEMON_DB = [
         "types": [
             "Steel",
             "Psychic"
+        ],
+        "abilities": [
+            "Clear Body",
+            "Light Metal"
         ],
         "hp": 230,
         "atk": 155,
@@ -24635,6 +26919,10 @@ export const POKEMON_DB = [
         "types": [
             "Steel",
             "Psychic"
+        ],
+        "abilities": [
+            "Clear Body",
+            "Light Metal"
         ],
         "hp": 270,
         "atk": 275,
@@ -24704,6 +26992,10 @@ export const POKEMON_DB = [
         "types": [
             "Rock"
         ],
+        "abilities": [
+            "Clear Body",
+            "Sturdy"
+        ],
         "hp": 270,
         "atk": 205,
         "def": 405,
@@ -24767,6 +27059,10 @@ export const POKEMON_DB = [
         "types": [
             "Ice"
         ],
+        "abilities": [
+            "Clear Body",
+            "Ice Body"
+        ],
         "hp": 270,
         "atk": 105,
         "def": 205,
@@ -24828,6 +27124,10 @@ export const POKEMON_DB = [
         "name": "Registeel",
         "types": [
             "Steel"
+        ],
+        "abilities": [
+            "Clear Body",
+            "Light Metal"
         ],
         "hp": 270,
         "atk": 155,
@@ -24891,6 +27191,9 @@ export const POKEMON_DB = [
         "types": [
             "Dragon",
             "Psychic"
+        ],
+        "abilities": [
+            "Levitate"
         ],
         "hp": 270,
         "atk": 165,
@@ -24963,6 +27266,9 @@ export const POKEMON_DB = [
             "Dragon",
             "Psychic"
         ],
+        "abilities": [
+            "Levitate"
+        ],
         "hp": 270,
         "atk": 185,
         "def": 165,
@@ -25032,6 +27338,9 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Drizzle"
+        ],
         "hp": 310,
         "atk": 205,
         "def": 185,
@@ -25089,6 +27398,9 @@ export const POKEMON_DB = [
         "name": "Groudon",
         "types": [
             "Ground"
+        ],
+        "abilities": [
+            "Drought"
         ],
         "hp": 310,
         "atk": 305,
@@ -25168,6 +27480,9 @@ export const POKEMON_DB = [
         "types": [
             "Dragon",
             "Flying"
+        ],
+        "abilities": [
+            "Air Lock"
         ],
         "hp": 320,
         "atk": 305,
@@ -25251,6 +27566,9 @@ export const POKEMON_DB = [
             "Steel",
             "Psychic"
         ],
+        "abilities": [
+            "Serene Grace"
+        ],
         "hp": 310,
         "atk": 205,
         "def": 205,
@@ -25315,6 +27633,9 @@ export const POKEMON_DB = [
         "name": "Deoxys-normal",
         "types": [
             "Psychic"
+        ],
+        "abilities": [
+            "Pressure"
         ],
         "hp": 210,
         "atk": 305,
@@ -25385,6 +27706,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Overgrow",
+            "Shell Armor"
+        ],
         "hp": 220,
         "atk": 141,
         "def": 133,
@@ -25432,6 +27757,10 @@ export const POKEMON_DB = [
         "name": "Grotle",
         "types": [
             "Grass"
+        ],
+        "abilities": [
+            "Overgrow",
+            "Shell Armor"
         ],
         "hp": 260,
         "atk": 183,
@@ -25481,6 +27810,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Ground"
+        ],
+        "abilities": [
+            "Overgrow",
+            "Shell Armor"
         ],
         "hp": 300,
         "atk": 223,
@@ -25545,6 +27878,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire"
         ],
+        "abilities": [
+            "Blaze",
+            "Iron Fist"
+        ],
         "hp": 198,
         "atk": 121,
         "def": 93,
@@ -25607,6 +27944,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Fighting"
+        ],
+        "abilities": [
+            "Blaze",
+            "Iron Fist"
         ],
         "hp": 238,
         "atk": 161,
@@ -25676,6 +28017,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Fighting"
+        ],
+        "abilities": [
+            "Blaze",
+            "Iron Fist"
         ],
         "hp": 262,
         "atk": 213,
@@ -25757,6 +28102,10 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Torrent",
+            "Competitive"
+        ],
         "hp": 216,
         "atk": 107,
         "def": 111,
@@ -25804,6 +28153,10 @@ export const POKEMON_DB = [
         "name": "Prinplup",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Torrent",
+            "Competitive"
         ],
         "hp": 238,
         "atk": 137,
@@ -25856,6 +28209,10 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Steel"
+        ],
+        "abilities": [
+            "Torrent",
+            "Competitive"
         ],
         "hp": 278,
         "atk": 177,
@@ -25930,6 +28287,10 @@ export const POKEMON_DB = [
             "Normal",
             "Flying"
         ],
+        "abilities": [
+            "Keen Eye",
+            "Reckless"
+        ],
         "hp": 190,
         "atk": 115,
         "def": 65,
@@ -25974,6 +28335,10 @@ export const POKEMON_DB = [
             "Normal",
             "Flying"
         ],
+        "abilities": [
+            "Intimidate",
+            "Reckless"
+        ],
         "hp": 220,
         "atk": 155,
         "def": 105,
@@ -26017,6 +28382,10 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Flying"
+        ],
+        "abilities": [
+            "Intimidate",
+            "Reckless"
         ],
         "hp": 280,
         "atk": 245,
@@ -26063,6 +28432,11 @@ export const POKEMON_DB = [
         "name": "Bidoof",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Simple",
+            "Unaware",
+            "Moody"
         ],
         "hp": 228,
         "atk": 95,
@@ -26111,6 +28485,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Water"
+        ],
+        "abilities": [
+            "Simple",
+            "Unaware",
+            "Moody"
         ],
         "hp": 268,
         "atk": 175,
@@ -26170,6 +28549,10 @@ export const POKEMON_DB = [
         "types": [
             "Bug"
         ],
+        "abilities": [
+            "Shed Skin",
+            "Run Away"
+        ],
         "hp": 184,
         "atk": 55,
         "def": 87,
@@ -26191,6 +28574,10 @@ export const POKEMON_DB = [
         "name": "Kricketune",
         "types": [
             "Bug"
+        ],
+        "abilities": [
+            "Swarm",
+            "Technician"
         ],
         "hp": 264,
         "atk": 175,
@@ -26233,6 +28620,11 @@ export const POKEMON_DB = [
         "name": "Shinx",
         "types": [
             "Electric"
+        ],
+        "abilities": [
+            "Rivalry",
+            "Intimidate",
+            "Guts"
         ],
         "hp": 200,
         "atk": 135,
@@ -26283,6 +28675,11 @@ export const POKEMON_DB = [
         "types": [
             "Electric"
         ],
+        "abilities": [
+            "Rivalry",
+            "Intimidate",
+            "Guts"
+        ],
         "hp": 230,
         "atk": 175,
         "def": 103,
@@ -26330,6 +28727,11 @@ export const POKEMON_DB = [
         "name": "Luxray",
         "types": [
             "Electric"
+        ],
+        "abilities": [
+            "Rivalry",
+            "Intimidate",
+            "Guts"
         ],
         "hp": 270,
         "atk": 245,
@@ -26386,6 +28788,11 @@ export const POKEMON_DB = [
             "Grass",
             "Poison"
         ],
+        "abilities": [
+            "Natural Cure",
+            "Poison Point",
+            "Leaf Guard"
+        ],
         "hp": 190,
         "atk": 65,
         "def": 75,
@@ -26424,6 +28831,11 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Poison"
+        ],
+        "abilities": [
+            "Natural Cure",
+            "Poison Point",
+            "Technician"
         ],
         "hp": 230,
         "atk": 145,
@@ -26466,6 +28878,10 @@ export const POKEMON_DB = [
         "name": "Cranidos",
         "types": [
             "Rock"
+        ],
+        "abilities": [
+            "Mold Breaker",
+            "Sheer Force"
         ],
         "hp": 244,
         "atk": 255,
@@ -26529,6 +28945,10 @@ export const POKEMON_DB = [
         "name": "Rampardos",
         "types": [
             "Rock"
+        ],
+        "abilities": [
+            "Mold Breaker",
+            "Sheer Force"
         ],
         "hp": 304,
         "atk": 335,
@@ -26607,6 +29027,10 @@ export const POKEMON_DB = [
             "Rock",
             "Steel"
         ],
+        "abilities": [
+            "Sturdy",
+            "Soundproof"
+        ],
         "hp": 170,
         "atk": 89,
         "def": 241,
@@ -26657,6 +29081,10 @@ export const POKEMON_DB = [
         "types": [
             "Rock",
             "Steel"
+        ],
+        "abilities": [
+            "Sturdy",
+            "Soundproof"
         ],
         "hp": 230,
         "atk": 109,
@@ -26715,6 +29143,10 @@ export const POKEMON_DB = [
         "types": [
             "Bug"
         ],
+        "abilities": [
+            "Shed Skin",
+            "Overcoat"
+        ],
         "hp": 190,
         "atk": 63,
         "def": 95,
@@ -26736,6 +29168,10 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Grass"
+        ],
+        "abilities": [
+            "Anticipation",
+            "Overcoat"
         ],
         "hp": 230,
         "atk": 123,
@@ -26781,6 +29217,10 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Flying"
+        ],
+        "abilities": [
+            "Swarm",
+            "Tinted Lens"
         ],
         "hp": 250,
         "atk": 193,
@@ -26828,6 +29268,10 @@ export const POKEMON_DB = [
             "Bug",
             "Flying"
         ],
+        "abilities": [
+            "Honey Gather",
+            "Hustle"
+        ],
         "hp": 170,
         "atk": 65,
         "def": 89,
@@ -26853,6 +29297,10 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Flying"
+        ],
+        "abilities": [
+            "Pressure",
+            "Unnerve"
         ],
         "hp": 250,
         "atk": 165,
@@ -26907,6 +29355,11 @@ export const POKEMON_DB = [
         "types": [
             "Electric"
         ],
+        "abilities": [
+            "Run Away",
+            "Pickup",
+            "Volt Absorb"
+        ],
         "hp": 230,
         "atk": 95,
         "def": 145,
@@ -26960,6 +29413,10 @@ export const POKEMON_DB = [
         "name": "Buizel",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Swift Swim",
+            "Water Veil"
         ],
         "hp": 220,
         "atk": 135,
@@ -27016,6 +29473,10 @@ export const POKEMON_DB = [
         "name": "Floatzel",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Swift Swim",
+            "Water Veil"
         ],
         "hp": 280,
         "atk": 215,
@@ -27079,6 +29540,9 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Chlorophyll"
+        ],
         "hp": 200,
         "atk": 75,
         "def": 95,
@@ -27112,6 +29576,9 @@ export const POKEMON_DB = [
         "name": "Cherrim",
         "types": [
             "Grass"
+        ],
+        "abilities": [
+            "Flower Gift"
         ],
         "hp": 250,
         "atk": 125,
@@ -27149,6 +29616,11 @@ export const POKEMON_DB = [
         "name": "Shellos",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Sticky Hold",
+            "Storm Drain",
+            "Sand Force"
         ],
         "hp": 262,
         "atk": 101,
@@ -27197,6 +29669,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Ground"
+        ],
+        "abilities": [
+            "Sticky Hold",
+            "Storm Drain",
+            "Sand Force"
         ],
         "hp": 332,
         "atk": 171,
@@ -27251,6 +29728,11 @@ export const POKEMON_DB = [
         "name": "Ambipom",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Technician",
+            "Pickup",
+            "Skill Link"
         ],
         "hp": 260,
         "atk": 205,
@@ -27318,6 +29800,11 @@ export const POKEMON_DB = [
             "Ghost",
             "Flying"
         ],
+        "abilities": [
+            "Aftermath",
+            "Unburden",
+            "Flare Boost"
+        ],
         "hp": 290,
         "atk": 105,
         "def": 73,
@@ -27367,6 +29854,11 @@ export const POKEMON_DB = [
         "types": [
             "Ghost",
             "Flying"
+        ],
+        "abilities": [
+            "Aftermath",
+            "Unburden",
+            "Flare Boost"
         ],
         "hp": 410,
         "atk": 165,
@@ -27419,6 +29911,11 @@ export const POKEMON_DB = [
         "name": "Buneary",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Run Away",
+            "Klutz",
+            "Limber"
         ],
         "hp": 220,
         "atk": 137,
@@ -27473,6 +29970,11 @@ export const POKEMON_DB = [
         "name": "Lopunny",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Cute Charm",
+            "Klutz",
+            "Limber"
         ],
         "hp": 240,
         "atk": 157,
@@ -27538,6 +30040,9 @@ export const POKEMON_DB = [
         "types": [
             "Ghost"
         ],
+        "abilities": [
+            "Levitate"
+        ],
         "hp": 230,
         "atk": 125,
         "def": 125,
@@ -27595,6 +30100,11 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Flying"
+        ],
+        "abilities": [
+            "Insomnia",
+            "Super Luck",
+            "Moxie"
         ],
         "hp": 310,
         "atk": 255,
@@ -27655,6 +30165,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Limber",
+            "Own Tempo",
+            "Keen Eye"
+        ],
         "hp": 208,
         "atk": 115,
         "def": 89,
@@ -27706,6 +30221,11 @@ export const POKEMON_DB = [
         "name": "Purugly",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Thick Fat",
+            "Own Tempo",
+            "Defiant"
         ],
         "hp": 252,
         "atk": 169,
@@ -27761,6 +30281,9 @@ export const POKEMON_DB = [
         "types": [
             "Psychic"
         ],
+        "abilities": [
+            "Levitate"
+        ],
         "hp": 200,
         "atk": 65,
         "def": 105,
@@ -27803,6 +30326,11 @@ export const POKEMON_DB = [
         "types": [
             "Poison",
             "Dark"
+        ],
+        "abilities": [
+            "Stench",
+            "Aftermath",
+            "Keen Eye"
         ],
         "hp": 236,
         "atk": 131,
@@ -27863,6 +30391,11 @@ export const POKEMON_DB = [
         "types": [
             "Poison",
             "Dark"
+        ],
+        "abilities": [
+            "Stench",
+            "Aftermath",
+            "Keen Eye"
         ],
         "hp": 316,
         "atk": 191,
@@ -27927,6 +30460,11 @@ export const POKEMON_DB = [
             "Steel",
             "Psychic"
         ],
+        "abilities": [
+            "Levitate",
+            "Heatproof",
+            "Heavy Metal"
+        ],
         "hp": 224,
         "atk": 53,
         "def": 177,
@@ -27975,6 +30513,11 @@ export const POKEMON_DB = [
         "types": [
             "Steel",
             "Psychic"
+        ],
+        "abilities": [
+            "Levitate",
+            "Heatproof",
+            "Heavy Metal"
         ],
         "hp": 244,
         "atk": 183,
@@ -28032,6 +30575,11 @@ export const POKEMON_DB = [
         "types": [
             "Rock"
         ],
+        "abilities": [
+            "Sturdy",
+            "Rock Head",
+            "Rattled"
+        ],
         "hp": 210,
         "atk": 165,
         "def": 195,
@@ -28080,6 +30628,11 @@ export const POKEMON_DB = [
             "Psychic",
             "Fairy"
         ],
+        "abilities": [
+            "Soundproof",
+            "Filter",
+            "Technician"
+        ],
         "hp": 150,
         "atk": 55,
         "def": 95,
@@ -28125,6 +30678,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Natural Cure",
+            "Serene Grace",
+            "Friend Guard"
+        ],
         "hp": 310,
         "atk": 15,
         "def": 15,
@@ -28168,6 +30726,11 @@ export const POKEMON_DB = [
             "Normal",
             "Flying"
         ],
+        "abilities": [
+            "Keen Eye",
+            "Tangled Feet",
+            "Big Pecks"
+        ],
         "hp": 262,
         "atk": 135,
         "def": 95,
@@ -28208,6 +30771,10 @@ export const POKEMON_DB = [
         "types": [
             "Ghost",
             "Dark"
+        ],
+        "abilities": [
+            "Pressure",
+            "Infiltrator"
         ],
         "hp": 210,
         "atk": 189,
@@ -28260,6 +30827,10 @@ export const POKEMON_DB = [
         "types": [
             "Dragon",
             "Ground"
+        ],
+        "abilities": [
+            "Sand Veil",
+            "Rough Skin"
         ],
         "hp": 226,
         "atk": 145,
@@ -28318,6 +30889,10 @@ export const POKEMON_DB = [
         "types": [
             "Dragon",
             "Ground"
+        ],
+        "abilities": [
+            "Sand Veil",
+            "Rough Skin"
         ],
         "hp": 246,
         "atk": 185,
@@ -28378,6 +30953,10 @@ export const POKEMON_DB = [
         "types": [
             "Dragon",
             "Ground"
+        ],
+        "abilities": [
+            "Sand Veil",
+            "Rough Skin"
         ],
         "hp": 326,
         "atk": 265,
@@ -28446,6 +31025,11 @@ export const POKEMON_DB = [
         "name": "Munchlax",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Pickup",
+            "Thick Fat",
+            "Gluttony"
         ],
         "hp": 380,
         "atk": 175,
@@ -28519,6 +31103,11 @@ export const POKEMON_DB = [
         "types": [
             "Fighting"
         ],
+        "abilities": [
+            "Steadfast",
+            "Inner Focus",
+            "Prankster"
+        ],
         "hp": 190,
         "atk": 145,
         "def": 85,
@@ -28582,6 +31171,11 @@ export const POKEMON_DB = [
         "types": [
             "Fighting",
             "Steel"
+        ],
+        "abilities": [
+            "Steadfast",
+            "Inner Focus",
+            "Justified"
         ],
         "hp": 250,
         "atk": 225,
@@ -28656,6 +31250,10 @@ export const POKEMON_DB = [
         "types": [
             "Ground"
         ],
+        "abilities": [
+            "Sand Stream",
+            "Sand Force"
+        ],
         "hp": 246,
         "atk": 149,
         "def": 161,
@@ -28705,6 +31303,10 @@ export const POKEMON_DB = [
         "name": "Hippowdon",
         "types": [
             "Ground"
+        ],
+        "abilities": [
+            "Sand Stream",
+            "Sand Force"
         ],
         "hp": 326,
         "atk": 229,
@@ -28761,6 +31363,11 @@ export const POKEMON_DB = [
             "Poison",
             "Bug"
         ],
+        "abilities": [
+            "Battle Armor",
+            "Sniper",
+            "Keen Eye"
+        ],
         "hp": 190,
         "atk": 105,
         "def": 185,
@@ -28808,6 +31415,11 @@ export const POKEMON_DB = [
         "types": [
             "Poison",
             "Dark"
+        ],
+        "abilities": [
+            "Battle Armor",
+            "Sniper",
+            "Keen Eye"
         ],
         "hp": 250,
         "atk": 185,
@@ -28870,6 +31482,11 @@ export const POKEMON_DB = [
         "types": [
             "Poison",
             "Fighting"
+        ],
+        "abilities": [
+            "Anticipation",
+            "Dry Skin",
+            "Poison Touch"
         ],
         "hp": 206,
         "atk": 127,
@@ -28947,6 +31564,11 @@ export const POKEMON_DB = [
             "Poison",
             "Fighting"
         ],
+        "abilities": [
+            "Anticipation",
+            "Dry Skin",
+            "Poison Touch"
+        ],
         "hp": 276,
         "atk": 217,
         "def": 135,
@@ -29020,6 +31642,9 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Levitate"
+        ],
         "hp": 258,
         "atk": 205,
         "def": 149,
@@ -29059,6 +31684,11 @@ export const POKEMON_DB = [
         "name": "Finneon",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Swift Swim",
+            "Storm Drain",
+            "Water Veil"
         ],
         "hp": 208,
         "atk": 103,
@@ -29108,6 +31738,11 @@ export const POKEMON_DB = [
         "name": "Lumineon",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Swift Swim",
+            "Storm Drain",
+            "Water Veil"
         ],
         "hp": 248,
         "atk": 143,
@@ -29160,6 +31795,11 @@ export const POKEMON_DB = [
             "Water",
             "Flying"
         ],
+        "abilities": [
+            "Swift Swim",
+            "Water Absorb",
+            "Water Veil"
+        ],
         "hp": 200,
         "atk": 45,
         "def": 105,
@@ -29206,6 +31846,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Ice"
+        ],
+        "abilities": [
+            "Snow Warning",
+            "Soundproof"
         ],
         "hp": 230,
         "atk": 129,
@@ -29257,6 +31901,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Ice"
+        ],
+        "abilities": [
+            "Snow Warning",
+            "Soundproof"
         ],
         "hp": 290,
         "atk": 189,
@@ -29322,6 +31970,10 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Ice"
+        ],
+        "abilities": [
+            "Pressure",
+            "Pickpocket"
         ],
         "hp": 250,
         "atk": 245,
@@ -29391,6 +32043,11 @@ export const POKEMON_DB = [
             "Electric",
             "Steel"
         ],
+        "abilities": [
+            "Magnet Pull",
+            "Sturdy",
+            "Analytic"
+        ],
         "hp": 250,
         "atk": 145,
         "def": 235,
@@ -29440,6 +32097,11 @@ export const POKEMON_DB = [
         "name": "Lickilicky",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Own Tempo",
+            "Oblivious",
+            "Cloud Nine"
         ],
         "hp": 330,
         "atk": 175,
@@ -29515,6 +32177,11 @@ export const POKEMON_DB = [
         "types": [
             "Ground",
             "Rock"
+        ],
+        "abilities": [
+            "Lightning Rod",
+            "Solid Rock",
+            "Reckless"
         ],
         "hp": 340,
         "atk": 285,
@@ -29609,6 +32276,11 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Chlorophyll",
+            "Leaf Guard",
+            "Regenerator"
+        ],
         "hp": 310,
         "atk": 205,
         "def": 255,
@@ -29658,6 +32330,10 @@ export const POKEMON_DB = [
         "name": "Electivire",
         "types": [
             "Electric"
+        ],
+        "abilities": [
+            "Motor Drive",
+            "Vital Spirit"
         ],
         "hp": 260,
         "atk": 251,
@@ -29728,6 +32404,10 @@ export const POKEMON_DB = [
         "name": "Magmortar",
         "types": [
             "Fire"
+        ],
+        "abilities": [
+            "Flame Body",
+            "Vital Spirit"
         ],
         "hp": 260,
         "atk": 195,
@@ -29801,6 +32481,11 @@ export const POKEMON_DB = [
             "Fairy",
             "Flying"
         ],
+        "abilities": [
+            "Hustle",
+            "Serene Grace",
+            "Super Luck"
+        ],
         "hp": 280,
         "atk": 105,
         "def": 195,
@@ -29873,6 +32558,11 @@ export const POKEMON_DB = [
             "Bug",
             "Flying"
         ],
+        "abilities": [
+            "Speed Boost",
+            "Tinted Lens",
+            "Frisk"
+        ],
         "hp": 282,
         "atk": 157,
         "def": 177,
@@ -29929,6 +32619,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Leaf Guard",
+            "Chlorophyll"
+        ],
         "hp": 240,
         "atk": 225,
         "def": 265,
@@ -29983,6 +32677,10 @@ export const POKEMON_DB = [
         "types": [
             "Ice"
         ],
+        "abilities": [
+            "Snow Cloak",
+            "Ice Body"
+        ],
         "hp": 240,
         "atk": 125,
         "def": 225,
@@ -30035,6 +32733,11 @@ export const POKEMON_DB = [
         "types": [
             "Ground",
             "Flying"
+        ],
+        "abilities": [
+            "Hyper Cutter",
+            "Sand Veil",
+            "Poison Heal"
         ],
         "hp": 260,
         "atk": 195,
@@ -30112,6 +32815,11 @@ export const POKEMON_DB = [
             "Ice",
             "Ground"
         ],
+        "abilities": [
+            "Oblivious",
+            "Snow Cloak",
+            "Thick Fat"
+        ],
         "hp": 330,
         "atk": 265,
         "def": 165,
@@ -30169,6 +32877,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Adaptability",
+            "Download",
+            "Analytic"
+        ],
         "hp": 280,
         "atk": 165,
         "def": 145,
@@ -30222,6 +32935,11 @@ export const POKEMON_DB = [
         "types": [
             "Psychic",
             "Fighting"
+        ],
+        "abilities": [
+            "Steadfast",
+            "Sharpness",
+            "Justified"
         ],
         "hp": 246,
         "atk": 255,
@@ -30308,6 +33026,11 @@ export const POKEMON_DB = [
             "Rock",
             "Steel"
         ],
+        "abilities": [
+            "Sturdy",
+            "Magnet Pull",
+            "Sand Force"
+        ],
         "hp": 230,
         "atk": 115,
         "def": 295,
@@ -30367,6 +33090,10 @@ export const POKEMON_DB = [
         "name": "Dusknoir",
         "types": [
             "Ghost"
+        ],
+        "abilities": [
+            "Pressure",
+            "Frisk"
         ],
         "hp": 200,
         "atk": 205,
@@ -30429,6 +33156,10 @@ export const POKEMON_DB = [
             "Ice",
             "Ghost"
         ],
+        "abilities": [
+            "Snow Cloak",
+            "Cursed Body"
+        ],
         "hp": 250,
         "atk": 165,
         "def": 145,
@@ -30482,6 +33213,9 @@ export const POKEMON_DB = [
             "Electric",
             "Ghost"
         ],
+        "abilities": [
+            "Levitate"
+        ],
         "hp": 210,
         "atk": 105,
         "def": 159,
@@ -30523,6 +33257,9 @@ export const POKEMON_DB = [
         "name": "Uxie",
         "types": [
             "Psychic"
+        ],
+        "abilities": [
+            "Levitate"
         ],
         "hp": 260,
         "atk": 155,
@@ -30582,6 +33319,9 @@ export const POKEMON_DB = [
         "types": [
             "Psychic"
         ],
+        "abilities": [
+            "Levitate"
+        ],
         "hp": 270,
         "atk": 215,
         "def": 215,
@@ -30639,6 +33379,9 @@ export const POKEMON_DB = [
         "name": "Azelf",
         "types": [
             "Psychic"
+        ],
+        "abilities": [
+            "Levitate"
         ],
         "hp": 260,
         "atk": 255,
@@ -30703,6 +33446,10 @@ export const POKEMON_DB = [
         "types": [
             "Steel",
             "Dragon"
+        ],
+        "abilities": [
+            "Pressure",
+            "Telepathy"
         ],
         "hp": 310,
         "atk": 245,
@@ -30771,6 +33518,10 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Dragon"
+        ],
+        "abilities": [
+            "Pressure",
+            "Telepathy"
         ],
         "hp": 290,
         "atk": 245,
@@ -30846,6 +33597,10 @@ export const POKEMON_DB = [
             "Fire",
             "Steel"
         ],
+        "abilities": [
+            "Flash Fire",
+            "Flame Body"
+        ],
         "hp": 292,
         "atk": 185,
         "def": 217,
@@ -30909,6 +33664,9 @@ export const POKEMON_DB = [
         "name": "Regigigas",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Slow Start"
         ],
         "hp": 330,
         "atk": 325,
@@ -30974,6 +33732,10 @@ export const POKEMON_DB = [
         "types": [
             "Ghost",
             "Dragon"
+        ],
+        "abilities": [
+            "Pressure",
+            "Telepathy"
         ],
         "hp": 410,
         "atk": 205,
@@ -31046,6 +33808,9 @@ export const POKEMON_DB = [
         "types": [
             "Psychic"
         ],
+        "abilities": [
+            "Levitate"
+        ],
         "hp": 350,
         "atk": 145,
         "def": 225,
@@ -31092,6 +33857,9 @@ export const POKEMON_DB = [
         "name": "Phione",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Hydration"
         ],
         "hp": 270,
         "atk": 165,
@@ -31140,6 +33908,9 @@ export const POKEMON_DB = [
         "name": "Manaphy",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Hydration"
         ],
         "hp": 310,
         "atk": 205,
@@ -31194,6 +33965,9 @@ export const POKEMON_DB = [
         "name": "Darkrai",
         "types": [
             "Dark"
+        ],
+        "abilities": [
+            "Bad Dreams"
         ],
         "hp": 250,
         "atk": 185,
@@ -31260,6 +34034,9 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Natural Cure"
+        ],
         "hp": 310,
         "atk": 205,
         "def": 205,
@@ -31308,6 +34085,9 @@ export const POKEMON_DB = [
         "name": "Arceus",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Multitype"
         ],
         "hp": 350,
         "atk": 245,
@@ -31424,6 +34204,9 @@ export const POKEMON_DB = [
             "Psychic",
             "Fire"
         ],
+        "abilities": [
+            "Victory Star"
+        ],
         "hp": 310,
         "atk": 205,
         "def": 205,
@@ -31488,6 +34271,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Overgrow",
+            "Contrary"
+        ],
         "hp": 200,
         "atk": 95,
         "def": 115,
@@ -31529,6 +34316,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Overgrow",
+            "Contrary"
+        ],
         "hp": 230,
         "atk": 125,
         "def": 155,
@@ -31569,6 +34360,10 @@ export const POKEMON_DB = [
         "name": "Serperior",
         "types": [
             "Grass"
+        ],
+        "abilities": [
+            "Overgrow",
+            "Contrary"
         ],
         "hp": 260,
         "atk": 155,
@@ -31621,6 +34416,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire"
         ],
+        "abilities": [
+            "Blaze",
+            "Thick Fat"
+        ],
         "hp": 240,
         "atk": 131,
         "def": 95,
@@ -31670,6 +34469,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Fighting"
+        ],
+        "abilities": [
+            "Blaze",
+            "Thick Fat"
         ],
         "hp": 290,
         "atk": 191,
@@ -31732,6 +34535,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Fighting"
+        ],
+        "abilities": [
+            "Blaze",
+            "Reckless"
         ],
         "hp": 330,
         "atk": 251,
@@ -31802,6 +34609,10 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Torrent",
+            "Shell Armor"
+        ],
         "hp": 220,
         "atk": 115,
         "def": 95,
@@ -31858,6 +34669,10 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Torrent",
+            "Shell Armor"
+        ],
         "hp": 260,
         "atk": 155,
         "def": 125,
@@ -31913,6 +34728,10 @@ export const POKEMON_DB = [
         "name": "Samurott",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Torrent",
+            "Shell Armor"
         ],
         "hp": 300,
         "atk": 205,
@@ -31986,6 +34805,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Run Away",
+            "Keen Eye",
+            "Analytic"
+        ],
         "hp": 200,
         "atk": 115,
         "def": 83,
@@ -32024,6 +34848,11 @@ export const POKEMON_DB = [
         "name": "Watchog",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Illuminate",
+            "Keen Eye",
+            "Analytic"
         ],
         "hp": 230,
         "atk": 175,
@@ -32076,6 +34905,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Vital Spirit",
+            "Pickup",
+            "Run Away"
+        ],
         "hp": 200,
         "atk": 125,
         "def": 95,
@@ -32118,6 +34952,11 @@ export const POKEMON_DB = [
         "name": "Herdier",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Intimidate",
+            "Sand Rush",
+            "Scrappy"
         ],
         "hp": 240,
         "atk": 165,
@@ -32163,6 +35002,11 @@ export const POKEMON_DB = [
         "name": "Stoutland",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Intimidate",
+            "Sand Rush",
+            "Scrappy"
         ],
         "hp": 280,
         "atk": 225,
@@ -32214,6 +35058,11 @@ export const POKEMON_DB = [
         "types": [
             "Dark"
         ],
+        "abilities": [
+            "Limber",
+            "Unburden",
+            "Prankster"
+        ],
         "hp": 192,
         "atk": 105,
         "def": 79,
@@ -32259,6 +35108,11 @@ export const POKEMON_DB = [
         "name": "Liepard",
         "types": [
             "Dark"
+        ],
+        "abilities": [
+            "Limber",
+            "Unburden",
+            "Prankster"
         ],
         "hp": 238,
         "atk": 181,
@@ -32310,6 +35164,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Gluttony",
+            "Overgrow"
+        ],
         "hp": 210,
         "atk": 111,
         "def": 101,
@@ -32351,6 +35209,10 @@ export const POKEMON_DB = [
         "name": "Simisage",
         "types": [
             "Grass"
+        ],
+        "abilities": [
+            "Gluttony",
+            "Overgrow"
         ],
         "hp": 260,
         "atk": 201,
@@ -32397,6 +35259,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire"
         ],
+        "abilities": [
+            "Gluttony",
+            "Blaze"
+        ],
         "hp": 210,
         "atk": 111,
         "def": 101,
@@ -32442,6 +35308,10 @@ export const POKEMON_DB = [
         "name": "Simisear",
         "types": [
             "Fire"
+        ],
+        "abilities": [
+            "Gluttony",
+            "Blaze"
         ],
         "hp": 260,
         "atk": 201,
@@ -32492,6 +35362,10 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Gluttony",
+            "Torrent"
+        ],
         "hp": 210,
         "atk": 111,
         "def": 101,
@@ -32539,6 +35413,10 @@ export const POKEMON_DB = [
         "name": "Simipour",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Gluttony",
+            "Torrent"
         ],
         "hp": 260,
         "atk": 201,
@@ -32591,6 +35469,11 @@ export const POKEMON_DB = [
         "types": [
             "Psychic"
         ],
+        "abilities": [
+            "Forewarn",
+            "Synchronize",
+            "Telepathy"
+        ],
         "hp": 262,
         "atk": 55,
         "def": 95,
@@ -32628,6 +35511,11 @@ export const POKEMON_DB = [
         "name": "Musharna",
         "types": [
             "Psychic"
+        ],
+        "abilities": [
+            "Forewarn",
+            "Synchronize",
+            "Telepathy"
         ],
         "hp": 342,
         "atk": 115,
@@ -32670,6 +35558,11 @@ export const POKEMON_DB = [
             "Normal",
             "Flying"
         ],
+        "abilities": [
+            "Big Pecks",
+            "Super Luck",
+            "Rivalry"
+        ],
         "hp": 210,
         "atk": 115,
         "def": 105,
@@ -32706,6 +35599,11 @@ export const POKEMON_DB = [
             "Normal",
             "Flying"
         ],
+        "abilities": [
+            "Big Pecks",
+            "Super Luck",
+            "Rivalry"
+        ],
         "hp": 234,
         "atk": 159,
         "def": 129,
@@ -32740,6 +35638,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Flying"
+        ],
+        "abilities": [
+            "Big Pecks",
+            "Super Luck",
+            "Rivalry"
         ],
         "hp": 270,
         "atk": 235,
@@ -32778,6 +35681,11 @@ export const POKEMON_DB = [
         "name": "Blitzle",
         "types": [
             "Electric"
+        ],
+        "abilities": [
+            "Lightning Rod",
+            "Motor Drive",
+            "Sap Sipper"
         ],
         "hp": 200,
         "atk": 125,
@@ -32821,6 +35729,11 @@ export const POKEMON_DB = [
         "name": "Zebstrika",
         "types": [
             "Electric"
+        ],
+        "abilities": [
+            "Lightning Rod",
+            "Motor Drive",
+            "Sap Sipper"
         ],
         "hp": 260,
         "atk": 205,
@@ -32870,6 +35783,11 @@ export const POKEMON_DB = [
         "types": [
             "Rock"
         ],
+        "abilities": [
+            "Sturdy",
+            "Weak Armor",
+            "Sand Force"
+        ],
         "hp": 220,
         "atk": 155,
         "def": 175,
@@ -32903,6 +35821,11 @@ export const POKEMON_DB = [
         "name": "Boldore",
         "types": [
             "Rock"
+        ],
+        "abilities": [
+            "Sturdy",
+            "Weak Armor",
+            "Sand Force"
         ],
         "hp": 250,
         "atk": 215,
@@ -32938,6 +35861,11 @@ export const POKEMON_DB = [
         "name": "Gigalith",
         "types": [
             "Rock"
+        ],
+        "abilities": [
+            "Sturdy",
+            "Sand Stream",
+            "Sand Force"
         ],
         "hp": 280,
         "atk": 275,
@@ -32981,6 +35909,11 @@ export const POKEMON_DB = [
         "types": [
             "Psychic",
             "Flying"
+        ],
+        "abilities": [
+            "Unaware",
+            "Klutz",
+            "Simple"
         ],
         "hp": 240,
         "atk": 95,
@@ -33031,6 +35964,11 @@ export const POKEMON_DB = [
         "types": [
             "Psychic",
             "Flying"
+        ],
+        "abilities": [
+            "Unaware",
+            "Klutz",
+            "Simple"
         ],
         "hp": 244,
         "atk": 119,
@@ -33084,6 +36022,11 @@ export const POKEMON_DB = [
         "types": [
             "Ground"
         ],
+        "abilities": [
+            "Sand Rush",
+            "Sand Force",
+            "Mold Breaker"
+        ],
         "hp": 230,
         "atk": 175,
         "def": 85,
@@ -33131,6 +36074,11 @@ export const POKEMON_DB = [
         "types": [
             "Ground",
             "Steel"
+        ],
+        "abilities": [
+            "Sand Rush",
+            "Sand Force",
+            "Mold Breaker"
         ],
         "hp": 330,
         "atk": 275,
@@ -33184,6 +36132,11 @@ export const POKEMON_DB = [
         "name": "Audino",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Healer",
+            "Regenerator",
+            "Klutz"
         ],
         "hp": 316,
         "atk": 125,
@@ -33246,6 +36199,11 @@ export const POKEMON_DB = [
         "types": [
             "Fighting"
         ],
+        "abilities": [
+            "Guts",
+            "Sheer Force",
+            "Iron Fist"
+        ],
         "hp": 260,
         "atk": 165,
         "def": 115,
@@ -33301,6 +36259,11 @@ export const POKEMON_DB = [
         "types": [
             "Fighting"
         ],
+        "abilities": [
+            "Guts",
+            "Sheer Force",
+            "Iron Fist"
+        ],
         "hp": 280,
         "atk": 215,
         "def": 175,
@@ -33354,6 +36317,11 @@ export const POKEMON_DB = [
         "name": "Conkeldurr",
         "types": [
             "Fighting"
+        ],
+        "abilities": [
+            "Guts",
+            "Sheer Force",
+            "Iron Fist"
         ],
         "hp": 320,
         "atk": 285,
@@ -33416,6 +36384,11 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Swift Swim",
+            "Hydration",
+            "Water Absorb"
+        ],
         "hp": 210,
         "atk": 105,
         "def": 85,
@@ -33452,6 +36425,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Ground"
+        ],
+        "abilities": [
+            "Swift Swim",
+            "Hydration",
+            "Water Absorb"
         ],
         "hp": 260,
         "atk": 135,
@@ -33491,6 +36469,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Ground"
+        ],
+        "abilities": [
+            "Swift Swim",
+            "Poison Touch",
+            "Water Absorb"
         ],
         "hp": 320,
         "atk": 195,
@@ -33549,6 +36532,11 @@ export const POKEMON_DB = [
         "types": [
             "Fighting"
         ],
+        "abilities": [
+            "Guts",
+            "Inner Focus",
+            "Mold Breaker"
+        ],
         "hp": 350,
         "atk": 205,
         "def": 175,
@@ -33598,6 +36586,11 @@ export const POKEMON_DB = [
         "types": [
             "Fighting"
         ],
+        "abilities": [
+            "Sturdy",
+            "Inner Focus",
+            "Mold Breaker"
+        ],
         "hp": 260,
         "atk": 255,
         "def": 155,
@@ -33645,6 +36638,11 @@ export const POKEMON_DB = [
             "Bug",
             "Grass"
         ],
+        "abilities": [
+            "Swarm",
+            "Chlorophyll",
+            "Overcoat"
+        ],
         "hp": 200,
         "atk": 111,
         "def": 145,
@@ -33686,6 +36684,11 @@ export const POKEMON_DB = [
             "Bug",
             "Grass"
         ],
+        "abilities": [
+            "Leaf Guard",
+            "Chlorophyll",
+            "Overcoat"
+        ],
         "hp": 220,
         "atk": 131,
         "def": 185,
@@ -33723,6 +36726,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Grass"
+        ],
+        "abilities": [
+            "Swarm",
+            "Chlorophyll",
+            "Overcoat"
         ],
         "hp": 260,
         "atk": 211,
@@ -33777,6 +36785,11 @@ export const POKEMON_DB = [
             "Bug",
             "Poison"
         ],
+        "abilities": [
+            "Poison Point",
+            "Swarm",
+            "Speed Boost"
+        ],
         "hp": 170,
         "atk": 95,
         "def": 123,
@@ -33813,6 +36826,11 @@ export const POKEMON_DB = [
             "Bug",
             "Poison"
         ],
+        "abilities": [
+            "Poison Point",
+            "Swarm",
+            "Speed Boost"
+        ],
         "hp": 190,
         "atk": 115,
         "def": 203,
@@ -33847,6 +36865,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Poison"
+        ],
+        "abilities": [
+            "Poison Point",
+            "Swarm",
+            "Speed Boost"
         ],
         "hp": 230,
         "atk": 205,
@@ -33901,6 +36924,11 @@ export const POKEMON_DB = [
             "Grass",
             "Fairy"
         ],
+        "abilities": [
+            "Prankster",
+            "Infiltrator",
+            "Chlorophyll"
+        ],
         "hp": 190,
         "atk": 59,
         "def": 125,
@@ -33934,6 +36962,11 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Fairy"
+        ],
+        "abilities": [
+            "Prankster",
+            "Infiltrator",
+            "Chlorophyll"
         ],
         "hp": 230,
         "atk": 139,
@@ -33977,6 +37010,11 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Chlorophyll",
+            "Own Tempo",
+            "Leaf Guard"
+        ],
         "hp": 200,
         "atk": 75,
         "def": 105,
@@ -34008,6 +37046,11 @@ export const POKEMON_DB = [
         "name": "Lilligant",
         "types": [
             "Grass"
+        ],
+        "abilities": [
+            "Chlorophyll",
+            "Own Tempo",
+            "Leaf Guard"
         ],
         "hp": 250,
         "atk": 125,
@@ -34047,6 +37090,11 @@ export const POKEMON_DB = [
         "name": "Basculin-red-striped",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Reckless",
+            "Adaptability",
+            "Mold Breaker"
         ],
         "hp": 250,
         "atk": 189,
@@ -34108,6 +37156,11 @@ export const POKEMON_DB = [
             "Ground",
             "Dark"
         ],
+        "abilities": [
+            "Intimidate",
+            "Moxie",
+            "Anger Point"
+        ],
         "hp": 210,
         "atk": 149,
         "def": 75,
@@ -34164,6 +37217,11 @@ export const POKEMON_DB = [
         "types": [
             "Ground",
             "Dark"
+        ],
+        "abilities": [
+            "Intimidate",
+            "Moxie",
+            "Anger Point"
         ],
         "hp": 230,
         "atk": 169,
@@ -34232,6 +37290,11 @@ export const POKEMON_DB = [
         "types": [
             "Ground",
             "Dark"
+        ],
+        "abilities": [
+            "Intimidate",
+            "Moxie",
+            "Anger Point"
         ],
         "hp": 300,
         "atk": 239,
@@ -34311,6 +37374,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire"
         ],
+        "abilities": [
+            "Hustle",
+            "Inner Focus"
+        ],
         "hp": 250,
         "atk": 185,
         "def": 95,
@@ -34360,6 +37427,10 @@ export const POKEMON_DB = [
         "name": "Darmanitan-standard",
         "types": [
             "Fire"
+        ],
+        "abilities": [
+            "Sheer Force",
+            "Zen Mode"
         ],
         "hp": 320,
         "atk": 285,
@@ -34423,6 +37494,11 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Water Absorb",
+            "Chlorophyll",
+            "Storm Drain"
+        ],
         "hp": 260,
         "atk": 177,
         "def": 139,
@@ -34465,6 +37541,11 @@ export const POKEMON_DB = [
             "Bug",
             "Rock"
         ],
+        "abilities": [
+            "Sturdy",
+            "Shell Armor",
+            "Weak Armor"
+        ],
         "hp": 210,
         "atk": 135,
         "def": 175,
@@ -34505,6 +37586,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Rock"
+        ],
+        "abilities": [
+            "Sturdy",
+            "Shell Armor",
+            "Weak Armor"
         ],
         "hp": 250,
         "atk": 215,
@@ -34551,6 +37637,11 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Fighting"
+        ],
+        "abilities": [
+            "Shed Skin",
+            "Moxie",
+            "Intimidate"
         ],
         "hp": 210,
         "atk": 155,
@@ -34621,6 +37712,11 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Fighting"
+        ],
+        "abilities": [
+            "Shed Skin",
+            "Moxie",
+            "Intimidate"
         ],
         "hp": 240,
         "atk": 185,
@@ -34696,6 +37792,11 @@ export const POKEMON_DB = [
             "Psychic",
             "Flying"
         ],
+        "abilities": [
+            "Wonder Skin",
+            "Magic Guard",
+            "Tinted Lens"
+        ],
         "hp": 254,
         "atk": 121,
         "def": 165,
@@ -34749,6 +37850,9 @@ export const POKEMON_DB = [
         "types": [
             "Ghost"
         ],
+        "abilities": [
+            "Mummy"
+        ],
         "hp": 186,
         "atk": 65,
         "def": 175,
@@ -34781,6 +37885,9 @@ export const POKEMON_DB = [
         "name": "Cofagrigus",
         "types": [
             "Ghost"
+        ],
+        "abilities": [
+            "Mummy"
         ],
         "hp": 226,
         "atk": 105,
@@ -34821,6 +37928,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Rock"
+        ],
+        "abilities": [
+            "Solid Rock",
+            "Sturdy",
+            "Swift Swim"
         ],
         "hp": 218,
         "atk": 161,
@@ -34875,6 +37987,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Rock"
+        ],
+        "abilities": [
+            "Solid Rock",
+            "Sturdy",
+            "Swift Swim"
         ],
         "hp": 258,
         "atk": 221,
@@ -34935,6 +38052,9 @@ export const POKEMON_DB = [
             "Rock",
             "Flying"
         ],
+        "abilities": [
+            "Defeatist"
+        ],
         "hp": 220,
         "atk": 229,
         "def": 95,
@@ -34990,6 +38110,9 @@ export const POKEMON_DB = [
         "types": [
             "Rock",
             "Flying"
+        ],
+        "abilities": [
+            "Defeatist"
         ],
         "hp": 260,
         "atk": 285,
@@ -35052,6 +38175,11 @@ export const POKEMON_DB = [
         "types": [
             "Poison"
         ],
+        "abilities": [
+            "Stench",
+            "Sticky Hold",
+            "Aftermath"
+        ],
         "hp": 210,
         "atk": 105,
         "def": 129,
@@ -35086,6 +38214,11 @@ export const POKEMON_DB = [
         "name": "Garbodor",
         "types": [
             "Poison"
+        ],
+        "abilities": [
+            "Stench",
+            "Weak Armor",
+            "Aftermath"
         ],
         "hp": 270,
         "atk": 195,
@@ -35131,6 +38264,9 @@ export const POKEMON_DB = [
         "name": "Zorua",
         "types": [
             "Dark"
+        ],
+        "abilities": [
+            "Illusion"
         ],
         "hp": 190,
         "atk": 135,
@@ -35182,6 +38318,9 @@ export const POKEMON_DB = [
         "name": "Zoroark",
         "types": [
             "Dark"
+        ],
+        "abilities": [
+            "Illusion"
         ],
         "hp": 230,
         "atk": 215,
@@ -35245,6 +38384,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Cute Charm",
+            "Technician",
+            "Skill Link"
+        ],
         "hp": 220,
         "atk": 105,
         "def": 85,
@@ -35288,6 +38432,11 @@ export const POKEMON_DB = [
         "name": "Cinccino",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Cute Charm",
+            "Technician",
+            "Skill Link"
         ],
         "hp": 260,
         "atk": 195,
@@ -35338,6 +38487,11 @@ export const POKEMON_DB = [
         "types": [
             "Psychic"
         ],
+        "abilities": [
+            "Frisk",
+            "Competitive",
+            "Shadow Tag"
+        ],
         "hp": 200,
         "atk": 65,
         "def": 105,
@@ -35383,6 +38537,11 @@ export const POKEMON_DB = [
         "types": [
             "Psychic"
         ],
+        "abilities": [
+            "Frisk",
+            "Competitive",
+            "Shadow Tag"
+        ],
         "hp": 230,
         "atk": 95,
         "def": 145,
@@ -35426,6 +38585,11 @@ export const POKEMON_DB = [
         "name": "Gothitelle",
         "types": [
             "Psychic"
+        ],
+        "abilities": [
+            "Frisk",
+            "Competitive",
+            "Shadow Tag"
         ],
         "hp": 250,
         "atk": 115,
@@ -35477,6 +38641,11 @@ export const POKEMON_DB = [
         "types": [
             "Psychic"
         ],
+        "abilities": [
+            "Overcoat",
+            "Magic Guard",
+            "Regenerator"
+        ],
         "hp": 200,
         "atk": 65,
         "def": 85,
@@ -35517,6 +38686,11 @@ export const POKEMON_DB = [
         "types": [
             "Psychic"
         ],
+        "abilities": [
+            "Overcoat",
+            "Magic Guard",
+            "Regenerator"
+        ],
         "hp": 240,
         "atk": 85,
         "def": 105,
@@ -35556,6 +38730,11 @@ export const POKEMON_DB = [
         "name": "Reuniclus",
         "types": [
             "Psychic"
+        ],
+        "abilities": [
+            "Overcoat",
+            "Magic Guard",
+            "Regenerator"
         ],
         "hp": 330,
         "atk": 135,
@@ -35614,6 +38793,11 @@ export const POKEMON_DB = [
             "Water",
             "Flying"
         ],
+        "abilities": [
+            "Keen Eye",
+            "Big Pecks",
+            "Hydration"
+        ],
         "hp": 234,
         "atk": 93,
         "def": 105,
@@ -35658,6 +38842,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Flying"
+        ],
+        "abilities": [
+            "Keen Eye",
+            "Big Pecks",
+            "Hydration"
         ],
         "hp": 260,
         "atk": 179,
@@ -35711,6 +38900,11 @@ export const POKEMON_DB = [
         "types": [
             "Ice"
         ],
+        "abilities": [
+            "Ice Body",
+            "Snow Cloak",
+            "Weak Armor"
+        ],
         "hp": 182,
         "atk": 105,
         "def": 105,
@@ -35747,6 +38941,11 @@ export const POKEMON_DB = [
         "types": [
             "Ice"
         ],
+        "abilities": [
+            "Ice Body",
+            "Snow Cloak",
+            "Weak Armor"
+        ],
         "hp": 212,
         "atk": 135,
         "def": 135,
@@ -35780,6 +38979,11 @@ export const POKEMON_DB = [
         "name": "Vanilluxe",
         "types": [
             "Ice"
+        ],
+        "abilities": [
+            "Ice Body",
+            "Snow Warning",
+            "Weak Armor"
         ],
         "hp": 252,
         "atk": 195,
@@ -35819,6 +39023,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Grass"
+        ],
+        "abilities": [
+            "Chlorophyll",
+            "Sap Sipper",
+            "Serene Grace"
         ],
         "hp": 230,
         "atk": 125,
@@ -35864,6 +39073,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Grass"
+        ],
+        "abilities": [
+            "Chlorophyll",
+            "Sap Sipper",
+            "Serene Grace"
         ],
         "hp": 270,
         "atk": 205,
@@ -35918,6 +39132,10 @@ export const POKEMON_DB = [
             "Electric",
             "Flying"
         ],
+        "abilities": [
+            "Static",
+            "Motor Drive"
+        ],
         "hp": 220,
         "atk": 155,
         "def": 125,
@@ -35961,6 +39179,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug"
         ],
+        "abilities": [
+            "Swarm",
+            "Shed Skin",
+            "No Guard"
+        ],
         "hp": 210,
         "atk": 155,
         "def": 95,
@@ -36000,6 +39223,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Steel"
+        ],
+        "abilities": [
+            "Swarm",
+            "Shell Armor",
+            "Overcoat"
         ],
         "hp": 250,
         "atk": 275,
@@ -36048,6 +39276,10 @@ export const POKEMON_DB = [
             "Grass",
             "Poison"
         ],
+        "abilities": [
+            "Effect Spore",
+            "Regenerator"
+        ],
         "hp": 248,
         "atk": 115,
         "def": 95,
@@ -36082,6 +39314,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Poison"
+        ],
+        "abilities": [
+            "Effect Spore",
+            "Regenerator"
         ],
         "hp": 338,
         "atk": 175,
@@ -36121,6 +39357,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Ghost"
+        ],
+        "abilities": [
+            "Water Absorb",
+            "Cursed Body",
+            "Damp"
         ],
         "hp": 220,
         "atk": 85,
@@ -36168,6 +39409,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Ghost"
+        ],
+        "abilities": [
+            "Water Absorb",
+            "Cursed Body",
+            "Damp"
         ],
         "hp": 310,
         "atk": 125,
@@ -36218,6 +39464,11 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Healer",
+            "Hydration",
+            "Regenerator"
+        ],
         "hp": 440,
         "atk": 155,
         "def": 165,
@@ -36267,6 +39518,11 @@ export const POKEMON_DB = [
             "Bug",
             "Electric"
         ],
+        "abilities": [
+            "Compound Eyes",
+            "Unnerve",
+            "Swarm"
+        ],
         "hp": 210,
         "atk": 99,
         "def": 105,
@@ -36315,6 +39571,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Electric"
+        ],
+        "abilities": [
+            "Compound Eyes",
+            "Unnerve",
+            "Swarm"
         ],
         "hp": 250,
         "atk": 159,
@@ -36366,6 +39627,9 @@ export const POKEMON_DB = [
             "Grass",
             "Steel"
         ],
+        "abilities": [
+            "Iron Barbs"
+        ],
         "hp": 198,
         "atk": 105,
         "def": 187,
@@ -36404,6 +39668,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Steel"
+        ],
+        "abilities": [
+            "Iron Barbs",
+            "Anticipation"
         ],
         "hp": 258,
         "atk": 193,
@@ -36453,6 +39721,11 @@ export const POKEMON_DB = [
         "types": [
             "Steel"
         ],
+        "abilities": [
+            "Plus",
+            "Minus",
+            "Clear Body"
+        ],
         "hp": 190,
         "atk": 115,
         "def": 145,
@@ -36491,6 +39764,11 @@ export const POKEMON_DB = [
         "types": [
             "Steel"
         ],
+        "abilities": [
+            "Plus",
+            "Minus",
+            "Clear Body"
+        ],
         "hp": 230,
         "atk": 165,
         "def": 195,
@@ -36528,6 +39806,11 @@ export const POKEMON_DB = [
         "name": "Klinklang",
         "types": [
             "Steel"
+        ],
+        "abilities": [
+            "Plus",
+            "Minus",
+            "Clear Body"
         ],
         "hp": 230,
         "atk": 205,
@@ -36569,6 +39852,9 @@ export const POKEMON_DB = [
         "types": [
             "Electric"
         ],
+        "abilities": [
+            "Levitate"
+        ],
         "hp": 180,
         "atk": 115,
         "def": 85,
@@ -36589,6 +39875,9 @@ export const POKEMON_DB = [
         "name": "Eelektrik",
         "types": [
             "Electric"
+        ],
+        "abilities": [
+            "Levitate"
         ],
         "hp": 240,
         "atk": 175,
@@ -36637,6 +39926,9 @@ export const POKEMON_DB = [
         "name": "Eelektross",
         "types": [
             "Electric"
+        ],
+        "abilities": [
+            "Levitate"
         ],
         "hp": 280,
         "atk": 235,
@@ -36711,6 +40003,11 @@ export const POKEMON_DB = [
         "types": [
             "Psychic"
         ],
+        "abilities": [
+            "Telepathy",
+            "Synchronize",
+            "Analytic"
+        ],
         "hp": 220,
         "atk": 115,
         "def": 115,
@@ -36751,6 +40048,11 @@ export const POKEMON_DB = [
         "name": "Beheeyem",
         "types": [
             "Psychic"
+        ],
+        "abilities": [
+            "Telepathy",
+            "Synchronize",
+            "Analytic"
         ],
         "hp": 260,
         "atk": 155,
@@ -36799,6 +40101,11 @@ export const POKEMON_DB = [
             "Ghost",
             "Fire"
         ],
+        "abilities": [
+            "Flash Fire",
+            "Flame Body",
+            "Infiltrator"
+        ],
         "hp": 210,
         "atk": 65,
         "def": 115,
@@ -36843,6 +40150,11 @@ export const POKEMON_DB = [
         "types": [
             "Ghost",
             "Fire"
+        ],
+        "abilities": [
+            "Flash Fire",
+            "Flame Body",
+            "Infiltrator"
         ],
         "hp": 230,
         "atk": 85,
@@ -36890,6 +40202,11 @@ export const POKEMON_DB = [
             "Ghost",
             "Fire"
         ],
+        "abilities": [
+            "Flash Fire",
+            "Flame Body",
+            "Infiltrator"
+        ],
         "hp": 230,
         "atk": 115,
         "def": 185,
@@ -36936,6 +40253,11 @@ export const POKEMON_DB = [
         "name": "Axew",
         "types": [
             "Dragon"
+        ],
+        "abilities": [
+            "Rivalry",
+            "Mold Breaker",
+            "Unnerve"
         ],
         "hp": 202,
         "atk": 179,
@@ -36994,6 +40316,11 @@ export const POKEMON_DB = [
         "types": [
             "Dragon"
         ],
+        "abilities": [
+            "Rivalry",
+            "Mold Breaker",
+            "Unnerve"
+        ],
         "hp": 242,
         "atk": 239,
         "def": 145,
@@ -37047,6 +40374,11 @@ export const POKEMON_DB = [
         "name": "Haxorus",
         "types": [
             "Dragon"
+        ],
+        "abilities": [
+            "Rivalry",
+            "Mold Breaker",
+            "Unnerve"
         ],
         "hp": 262,
         "atk": 299,
@@ -37111,6 +40443,11 @@ export const POKEMON_DB = [
         "types": [
             "Ice"
         ],
+        "abilities": [
+            "Snow Cloak",
+            "Slush Rush",
+            "Rattled"
+        ],
         "hp": 220,
         "atk": 145,
         "def": 85,
@@ -37168,6 +40505,11 @@ export const POKEMON_DB = [
         "name": "Beartic",
         "types": [
             "Ice"
+        ],
+        "abilities": [
+            "Snow Cloak",
+            "Slush Rush",
+            "Swift Swim"
         ],
         "hp": 300,
         "atk": 265,
@@ -37238,6 +40580,9 @@ export const POKEMON_DB = [
         "types": [
             "Ice"
         ],
+        "abilities": [
+            "Levitate"
+        ],
         "hp": 270,
         "atk": 105,
         "def": 105,
@@ -37285,6 +40630,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug"
         ],
+        "abilities": [
+            "Hydration",
+            "Shell Armor",
+            "Overcoat"
+        ],
         "hp": 210,
         "atk": 85,
         "def": 175,
@@ -37318,6 +40668,11 @@ export const POKEMON_DB = [
         "name": "Accelgor",
         "types": [
             "Bug"
+        ],
+        "abilities": [
+            "Hydration",
+            "Sticky Hold",
+            "Unburden"
         ],
         "hp": 270,
         "atk": 145,
@@ -37360,6 +40715,11 @@ export const POKEMON_DB = [
         "types": [
             "Ground",
             "Electric"
+        ],
+        "abilities": [
+            "Static",
+            "Limber",
+            "Sand Veil"
         ],
         "hp": 328,
         "atk": 137,
@@ -37410,6 +40770,11 @@ export const POKEMON_DB = [
         "name": "Mienfoo",
         "types": [
             "Fighting"
+        ],
+        "abilities": [
+            "Inner Focus",
+            "Regenerator",
+            "Reckless"
         ],
         "hp": 200,
         "atk": 175,
@@ -37464,6 +40829,11 @@ export const POKEMON_DB = [
         "name": "Mienshao",
         "types": [
             "Fighting"
+        ],
+        "abilities": [
+            "Inner Focus",
+            "Regenerator",
+            "Reckless"
         ],
         "hp": 240,
         "atk": 255,
@@ -37524,6 +40894,11 @@ export const POKEMON_DB = [
         "name": "Druddigon",
         "types": [
             "Dragon"
+        ],
+        "abilities": [
+            "Rough Skin",
+            "Sheer Force",
+            "Mold Breaker"
         ],
         "hp": 264,
         "atk": 245,
@@ -37596,6 +40971,11 @@ export const POKEMON_DB = [
             "Ground",
             "Ghost"
         ],
+        "abilities": [
+            "Iron Fist",
+            "Klutz",
+            "No Guard"
+        ],
         "hp": 228,
         "atk": 153,
         "def": 105,
@@ -37656,6 +41036,11 @@ export const POKEMON_DB = [
         "types": [
             "Ground",
             "Ghost"
+        ],
+        "abilities": [
+            "Iron Fist",
+            "Klutz",
+            "No Guard"
         ],
         "hp": 288,
         "atk": 253,
@@ -37730,6 +41115,11 @@ export const POKEMON_DB = [
             "Dark",
             "Steel"
         ],
+        "abilities": [
+            "Defiant",
+            "Inner Focus",
+            "Pressure"
+        ],
         "hp": 200,
         "atk": 175,
         "def": 145,
@@ -37781,6 +41171,11 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Steel"
+        ],
+        "abilities": [
+            "Defiant",
+            "Inner Focus",
+            "Pressure"
         ],
         "hp": 240,
         "atk": 255,
@@ -37834,6 +41229,11 @@ export const POKEMON_DB = [
         "name": "Bouffalant",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Reckless",
+            "Sap Sipper",
+            "Soundproof"
         ],
         "hp": 300,
         "atk": 225,
@@ -37893,6 +41293,11 @@ export const POKEMON_DB = [
             "Normal",
             "Flying"
         ],
+        "abilities": [
+            "Keen Eye",
+            "Sheer Force",
+            "Hustle"
+        ],
         "hp": 250,
         "atk": 171,
         "def": 105,
@@ -37945,6 +41350,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Flying"
+        ],
+        "abilities": [
+            "Keen Eye",
+            "Sheer Force",
+            "Defiant"
         ],
         "hp": 310,
         "atk": 251,
@@ -38002,6 +41412,11 @@ export const POKEMON_DB = [
             "Dark",
             "Flying"
         ],
+        "abilities": [
+            "Big Pecks",
+            "Overcoat",
+            "Weak Armor"
+        ],
         "hp": 250,
         "atk": 115,
         "def": 155,
@@ -38050,6 +41465,11 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Flying"
+        ],
+        "abilities": [
+            "Big Pecks",
+            "Overcoat",
+            "Weak Armor"
         ],
         "hp": 330,
         "atk": 135,
@@ -38103,6 +41523,11 @@ export const POKEMON_DB = [
         "name": "Heatmor",
         "types": [
             "Fire"
+        ],
+        "abilities": [
+            "Gluttony",
+            "Flash Fire",
+            "White Smoke"
         ],
         "hp": 280,
         "atk": 199,
@@ -38162,6 +41587,11 @@ export const POKEMON_DB = [
             "Bug",
             "Steel"
         ],
+        "abilities": [
+            "Swarm",
+            "Hustle",
+            "Truant"
+        ],
         "hp": 226,
         "atk": 223,
         "def": 229,
@@ -38208,6 +41638,9 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Dragon"
+        ],
+        "abilities": [
+            "Hustle"
         ],
         "hp": 214,
         "atk": 135,
@@ -38262,6 +41695,9 @@ export const POKEMON_DB = [
             "Dark",
             "Dragon"
         ],
+        "abilities": [
+            "Hustle"
+        ],
         "hp": 254,
         "atk": 175,
         "def": 145,
@@ -38314,6 +41750,9 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Dragon"
+        ],
+        "abilities": [
+            "Levitate"
         ],
         "hp": 294,
         "atk": 215,
@@ -38392,6 +41831,10 @@ export const POKEMON_DB = [
             "Bug",
             "Fire"
         ],
+        "abilities": [
+            "Flame Body",
+            "Swarm"
+        ],
         "hp": 220,
         "atk": 175,
         "def": 115,
@@ -38438,6 +41881,10 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Fire"
+        ],
+        "abilities": [
+            "Flame Body",
+            "Swarm"
         ],
         "hp": 280,
         "atk": 125,
@@ -38497,6 +41944,9 @@ export const POKEMON_DB = [
             "Steel",
             "Fighting"
         ],
+        "abilities": [
+            "Justified"
+        ],
         "hp": 292,
         "atk": 185,
         "def": 263,
@@ -38551,6 +42001,9 @@ export const POKEMON_DB = [
         "types": [
             "Rock",
             "Fighting"
+        ],
+        "abilities": [
+            "Justified"
         ],
         "hp": 292,
         "atk": 263,
@@ -38608,6 +42061,9 @@ export const POKEMON_DB = [
             "Grass",
             "Fighting"
         ],
+        "abilities": [
+            "Justified"
+        ],
         "hp": 292,
         "atk": 185,
         "def": 149,
@@ -38664,6 +42120,10 @@ export const POKEMON_DB = [
         "name": "Tornadus-incarnate",
         "types": [
             "Flying"
+        ],
+        "abilities": [
+            "Prankster",
+            "Defiant"
         ],
         "hp": 268,
         "atk": 235,
@@ -38725,6 +42185,10 @@ export const POKEMON_DB = [
         "types": [
             "Electric",
             "Flying"
+        ],
+        "abilities": [
+            "Prankster",
+            "Defiant"
         ],
         "hp": 268,
         "atk": 235,
@@ -38796,6 +42260,9 @@ export const POKEMON_DB = [
             "Dragon",
             "Fire"
         ],
+        "abilities": [
+            "Turboblaze"
+        ],
         "hp": 310,
         "atk": 245,
         "def": 205,
@@ -38862,6 +42329,9 @@ export const POKEMON_DB = [
         "types": [
             "Dragon",
             "Electric"
+        ],
+        "abilities": [
+            "Teravolt"
         ],
         "hp": 310,
         "atk": 305,
@@ -38932,6 +42402,10 @@ export const POKEMON_DB = [
             "Ground",
             "Flying"
         ],
+        "abilities": [
+            "Sand Force",
+            "Sheer Force"
+        ],
         "hp": 288,
         "atk": 255,
         "def": 185,
@@ -38988,6 +42462,9 @@ export const POKEMON_DB = [
         "types": [
             "Dragon",
             "Ice"
+        ],
+        "abilities": [
+            "Pressure"
         ],
         "hp": 360,
         "atk": 265,
@@ -39052,6 +42529,9 @@ export const POKEMON_DB = [
             "Water",
             "Fighting"
         ],
+        "abilities": [
+            "Justified"
+        ],
         "hp": 292,
         "atk": 149,
         "def": 185,
@@ -39112,6 +42592,9 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Psychic"
+        ],
+        "abilities": [
+            "Serene Grace"
         ],
         "hp": 310,
         "atk": 159,
@@ -39176,6 +42659,9 @@ export const POKEMON_DB = [
             "Bug",
             "Steel"
         ],
+        "abilities": [
+            "Download"
+        ],
         "hp": 252,
         "atk": 245,
         "def": 195,
@@ -39237,6 +42723,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Overgrow",
+            "Bulletproof"
+        ],
         "hp": 222,
         "atk": 127,
         "def": 135,
@@ -39293,6 +42783,10 @@ export const POKEMON_DB = [
         "name": "Quilladin",
         "types": [
             "Grass"
+        ],
+        "abilities": [
+            "Overgrow",
+            "Bulletproof"
         ],
         "hp": 232,
         "atk": 161,
@@ -39352,6 +42846,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Fighting"
+        ],
+        "abilities": [
+            "Overgrow",
+            "Bulletproof"
         ],
         "hp": 286,
         "atk": 219,
@@ -39425,6 +42923,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire"
         ],
+        "abilities": [
+            "Blaze",
+            "Magician"
+        ],
         "hp": 190,
         "atk": 95,
         "def": 85,
@@ -39466,6 +42968,10 @@ export const POKEMON_DB = [
         "name": "Braixen",
         "types": [
             "Fire"
+        ],
+        "abilities": [
+            "Blaze",
+            "Magician"
         ],
         "hp": 228,
         "atk": 123,
@@ -39513,6 +43019,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Psychic"
+        ],
+        "abilities": [
+            "Blaze",
+            "Magician"
         ],
         "hp": 260,
         "atk": 143,
@@ -39574,6 +43084,10 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Torrent",
+            "Protean"
+        ],
         "hp": 192,
         "atk": 117,
         "def": 85,
@@ -39620,6 +43134,10 @@ export const POKEMON_DB = [
         "name": "Frogadier",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Torrent",
+            "Protean"
         ],
         "hp": 218,
         "atk": 131,
@@ -39671,6 +43189,10 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Dark"
+        ],
+        "abilities": [
+            "Torrent",
+            "Protean"
         ],
         "hp": 254,
         "atk": 195,
@@ -39735,6 +43257,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Pickup",
+            "Cheek Pouch",
+            "Huge Power"
+        ],
         "hp": 186,
         "atk": 77,
         "def": 81,
@@ -39776,6 +43303,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Ground"
+        ],
+        "abilities": [
+            "Pickup",
+            "Cheek Pouch",
+            "Huge Power"
         ],
         "hp": 280,
         "atk": 117,
@@ -39839,6 +43371,10 @@ export const POKEMON_DB = [
             "Normal",
             "Flying"
         ],
+        "abilities": [
+            "Big Pecks",
+            "Gale Wings"
+        ],
         "hp": 200,
         "atk": 105,
         "def": 91,
@@ -39879,6 +43415,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Flying"
+        ],
+        "abilities": [
+            "Flame Body",
+            "Gale Wings"
         ],
         "hp": 234,
         "atk": 151,
@@ -39925,6 +43465,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Flying"
+        ],
+        "abilities": [
+            "Flame Body",
+            "Gale Wings"
         ],
         "hp": 266,
         "atk": 167,
@@ -39975,6 +43519,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug"
         ],
+        "abilities": [
+            "Shield Dust",
+            "Compound Eyes",
+            "Friend Guard"
+        ],
         "hp": 186,
         "atk": 75,
         "def": 85,
@@ -39995,6 +43544,10 @@ export const POKEMON_DB = [
         "name": "Spewpa",
         "types": [
             "Bug"
+        ],
+        "abilities": [
+            "Shed Skin",
+            "Friend Guard"
         ],
         "hp": 200,
         "atk": 49,
@@ -40017,6 +43570,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Flying"
+        ],
+        "abilities": [
+            "Shield Dust",
+            "Compound Eyes",
+            "Friend Guard"
         ],
         "hp": 270,
         "atk": 109,
@@ -40062,6 +43620,11 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Normal"
+        ],
+        "abilities": [
+            "Rivalry",
+            "Unnerve",
+            "Moxie"
         ],
         "hp": 234,
         "atk": 105,
@@ -40112,6 +43675,11 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Normal"
+        ],
+        "abilities": [
+            "Rivalry",
+            "Unnerve",
+            "Moxie"
         ],
         "hp": 282,
         "atk": 141,
@@ -40167,6 +43735,10 @@ export const POKEMON_DB = [
         "types": [
             "Fairy"
         ],
+        "abilities": [
+            "Flower Veil",
+            "Symbiosis"
+        ],
         "hp": 198,
         "atk": 81,
         "def": 83,
@@ -40204,6 +43776,10 @@ export const POKEMON_DB = [
         "types": [
             "Fairy"
         ],
+        "abilities": [
+            "Flower Veil",
+            "Symbiosis"
+        ],
         "hp": 218,
         "atk": 95,
         "def": 99,
@@ -40240,6 +43816,10 @@ export const POKEMON_DB = [
         "name": "Florges",
         "types": [
             "Fairy"
+        ],
+        "abilities": [
+            "Flower Veil",
+            "Symbiosis"
         ],
         "hp": 266,
         "atk": 135,
@@ -40280,6 +43860,10 @@ export const POKEMON_DB = [
         "name": "Skiddo",
         "types": [
             "Grass"
+        ],
+        "abilities": [
+            "Sap Sipper",
+            "Grass Pelt"
         ],
         "hp": 242,
         "atk": 135,
@@ -40328,6 +43912,10 @@ export const POKEMON_DB = [
         "name": "Gogoat",
         "types": [
             "Grass"
+        ],
+        "abilities": [
+            "Sap Sipper",
+            "Grass Pelt"
         ],
         "hp": 356,
         "atk": 205,
@@ -40384,6 +43972,11 @@ export const POKEMON_DB = [
         "name": "Pancham",
         "types": [
             "Fighting"
+        ],
+        "abilities": [
+            "Iron Fist",
+            "Mold Breaker",
+            "Scrappy"
         ],
         "hp": 244,
         "atk": 169,
@@ -40444,6 +44037,11 @@ export const POKEMON_DB = [
         "types": [
             "Fighting",
             "Dark"
+        ],
+        "abilities": [
+            "Iron Fist",
+            "Mold Breaker",
+            "Scrappy"
         ],
         "hp": 300,
         "atk": 253,
@@ -40521,6 +44119,9 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Fur Coat"
+        ],
         "hp": 260,
         "atk": 165,
         "def": 125,
@@ -40558,6 +44159,11 @@ export const POKEMON_DB = [
         "name": "Espurr",
         "types": [
             "Psychic"
+        ],
+        "abilities": [
+            "Keen Eye",
+            "Infiltrator",
+            "Own Tempo"
         ],
         "hp": 234,
         "atk": 101,
@@ -40598,6 +44204,11 @@ export const POKEMON_DB = [
         "name": "Meowstic-male",
         "types": [
             "Psychic"
+        ],
+        "abilities": [
+            "Keen Eye",
+            "Infiltrator",
+            "Prankster"
         ],
         "hp": 258,
         "atk": 101,
@@ -40645,6 +44256,9 @@ export const POKEMON_DB = [
             "Steel",
             "Ghost"
         ],
+        "abilities": [
+            "No Guard"
+        ],
         "hp": 200,
         "atk": 165,
         "def": 205,
@@ -40684,6 +44298,9 @@ export const POKEMON_DB = [
             "Steel",
             "Ghost"
         ],
+        "abilities": [
+            "No Guard"
+        ],
         "hp": 228,
         "atk": 225,
         "def": 305,
@@ -40722,6 +44339,9 @@ export const POKEMON_DB = [
         "types": [
             "Steel",
             "Ghost"
+        ],
+        "abilities": [
+            "Stance Change"
         ],
         "hp": 230,
         "atk": 105,
@@ -40766,6 +44386,10 @@ export const POKEMON_DB = [
         "types": [
             "Fairy"
         ],
+        "abilities": [
+            "Healer",
+            "Aroma Veil"
+        ],
         "hp": 266,
         "atk": 109,
         "def": 125,
@@ -40795,6 +44419,10 @@ export const POKEMON_DB = [
         "name": "Aromatisse",
         "types": [
             "Fairy"
+        ],
+        "abilities": [
+            "Healer",
+            "Aroma Veil"
         ],
         "hp": 312,
         "atk": 149,
@@ -40831,6 +44459,10 @@ export const POKEMON_DB = [
         "types": [
             "Fairy"
         ],
+        "abilities": [
+            "Sweet Veil",
+            "Unburden"
+        ],
         "hp": 234,
         "atk": 101,
         "def": 137,
@@ -40862,6 +44494,10 @@ export const POKEMON_DB = [
         "name": "Slurpuff",
         "types": [
             "Fairy"
+        ],
+        "abilities": [
+            "Sweet Veil",
+            "Unburden"
         ],
         "hp": 274,
         "atk": 165,
@@ -40899,6 +44535,11 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Psychic"
+        ],
+        "abilities": [
+            "Contrary",
+            "Suction Cups",
+            "Infiltrator"
         ],
         "hp": 216,
         "atk": 113,
@@ -40945,6 +44586,11 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Psychic"
+        ],
+        "abilities": [
+            "Contrary",
+            "Suction Cups",
+            "Infiltrator"
         ],
         "hp": 282,
         "atk": 189,
@@ -40998,6 +44644,11 @@ export const POKEMON_DB = [
             "Rock",
             "Water"
         ],
+        "abilities": [
+            "Tough Claws",
+            "Sniper",
+            "Pickpocket"
+        ],
         "hp": 194,
         "atk": 109,
         "def": 139,
@@ -41049,6 +44700,11 @@ export const POKEMON_DB = [
         "types": [
             "Rock",
             "Water"
+        ],
+        "abilities": [
+            "Tough Claws",
+            "Sniper",
+            "Pickpocket"
         ],
         "hp": 254,
         "atk": 215,
@@ -41113,6 +44769,11 @@ export const POKEMON_DB = [
             "Poison",
             "Water"
         ],
+        "abilities": [
+            "Poison Point",
+            "Poison Touch",
+            "Adaptability"
+        ],
         "hp": 210,
         "atk": 125,
         "def": 125,
@@ -41163,6 +44824,11 @@ export const POKEMON_DB = [
         "types": [
             "Poison",
             "Dragon"
+        ],
+        "abilities": [
+            "Poison Point",
+            "Poison Touch",
+            "Adaptability"
         ],
         "hp": 240,
         "atk": 155,
@@ -41219,6 +44885,9 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Mega Launcher"
+        ],
         "hp": 210,
         "atk": 111,
         "def": 129,
@@ -41271,6 +44940,9 @@ export const POKEMON_DB = [
         "name": "Clawitzer",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Mega Launcher"
         ],
         "hp": 252,
         "atk": 151,
@@ -41331,6 +45003,11 @@ export const POKEMON_DB = [
             "Electric",
             "Normal"
         ],
+        "abilities": [
+            "Dry Skin",
+            "Sand Veil",
+            "Solar Power"
+        ],
         "hp": 198,
         "atk": 81,
         "def": 71,
@@ -41375,6 +45052,11 @@ export const POKEMON_DB = [
         "types": [
             "Electric",
             "Normal"
+        ],
+        "abilities": [
+            "Dry Skin",
+            "Sand Veil",
+            "Solar Power"
         ],
         "hp": 234,
         "atk": 115,
@@ -41432,6 +45114,10 @@ export const POKEMON_DB = [
         "types": [
             "Rock",
             "Dragon"
+        ],
+        "abilities": [
+            "Strong Jaw",
+            "Sturdy"
         ],
         "hp": 226,
         "atk": 183,
@@ -41491,6 +45177,10 @@ export const POKEMON_DB = [
         "types": [
             "Rock",
             "Dragon"
+        ],
+        "abilities": [
+            "Strong Jaw",
+            "Rock Head"
         ],
         "hp": 274,
         "atk": 247,
@@ -41557,6 +45247,10 @@ export const POKEMON_DB = [
             "Rock",
             "Ice"
         ],
+        "abilities": [
+            "Refrigerate",
+            "Snow Warning"
+        ],
         "hp": 264,
         "atk": 123,
         "def": 105,
@@ -41609,6 +45303,10 @@ export const POKEMON_DB = [
         "types": [
             "Rock",
             "Ice"
+        ],
+        "abilities": [
+            "Refrigerate",
+            "Snow Warning"
         ],
         "hp": 356,
         "atk": 159,
@@ -41665,6 +45363,10 @@ export const POKEMON_DB = [
         "types": [
             "Fairy"
         ],
+        "abilities": [
+            "Cute Charm",
+            "Pixilate"
+        ],
         "hp": 300,
         "atk": 135,
         "def": 135,
@@ -41711,6 +45413,11 @@ export const POKEMON_DB = [
         "types": [
             "Fighting",
             "Flying"
+        ],
+        "abilities": [
+            "Limber",
+            "Unburden",
+            "Mold Breaker"
         ],
         "hp": 266,
         "atk": 189,
@@ -41785,6 +45492,11 @@ export const POKEMON_DB = [
             "Electric",
             "Fairy"
         ],
+        "abilities": [
+            "Cheek Pouch",
+            "Pickup",
+            "Plus"
+        ],
         "hp": 244,
         "atk": 121,
         "def": 119,
@@ -41834,6 +45546,10 @@ export const POKEMON_DB = [
             "Rock",
             "Fairy"
         ],
+        "abilities": [
+            "Clear Body",
+            "Sturdy"
+        ],
         "hp": 210,
         "atk": 105,
         "def": 305,
@@ -41878,6 +45594,11 @@ export const POKEMON_DB = [
         "types": [
             "Dragon"
         ],
+        "abilities": [
+            "Sap Sipper",
+            "Hydration",
+            "Gooey"
+        ],
         "hp": 200,
         "atk": 105,
         "def": 75,
@@ -41916,6 +45637,11 @@ export const POKEMON_DB = [
         "name": "Sliggoo",
         "types": [
             "Dragon"
+        ],
+        "abilities": [
+            "Sap Sipper",
+            "Hydration",
+            "Gooey"
         ],
         "hp": 246,
         "atk": 155,
@@ -41957,6 +45683,11 @@ export const POKEMON_DB = [
         "name": "Goodra",
         "types": [
             "Dragon"
+        ],
+        "abilities": [
+            "Sap Sipper",
+            "Hydration",
+            "Gooey"
         ],
         "hp": 290,
         "atk": 205,
@@ -42029,6 +45760,10 @@ export const POKEMON_DB = [
             "Steel",
             "Fairy"
         ],
+        "abilities": [
+            "Prankster",
+            "Magician"
+        ],
         "hp": 224,
         "atk": 165,
         "def": 187,
@@ -42066,6 +45801,11 @@ export const POKEMON_DB = [
         "types": [
             "Ghost",
             "Grass"
+        ],
+        "abilities": [
+            "Natural Cure",
+            "Frisk",
+            "Harvest"
         ],
         "hp": 196,
         "atk": 145,
@@ -42116,6 +45856,11 @@ export const POKEMON_DB = [
         "types": [
             "Ghost",
             "Grass"
+        ],
+        "abilities": [
+            "Natural Cure",
+            "Frisk",
+            "Harvest"
         ],
         "hp": 280,
         "atk": 225,
@@ -42179,6 +45924,11 @@ export const POKEMON_DB = [
             "Ghost",
             "Grass"
         ],
+        "abilities": [
+            "Pickup",
+            "Frisk",
+            "Insomnia"
+        ],
         "hp": 208,
         "atk": 137,
         "def": 145,
@@ -42223,6 +45973,11 @@ export const POKEMON_DB = [
         "types": [
             "Ghost",
             "Grass"
+        ],
+        "abilities": [
+            "Pickup",
+            "Frisk",
+            "Insomnia"
         ],
         "hp": 240,
         "atk": 185,
@@ -42275,6 +46030,11 @@ export const POKEMON_DB = [
         "types": [
             "Ice"
         ],
+        "abilities": [
+            "Own Tempo",
+            "Ice Body",
+            "Sturdy"
+        ],
         "hp": 220,
         "atk": 143,
         "def": 175,
@@ -42317,6 +46077,11 @@ export const POKEMON_DB = [
         "name": "Avalugg",
         "types": [
             "Ice"
+        ],
+        "abilities": [
+            "Own Tempo",
+            "Ice Body",
+            "Sturdy"
         ],
         "hp": 300,
         "atk": 239,
@@ -42371,6 +46136,11 @@ export const POKEMON_DB = [
         "types": [
             "Flying",
             "Dragon"
+        ],
+        "abilities": [
+            "Frisk",
+            "Infiltrator",
+            "Telepathy"
         ],
         "hp": 190,
         "atk": 65,
@@ -42429,6 +46199,11 @@ export const POKEMON_DB = [
         "types": [
             "Flying",
             "Dragon"
+        ],
+        "abilities": [
+            "Frisk",
+            "Infiltrator",
+            "Telepathy"
         ],
         "hp": 280,
         "atk": 145,
@@ -42496,6 +46271,9 @@ export const POKEMON_DB = [
         "types": [
             "Fairy"
         ],
+        "abilities": [
+            "Fairy Aura"
+        ],
         "hp": 362,
         "atk": 267,
         "def": 195,
@@ -42542,6 +46320,9 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Flying"
+        ],
+        "abilities": [
+            "Dark Aura"
         ],
         "hp": 362,
         "atk": 267,
@@ -42598,6 +46379,9 @@ export const POKEMON_DB = [
         "types": [
             "Dragon",
             "Ground"
+        ],
+        "abilities": [
+            "Aura Break"
         ],
         "hp": 326,
         "atk": 205,
@@ -42658,6 +46442,9 @@ export const POKEMON_DB = [
             "Rock",
             "Fairy"
         ],
+        "abilities": [
+            "Clear Body"
+        ],
         "hp": 210,
         "atk": 205,
         "def": 305,
@@ -42707,6 +46494,9 @@ export const POKEMON_DB = [
         "types": [
             "Psychic",
             "Ghost"
+        ],
+        "abilities": [
+            "Magician"
         ],
         "hp": 270,
         "atk": 225,
@@ -42768,6 +46558,9 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Water"
+        ],
+        "abilities": [
+            "Water Absorb"
         ],
         "hp": 270,
         "atk": 225,
@@ -42833,6 +46626,10 @@ export const POKEMON_DB = [
             "Grass",
             "Flying"
         ],
+        "abilities": [
+            "Overgrow",
+            "Long Reach"
+        ],
         "hp": 246,
         "atk": 115,
         "def": 115,
@@ -42880,6 +46677,10 @@ export const POKEMON_DB = [
             "Grass",
             "Flying"
         ],
+        "abilities": [
+            "Overgrow",
+            "Long Reach"
+        ],
         "hp": 266,
         "atk": 155,
         "def": 155,
@@ -42926,6 +46727,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Ghost"
+        ],
+        "abilities": [
+            "Overgrow",
+            "Long Reach"
         ],
         "hp": 266,
         "atk": 219,
@@ -42995,6 +46800,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire"
         ],
+        "abilities": [
+            "Blaze",
+            "Intimidate"
+        ],
         "hp": 200,
         "atk": 135,
         "def": 85,
@@ -43037,6 +46846,10 @@ export const POKEMON_DB = [
         "name": "Torracat",
         "types": [
             "Fire"
+        ],
+        "abilities": [
+            "Blaze",
+            "Intimidate"
         ],
         "hp": 240,
         "atk": 175,
@@ -43081,6 +46894,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Dark"
+        ],
+        "abilities": [
+            "Blaze",
+            "Intimidate"
         ],
         "hp": 300,
         "atk": 235,
@@ -43157,6 +46974,10 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Torrent",
+            "Liquid Voice"
+        ],
         "hp": 210,
         "atk": 113,
         "def": 113,
@@ -43201,6 +47022,10 @@ export const POKEMON_DB = [
         "name": "Brionne",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Torrent",
+            "Liquid Voice"
         ],
         "hp": 230,
         "atk": 143,
@@ -43248,6 +47073,10 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Fairy"
+        ],
+        "abilities": [
+            "Torrent",
+            "Liquid Voice"
         ],
         "hp": 270,
         "atk": 153,
@@ -43308,6 +47137,11 @@ export const POKEMON_DB = [
             "Normal",
             "Flying"
         ],
+        "abilities": [
+            "Keen Eye",
+            "Skill Link",
+            "Pickup"
+        ],
         "hp": 180,
         "atk": 155,
         "def": 65,
@@ -43349,6 +47183,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Flying"
+        ],
+        "abilities": [
+            "Keen Eye",
+            "Skill Link",
+            "Pickup"
         ],
         "hp": 220,
         "atk": 175,
@@ -43392,6 +47231,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Flying"
+        ],
+        "abilities": [
+            "Keen Eye",
+            "Skill Link",
+            "Sheer Force"
         ],
         "hp": 270,
         "atk": 245,
@@ -43444,6 +47288,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Stakeout",
+            "Strong Jaw",
+            "Adaptability"
+        ],
         "hp": 206,
         "atk": 145,
         "def": 65,
@@ -43490,6 +47339,11 @@ export const POKEMON_DB = [
         "name": "Gumshoos",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Stakeout",
+            "Strong Jaw",
+            "Adaptability"
         ],
         "hp": 286,
         "atk": 225,
@@ -43547,6 +47401,9 @@ export const POKEMON_DB = [
         "types": [
             "Bug"
         ],
+        "abilities": [
+            "Swarm"
+        ],
         "hp": 204,
         "atk": 129,
         "def": 95,
@@ -43588,6 +47445,9 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Electric"
+        ],
+        "abilities": [
+            "Battery"
         ],
         "hp": 224,
         "atk": 169,
@@ -43631,6 +47491,9 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Electric"
+        ],
+        "abilities": [
+            "Levitate"
         ],
         "hp": 264,
         "atk": 145,
@@ -43688,6 +47551,11 @@ export const POKEMON_DB = [
         "types": [
             "Fighting"
         ],
+        "abilities": [
+            "Hyper Cutter",
+            "Iron Fist",
+            "Anger Point"
+        ],
         "hp": 204,
         "atk": 169,
         "def": 119,
@@ -43743,6 +47611,11 @@ export const POKEMON_DB = [
         "types": [
             "Fighting",
             "Ice"
+        ],
+        "abilities": [
+            "Hyper Cutter",
+            "Iron Fist",
+            "Anger Point"
         ],
         "hp": 304,
         "atk": 269,
@@ -43808,6 +47681,9 @@ export const POKEMON_DB = [
             "Fire",
             "Flying"
         ],
+        "abilities": [
+            "Dancer"
+        ],
         "hp": 260,
         "atk": 145,
         "def": 145,
@@ -43845,6 +47721,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Fairy"
+        ],
+        "abilities": [
+            "Honey Gather",
+            "Shield Dust",
+            "Sweet Veil"
         ],
         "hp": 190,
         "atk": 95,
@@ -43888,6 +47769,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Fairy"
+        ],
+        "abilities": [
+            "Honey Gather",
+            "Shield Dust",
+            "Sweet Veil"
         ],
         "hp": 230,
         "atk": 115,
@@ -43938,6 +47824,11 @@ export const POKEMON_DB = [
         "types": [
             "Rock"
         ],
+        "abilities": [
+            "Keen Eye",
+            "Vital Spirit",
+            "Steadfast"
+        ],
         "hp": 200,
         "atk": 135,
         "def": 85,
@@ -43985,6 +47876,11 @@ export const POKEMON_DB = [
         "name": "Lycanroc-midday",
         "types": [
             "Rock"
+        ],
+        "abilities": [
+            "Keen Eye",
+            "Sand Rush",
+            "Steadfast"
         ],
         "hp": 260,
         "atk": 235,
@@ -44040,6 +47936,9 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Schooling"
+        ],
         "hp": 200,
         "atk": 45,
         "def": 45,
@@ -44082,6 +47981,11 @@ export const POKEMON_DB = [
         "types": [
             "Poison",
             "Water"
+        ],
+        "abilities": [
+            "Merciless",
+            "Limber",
+            "Regenerator"
         ],
         "hp": 210,
         "atk": 111,
@@ -44126,6 +48030,11 @@ export const POKEMON_DB = [
         "types": [
             "Poison",
             "Water"
+        ],
+        "abilities": [
+            "Merciless",
+            "Limber",
+            "Regenerator"
         ],
         "hp": 210,
         "atk": 131,
@@ -44175,6 +48084,11 @@ export const POKEMON_DB = [
         "types": [
             "Ground"
         ],
+        "abilities": [
+            "Own Tempo",
+            "Stamina",
+            "Inner Focus"
+        ],
         "hp": 250,
         "atk": 205,
         "def": 145,
@@ -44214,6 +48128,11 @@ export const POKEMON_DB = [
         "name": "Mudsdale",
         "types": [
             "Ground"
+        ],
+        "abilities": [
+            "Own Tempo",
+            "Stamina",
+            "Inner Focus"
         ],
         "hp": 310,
         "atk": 255,
@@ -44262,6 +48181,10 @@ export const POKEMON_DB = [
             "Water",
             "Bug"
         ],
+        "abilities": [
+            "Water Bubble",
+            "Water Absorb"
+        ],
         "hp": 186,
         "atk": 85,
         "def": 109,
@@ -44307,6 +48230,10 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Bug"
+        ],
+        "abilities": [
+            "Water Bubble",
+            "Water Absorb"
         ],
         "hp": 246,
         "atk": 145,
@@ -44356,6 +48283,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Leaf Guard",
+            "Contrary"
+        ],
         "hp": 190,
         "atk": 115,
         "def": 75,
@@ -44394,6 +48325,10 @@ export const POKEMON_DB = [
         "name": "Lurantis",
         "types": [
             "Grass"
+        ],
+        "abilities": [
+            "Leaf Guard",
+            "Contrary"
         ],
         "hp": 250,
         "atk": 215,
@@ -44447,6 +48382,11 @@ export const POKEMON_DB = [
             "Grass",
             "Fairy"
         ],
+        "abilities": [
+            "Illuminate",
+            "Effect Spore",
+            "Rain Dish"
+        ],
         "hp": 190,
         "atk": 75,
         "def": 115,
@@ -44477,6 +48417,11 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Fairy"
+        ],
+        "abilities": [
+            "Illuminate",
+            "Effect Spore",
+            "Rain Dish"
         ],
         "hp": 230,
         "atk": 95,
@@ -44511,6 +48456,10 @@ export const POKEMON_DB = [
         "types": [
             "Poison",
             "Fire"
+        ],
+        "abilities": [
+            "Corrosion",
+            "Oblivious"
         ],
         "hp": 206,
         "atk": 93,
@@ -44562,6 +48511,10 @@ export const POKEMON_DB = [
         "types": [
             "Poison",
             "Fire"
+        ],
+        "abilities": [
+            "Corrosion",
+            "Oblivious"
         ],
         "hp": 246,
         "atk": 133,
@@ -44621,6 +48574,11 @@ export const POKEMON_DB = [
             "Normal",
             "Fighting"
         ],
+        "abilities": [
+            "Fluffy",
+            "Klutz",
+            "Cute Charm"
+        ],
         "hp": 250,
         "atk": 155,
         "def": 105,
@@ -44666,6 +48624,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Fighting"
+        ],
+        "abilities": [
+            "Fluffy",
+            "Klutz",
+            "Unnerve"
         ],
         "hp": 350,
         "atk": 255,
@@ -44721,6 +48684,11 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Leaf Guard",
+            "Oblivious",
+            "Sweet Veil"
+        ],
         "hp": 194,
         "atk": 65,
         "def": 81,
@@ -44757,6 +48725,11 @@ export const POKEMON_DB = [
         "name": "Steenee",
         "types": [
             "Grass"
+        ],
+        "abilities": [
+            "Leaf Guard",
+            "Oblivious",
+            "Sweet Veil"
         ],
         "hp": 214,
         "atk": 85,
@@ -44797,6 +48770,11 @@ export const POKEMON_DB = [
         "name": "Tsareena",
         "types": [
             "Grass"
+        ],
+        "abilities": [
+            "Leaf Guard",
+            "Queenly Majesty",
+            "Sweet Veil"
         ],
         "hp": 254,
         "atk": 245,
@@ -44847,6 +48825,11 @@ export const POKEMON_DB = [
         "types": [
             "Fairy"
         ],
+        "abilities": [
+            "Flower Veil",
+            "Triage",
+            "Natural Cure"
+        ],
         "hp": 212,
         "atk": 109,
         "def": 185,
@@ -44888,6 +48871,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Psychic"
+        ],
+        "abilities": [
+            "Inner Focus",
+            "Telepathy",
+            "Symbiosis"
         ],
         "hp": 290,
         "atk": 125,
@@ -44941,6 +48929,10 @@ export const POKEMON_DB = [
         "name": "Passimian",
         "types": [
             "Fighting"
+        ],
+        "abilities": [
+            "Receiver",
+            "Defiant"
         ],
         "hp": 310,
         "atk": 245,
@@ -45006,6 +48998,9 @@ export const POKEMON_DB = [
             "Bug",
             "Water"
         ],
+        "abilities": [
+            "Wimp Out"
+        ],
         "hp": 160,
         "atk": 75,
         "def": 85,
@@ -45036,6 +49031,9 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Water"
+        ],
+        "abilities": [
+            "Emergency Exit"
         ],
         "hp": 260,
         "atk": 255,
@@ -45100,6 +49098,10 @@ export const POKEMON_DB = [
             "Ghost",
             "Ground"
         ],
+        "abilities": [
+            "Water Compaction",
+            "Sand Veil"
+        ],
         "hp": 220,
         "atk": 115,
         "def": 165,
@@ -45139,6 +49141,10 @@ export const POKEMON_DB = [
         "types": [
             "Ghost",
             "Ground"
+        ],
+        "abilities": [
+            "Water Compaction",
+            "Sand Veil"
         ],
         "hp": 280,
         "atk": 155,
@@ -45181,6 +49187,10 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Innards Out",
+            "Unaware"
+        ],
         "hp": 220,
         "atk": 125,
         "def": 265,
@@ -45201,6 +49211,9 @@ export const POKEMON_DB = [
         "name": "Type-null",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Battle Armor"
         ],
         "hp": 300,
         "atk": 195,
@@ -45240,6 +49253,9 @@ export const POKEMON_DB = [
         "name": "Silvally",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Rks System"
         ],
         "hp": 300,
         "atk": 195,
@@ -45307,6 +49323,9 @@ export const POKEMON_DB = [
             "Rock",
             "Flying"
         ],
+        "abilities": [
+            "Shields Down"
+        ],
         "hp": 230,
         "atk": 125,
         "def": 205,
@@ -45352,6 +49371,9 @@ export const POKEMON_DB = [
         "name": "Komala",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Comatose"
         ],
         "hp": 240,
         "atk": 235,
@@ -45403,6 +49425,9 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Dragon"
+        ],
+        "abilities": [
+            "Shell Armor"
         ],
         "hp": 230,
         "atk": 161,
@@ -45463,6 +49488,11 @@ export const POKEMON_DB = [
             "Electric",
             "Steel"
         ],
+        "abilities": [
+            "Iron Barbs",
+            "Lightning Rod",
+            "Sturdy"
+        ],
         "hp": 240,
         "atk": 201,
         "def": 131,
@@ -45509,6 +49539,9 @@ export const POKEMON_DB = [
         "types": [
             "Ghost",
             "Fairy"
+        ],
+        "abilities": [
+            "Disguise"
         ],
         "hp": 220,
         "atk": 185,
@@ -45557,6 +49590,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Psychic"
+        ],
+        "abilities": [
+            "Dazzling",
+            "Strong Jaw",
+            "Wonder Skin"
         ],
         "hp": 246,
         "atk": 215,
@@ -45611,6 +49649,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Dragon"
+        ],
+        "abilities": [
+            "Berserk",
+            "Sap Sipper",
+            "Cloud Nine"
         ],
         "hp": 266,
         "atk": 125,
@@ -45677,6 +49720,9 @@ export const POKEMON_DB = [
             "Ghost",
             "Grass"
         ],
+        "abilities": [
+            "Steelworker"
+        ],
         "hp": 250,
         "atk": 267,
         "def": 205,
@@ -45731,6 +49777,11 @@ export const POKEMON_DB = [
         "types": [
             "Dragon"
         ],
+        "abilities": [
+            "Bulletproof",
+            "Soundproof",
+            "Overcoat"
+        ],
         "hp": 200,
         "atk": 115,
         "def": 135,
@@ -45776,6 +49827,11 @@ export const POKEMON_DB = [
         "types": [
             "Dragon",
             "Fighting"
+        ],
+        "abilities": [
+            "Bulletproof",
+            "Soundproof",
+            "Overcoat"
         ],
         "hp": 220,
         "atk": 155,
@@ -45832,6 +49888,11 @@ export const POKEMON_DB = [
         "types": [
             "Dragon",
             "Fighting"
+        ],
+        "abilities": [
+            "Bulletproof",
+            "Soundproof",
+            "Overcoat"
         ],
         "hp": 260,
         "atk": 225,
@@ -45907,6 +49968,10 @@ export const POKEMON_DB = [
             "Electric",
             "Fairy"
         ],
+        "abilities": [
+            "Electric Surge",
+            "Telepathy"
+        ],
         "hp": 250,
         "atk": 235,
         "def": 175,
@@ -45954,6 +50019,10 @@ export const POKEMON_DB = [
             "Psychic",
             "Fairy"
         ],
+        "abilities": [
+            "Psychic Surge",
+            "Telepathy"
+        ],
         "hp": 250,
         "atk": 175,
         "def": 155,
@@ -45991,6 +50060,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Fairy"
+        ],
+        "abilities": [
+            "Grassy Surge",
+            "Telepathy"
         ],
         "hp": 250,
         "atk": 265,
@@ -46041,6 +50114,10 @@ export const POKEMON_DB = [
             "Water",
             "Fairy"
         ],
+        "abilities": [
+            "Misty Surge",
+            "Telepathy"
+        ],
         "hp": 250,
         "atk": 155,
         "def": 235,
@@ -46081,6 +50158,9 @@ export const POKEMON_DB = [
         "types": [
             "Psychic"
         ],
+        "abilities": [
+            "Unaware"
+        ],
         "hp": 196,
         "atk": 63,
         "def": 67,
@@ -46101,6 +50181,9 @@ export const POKEMON_DB = [
         "name": "Cosmoem",
         "types": [
             "Psychic"
+        ],
+        "abilities": [
+            "Sturdy"
         ],
         "hp": 196,
         "atk": 63,
@@ -46123,6 +50206,9 @@ export const POKEMON_DB = [
         "types": [
             "Psychic",
             "Steel"
+        ],
+        "abilities": [
+            "Full Metal Body"
         ],
         "hp": 384,
         "atk": 279,
@@ -46189,6 +50275,9 @@ export const POKEMON_DB = [
             "Psychic",
             "Ghost"
         ],
+        "abilities": [
+            "Shadow Shield"
+        ],
         "hp": 384,
         "atk": 231,
         "def": 183,
@@ -46246,6 +50335,9 @@ export const POKEMON_DB = [
             "Rock",
             "Poison"
         ],
+        "abilities": [
+            "Beast Boost"
+        ],
         "hp": 328,
         "atk": 111,
         "def": 99,
@@ -46290,6 +50382,9 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Fighting"
+        ],
+        "abilities": [
+            "Beast Boost"
         ],
         "hp": 324,
         "atk": 283,
@@ -46342,6 +50437,9 @@ export const POKEMON_DB = [
             "Bug",
             "Fighting"
         ],
+        "abilities": [
+            "Beast Boost"
+        ],
         "hp": 252,
         "atk": 279,
         "def": 79,
@@ -46392,6 +50490,9 @@ export const POKEMON_DB = [
         "types": [
             "Electric"
         ],
+        "abilities": [
+            "Beast Boost"
+        ],
         "hp": 276,
         "atk": 183,
         "def": 147,
@@ -46431,6 +50532,9 @@ export const POKEMON_DB = [
         "types": [
             "Steel",
             "Flying"
+        ],
+        "abilities": [
+            "Beast Boost"
         ],
         "hp": 304,
         "atk": 207,
@@ -46485,6 +50589,9 @@ export const POKEMON_DB = [
             "Grass",
             "Steel"
         ],
+        "abilities": [
+            "Beast Boost"
+        ],
         "hp": 228,
         "atk": 367,
         "def": 267,
@@ -46522,6 +50629,9 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Dragon"
+        ],
+        "abilities": [
+            "Beast Boost"
         ],
         "hp": 556,
         "atk": 207,
@@ -46589,6 +50699,9 @@ export const POKEMON_DB = [
         "types": [
             "Psychic"
         ],
+        "abilities": [
+            "Prism Armor"
+        ],
         "hp": 304,
         "atk": 219,
         "def": 207,
@@ -46653,6 +50766,9 @@ export const POKEMON_DB = [
             "Steel",
             "Fairy"
         ],
+        "abilities": [
+            "Soul Heart"
+        ],
         "hp": 270,
         "atk": 195,
         "def": 235,
@@ -46712,6 +50828,9 @@ export const POKEMON_DB = [
         "types": [
             "Fighting",
             "Ghost"
+        ],
+        "abilities": [
+            "Technician"
         ],
         "hp": 290,
         "atk": 255,
@@ -46780,6 +50899,9 @@ export const POKEMON_DB = [
         "types": [
             "Poison"
         ],
+        "abilities": [
+            "Beast Boost"
+        ],
         "hp": 244,
         "atk": 151,
         "def": 139,
@@ -46810,6 +50932,9 @@ export const POKEMON_DB = [
         "types": [
             "Poison",
             "Dragon"
+        ],
+        "abilities": [
+            "Beast Boost"
         ],
         "hp": 256,
         "atk": 151,
@@ -46874,6 +50999,9 @@ export const POKEMON_DB = [
             "Rock",
             "Steel"
         ],
+        "abilities": [
+            "Beast Boost"
+        ],
         "hp": 232,
         "atk": 267,
         "def": 427,
@@ -46916,6 +51044,9 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Ghost"
+        ],
+        "abilities": [
+            "Beast Boost"
         ],
         "hp": 216,
         "atk": 259,
@@ -46961,6 +51092,9 @@ export const POKEMON_DB = [
         "name": "Zeraora",
         "types": [
             "Electric"
+        ],
+        "abilities": [
+            "Volt Absorb"
         ],
         "hp": 286,
         "atk": 229,
@@ -47023,6 +51157,9 @@ export const POKEMON_DB = [
         "types": [
             "Steel"
         ],
+        "abilities": [
+            "Magnet Pull"
+        ],
         "hp": 202,
         "atk": 135,
         "def": 135,
@@ -47045,6 +51182,9 @@ export const POKEMON_DB = [
         "name": "Melmetal",
         "types": [
             "Steel"
+        ],
+        "abilities": [
+            "Iron Fist"
         ],
         "hp": 380,
         "atk": 291,
@@ -47094,6 +51234,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Overgrow",
+            "Grassy Surge"
+        ],
         "hp": 210,
         "atk": 135,
         "def": 105,
@@ -47140,6 +51284,10 @@ export const POKEMON_DB = [
         "name": "Thwackey",
         "types": [
             "Grass"
+        ],
+        "abilities": [
+            "Overgrow",
+            "Grassy Surge"
         ],
         "hp": 250,
         "atk": 175,
@@ -47188,6 +51336,10 @@ export const POKEMON_DB = [
         "name": "Rillaboom",
         "types": [
             "Grass"
+        ],
+        "abilities": [
+            "Overgrow",
+            "Grassy Surge"
         ],
         "hp": 310,
         "atk": 255,
@@ -47258,6 +51410,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire"
         ],
+        "abilities": [
+            "Blaze",
+            "Libero"
+        ],
         "hp": 210,
         "atk": 147,
         "def": 85,
@@ -47303,6 +51459,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire"
         ],
+        "abilities": [
+            "Blaze",
+            "Libero"
+        ],
         "hp": 240,
         "atk": 177,
         "def": 125,
@@ -47347,6 +51507,10 @@ export const POKEMON_DB = [
         "name": "Cinderace",
         "types": [
             "Fire"
+        ],
+        "abilities": [
+            "Blaze",
+            "Libero"
         ],
         "hp": 270,
         "atk": 237,
@@ -47406,6 +51570,10 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Torrent",
+            "Sniper"
+        ],
         "hp": 210,
         "atk": 85,
         "def": 85,
@@ -47442,6 +51610,10 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Torrent",
+            "Sniper"
+        ],
         "hp": 240,
         "atk": 125,
         "def": 115,
@@ -47477,6 +51649,10 @@ export const POKEMON_DB = [
         "name": "Inteleon",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Torrent",
+            "Sniper"
         ],
         "hp": 250,
         "atk": 175,
@@ -47531,6 +51707,10 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Cheek Pouch",
+            "Gluttony"
+        ],
         "hp": 250,
         "atk": 115,
         "def": 115,
@@ -47566,6 +51746,10 @@ export const POKEMON_DB = [
         "name": "Greedent",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Cheek Pouch",
+            "Gluttony"
         ],
         "hp": 350,
         "atk": 195,
@@ -47617,6 +51801,11 @@ export const POKEMON_DB = [
         "types": [
             "Flying"
         ],
+        "abilities": [
+            "Keen Eye",
+            "Unnerve",
+            "Big Pecks"
+        ],
         "hp": 186,
         "atk": 99,
         "def": 75,
@@ -47651,6 +51840,11 @@ export const POKEMON_DB = [
         "name": "Corvisquire",
         "types": [
             "Flying"
+        ],
+        "abilities": [
+            "Keen Eye",
+            "Unnerve",
+            "Big Pecks"
         ],
         "hp": 246,
         "atk": 139,
@@ -47687,6 +51881,11 @@ export const POKEMON_DB = [
         "types": [
             "Flying",
             "Steel"
+        ],
+        "abilities": [
+            "Pressure",
+            "Unnerve",
+            "Mirror Armor"
         ],
         "hp": 306,
         "atk": 179,
@@ -47733,6 +51932,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug"
         ],
+        "abilities": [
+            "Swarm",
+            "Compound Eyes",
+            "Telepathy"
+        ],
         "hp": 160,
         "atk": 45,
         "def": 45,
@@ -47754,6 +51958,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Psychic"
+        ],
+        "abilities": [
+            "Swarm",
+            "Compound Eyes",
+            "Telepathy"
         ],
         "hp": 210,
         "atk": 75,
@@ -47785,6 +51994,11 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Psychic"
+        ],
+        "abilities": [
+            "Swarm",
+            "Frisk",
+            "Telepathy"
         ],
         "hp": 230,
         "atk": 95,
@@ -47822,6 +52036,11 @@ export const POKEMON_DB = [
         "types": [
             "Dark"
         ],
+        "abilities": [
+            "Run Away",
+            "Unburden",
+            "Stakeout"
+        ],
         "hp": 190,
         "atk": 61,
         "def": 61,
@@ -47853,6 +52072,11 @@ export const POKEMON_DB = [
         "name": "Thievul",
         "types": [
             "Dark"
+        ],
+        "abilities": [
+            "Run Away",
+            "Unburden",
+            "Stakeout"
         ],
         "hp": 250,
         "atk": 121,
@@ -47898,6 +52122,11 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Cotton Down",
+            "Regenerator",
+            "Effect Spore"
+        ],
         "hp": 190,
         "atk": 85,
         "def": 125,
@@ -47926,6 +52155,11 @@ export const POKEMON_DB = [
         "name": "Eldegoss",
         "types": [
             "Grass"
+        ],
+        "abilities": [
+            "Cotton Down",
+            "Regenerator",
+            "Effect Spore"
         ],
         "hp": 230,
         "atk": 105,
@@ -47959,6 +52193,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Fluffy",
+            "Run Away",
+            "Bulletproof"
+        ],
         "hp": 194,
         "atk": 85,
         "def": 115,
@@ -47983,6 +52222,11 @@ export const POKEMON_DB = [
         "name": "Dubwool",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Fluffy",
+            "Steadfast",
+            "Bulletproof"
         ],
         "hp": 254,
         "atk": 165,
@@ -48016,6 +52260,11 @@ export const POKEMON_DB = [
         "name": "Chewtle",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Strong Jaw",
+            "Shell Armor",
+            "Swift Swim"
         ],
         "hp": 210,
         "atk": 133,
@@ -48058,6 +52307,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Rock"
+        ],
+        "abilities": [
+            "Strong Jaw",
+            "Shell Armor",
+            "Swift Swim"
         ],
         "hp": 290,
         "atk": 235,
@@ -48123,6 +52377,10 @@ export const POKEMON_DB = [
         "types": [
             "Electric"
         ],
+        "abilities": [
+            "Ball Fetch",
+            "Rattled"
+        ],
         "hp": 228,
         "atk": 95,
         "def": 105,
@@ -48158,6 +52416,10 @@ export const POKEMON_DB = [
         "name": "Boltund",
         "types": [
             "Electric"
+        ],
+        "abilities": [
+            "Strong Jaw",
+            "Competitive"
         ],
         "hp": 248,
         "atk": 185,
@@ -48197,6 +52459,11 @@ export const POKEMON_DB = [
         "types": [
             "Rock"
         ],
+        "abilities": [
+            "Steam Engine",
+            "Heatproof",
+            "Flash Fire"
+        ],
         "hp": 170,
         "atk": 85,
         "def": 105,
@@ -48232,6 +52499,11 @@ export const POKEMON_DB = [
         "types": [
             "Rock",
             "Fire"
+        ],
+        "abilities": [
+            "Steam Engine",
+            "Flame Body",
+            "Flash Fire"
         ],
         "hp": 270,
         "atk": 125,
@@ -48277,6 +52549,11 @@ export const POKEMON_DB = [
         "types": [
             "Rock",
             "Fire"
+        ],
+        "abilities": [
+            "Steam Engine",
+            "Flame Body",
+            "Flash Fire"
         ],
         "hp": 330,
         "atk": 165,
@@ -48331,6 +52608,11 @@ export const POKEMON_DB = [
             "Grass",
             "Dragon"
         ],
+        "abilities": [
+            "Ripen",
+            "Gluttony",
+            "Bulletproof"
+        ],
         "hp": 190,
         "atk": 85,
         "def": 165,
@@ -48352,6 +52634,11 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Dragon"
+        ],
+        "abilities": [
+            "Ripen",
+            "Gluttony",
+            "Hustle"
         ],
         "hp": 250,
         "atk": 225,
@@ -48395,6 +52682,11 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Dragon"
+        ],
+        "abilities": [
+            "Ripen",
+            "Gluttony",
+            "Thick Fat"
         ],
         "hp": 330,
         "atk": 175,
@@ -48442,6 +52734,11 @@ export const POKEMON_DB = [
         "types": [
             "Ground"
         ],
+        "abilities": [
+            "Sand Spit",
+            "Shed Skin",
+            "Sand Veil"
+        ],
         "hp": 214,
         "atk": 119,
         "def": 155,
@@ -48480,6 +52777,11 @@ export const POKEMON_DB = [
         "name": "Sandaconda",
         "types": [
             "Ground"
+        ],
+        "abilities": [
+            "Sand Spit",
+            "Shed Skin",
+            "Sand Veil"
         ],
         "hp": 254,
         "atk": 219,
@@ -48528,6 +52830,9 @@ export const POKEMON_DB = [
         "types": [
             "Flying",
             "Water"
+        ],
+        "abilities": [
+            "Gulp Missile"
         ],
         "hp": 250,
         "atk": 175,
@@ -48579,6 +52884,10 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Swift Swim",
+            "Propeller Tail"
+        ],
         "hp": 192,
         "atk": 131,
         "def": 85,
@@ -48624,6 +52933,10 @@ export const POKEMON_DB = [
         "name": "Barraskewda",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Swift Swim",
+            "Propeller Tail"
         ],
         "hp": 232,
         "atk": 251,
@@ -48673,6 +52986,11 @@ export const POKEMON_DB = [
             "Electric",
             "Poison"
         ],
+        "abilities": [
+            "Rattled",
+            "Static",
+            "Klutz"
+        ],
         "hp": 190,
         "atk": 81,
         "def": 75,
@@ -48694,6 +53012,11 @@ export const POKEMON_DB = [
         "types": [
             "Electric",
             "Poison"
+        ],
+        "abilities": [
+            "Punk Rock",
+            "Plus",
+            "Technician"
         ],
         "hp": 260,
         "atk": 201,
@@ -48751,6 +53074,11 @@ export const POKEMON_DB = [
             "Fire",
             "Bug"
         ],
+        "abilities": [
+            "Flash Fire",
+            "White Smoke",
+            "Flame Body"
+        ],
         "hp": 210,
         "atk": 135,
         "def": 95,
@@ -48788,6 +53116,11 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Bug"
+        ],
+        "abilities": [
+            "Flash Fire",
+            "White Smoke",
+            "Flame Body"
         ],
         "hp": 310,
         "atk": 235,
@@ -48837,6 +53170,10 @@ export const POKEMON_DB = [
         "types": [
             "Fighting"
         ],
+        "abilities": [
+            "Limber",
+            "Technician"
+        ],
         "hp": 210,
         "atk": 141,
         "def": 125,
@@ -48874,6 +53211,10 @@ export const POKEMON_DB = [
         "name": "Grapploct",
         "types": [
             "Fighting"
+        ],
+        "abilities": [
+            "Limber",
+            "Technician"
         ],
         "hp": 270,
         "atk": 241,
@@ -48921,6 +53262,10 @@ export const POKEMON_DB = [
         "types": [
             "Ghost"
         ],
+        "abilities": [
+            "Weak Armor",
+            "Cursed Body"
+        ],
         "hp": 190,
         "atk": 95,
         "def": 95,
@@ -48952,6 +53297,10 @@ export const POKEMON_DB = [
         "name": "Polteageist",
         "types": [
             "Ghost"
+        ],
+        "abilities": [
+            "Weak Armor",
+            "Cursed Body"
         ],
         "hp": 230,
         "atk": 135,
@@ -48988,6 +53337,11 @@ export const POKEMON_DB = [
         "types": [
             "Psychic"
         ],
+        "abilities": [
+            "Healer",
+            "Anticipation",
+            "Magic Bounce"
+        ],
         "hp": 194,
         "atk": 65,
         "def": 95,
@@ -49019,6 +53373,11 @@ export const POKEMON_DB = [
         "name": "Hattrem",
         "types": [
             "Psychic"
+        ],
+        "abilities": [
+            "Healer",
+            "Anticipation",
+            "Magic Bounce"
         ],
         "hp": 224,
         "atk": 85,
@@ -49053,6 +53412,11 @@ export const POKEMON_DB = [
         "types": [
             "Psychic",
             "Fairy"
+        ],
+        "abilities": [
+            "Healer",
+            "Anticipation",
+            "Magic Bounce"
         ],
         "hp": 224,
         "atk": 185,
@@ -49096,6 +53460,11 @@ export const POKEMON_DB = [
             "Dark",
             "Fairy"
         ],
+        "abilities": [
+            "Prankster",
+            "Frisk",
+            "Pickpocket"
+        ],
         "hp": 200,
         "atk": 95,
         "def": 65,
@@ -49136,6 +53505,11 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Fairy"
+        ],
+        "abilities": [
+            "Prankster",
+            "Frisk",
+            "Pickpocket"
         ],
         "hp": 240,
         "atk": 125,
@@ -49179,6 +53553,11 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Fairy"
+        ],
+        "abilities": [
+            "Prankster",
+            "Frisk",
+            "Pickpocket"
         ],
         "hp": 300,
         "atk": 245,
@@ -49241,6 +53620,11 @@ export const POKEMON_DB = [
             "Dark",
             "Normal"
         ],
+        "abilities": [
+            "Reckless",
+            "Guts",
+            "Defiant"
+        ],
         "hp": 296,
         "atk": 185,
         "def": 207,
@@ -49302,6 +53686,11 @@ export const POKEMON_DB = [
         "types": [
             "Steel"
         ],
+        "abilities": [
+            "Battle Armor",
+            "Tough Claws",
+            "Steely Spirit"
+        ],
         "hp": 250,
         "atk": 225,
         "def": 205,
@@ -49356,6 +53745,10 @@ export const POKEMON_DB = [
         "types": [
             "Ghost"
         ],
+        "abilities": [
+            "Weak Armor",
+            "Perish Body"
+        ],
         "hp": 230,
         "atk": 195,
         "def": 105,
@@ -49407,6 +53800,10 @@ export const POKEMON_DB = [
         "types": [
             "Fighting"
         ],
+        "abilities": [
+            "Steadfast",
+            "Scrappy"
+        ],
         "hp": 234,
         "atk": 275,
         "def": 195,
@@ -49445,6 +53842,11 @@ export const POKEMON_DB = [
         "types": [
             "Ice",
             "Psychic"
+        ],
+        "abilities": [
+            "Tangled Feet",
+            "Screen Cleaner",
+            "Ice Body"
         ],
         "hp": 270,
         "atk": 175,
@@ -49498,6 +53900,9 @@ export const POKEMON_DB = [
             "Ground",
             "Ghost"
         ],
+        "abilities": [
+            "Wandering Spirit"
+        ],
         "hp": 226,
         "atk": 195,
         "def": 295,
@@ -49540,6 +53945,10 @@ export const POKEMON_DB = [
         "types": [
             "Fairy"
         ],
+        "abilities": [
+            "Sweet Veil",
+            "Aroma Veil"
+        ],
         "hp": 200,
         "atk": 85,
         "def": 85,
@@ -49561,6 +53970,10 @@ export const POKEMON_DB = [
         "name": "Alcremie",
         "types": [
             "Fairy"
+        ],
+        "abilities": [
+            "Sweet Veil",
+            "Aroma Veil"
         ],
         "hp": 240,
         "atk": 125,
@@ -49597,6 +54010,10 @@ export const POKEMON_DB = [
         "name": "Falinks",
         "types": [
             "Fighting"
+        ],
+        "abilities": [
+            "Battle Armor",
+            "Defiant"
         ],
         "hp": 240,
         "atk": 205,
@@ -49644,6 +54061,10 @@ export const POKEMON_DB = [
         "name": "Pincurchin",
         "types": [
             "Electric"
+        ],
+        "abilities": [
+            "Lightning Rod",
+            "Electric Surge"
         ],
         "hp": 206,
         "atk": 207,
@@ -49694,6 +54115,10 @@ export const POKEMON_DB = [
             "Ice",
             "Bug"
         ],
+        "abilities": [
+            "Shield Dust",
+            "Ice Scales"
+        ],
         "hp": 170,
         "atk": 55,
         "def": 75,
@@ -49719,6 +54144,10 @@ export const POKEMON_DB = [
         "types": [
             "Ice",
             "Bug"
+        ],
+        "abilities": [
+            "Shield Dust",
+            "Ice Scales"
         ],
         "hp": 250,
         "atk": 135,
@@ -49762,6 +54191,9 @@ export const POKEMON_DB = [
         "types": [
             "Rock"
         ],
+        "abilities": [
+            "Power Spot"
+        ],
         "hp": 310,
         "atk": 255,
         "def": 275,
@@ -49804,6 +54236,9 @@ export const POKEMON_DB = [
         "name": "Eiscue-ice",
         "types": [
             "Ice"
+        ],
+        "abilities": [
+            "Ice Face"
         ],
         "hp": 260,
         "atk": 165,
@@ -49851,6 +54286,11 @@ export const POKEMON_DB = [
             "Psychic",
             "Normal"
         ],
+        "abilities": [
+            "Inner Focus",
+            "Synchronize",
+            "Psychic Surge"
+        ],
         "hp": 230,
         "atk": 135,
         "def": 115,
@@ -49893,6 +54333,9 @@ export const POKEMON_DB = [
         "types": [
             "Electric",
             "Dark"
+        ],
+        "abilities": [
+            "Hunger Switch"
         ],
         "hp": 226,
         "atk": 195,
@@ -49948,6 +54391,10 @@ export const POKEMON_DB = [
         "types": [
             "Steel"
         ],
+        "abilities": [
+            "Sheer Force",
+            "Heavy Metal"
+        ],
         "hp": 254,
         "atk": 165,
         "def": 103,
@@ -49996,6 +54443,10 @@ export const POKEMON_DB = [
         "name": "Copperajah",
         "types": [
             "Steel"
+        ],
+        "abilities": [
+            "Sheer Force",
+            "Heavy Metal"
         ],
         "hp": 354,
         "atk": 265,
@@ -50051,6 +54502,11 @@ export const POKEMON_DB = [
         "types": [
             "Electric",
             "Dragon"
+        ],
+        "abilities": [
+            "Volt Absorb",
+            "Hustle",
+            "Sand Rush"
         ],
         "hp": 290,
         "atk": 205,
@@ -50111,6 +54567,11 @@ export const POKEMON_DB = [
             "Electric",
             "Ice"
         ],
+        "abilities": [
+            "Volt Absorb",
+            "Static",
+            "Slush Rush"
+        ],
         "hp": 290,
         "atk": 205,
         "def": 185,
@@ -50163,6 +54624,11 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Dragon"
+        ],
+        "abilities": [
+            "Water Absorb",
+            "Strong Jaw",
+            "Sand Rush"
         ],
         "hp": 290,
         "atk": 185,
@@ -50219,6 +54685,11 @@ export const POKEMON_DB = [
             "Water",
             "Ice"
         ],
+        "abilities": [
+            "Water Absorb",
+            "Ice Body",
+            "Slush Rush"
+        ],
         "hp": 290,
         "atk": 185,
         "def": 205,
@@ -50265,6 +54736,11 @@ export const POKEMON_DB = [
         "types": [
             "Steel",
             "Dragon"
+        ],
+        "abilities": [
+            "Light Metal",
+            "Heavy Metal",
+            "Stalwart"
         ],
         "hp": 250,
         "atk": 195,
@@ -50316,6 +54792,11 @@ export const POKEMON_DB = [
             "Dragon",
             "Ghost"
         ],
+        "abilities": [
+            "Clear Body",
+            "Infiltrator",
+            "Cursed Body"
+        ],
         "hp": 166,
         "atk": 125,
         "def": 65,
@@ -50342,6 +54823,11 @@ export const POKEMON_DB = [
         "types": [
             "Dragon",
             "Ghost"
+        ],
+        "abilities": [
+            "Clear Body",
+            "Infiltrator",
+            "Cursed Body"
         ],
         "hp": 246,
         "atk": 165,
@@ -50393,6 +54879,11 @@ export const POKEMON_DB = [
         "types": [
             "Dragon",
             "Ghost"
+        ],
+        "abilities": [
+            "Clear Body",
+            "Infiltrator",
+            "Cursed Body"
         ],
         "hp": 286,
         "atk": 245,
@@ -50453,6 +54944,9 @@ export const POKEMON_DB = [
         "types": [
             "Fairy"
         ],
+        "abilities": [
+            "Intrepid Sword"
+        ],
         "hp": 294,
         "atk": 245,
         "def": 235,
@@ -50509,6 +55003,9 @@ export const POKEMON_DB = [
         "types": [
             "Fighting"
         ],
+        "abilities": [
+            "Dauntless Shield"
+        ],
         "hp": 294,
         "atk": 245,
         "def": 235,
@@ -50562,6 +55059,9 @@ export const POKEMON_DB = [
             "Poison",
             "Dragon"
         ],
+        "abilities": [
+            "Pressure"
+        ],
         "hp": 390,
         "atk": 175,
         "def": 195,
@@ -50608,6 +55108,9 @@ export const POKEMON_DB = [
         "types": [
             "Fighting"
         ],
+        "abilities": [
+            "Inner Focus"
+        ],
         "hp": 230,
         "atk": 185,
         "def": 125,
@@ -50651,6 +55154,9 @@ export const POKEMON_DB = [
         "types": [
             "Fighting",
             "Dark"
+        ],
+        "abilities": [
+            "Unseen Fist"
         ],
         "hp": 310,
         "atk": 265,
@@ -50715,6 +55221,9 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Grass"
+        ],
+        "abilities": [
+            "Leaf Guard"
         ],
         "hp": 320,
         "atk": 245,
@@ -50784,6 +55293,9 @@ export const POKEMON_DB = [
         "types": [
             "Electric"
         ],
+        "abilities": [
+            "Transistor"
+        ],
         "hp": 270,
         "atk": 205,
         "def": 105,
@@ -50826,6 +55338,9 @@ export const POKEMON_DB = [
         "name": "Regidrago",
         "types": [
             "Dragon"
+        ],
+        "abilities": [
+            "Dragons Maw"
         ],
         "hp": 510,
         "atk": 205,
@@ -50871,6 +55386,9 @@ export const POKEMON_DB = [
         "name": "Glastrier",
         "types": [
             "Ice"
+        ],
+        "abilities": [
+            "Chilling Neigh"
         ],
         "hp": 310,
         "atk": 295,
@@ -50921,6 +55439,9 @@ export const POKEMON_DB = [
         "types": [
             "Ghost"
         ],
+        "abilities": [
+            "Grim Neigh"
+        ],
         "hp": 310,
         "atk": 135,
         "def": 125,
@@ -50966,6 +55487,9 @@ export const POKEMON_DB = [
             "Psychic",
             "Grass"
         ],
+        "abilities": [
+            "Unnerve"
+        ],
         "hp": 310,
         "atk": 165,
         "def": 165,
@@ -51008,6 +55532,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal",
             "Psychic"
+        ],
+        "abilities": [
+            "Intimidate",
+            "Frisk",
+            "Sap Sipper"
         ],
         "hp": 316,
         "atk": 215,
@@ -51061,6 +55590,11 @@ export const POKEMON_DB = [
             "Bug",
             "Rock"
         ],
+        "abilities": [
+            "Swarm",
+            "Sheer Force",
+            "Sharpness"
+        ],
         "hp": 250,
         "atk": 275,
         "def": 195,
@@ -51106,6 +55640,11 @@ export const POKEMON_DB = [
         "types": [
             "Ground",
             "Normal"
+        ],
+        "abilities": [
+            "Guts",
+            "Bulletproof",
+            "Unnerve"
         ],
         "hp": 370,
         "atk": 285,
@@ -51168,6 +55707,11 @@ export const POKEMON_DB = [
             "Water",
             "Ghost"
         ],
+        "abilities": [
+            "Swift Swim",
+            "Adaptability",
+            "Mold Breaker"
+        ],
         "hp": 350,
         "atk": 229,
         "def": 135,
@@ -51217,6 +55761,11 @@ export const POKEMON_DB = [
         "types": [
             "Fighting",
             "Poison"
+        ],
+        "abilities": [
+            "Pressure",
+            "Unburden",
+            "Poison Touch"
         ],
         "hp": 270,
         "atk": 265,
@@ -51270,6 +55819,11 @@ export const POKEMON_DB = [
             "Dark",
             "Poison"
         ],
+        "abilities": [
+            "Poison Point",
+            "Swift Swim",
+            "Intimidate"
+        ],
         "hp": 280,
         "atk": 235,
         "def": 195,
@@ -51319,6 +55873,10 @@ export const POKEMON_DB = [
             "Fairy",
             "Flying"
         ],
+        "abilities": [
+            "Cute Charm",
+            "Contrary"
+        ],
         "hp": 258,
         "atk": 235,
         "def": 145,
@@ -51362,6 +55920,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Overgrow",
+            "Protean"
+        ],
         "hp": 190,
         "atk": 127,
         "def": 113,
@@ -51399,6 +55961,10 @@ export const POKEMON_DB = [
         "name": "Floragato",
         "types": [
             "Grass"
+        ],
+        "abilities": [
+            "Overgrow",
+            "Protean"
         ],
         "hp": 232,
         "atk": 165,
@@ -51440,6 +56006,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Dark"
+        ],
+        "abilities": [
+            "Overgrow",
+            "Protean"
         ],
         "hp": 262,
         "atk": 225,
@@ -51497,6 +56067,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire"
         ],
+        "abilities": [
+            "Blaze",
+            "Unaware"
+        ],
         "hp": 244,
         "atk": 95,
         "def": 123,
@@ -51539,6 +56113,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire"
         ],
+        "abilities": [
+            "Blaze",
+            "Unaware"
+        ],
         "hp": 272,
         "atk": 115,
         "def": 161,
@@ -51580,6 +56158,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Ghost"
+        ],
+        "abilities": [
+            "Blaze",
+            "Unaware"
         ],
         "hp": 318,
         "atk": 155,
@@ -51635,6 +56217,10 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Torrent",
+            "Moxie"
+        ],
         "hp": 220,
         "atk": 135,
         "def": 95,
@@ -51668,6 +56254,10 @@ export const POKEMON_DB = [
         "name": "Quaxwell",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Torrent",
+            "Moxie"
         ],
         "hp": 250,
         "atk": 175,
@@ -51705,6 +56295,10 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Fighting"
+        ],
+        "abilities": [
+            "Torrent",
+            "Moxie"
         ],
         "hp": 280,
         "atk": 245,
@@ -51756,6 +56350,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Aroma Veil",
+            "Gluttony",
+            "Thick Fat"
+        ],
         "hp": 218,
         "atk": 95,
         "def": 85,
@@ -51789,6 +56388,11 @@ export const POKEMON_DB = [
         "name": "Oinkologne-male",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Lingering Aroma",
+            "Gluttony",
+            "Thick Fat"
         ],
         "hp": 330,
         "atk": 205,
@@ -51833,6 +56437,10 @@ export const POKEMON_DB = [
         "types": [
             "Bug"
         ],
+        "abilities": [
+            "Insomnia",
+            "Stakeout"
+        ],
         "hp": 180,
         "atk": 87,
         "def": 95,
@@ -51871,6 +56479,10 @@ export const POKEMON_DB = [
         "name": "Spidops",
         "types": [
             "Bug"
+        ],
+        "abilities": [
+            "Insomnia",
+            "Stakeout"
         ],
         "hp": 230,
         "atk": 163,
@@ -51916,6 +56528,10 @@ export const POKEMON_DB = [
         "types": [
             "Bug"
         ],
+        "abilities": [
+            "Swarm",
+            "Tinted Lens"
+        ],
         "hp": 176,
         "atk": 97,
         "def": 85,
@@ -51947,6 +56563,10 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Dark"
+        ],
+        "abilities": [
+            "Swarm",
+            "Tinted Lens"
         ],
         "hp": 252,
         "atk": 209,
@@ -51991,6 +56611,11 @@ export const POKEMON_DB = [
         "types": [
             "Electric"
         ],
+        "abilities": [
+            "Static",
+            "Natural Cure",
+            "Iron Fist"
+        ],
         "hp": 200,
         "atk": 105,
         "def": 45,
@@ -52029,6 +56654,11 @@ export const POKEMON_DB = [
         "types": [
             "Electric",
             "Fighting"
+        ],
+        "abilities": [
+            "Volt Absorb",
+            "Natural Cure",
+            "Iron Fist"
         ],
         "hp": 230,
         "atk": 155,
@@ -52071,6 +56701,11 @@ export const POKEMON_DB = [
         "types": [
             "Electric",
             "Fighting"
+        ],
+        "abilities": [
+            "Volt Absorb",
+            "Natural Cure",
+            "Iron Fist"
         ],
         "hp": 250,
         "atk": 235,
@@ -52127,6 +56762,11 @@ export const POKEMON_DB = [
         "types": [
             "Normal"
         ],
+        "abilities": [
+            "Run Away",
+            "Pickup",
+            "Own Tempo"
+        ],
         "hp": 210,
         "atk": 105,
         "def": 95,
@@ -52162,6 +56802,11 @@ export const POKEMON_DB = [
         "name": "Maushold-family-of-four",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Friend Guard",
+            "Cheek Pouch",
+            "Technician"
         ],
         "hp": 258,
         "atk": 155,
@@ -52199,6 +56844,10 @@ export const POKEMON_DB = [
         "types": [
             "Fairy"
         ],
+        "abilities": [
+            "Own Tempo",
+            "Klutz"
+        ],
         "hp": 184,
         "atk": 115,
         "def": 145,
@@ -52235,6 +56884,10 @@ export const POKEMON_DB = [
         "name": "Dachsbun",
         "types": [
             "Fairy"
+        ],
+        "abilities": [
+            "Well Baked Body",
+            "Aroma Veil"
         ],
         "hp": 224,
         "atk": 165,
@@ -52277,6 +56930,10 @@ export const POKEMON_DB = [
             "Grass",
             "Normal"
         ],
+        "abilities": [
+            "Early Bird",
+            "Harvest"
+        ],
         "hp": 192,
         "atk": 75,
         "def": 95,
@@ -52307,6 +56964,10 @@ export const POKEMON_DB = [
             "Grass",
             "Normal"
         ],
+        "abilities": [
+            "Early Bird",
+            "Harvest"
+        ],
         "hp": 214,
         "atk": 111,
         "def": 125,
@@ -52336,6 +56997,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Normal"
+        ],
+        "abilities": [
+            "Seed Sower",
+            "Harvest"
         ],
         "hp": 266,
         "atk": 143,
@@ -52375,6 +57040,11 @@ export const POKEMON_DB = [
             "Normal",
             "Flying"
         ],
+        "abilities": [
+            "Intimidate",
+            "Hustle",
+            "Guts"
+        ],
         "hp": 274,
         "atk": 197,
         "def": 107,
@@ -52412,6 +57082,11 @@ export const POKEMON_DB = [
         "types": [
             "Rock"
         ],
+        "abilities": [
+            "Purifying Salt",
+            "Sturdy",
+            "Clear Body"
+        ],
         "hp": 220,
         "atk": 115,
         "def": 155,
@@ -52447,6 +57122,11 @@ export const POKEMON_DB = [
         "name": "Naclstack",
         "types": [
             "Rock"
+        ],
+        "abilities": [
+            "Purifying Salt",
+            "Sturdy",
+            "Clear Body"
         ],
         "hp": 230,
         "atk": 125,
@@ -52486,6 +57166,11 @@ export const POKEMON_DB = [
         "name": "Garganacl",
         "types": [
             "Rock"
+        ],
+        "abilities": [
+            "Purifying Salt",
+            "Sturdy",
+            "Clear Body"
         ],
         "hp": 310,
         "atk": 205,
@@ -52535,6 +57220,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire"
         ],
+        "abilities": [
+            "Flash Fire",
+            "Flame Body"
+        ],
         "hp": 190,
         "atk": 105,
         "def": 85,
@@ -52562,6 +57251,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Psychic"
+        ],
+        "abilities": [
+            "Flash Fire",
+            "Weak Armor"
         ],
         "hp": 280,
         "atk": 125,
@@ -52606,6 +57299,10 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Ghost"
+        ],
+        "abilities": [
+            "Flash Fire",
+            "Weak Armor"
         ],
         "hp": 260,
         "atk": 255,
@@ -52652,6 +57349,11 @@ export const POKEMON_DB = [
         "types": [
             "Electric"
         ],
+        "abilities": [
+            "Own Tempo",
+            "Static",
+            "Damp"
+        ],
         "hp": 232,
         "atk": 67,
         "def": 87,
@@ -52684,6 +57386,11 @@ export const POKEMON_DB = [
         "name": "Bellibolt",
         "types": [
             "Electric"
+        ],
+        "abilities": [
+            "Electromorphosis",
+            "Static",
+            "Damp"
         ],
         "hp": 328,
         "atk": 133,
@@ -52720,6 +57427,11 @@ export const POKEMON_DB = [
         "types": [
             "Electric",
             "Flying"
+        ],
+        "abilities": [
+            "Wind Power",
+            "Volt Absorb",
+            "Competitive"
         ],
         "hp": 190,
         "atk": 85,
@@ -52760,6 +57472,11 @@ export const POKEMON_DB = [
         "types": [
             "Electric",
             "Flying"
+        ],
+        "abilities": [
+            "Wind Power",
+            "Volt Absorb",
+            "Competitive"
         ],
         "hp": 250,
         "atk": 145,
@@ -52803,6 +57520,11 @@ export const POKEMON_DB = [
         "types": [
             "Dark"
         ],
+        "abilities": [
+            "Intimidate",
+            "Run Away",
+            "Stakeout"
+        ],
         "hp": 230,
         "atk": 161,
         "def": 125,
@@ -52839,6 +57561,11 @@ export const POKEMON_DB = [
         "name": "Mabosstiff",
         "types": [
             "Dark"
+        ],
+        "abilities": [
+            "Intimidate",
+            "Guard Dog",
+            "Stakeout"
         ],
         "hp": 270,
         "atk": 245,
@@ -52882,6 +57609,11 @@ export const POKEMON_DB = [
             "Poison",
             "Normal"
         ],
+        "abilities": [
+            "Unburden",
+            "Pickpocket",
+            "Prankster"
+        ],
         "hp": 190,
         "atk": 135,
         "def": 75,
@@ -52920,6 +57652,11 @@ export const POKEMON_DB = [
         "types": [
             "Poison",
             "Normal"
+        ],
+        "abilities": [
+            "Unburden",
+            "Poison Touch",
+            "Prankster"
         ],
         "hp": 236,
         "atk": 195,
@@ -52962,6 +57699,10 @@ export const POKEMON_DB = [
             "Grass",
             "Ghost"
         ],
+        "abilities": [
+            "Wind Rider",
+            "Infiltrator"
+        ],
         "hp": 190,
         "atk": 135,
         "def": 65,
@@ -52994,6 +57735,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Ghost"
+        ],
+        "abilities": [
+            "Wind Rider",
+            "Infiltrator"
         ],
         "hp": 220,
         "atk": 235,
@@ -53030,6 +57775,9 @@ export const POKEMON_DB = [
         "types": [
             "Ground",
             "Grass"
+        ],
+        "abilities": [
+            "Mycelium Might"
         ],
         "hp": 190,
         "atk": 85,
@@ -53068,6 +57816,9 @@ export const POKEMON_DB = [
         "types": [
             "Ground",
             "Grass"
+        ],
+        "abilities": [
+            "Mycelium Might"
         ],
         "hp": 270,
         "atk": 145,
@@ -53108,6 +57859,11 @@ export const POKEMON_DB = [
         "name": "Klawf",
         "types": [
             "Rock"
+        ],
+        "abilities": [
+            "Anger Shell",
+            "Shell Armor",
+            "Regenerator"
         ],
         "hp": 250,
         "atk": 205,
@@ -53153,6 +57909,11 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Chlorophyll",
+            "Insomnia",
+            "Klutz"
+        ],
         "hp": 210,
         "atk": 129,
         "def": 85,
@@ -53187,6 +57948,11 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Fire"
+        ],
+        "abilities": [
+            "Chlorophyll",
+            "Insomnia",
+            "Moody"
         ],
         "hp": 240,
         "atk": 221,
@@ -53231,6 +57997,10 @@ export const POKEMON_DB = [
         "types": [
             "Bug"
         ],
+        "abilities": [
+            "Compound Eyes",
+            "Shed Skin"
+        ],
         "hp": 192,
         "atk": 105,
         "def": 125,
@@ -53263,6 +58033,10 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Psychic"
+        ],
+        "abilities": [
+            "Synchronize",
+            "Telepathy"
         ],
         "hp": 260,
         "atk": 105,
@@ -53312,6 +58086,11 @@ export const POKEMON_DB = [
         "types": [
             "Psychic"
         ],
+        "abilities": [
+            "Anticipation",
+            "Frisk",
+            "Speed Boost"
+        ],
         "hp": 170,
         "atk": 75,
         "def": 65,
@@ -53343,6 +58122,11 @@ export const POKEMON_DB = [
         "name": "Espathra",
         "types": [
             "Psychic"
+        ],
+        "abilities": [
+            "Opportunist",
+            "Frisk",
+            "Speed Boost"
         ],
         "hp": 300,
         "atk": 125,
@@ -53393,6 +58177,11 @@ export const POKEMON_DB = [
             "Fairy",
             "Steel"
         ],
+        "abilities": [
+            "Mold Breaker",
+            "Own Tempo",
+            "Pickpocket"
+        ],
         "hp": 210,
         "atk": 95,
         "def": 95,
@@ -53429,6 +58218,11 @@ export const POKEMON_DB = [
             "Fairy",
             "Steel"
         ],
+        "abilities": [
+            "Mold Breaker",
+            "Own Tempo",
+            "Pickpocket"
+        ],
         "hp": 240,
         "atk": 115,
         "def": 115,
@@ -53463,6 +58257,11 @@ export const POKEMON_DB = [
         "types": [
             "Fairy",
             "Steel"
+        ],
+        "abilities": [
+            "Mold Breaker",
+            "Own Tempo",
+            "Pickpocket"
         ],
         "hp": 280,
         "atk": 155,
@@ -53499,6 +58298,11 @@ export const POKEMON_DB = [
         "name": "Wiglett",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Gooey",
+            "Rattled",
+            "Sand Veil"
         ],
         "hp": 130,
         "atk": 115,
@@ -53538,6 +58342,11 @@ export const POKEMON_DB = [
         "name": "Wugtrio",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Gooey",
+            "Rattled",
+            "Sand Veil"
         ],
         "hp": 180,
         "atk": 205,
@@ -53580,6 +58389,11 @@ export const POKEMON_DB = [
         "types": [
             "Flying",
             "Dark"
+        ],
+        "abilities": [
+            "Big Pecks",
+            "Keen Eye",
+            "Rocky Payload"
         ],
         "hp": 250,
         "atk": 211,
@@ -53629,6 +58443,9 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Water Veil"
+        ],
         "hp": 250,
         "atk": 95,
         "def": 85,
@@ -53665,6 +58482,9 @@ export const POKEMON_DB = [
         "name": "Palafin-zero",
         "types": [
             "Water"
+        ],
+        "abilities": [
+            "Zero To Hero"
         ],
         "hp": 310,
         "atk": 145,
@@ -53717,6 +58537,10 @@ export const POKEMON_DB = [
             "Steel",
             "Poison"
         ],
+        "abilities": [
+            "Overcoat",
+            "Slow Start"
+        ],
         "hp": 200,
         "atk": 145,
         "def": 131,
@@ -53756,6 +58580,10 @@ export const POKEMON_DB = [
         "types": [
             "Steel",
             "Poison"
+        ],
+        "abilities": [
+            "Overcoat",
+            "Filter"
         ],
         "hp": 270,
         "atk": 243,
@@ -53801,6 +58629,10 @@ export const POKEMON_DB = [
         "types": [
             "Dragon",
             "Normal"
+        ],
+        "abilities": [
+            "Shed Skin",
+            "Regenerator"
         ],
         "hp": 250,
         "atk": 195,
@@ -53856,6 +58688,10 @@ export const POKEMON_DB = [
         "types": [
             "Steel"
         ],
+        "abilities": [
+            "Earth Eater",
+            "Sand Veil"
+        ],
         "hp": 250,
         "atk": 175,
         "def": 295,
@@ -53895,6 +58731,10 @@ export const POKEMON_DB = [
             "Rock",
             "Poison"
         ],
+        "abilities": [
+            "Toxic Debris",
+            "Corrosion"
+        ],
         "hp": 206,
         "atk": 75,
         "def": 89,
@@ -53928,6 +58768,10 @@ export const POKEMON_DB = [
         "types": [
             "Rock",
             "Poison"
+        ],
+        "abilities": [
+            "Toxic Debris",
+            "Corrosion"
         ],
         "hp": 276,
         "atk": 115,
@@ -53966,6 +58810,10 @@ export const POKEMON_DB = [
         "name": "Greavard",
         "types": [
             "Ghost"
+        ],
+        "abilities": [
+            "Pickup",
+            "Fluffy"
         ],
         "hp": 210,
         "atk": 127,
@@ -54007,6 +58855,10 @@ export const POKEMON_DB = [
         "name": "Houndstone",
         "types": [
             "Ghost"
+        ],
+        "abilities": [
+            "Sand Rush",
+            "Fluffy"
         ],
         "hp": 254,
         "atk": 207,
@@ -54052,6 +58904,11 @@ export const POKEMON_DB = [
             "Flying",
             "Fighting"
         ],
+        "abilities": [
+            "Scrappy",
+            "Tangled Feet",
+            "Costar"
+        ],
         "hp": 274,
         "atk": 235,
         "def": 153,
@@ -54093,6 +58950,11 @@ export const POKEMON_DB = [
         "name": "Cetoddle",
         "types": [
             "Ice"
+        ],
+        "abilities": [
+            "Thick Fat",
+            "Snow Cloak",
+            "Sheer Force"
         ],
         "hp": 326,
         "atk": 141,
@@ -54137,6 +58999,11 @@ export const POKEMON_DB = [
         "types": [
             "Ice"
         ],
+        "abilities": [
+            "Thick Fat",
+            "Slush Rush",
+            "Sheer Force"
+        ],
         "hp": 450,
         "atk": 231,
         "def": 135,
@@ -54180,6 +59047,10 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Psychic"
+        ],
+        "abilities": [
+            "Mold Breaker",
+            "Sharpness"
         ],
         "hp": 290,
         "atk": 209,
@@ -54227,6 +59098,11 @@ export const POKEMON_DB = [
         "types": [
             "Water"
         ],
+        "abilities": [
+            "Unaware",
+            "Oblivious",
+            "Water Veil"
+        ],
         "hp": 410,
         "atk": 205,
         "def": 235,
@@ -54272,6 +59148,10 @@ export const POKEMON_DB = [
             "Dragon",
             "Water"
         ],
+        "abilities": [
+            "Commander",
+            "Storm Drain"
+        ],
         "hp": 246,
         "atk": 105,
         "def": 125,
@@ -54303,6 +59183,11 @@ export const POKEMON_DB = [
         "types": [
             "Fighting",
             "Ghost"
+        ],
+        "abilities": [
+            "Vital Spirit",
+            "Inner Focus",
+            "Defiant"
         ],
         "hp": 330,
         "atk": 235,
@@ -54366,6 +59251,11 @@ export const POKEMON_DB = [
             "Poison",
             "Ground"
         ],
+        "abilities": [
+            "Poison Point",
+            "Water Absorb",
+            "Unaware"
+        ],
         "hp": 370,
         "atk": 155,
         "def": 125,
@@ -54417,6 +59307,11 @@ export const POKEMON_DB = [
             "Normal",
             "Psychic"
         ],
+        "abilities": [
+            "Cud Chew",
+            "Armor Tail",
+            "Sap Sipper"
+        ],
         "hp": 350,
         "atk": 185,
         "def": 145,
@@ -54466,6 +59361,11 @@ export const POKEMON_DB = [
         "name": "Dudunsparce-two-segment",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Serene Grace",
+            "Run Away",
+            "Rattled"
         ],
         "hp": 360,
         "atk": 205,
@@ -54532,6 +59432,11 @@ export const POKEMON_DB = [
             "Dark",
             "Steel"
         ],
+        "abilities": [
+            "Defiant",
+            "Supreme Overlord",
+            "Pressure"
+        ],
         "hp": 310,
         "atk": 275,
         "def": 245,
@@ -54580,6 +59485,9 @@ export const POKEMON_DB = [
         "types": [
             "Ground",
             "Fighting"
+        ],
+        "abilities": [
+            "Protosynthesis"
         ],
         "hp": 340,
         "atk": 267,
@@ -54636,6 +59544,9 @@ export const POKEMON_DB = [
         "types": [
             "Fairy",
             "Psychic"
+        ],
+        "abilities": [
+            "Protosynthesis"
         ],
         "hp": 340,
         "atk": 135,
@@ -54695,6 +59606,9 @@ export const POKEMON_DB = [
             "Grass",
             "Dark"
         ],
+        "abilities": [
+            "Protosynthesis"
+        ],
         "hp": 332,
         "atk": 259,
         "def": 203,
@@ -54740,6 +59654,9 @@ export const POKEMON_DB = [
             "Ghost",
             "Fairy"
         ],
+        "abilities": [
+            "Protosynthesis"
+        ],
         "hp": 220,
         "atk": 115,
         "def": 115,
@@ -54778,6 +59695,9 @@ export const POKEMON_DB = [
         "types": [
             "Bug",
             "Fighting"
+        ],
+        "abilities": [
+            "Protosynthesis"
         ],
         "hp": 280,
         "atk": 275,
@@ -54830,6 +59750,9 @@ export const POKEMON_DB = [
             "Electric",
             "Ground"
         ],
+        "abilities": [
+            "Protosynthesis"
+        ],
         "hp": 280,
         "atk": 167,
         "def": 199,
@@ -54874,6 +59797,9 @@ export const POKEMON_DB = [
         "types": [
             "Ground",
             "Steel"
+        ],
+        "abilities": [
+            "Quark Drive"
         ],
         "hp": 290,
         "atk": 229,
@@ -54926,6 +59852,9 @@ export const POKEMON_DB = [
             "Ice",
             "Water"
         ],
+        "abilities": [
+            "Quark Drive"
+        ],
         "hp": 222,
         "atk": 165,
         "def": 233,
@@ -54966,6 +59895,9 @@ export const POKEMON_DB = [
         "types": [
             "Fighting",
             "Electric"
+        ],
+        "abilities": [
+            "Quark Drive"
         ],
         "hp": 418,
         "atk": 285,
@@ -55016,6 +59948,9 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Flying"
+        ],
+        "abilities": [
+            "Quark Drive"
         ],
         "hp": 298,
         "atk": 165,
@@ -55073,6 +60008,9 @@ export const POKEMON_DB = [
             "Fire",
             "Poison"
         ],
+        "abilities": [
+            "Quark Drive"
+        ],
         "hp": 270,
         "atk": 145,
         "def": 125,
@@ -55117,6 +60055,9 @@ export const POKEMON_DB = [
         "types": [
             "Rock",
             "Electric"
+        ],
+        "abilities": [
+            "Quark Drive"
         ],
         "hp": 310,
         "atk": 273,
@@ -55180,6 +60121,10 @@ export const POKEMON_DB = [
             "Dragon",
             "Ice"
         ],
+        "abilities": [
+            "Thermal Exchange",
+            "Ice Body"
+        ],
         "hp": 240,
         "atk": 155,
         "def": 95,
@@ -55220,6 +60165,10 @@ export const POKEMON_DB = [
             "Dragon",
             "Ice"
         ],
+        "abilities": [
+            "Thermal Exchange",
+            "Ice Body"
+        ],
         "hp": 290,
         "atk": 195,
         "def": 137,
@@ -55259,6 +60208,10 @@ export const POKEMON_DB = [
         "types": [
             "Dragon",
             "Ice"
+        ],
+        "abilities": [
+            "Thermal Exchange",
+            "Ice Body"
         ],
         "hp": 340,
         "atk": 295,
@@ -55312,6 +60265,9 @@ export const POKEMON_DB = [
         "types": [
             "Ghost"
         ],
+        "abilities": [
+            "Rattled"
+        ],
         "hp": 200,
         "atk": 65,
         "def": 145,
@@ -55335,6 +60291,9 @@ export const POKEMON_DB = [
         "types": [
             "Steel",
             "Ghost"
+        ],
+        "abilities": [
+            "Good As Gold"
         ],
         "hp": 284,
         "atk": 125,
@@ -55375,6 +60334,9 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Grass"
+        ],
+        "abilities": [
+            "Tablets Of Ruin"
         ],
         "hp": 280,
         "atk": 175,
@@ -55417,6 +60379,9 @@ export const POKEMON_DB = [
         "types": [
             "Dark",
             "Ice"
+        ],
+        "abilities": [
+            "Sword Of Ruin"
         ],
         "hp": 270,
         "atk": 245,
@@ -55461,6 +60426,9 @@ export const POKEMON_DB = [
             "Dark",
             "Ground"
         ],
+        "abilities": [
+            "Vessel Of Ruin"
+        ],
         "hp": 420,
         "atk": 225,
         "def": 255,
@@ -55504,6 +60472,9 @@ export const POKEMON_DB = [
             "Dark",
             "Fire"
         ],
+        "abilities": [
+            "Beads Of Ruin"
+        ],
         "hp": 220,
         "atk": 165,
         "def": 165,
@@ -55545,6 +60516,9 @@ export const POKEMON_DB = [
         "types": [
             "Dragon",
             "Dark"
+        ],
+        "abilities": [
+            "Protosynthesis"
         ],
         "hp": 320,
         "atk": 283,
@@ -55614,6 +60588,9 @@ export const POKEMON_DB = [
             "Fairy",
             "Fighting"
         ],
+        "abilities": [
+            "Quark Drive"
+        ],
         "hp": 258,
         "atk": 265,
         "def": 185,
@@ -55672,6 +60649,9 @@ export const POKEMON_DB = [
         "types": [
             "Fighting",
             "Dragon"
+        ],
+        "abilities": [
+            "Orichalcum Pulse"
         ],
         "hp": 310,
         "atk": 275,
@@ -55737,6 +60717,9 @@ export const POKEMON_DB = [
             "Electric",
             "Dragon"
         ],
+        "abilities": [
+            "Hadron Engine"
+        ],
         "hp": 310,
         "atk": 175,
         "def": 205,
@@ -55785,6 +60768,9 @@ export const POKEMON_DB = [
         "types": [
             "Water",
             "Dragon"
+        ],
+        "abilities": [
+            "Protosynthesis"
         ],
         "hp": 308,
         "atk": 171,
@@ -55836,6 +60822,9 @@ export const POKEMON_DB = [
             "Grass",
             "Psychic"
         ],
+        "abilities": [
+            "Quark Drive"
+        ],
         "hp": 290,
         "atk": 265,
         "def": 181,
@@ -55883,6 +60872,11 @@ export const POKEMON_DB = [
             "Grass",
             "Dragon"
         ],
+        "abilities": [
+            "Supersweet Syrup",
+            "Gluttony",
+            "Sticky Hold"
+        ],
         "hp": 270,
         "atk": 165,
         "def": 225,
@@ -55922,6 +60916,10 @@ export const POKEMON_DB = [
             "Grass",
             "Ghost"
         ],
+        "abilities": [
+            "Hospitality",
+            "Heatproof"
+        ],
         "hp": 190,
         "atk": 95,
         "def": 95,
@@ -55952,6 +60950,10 @@ export const POKEMON_DB = [
         "types": [
             "Grass",
             "Ghost"
+        ],
+        "abilities": [
+            "Hospitality",
+            "Heatproof"
         ],
         "hp": 252,
         "atk": 125,
@@ -55985,6 +60987,10 @@ export const POKEMON_DB = [
         "types": [
             "Poison",
             "Fighting"
+        ],
+        "abilities": [
+            "Toxic Chain",
+            "Guard Dog"
         ],
         "hp": 286,
         "atk": 261,
@@ -56048,6 +61054,10 @@ export const POKEMON_DB = [
             "Poison",
             "Psychic"
         ],
+        "abilities": [
+            "Toxic Chain",
+            "Frisk"
+        ],
         "hp": 286,
         "atk": 155,
         "def": 137,
@@ -56090,6 +61100,10 @@ export const POKEMON_DB = [
         "types": [
             "Poison",
             "Fairy"
+        ],
+        "abilities": [
+            "Toxic Chain",
+            "Technician"
         ],
         "hp": 286,
         "atk": 187,
@@ -56142,6 +61156,9 @@ export const POKEMON_DB = [
         "types": [
             "Grass"
         ],
+        "abilities": [
+            "Defiant"
+        ],
         "hp": 270,
         "atk": 245,
         "def": 173,
@@ -56189,6 +61206,11 @@ export const POKEMON_DB = [
         "types": [
             "Steel",
             "Dragon"
+        ],
+        "abilities": [
+            "Stamina",
+            "Sturdy",
+            "Stalwart"
         ],
         "hp": 290,
         "atk": 215,
@@ -56241,6 +61263,11 @@ export const POKEMON_DB = [
             "Grass",
             "Dragon"
         ],
+        "abilities": [
+            "Supersweet Syrup",
+            "Regenerator",
+            "Sticky Hold"
+        ],
         "hp": 322,
         "atk": 165,
         "def": 225,
@@ -56289,6 +61316,9 @@ export const POKEMON_DB = [
         "types": [
             "Fire",
             "Dragon"
+        ],
+        "abilities": [
+            "Protosynthesis"
         ],
         "hp": 320,
         "atk": 235,
@@ -56347,6 +61377,9 @@ export const POKEMON_DB = [
             "Electric",
             "Dragon"
         ],
+        "abilities": [
+            "Protosynthesis"
+        ],
         "hp": 360,
         "atk": 151,
         "def": 187,
@@ -56400,6 +61433,9 @@ export const POKEMON_DB = [
             "Rock",
             "Psychic"
         ],
+        "abilities": [
+            "Quark Drive"
+        ],
         "hp": 290,
         "atk": 245,
         "def": 165,
@@ -56450,6 +61486,9 @@ export const POKEMON_DB = [
             "Steel",
             "Psychic"
         ],
+        "abilities": [
+            "Quark Drive"
+        ],
         "hp": 290,
         "atk": 149,
         "def": 205,
@@ -56494,6 +61533,9 @@ export const POKEMON_DB = [
         "name": "Terapagos",
         "types": [
             "Normal"
+        ],
+        "abilities": [
+            "Tera Shift"
         ],
         "hp": 290,
         "atk": 135,
@@ -56552,6 +61594,9 @@ export const POKEMON_DB = [
             "Poison",
             "Ghost"
         ],
+        "abilities": [
+            "Poison Puppeteer"
+        ],
         "hp": 286,
         "atk": 181,
         "def": 325,
@@ -56587,8 +61632,8 @@ export const ITEMS = {
 };
 
 export const FORMATS = [
-    { id: 'gen9random', name: '[Gen 9] Random Battle', warning: 'Pokemon, moves, and items are completely randomized.' },
-    { id: 'gen9ou', name: '[Gen 9] OU', warning: '' },
-    { id: 'gen9anythinggoes', name: '[Gen 9] Anything Goes', warning: 'WARNING: Anything Goes format allows teams of identical Pokémon.' },
-    { id: 'gen9hackmons', name: '[Gen 9] Unlimited Hackmons', warning: 'WARNING: Pure Chaos!' }
+    { id: 'gen9random', name: '[Gen 9] Random Battle', clauses: ['Sleep Clause Mod', 'HP Percentage Mod', 'Cancel Mod'], warning: 'Pokemon, moves, and items are completely randomized.' },
+    { id: 'gen9ou', name: '[Gen 9] OU', clauses: ['Sleep Clause Mod', 'Species Clause', 'OHKO Clause', 'Evasion Moves Clause', 'Endless Battle Clause', 'HP Percentage Mod', 'Cancel Mod'], warning: '' },
+    { id: 'gen9anythinggoes', name: '[Gen 9] Anything Goes', clauses: ['Endless Battle Clause', 'HP Percentage Mod', 'Cancel Mod'], warning: 'WARNING: Anything Goes format allows teams of identical Pokémon.' },
+    { id: 'gen9hackmons', name: '[Gen 9] Unlimited Hackmons', clauses: ['HP Percentage Mod', 'Cancel Mod'], warning: 'WARNING: Pure Chaos!' }
 ];
