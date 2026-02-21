@@ -1633,12 +1633,16 @@
     }
 
     .topbar-left {
-        gap: var(--space-4);
+        flex: 1;
+        min-width: 0;
+        gap: var(--space-2);
     }
 
     .main-nav {
+        flex: 1;
         overflow-x: auto;
         scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
     }
 
     .main-nav::-webkit-scrollbar {
@@ -1649,6 +1653,11 @@
         white-space: nowrap;
         font-size: var(--fs-xs);
         padding: var(--space-2) var(--space-3);
+    }
+
+    .topbar-right {
+        flex-shrink: 0;
+        gap: var(--space-2);
     }
 
     .dashboard-main {

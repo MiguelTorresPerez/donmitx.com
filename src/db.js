@@ -655,7 +655,7 @@ export async function getActiveGameRooms(gameId) {
     const q = query(
         collection(db, COL.GAME_ROOMS),
         where('gameId', '==', gameId),
-        where('status', '==', 'lobby'),
+        where('status', 'in', ['lobby', 'playing']),
         orderBy('createdAt', 'desc'),
         limit(20)
     );

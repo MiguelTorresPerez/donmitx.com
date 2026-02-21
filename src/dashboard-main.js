@@ -912,14 +912,31 @@ function setupEventListeners() {
 
             rooms.forEach(room => {
                 const playerCount = Object.keys(room.players || {}).length;
+                const isPlaying = room.status === 'playing';
+                const hasMe = currentUser && room.players[currentUser.uid];
+
                 const div = document.createElement('div');
                 div.className = 'chat-card'; // Reuse chat card styling for simplicity
+
+                let actionBtn = '';
+                if (isPlaying) {
+                    if (hasMe) {
+                        actionBtn = `<button class="btn-primary btn-sm btn-join-room" data-room-id="${room.id}">Rejoin</button>`;
+                    } else {
+                        actionBtn = `<span class="badge" style="background:var(--primary); color:white; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem;">In Progress</span>`;
+                    }
+                } else if (playerCount < 6) {
+                    actionBtn = `<button class="btn-primary btn-sm btn-join-room" data-room-id="${room.id}">Join</button>`;
+                } else {
+                    actionBtn = '<span class="badge">Full</span>';
+                }
+
                 div.innerHTML = `
                     <div class="chat-info" style="flex:1;">
                         <h4 style="margin:0; font-size:1rem;">Host: ${escapeHtml(room.players[room.hostUid]?.name || 'Unknown')}</h4>
-                        <span class="text-muted" style="font-size:0.85rem;">Players: ${playerCount}/6</span>
+                        <span class="text-muted" style="font-size:0.85rem;">Players: ${playerCount}/6 ${isPlaying ? '• Playing' : '• Lobby'}</span>
                     </div>
-                    ${playerCount < 6 ? `<button class="btn-primary btn-sm btn-join-room" data-room-id="${room.id}">Join</button>` : '<span class="badge">Full</span>'}
+                    ${actionBtn}
                 `;
                 list.appendChild(div);
             });

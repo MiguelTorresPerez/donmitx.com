@@ -609,7 +609,7 @@
             if (top3[2]) podiumArr.push({ p: top3[2], r: ranks[2], m: medals[2] });
 
             return `
-            <div class="animate-in">
+            <div class="animate-in" style="width: 100%; max-width: 500px; margin: 0 auto;">
                 <h2>Game Over!</h2>
                 <div class="podium">
                     ${podiumArr.map(item => `
@@ -622,6 +622,25 @@
                         </div>
                     `).join('')}
                 </div>
+                
+                <div style="margin: 30px 0; background: rgba(20, 25, 41, 0.7); border-radius: 12px; padding: 16px; border: 1px solid rgba(255,255,255,0.05); text-align: left;">
+                    <h3 style="margin-bottom: 12px; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">Final Leaderboard</h3>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        ${players.map((p, idx) => `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <span style="font-weight: bold; color: var(--text-muted); width: 20px;">#${idx + 1}</span>
+                                    <span>${esc(p.name)}</span>
+                                </div>
+                                <div style="display: flex; gap: 16px; text-align: right; font-size: 0.9rem;">
+                                    <span style="color: var(--success);">${p.correct || 0} ✓</span>
+                                    <span style="font-weight: bold; min-width: 50px;">${p.score} pts</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
                 ${isHost() ? `<button class="btn-host" id="btn-play-again">Back to Lobby</button>` : `<div class="status-bar">Waiting for host...</div>`}
             </div>
         `;
@@ -644,11 +663,13 @@
 
             // Calculate new score state locally to send to db
             const me = roomState.players[currentUser.uid];
-            let newScore = me.score;
-            let newStreak = me.streak;
+            let newScore = me.score || 0;
+            let newStreak = me.streak || 0;
+            let newCorrect = me.correct || 0;
 
             if (isCorrect) {
                 newStreak++;
+                newCorrect++;
                 const speedBonus = Math.max(0, timeRemaining); // 0-10 pts for speed
                 newScore += (10 + speedBonus + (newStreak > 1 ? newStreak * 2 : 0));
             } else {
@@ -659,6 +680,7 @@
             await updateDoc(roomRef, {
                 [`players.${currentUser.uid}.score`]: newScore,
                 [`players.${currentUser.uid}.streak`]: newStreak,
+                [`players.${currentUser.uid}.correct`]: newCorrect,
                 [`players.${currentUser.uid}.hasAnswered`]: true,
                 [`players.${currentUser.uid}.lastAnswer`]: idx
             });
@@ -678,17 +700,18 @@
             if (e.target.id === 'btn-start-game') {
                 e.target.disabled = true;
                 try {
-                    // Host generates the game session cache
+                    // Host generates the game session cache and saves it to Firestore!
                     const shuffled = [...ALL_QUESTIONS].sort(() => 0.5 - Math.random()).slice(0, 10);
-                    sessionStorage.setItem(CACHE_KEY, JSON.stringify(shuffled));
 
                     await updateDoc(roomRef, {
                         status: 'playing',
                         'state.currentQuestion': 0,
                         'state.answersRevealed': false,
+                        'state.questions': shuffled,
                         // Reset players
                         ...Object.fromEntries(Object.keys(roomState.players).map(uid => [`players.${uid}.score`, 0])),
                         ...Object.fromEntries(Object.keys(roomState.players).map(uid => [`players.${uid}.streak`, 0])),
+                        ...Object.fromEntries(Object.keys(roomState.players).map(uid => [`players.${uid}.correct`, 0])),
                         ...Object.fromEntries(Object.keys(roomState.players).map(uid => [`players.${uid}.hasAnswered`, false])),
                         'state.qData': shuffled[0]
                     });
@@ -701,7 +724,8 @@
             else if (e.target.id === 'btn-next-round') {
                 e.target.disabled = true;
                 try {
-                    const qList = JSON.parse(sessionStorage.getItem(CACHE_KEY));
+                    // Read from Firestore state to survive host disconnects
+                    const qList = roomState.state.questions || [];
                     const nextIdx = roomState.state.currentQuestion + 1;
 
                     if (nextIdx >= qList.length) {
