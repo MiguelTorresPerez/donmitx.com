@@ -356,6 +356,15 @@
                         <label>URL</label>
                         <input type="text" name="url" id="inp-item-url" required
                             placeholder="https://... or /games/trivial/index.html">
+
+                        <div style="display:flex; gap:8px; margin-top:8px;">
+                            <button type="button" class="btn-xs btn-outline"
+                                onclick="document.getElementById('inp-item-url').value = '/games/trivial/index.html'; document.getElementById('inp-item-url').dispatchEvent(new Event('input'))">🎮
+                                Trivial</button>
+                            <button type="button" class="btn-xs btn-outline"
+                                onclick="document.getElementById('inp-item-url').value = '/games/pokemon_sd/index.html'; document.getElementById('inp-item-url').dispatchEvent(new Event('input'))">🐉
+                                Pokemon SD</button>
+                        </div>
                     </div>
 
                     <div id="url-preview-area" class="hidden">

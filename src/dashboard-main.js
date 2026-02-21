@@ -892,7 +892,7 @@ function setupEventListeners() {
         openModal('modal-add-item');
 
         const urlInput = document.getElementById('inp-item-url');
-        urlInput.value = '/games/trivial/index.html';
+        urlInput.value = '';
         urlInput.dispatchEvent(new Event('input'));
 
         const folders = await getFolders(currentUser.uid);
@@ -909,6 +909,8 @@ function setupEventListeners() {
                 // If it's a known multiplayer game, open the native lobby instead
                 if (appUrl.includes('/games/trivial/index.html')) {
                     openGameLobby('trivial', appUrl);
+                } else if (appUrl.includes('/games/pokemon_sd/index.html')) {
+                    openGameLobby('pokemon_sd', appUrl);
                 } else {
                     document.getElementById('game-iframe').src = appUrl;
                     openModal('modal-play-game');

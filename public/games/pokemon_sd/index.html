@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon Showdown - Live</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: rgba(30, 41, 59, 0.8);
+            --card-hover: #334155;
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.3);
+            --success: #10b981;
+            --error: #ef4444;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: transparent;
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-wrapper {
+            width: 100%;
+            max-width: 800px;
+            padding-top: 10px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header .subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Lobby */
+        .setting-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .setting-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .setting-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .warning-text {
+            color: var(--error);
+            font-size: 0.85rem;
+            margin-top: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* Buttons */
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--primary-glow);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        /* Team Builder */
+        .pokemon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .pokemon-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .pokemon-card:hover {
+            border-color: var(--primary);
+        }
+
+        .pokemon-card.selected {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--primary);
+        }
+
+        .pokemon-card img {
+            width: 60px;
+            height: 60px;
+            image-rendering: pixelated;
+        }
+
+        .pokemon-card .name {
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .team-slots {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .slot {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+
+        .slot.filled {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        /* Battle */
+        .battle-arena {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .player-zone {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .player-zone.opponent {
+            border-top: 3px solid #ef4444;
+        }
+
+        .player-zone.me {
+            border-bottom: 3px solid #3b82f6;
+            text-align: right;
+        }
+
+        .team-mini {
+            display: flex;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .team-mini .slot-mini {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #22c55e;
+        }
+
+        .team-mini .slot-mini.fainted {
+            background: #ef4444;
+        }
+
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game-wrapper">
+        <div class="header">
+            <h1>⚔️ Showdown Match</h1>
+            <p class="subtitle" id="room-code">Connecting...</p>
+        </div>
+        <div id="game-area" style="text-align: center;">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { POKEMON_DB, FORMATS } from './data.js';
+
+        if (!window.parent.DONMITX_GAME_API) {
+            document.getElementById('game-area').innerHTML = '<p class="warning-text" style="display:block">Error: Must be played from Dashboard.</p>';
+            throw new Error("Game API missing");
+        }
+
+        const { db, auth, doc, onSnapshot, updateDoc: _updateDoc } = window.parent.DONMITX_GAME_API;
+
+        const updateDoc = async (ref, data) => {
+            const pureData = window.parent.JSON.parse(JSON.stringify(data));
+            return _updateDoc(ref, pureData);
+        };
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomId = urlParams.get('roomId');
+
+        if (!roomId) {
+            document.getElementById('game-area').innerHTML = '<p class="warning-text" style="display:block">Error: No Room ID provided.</p>';
+            throw new Error("No roomId");
+        }
+
+        let currentUser = null;
+        let roomRef = doc(db, 'game_rooms', roomId);
+        let roomState = null;
+
+        // Local UI state
+        let myTeam = [];
+
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                initGame();
+            } else {
+                document.getElementById('game-area').innerHTML = '<p class="warning-text" style="display:block">You must be logged in to play.</p>';
+            }
+        });
+
+        function initGame() {
+            document.getElementById('room-code').textContent = `Room ID: ${roomId.substring(0, 6).toUpperCase()}`;
+
+            onSnapshot(roomRef, (snapshot) => {
+                if (!snapshot.exists()) {
+                    document.getElementById('game-area').innerHTML = '<p>Room has been closed.</p>';
+                    return;
+                }
+                const oldStatus = roomState?.status;
+                const oldTeamReady = roomState?.players?.[currentUser.uid]?.teamReady;
+                roomState = snapshot.data();
+
+                // Re-render
+                render();
+
+                // Host logic checking if everyone is ready in teambuilder
+                if (isHost() && roomState.status === 'teambuilder') {
+                    const players = Object.values(roomState.players);
+                    const allReady = players.length > 0 && players.every(p => p.teamReady);
+                    if (allReady) {
+                        startGameBattle();
+                    }
+                }
+            });
+        }
+
+        function isHost() { return currentUser && roomState && roomState.hostUid === currentUser.uid; }
+        function esc(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function render() {
+            const area = document.getElementById('game-area');
+            if (roomState.status === 'lobby') {
+                area.innerHTML = renderLobby();
+            } else if (roomState.status === 'teambuilder') {
+                area.innerHTML = renderTeamBuilder();
+            } else if (roomState.status === 'playing') {
+                area.innerHTML = renderBattle();
+            } else {
+                area.innerHTML = `<p>Game is finished.</p><button class="btn" onclick="window.parent.document.querySelector('.btn-close[data-close=\\'modal-play-game\\']').click()">Close</button>`;
+            }
+        }
+
+        window.handleFormatChange = function (e) {
+            const formatId = e.value;
+            const format = FORMATS.find(f => f.id === formatId);
+            const warningEl = document.getElementById('format-warning');
+            if (format && format.warning) {
+                warningEl.textContent = format.warning;
+                warningEl.style.display = 'block';
+            } else {
+                warningEl.style.display = 'none';
+            }
+        }
+
+        window.startTeamBuilder = async function () {
+            const formatId = document.getElementById('setting-format').value;
+            const formatName = FORMATS.find(f => f.id === formatId)?.name || 'Custom';
+
+            await updateDoc(roomRef, {
+                status: 'teambuilder',
+                'state.format': { id: formatId, name: formatName },
+                ...Object.fromEntries(Object.keys(roomState.players).map(uid => [`players.${uid}.teamReady`, false])),
+                ...Object.fromEntries(Object.keys(roomState.players).map(uid => [`players.${uid}.team`, []]))
+            });
+        }
+
+        function renderLobby() {
+            const players = Object.values(roomState.players);
+            let html = `
+                <div class="card">
+                    <h2>Waiting for players...</h2>
+                    <p class="text-muted" style="margin-top:8px">${players.length}/2 players joined.</p>
+                    <div style="display:flex; justify-content:center; gap:10px; margin-top:16px;">
+                        ${players.map(p => `
+                            <div style="background:rgba(255,255,255,0.05); padding:8px 16px; border-radius:20px; font-size:0.85rem;">
+                                ${esc(p.name)} ${p.uid === roomState.hostUid ? '👑' : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            if (isHost()) {
+                html += `
+                <div class="card">
+                    <h3 style="margin-bottom: 16px;">⚙️ Host Battle Settings</h3>
+                    <div class="setting-group">
+                        <label>Format</label>
+                        <select id="setting-format" onchange="window.handleFormatChange(this)">
+                            ${FORMATS.map(f => `<option value="${f.id}">${esc(f.name)}</option>`).join('')}
+                        </select>
+                        <p class="warning-text" id="format-warning"></p>
+                    </div>
+                    <button class="btn" onclick="window.startTeamBuilder()">To Team Builder →</button>
+                </div>
+                `;
+            } else {
+                html += `<p class="text-muted">Waiting for Host to choose format...</p>`;
+            }
+            return html;
+        }
+
+        // --- Team Builder ---
+        window.togglePokemon = function (pokemonId) {
+            if (roomState.players[currentUser.uid]?.teamReady) return;
+
+            const idx = myTeam.indexOf(pokemonId);
+            if (idx > -1) {
+                myTeam.splice(idx, 1);
+            } else {
+                if (myTeam.length < 6) myTeam.push(pokemonId);
+            }
+            render();
+        }
+
+        window.submitTeam = async function () {
+            if (myTeam.length === 0) return alert("Select at least 1 Pokémon!");
+
+            // Map ids to full objects for the battle state
+            const fullTeam = myTeam.map(id => POKEMON_DB.find(p => p.id === id));
+
+            await updateDoc(roomRef, {
+                [`players.${currentUser.uid}.team`]: fullTeam,
+                [`players.${currentUser.uid}.teamReady`]: true
+            });
+        }
+
+        function renderTeamBuilder() {
+            const isReady = roomState.players[currentUser.uid]?.teamReady;
+            const formatName = roomState.state?.format?.name || 'Battle';
+
+            let html = `
+                <div class="card">
+                    <h2>Team Builder - <span style="color:var(--primary)">${esc(formatName)}</span></h2>
+                    
+                    <div class="team-slots">
+                        ${Array.from({ length: 6 }).map((_, i) => `
+                            <div class="slot ${myTeam[i] ? 'filled' : ''}">
+                                ${myTeam[i] ? `<img src="${POKEMON_DB.find(p => p.id === myTeam[i]).sprite}" style="width:30px">` : i + 1}
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    ${isReady ? `
+                        <p class="text-muted" style="margin-bottom:16px;">Waiting for opponent to finish building...</p>
+                        <div class="spinner"></div>
+                    ` : `
+                        <button class="btn ${myTeam.length > 0 ? 'btn-success' : ''}" onclick="window.submitTeam()">READY (${myTeam.length}/6)</button>
+                    `}
+                </div>
+            `;
+
+            if (!isReady) {
+                html += `
+                <div class="pokemon-grid">
+                    ${POKEMON_DB.map(p => `
+                        <div class="pokemon-card ${myTeam.includes(p.id) ? 'selected' : ''}" onclick="window.togglePokemon('${p.id}')">
+                            <img src="${p.sprite}" alt="${p.name}">
+                            <div class="name">${p.name}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                `;
+            }
+            return html;
+        }
+
+        // --- Battle ---
+        async function startGameBattle() {
+            await updateDoc(roomRef, {
+                status: 'playing',
+                'state.turn': 1,
+                'state.log': [`Format: ${roomState.state.format.name}`, `Battle Started!`]
+            });
+        }
+
+        window.endBattle = async function (winnerUid) {
+            await updateDoc(roomRef, {
+                status: 'finished',
+                'state.log': [...(roomState.state.log || []), `Battle Ended!`]
+            });
+        }
+
+        function renderBattle() {
+            const players = Object.values(roomState.players);
+            const opponent = players.find(p => p.uid !== currentUser.uid) || players[0];
+            const me = players.find(p => p.uid === currentUser.uid);
+
+            let html = `
+                <div class="card" style="margin-bottom:20px;">
+                    <div class="battle-arena">
+                        <!-- Opponent -->
+                        <div class="player-zone opponent">
+                            <h3 style="margin:0; font-size:1rem;">${esc(opponent?.name || 'Opponent')}</h3>
+                            <div class="team-mini" style="justify-content:flex-start;">
+                                ${opponent?.team?.map(() => `<div class="slot-mini"></div>`).join('') || ''}
+                            </div>
+                        </div>
+
+                        <!-- VS -->
+                        <div style="font-weight:800; font-style:italic; color:var(--text-muted);">VS</div>
+
+                        <!-- Me -->
+                        <div class="player-zone me">
+                            <h3 style="margin:0; font-size:1rem;">${esc(me?.name || 'Me')}</h3>
+                            <div class="team-mini" style="justify-content:flex-end;">
+                                ${me?.team?.map(() => `<div class="slot-mini"></div>`).join('') || ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="text-align:left; font-family:monospace; font-size:0.85rem; height:150px; overflow-y:auto; background:rgba(0,0,0,0.5);">
+                    ${(roomState.state.log || []).map(line => `<div style="margin-bottom:4px;">> ${esc(line)}</div>`).join('')}
+                </div>
+            `;
+
+            if (isHost()) {
+                html += `<button class="btn btn-success" style="margin-top:20px;" onclick="window.endBattle()">End Mock Battle</button>`;
+            } else {
+                html += `<p class="text-muted" style="margin-top:20px;">Playing Mock Battle... Waiting for host to end.</p>`;
+            }
+
+            return html;
+        }
+
+    </script>
+</body>
+
+</html>
