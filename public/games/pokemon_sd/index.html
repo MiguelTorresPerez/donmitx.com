@@ -1191,6 +1191,8 @@
                 'state.turn': 1,
                 'state.log': [`Format: ${roomState.state.format.name}`, `Battle Started!`],
                 'state.actions': {},
+                'state.weather': null,
+                'state.weatherTurns': 0,
                 'state.active': {
                     [p1Uid]: 0,
                     [p2Uid]: 0
@@ -1211,6 +1213,31 @@
             });
         }
 
+        window.cancelAction = async function () {
+            if (!currentUser) return;
+            const state = roomState.state;
+            if (state.resolving) return;
+
+            await updateDoc(roomRef, {
+                [`state.actions.${currentUser.uid}`]: null
+            });
+        };
+
+        window.surrenderMatch = async function () {
+            if (!currentUser) return;
+            if (!confirm("Are you sure you want to forfeit the match?")) return;
+
+            const oppUid = p1Uid === currentUser.uid ? p2Uid : p1Uid;
+            let log = [...(roomState.state?.log || [])];
+            log.push(`${roomState.players[currentUser.uid].name} forfeited the match!`);
+            log.push(`${roomState.players[oppUid].name} wins the battle!`);
+
+            await updateDoc(roomRef, {
+                status: 'finished',
+                'state.log': log
+            });
+        };
+
         // Core Turn Logic (Host side)
         async function executeTurn() {
             await updateDoc(roomRef, { 'state.resolving': true });
@@ -1230,6 +1257,10 @@
                 for (const uid of [p1Uid, p2Uid]) {
                     if (getMon(uid).currentHp <= 0) {
                         if (actions[uid] && actions[uid].type === 'switch') {
+                            const oldMon = getMon(uid);
+                            oldMon.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
+                            oldMon.choiceLock = null;
+
                             const newIdx = actions[uid].val;
                             activeIdx[uid] = newIdx;
                             log.push(`${roomState.players[uid].name} sent out ${getMon(uid).name}!`);
@@ -1259,6 +1290,10 @@
             // 1. Resolve Switches first (Priority 6)
             for (const uid of [p1Uid, p2Uid]) {
                 if (actions[uid].type === 'switch') {
+                    const oldMon = getMon(uid);
+                    oldMon.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
+                    oldMon.choiceLock = null;
+
                     const newIdx = actions[uid].val;
                     activeIdx[uid] = newIdx;
                     log.push(`${roomState.players[uid].name} withdrew their Pokémon and sent out ${getMon(uid).name}!`);
@@ -1283,20 +1318,26 @@
                         log.push(`${mon.name} is fully paralyzed!`);
                         continue;
                     }
-                    // Sleep skip
+                    // Sleep skip (counter-based, 1-3 turns)
                     if (mon.status === 'SLP') {
-                        // Wake up chance 33%
-                        if (Math.random() < 0.33) {
-                            mon.status = null;
-                            log.push(`${mon.name} woke up!`);
+                        if (mon.sleepTurns !== undefined && mon.sleepTurns > 0) {
+                            mon.sleepTurns--;
+                            if (mon.sleepTurns <= 0) {
+                                mon.status = null;
+                                log.push(`${mon.name} woke up!`);
+                            } else {
+                                log.push(`${mon.name} is fast asleep.`);
+                                continue;
+                            }
                         } else {
+                            mon.sleepTurns = 1 + Math.floor(Math.random() * 3);
                             log.push(`${mon.name} is fast asleep.`);
                             continue;
                         }
                     }
-                    // Freeze skip
+                    // Freeze skip (20% thaw, or thaw if using Fire move)
                     if (mon.status === 'FRZ') {
-                        if (Math.random() < 0.2) {
+                        if (move.type === 'Fire' || Math.random() < 0.2) {
                             mon.status = null;
                             log.push(`${mon.name} thawed out!`);
                         } else {
@@ -1315,7 +1356,10 @@
                     if (mon.item === 'Choice Scarf') speed = Math.floor(speed * 1.5);
                     if (mon.status === 'PAR') speed = Math.floor(speed * 0.5);
 
-                    attackers.push({ uid, mon, move, priority: move.priority || 0, speed });
+                    let priority = move.priority || 0;
+                    if (mon.ability === 'Prankster' && move.category === 'Status') priority += 1;
+
+                    attackers.push({ uid, mon, move, priority, speed });
                 }
             }
 
@@ -1333,119 +1377,191 @@
                 const defUid = uid === p1Uid ? p2Uid : p1Uid;
                 const defMon = getMon(defUid);
 
-                if (mon.currentHp <= 0) continue; // Attacker might have died to recoil/status
+                if (mon.currentHp <= 0) continue;
 
                 log.push(`${mon.name} used ${move.name}!`);
 
+                if (mon.item && mon.item.startsWith('Choice ') && !mon.choiceLock) {
+                    mon.choiceLock = actions[uid].val;
+                }
+
                 const calcStat = (base, boost) => boost >= 0 ? Math.floor(base * ((2 + boost) / 2)) : Math.floor(base * (2 / (2 - boost)));
 
+                // --- PROTECT LOGIC ---
+                if (move.effects && move.effects.protect) {
+                    if (mon.protectLastTurn) {
+                        if (Math.random() < 0.5) { log.push(`> But it failed!`); continue; }
+                    }
+                    mon.protecting = true;
+                    mon.protectLastTurn = true;
+                    log.push(`> ${mon.name} protected itself!`);
+                    continue;
+                }
+
+                // --- WEATHER LOGIC ---
+                if (move.effects && move.effects.weather) {
+                    state.weather = move.effects.weather;
+                    state.weatherTurns = 5;
+                    const wNames = { Sun: 'harsh sunlight', Rain: 'rain', Sand: 'a sandstorm', Snow: 'snow' };
+                    log.push(`> The weather changed to ${wNames[move.effects.weather] || move.effects.weather}!`);
+                    continue;
+                }
+
+                // --- CHECK IF DEFENDER IS PROTECTING ---
+                if (defMon.protecting && defMon.currentHp > 0 && move.category !== 'Status') {
+                    log.push(`> ${defMon.name} protected itself!`);
+                    const defFx = defMon._protectFx;
+                    if (defFx) {
+                        if (defFx.protectDamage && mon.currentHp > 0) {
+                            const pd = Math.floor(mon.hp * defFx.protectDamage) || 1;
+                            mon.currentHp = Math.max(0, mon.currentHp - pd);
+                            log.push(`> ${mon.name} was hurt!`);
+                        }
+                        if (defFx.protectDrop) {
+                            for (const [s, a] of Object.entries(defFx.protectDrop)) {
+                                mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + a));
+                            }
+                            log.push(`> ${mon.name}'s stats fell!`);
+                        }
+                        if (defFx.protectStatus && !mon.status && mon.currentHp > 0) {
+                            mon.status = defFx.protectStatus;
+                            log.push(`> ${mon.name} was afflicted with ${defFx.protectStatus}!`);
+                        }
+                    }
+                    continue;
+                }
+
+                // --- ACCURACY CHECK ---
+                if (defMon.currentHp > 0 && move.accuracy && move.accuracy < 100) {
+                    let accStage = (mon.boosts.accuracy || 0) - (defMon.boosts.evasion || 0);
+                    accStage = Math.max(-6, Math.min(6, accStage));
+                    const accMul = accStage >= 0 ? (3 + accStage) / 3 : 3 / (3 - accStage);
+                    const finalAcc = move.accuracy * accMul;
+                    if (Math.random() * 100 > finalAcc) {
+                        log.push(`> ${mon.name}'s attack missed!`);
+                        continue;
+                    }
+                }
+
+                // --- DAMAGING MOVES ---
                 if (defMon.currentHp > 0 && move.category !== 'Status') {
-                    if (Math.random() * 100 > move.accuracy) {
-                        log.push(`> It's an <span class="notvery">avoided</span> miss!`);
-                    } else {
-                        const level = 100;
-                        const isChoiceBand = mon.item === 'Choice Band' && move.category === 'Physical' ? 1.5 : 1;
-                        const isChoiceSpecs = mon.item === 'Choice Specs' && move.category === 'Special' ? 1.5 : 1;
-                        const isLifeOrb = mon.item === 'Life Orb' ? 1.3 : 1;
+                    const level = 100;
+                    const isChoiceBand = mon.item === 'Choice Band' && move.category === 'Physical' ? 1.5 : 1;
+                    const isChoiceSpecs = mon.item === 'Choice Specs' && move.category === 'Special' ? 1.5 : 1;
+                    const isLifeOrb = mon.item === 'Life Orb' ? 1.3 : 1;
 
-                        let statA = move.category === 'Special' ? calcStat(mon.spa, mon.boosts.spa) : calcStat(mon.atk, mon.boosts.atk);
-                        if (mon.status === 'BRN' && move.category === 'Physical') statA = Math.floor(statA * 0.5);
-                        statA = Math.floor(statA * isChoiceBand * isChoiceSpecs);
+                    let statA = move.category === 'Special' ? calcStat(mon.spa, mon.boosts.spa) : calcStat(mon.atk, mon.boosts.atk);
+                    if (mon.status === 'BRN' && move.category === 'Physical') statA = Math.floor(statA * 0.5);
+                    statA = Math.floor(statA * isChoiceBand * isChoiceSpecs);
 
-                        let statD = move.category === 'Special' ? calcStat(defMon.spd, defMon.boosts.spd) : calcStat(defMon.def, defMon.boosts.def);
+                    let statD = move.category === 'Special' ? calcStat(defMon.spd, defMon.boosts.spd) : calcStat(defMon.def, defMon.boosts.def);
+
+                    // Ability: Levitate
+                    let effectiveness = getEffectiveness(move.type, defMon.types);
+                    if (defMon.ability === 'Levitate' && move.type === 'Ground') {
+                        log.push(`> ${defMon.name}'s Levitate makes it immune!`);
+                        effectiveness = 0;
+                    }
+
+                    // Weather damage modifiers
+                    let weatherMod = 1;
+                    if (state.weather === 'Sun') { if (move.type === 'Fire') weatherMod = 1.5; if (move.type === 'Water') weatherMod = 0.5; }
+                    if (state.weather === 'Rain') { if (move.type === 'Water') weatherMod = 1.5; if (move.type === 'Fire') weatherMod = 0.5; }
+
+                    // Multi-hit
+                    let hits = 1;
+                    if (move.effects && move.effects.multiHit) {
+                        const [lo, hi] = move.effects.multiHit;
+                        if (lo === hi) hits = lo;
+                        else hits = lo + Math.floor(Math.random() * (hi - lo + 1));
+                    }
+
+                    let totalDmg = 0;
+                    for (let h = 0; h < hits; h++) {
+                        if (defMon.currentHp <= 0) break;
 
                         let damage = Math.floor((((2 * level / 5 + 2) * move.power * statA / statD) / 50) + 2);
-
                         const isSTAB = mon.types.includes(move.type) ? 1.5 : 1;
-                        const effectiveness = getEffectiveness(move.type, defMon.types);
-
-                        let isCrit = false;
-                        if (Math.random() < (move.critRate ? 0.12 : 0.04)) {
-                            isCrit = true;
-                            damage *= 1.5;
-                        }
-
+                        let isCrit = Math.random() < (move.critRate ? 0.12 : 0.04);
+                        if (isCrit) damage = Math.floor(damage * 1.5);
                         const rng = (85 + Math.random() * 15) / 100;
-                        damage = Math.floor(damage * isSTAB * effectiveness * rng * isLifeOrb);
+                        damage = Math.floor(damage * isSTAB * effectiveness * rng * isLifeOrb * weatherMod);
 
-                        if (effectiveness > 1) log.push(`> It's <span class="super">super effective!</span>`);
-                        if (effectiveness < 1 && effectiveness > 0) log.push(`> It's <span class="notvery">not very effective...</span>`);
-                        if (effectiveness === 0) {
-                            log.push(`> It had <span class="notvery">no effect</span> on ${defMon.name}!`);
-                            damage = 0;
-                        }
+                        if (effectiveness > 1 && h === 0) log.push(`> It's <span class="super">super effective!</span>`);
+                        if (effectiveness < 1 && effectiveness > 0 && h === 0) log.push(`> It's <span class="notvery">not very effective...</span>`);
+                        if (effectiveness === 0) { log.push(`> It had <span class="notvery">no effect</span> on ${defMon.name}!`); damage = 0; break; }
                         if (isCrit && damage > 0) log.push(`> <span class="crit">A critical hit!</span>`);
 
-                        // Apply Damage
                         if (damage > 0) {
                             let dmgDealt = Math.min(defMon.currentHp, damage);
                             if (defMon.item === 'Focus Sash' && defMon.currentHp === defMon.hp && damage >= defMon.currentHp) {
-                                defMon.currentHp = 1;
-                                defMon.item = 'None';
+                                defMon.currentHp = 1; defMon.item = 'None';
                                 log.push(`<span class="item-text">${defMon.name} hung on using its Focus Sash!</span>`);
-                            } else {
-                                defMon.currentHp = Math.max(0, defMon.currentHp - damage);
-                            }
+                            } else { defMon.currentHp = Math.max(0, defMon.currentHp - damage); }
+                            totalDmg += dmgDealt;
                             if (defMon.currentHp === 0) log.push(`<span class="fainted-text">${defMon.name} fainted!</span>`);
+                        }
+                    }
+                    if (hits > 1) log.push(`> Hit ${hits} time(s)!`);
 
-                            if (mon.item === 'Life Orb' && mon.currentHp > 0) {
-                                const recoil = Math.floor(mon.hp / 10) || 1;
-                                mon.currentHp = Math.max(0, mon.currentHp - recoil);
-                                log.push(`<span class="item-text">${mon.name} lost some of its HP due to Life Orb!</span>`);
-                                if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
+                    // Life Orb recoil
+                    if (mon.item === 'Life Orb' && mon.currentHp > 0 && totalDmg > 0) {
+                        const recoil = Math.floor(mon.hp / 10) || 1;
+                        mon.currentHp = Math.max(0, mon.currentHp - recoil);
+                        log.push(`<span class="item-text">${mon.name} lost some HP due to Life Orb!</span>`);
+                        if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
+                    }
+
+                    // Move effects after damage
+                    if (move.effects && totalDmg > 0) {
+                        const fx = move.effects;
+                        if (fx.recharge) mon.recharging = true;
+                        if (fx.recoilPerc && mon.currentHp > 0) {
+                            const r = Math.floor(totalDmg * fx.recoilPerc) || 1;
+                            mon.currentHp = Math.max(0, mon.currentHp - r);
+                            log.push(`<span class="item-text">${mon.name} is damaged by recoil!</span>`);
+                            if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
+                        }
+                        if (fx.drainPerc && mon.currentHp > 0) {
+                            const h2 = Math.floor(totalDmg * fx.drainPerc) || 1;
+                            mon.currentHp = Math.min(mon.hp, mon.currentHp + h2);
+                            log.push(`<span class="item-text">${mon.name} had its energy drained!</span>`);
+                        }
+                        if (fx.enemyDrop && defMon.currentHp > 0 && Math.random() * 100 < (fx.dropRate || 100)) {
+                            for (const [s, amt] of Object.entries(fx.enemyDrop)) {
+                                defMon.boosts[s] = Math.max(-6, Math.min(6, defMon.boosts[s] + amt));
+                                log.push(`<span class="notvery">${defMon.name}'s ${s} fell!</span>`);
                             }
-
-                            // Evaluate custom damage effects
-                            if (move.effects) {
-                                const fx = move.effects;
-                                if (fx.recharge) mon.recharging = true;
-                                if (fx.recoilPerc && mon.currentHp > 0) {
-                                    const r = Math.floor(dmgDealt * fx.recoilPerc) || 1;
-                                    mon.currentHp = Math.max(0, mon.currentHp - r);
-                                    log.push(`<span class="item-text">${mon.name} is damaged by recoil!</span>`);
-                                }
-                                if (fx.drainPerc && mon.currentHp > 0) {
-                                    const h = Math.floor(dmgDealt * fx.drainPerc) || 1;
-                                    mon.currentHp = Math.min(mon.hp, mon.currentHp + h);
-                                    log.push(`<span class="item-text">${mon.name} had its energy drained!</span>`);
-                                }
-                                if (fx.enemyDrop && defMon.currentHp > 0 && Math.random() * 100 < (fx.dropRate || 100)) {
-                                    for (const [s, amt] of Object.entries(fx.enemyDrop)) {
-                                        defMon.boosts[s] = Math.max(-6, Math.min(6, defMon.boosts[s] + amt));
-                                        log.push(`<span class="notvery">${defMon.name}'s stats fell!</span>`);
-                                    }
-                                }
-                                if (fx.selfBoost && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100)) {
-                                    for (const [s, amt] of Object.entries(fx.selfBoost)) {
-                                        mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
-                                        log.push(`<span class="super">${mon.name}'s stats rose!</span>`);
-                                    }
-                                }
+                        }
+                        if (fx.selfBoost && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100)) {
+                            for (const [s, amt] of Object.entries(fx.selfBoost)) {
+                                mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
+                                log.push(`<span class="super">${mon.name}'s ${s} rose!</span>`);
                             }
                         }
                     }
                 }
 
-                // Process Status & Non-Damaging Move Effects
-                if (move.category === 'Status' || (move.effects && move.category !== 'Status' && defMon.currentHp > 0)) {
+                // --- STATUS & NON-DAMAGING MOVE EFFECTS ---
+                if (move.category === 'Status' || (move.effects && defMon.currentHp > 0)) {
                     const fx = move.effects;
                     if (fx) {
                         if (fx.selfBoost && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100)) {
                             for (const [s, amt] of Object.entries(fx.selfBoost)) {
                                 mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
-                                log.push(`<span class="super">${mon.name}'s stats rose!</span>`);
+                                log.push(`<span class="super">${mon.name}'s ${s} rose!</span>`);
                             }
                         }
-                        if (fx.selfDrop && mon.currentHp > 0 && Math.random() * 100 < (fx.dropRate || 100)) {
+                        if (fx.selfDrop && mon.currentHp > 0) {
                             for (const [s, amt] of Object.entries(fx.selfDrop)) {
                                 mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
-                                log.push(`<span class="notvery">${mon.name}'s stats fell!</span>`);
+                                log.push(`<span class="notvery">${mon.name}'s ${s} fell!</span>`);
                             }
                         }
-                        if (fx.enemyDrop && defMon.currentHp > 0 && Math.random() * 100 < (fx.dropRate || 100)) {
+                        if (fx.enemyDrop && defMon.currentHp > 0 && move.category === 'Status' && Math.random() * 100 < (fx.dropRate || 100)) {
                             for (const [s, amt] of Object.entries(fx.enemyDrop)) {
                                 defMon.boosts[s] = Math.max(-6, Math.min(6, defMon.boosts[s] + amt));
-                                log.push(`<span class="notvery">${defMon.name}'s stats fell!</span>`);
+                                log.push(`<span class="notvery">${defMon.name}'s ${s} fell!</span>`);
                             }
                         }
                         if (fx.healPerc && mon.currentHp > 0) {
@@ -1453,24 +1569,20 @@
                             mon.currentHp = Math.min(mon.hp, mon.currentHp + heal);
                             log.push(`<span class="item-text">${mon.name} recovered HP!</span>`);
                         }
-                        // Applying Status Conditions
+                        // Status
                         if (fx.status && defMon.currentHp > 0 && !defMon.status && Math.random() * 100 < (fx.statusRate || 100)) {
                             let canApply = true;
-                            // Sleep Clause Mod check
                             if (fx.status === 'SLP' && state.format.clauses?.includes('Sleep Clause Mod')) {
-                                const oppTeam = teams[defUid];
-                                if (oppTeam.some(p => p.status === 'SLP')) {
-                                    canApply = false;
-                                    log.push(`> Sleep Clause Mod activated (Immune).`);
-                                }
+                                if (teams[defUid].some(p => p.status === 'SLP')) { canApply = false; log.push(`> Sleep Clause Mod blocked!`); }
                             }
-                            // Type immunities
                             if (fx.status === 'PAR' && defMon.types.includes('Electric')) canApply = false;
                             if (fx.status === 'BRN' && defMon.types.includes('Fire')) canApply = false;
-                            if (fx.status === 'PSN' && (defMon.types.includes('Poison') || defMon.types.includes('Steel'))) canApply = false;
-
+                            if ((fx.status === 'PSN' || fx.status === 'TOX') && (defMon.types.includes('Poison') || defMon.types.includes('Steel'))) canApply = false;
+                            if (fx.status === 'FRZ' && defMon.types.includes('Ice')) canApply = false;
                             if (canApply) {
                                 defMon.status = fx.status;
+                                if (fx.status === 'TOX') defMon.toxicCounter = 1;
+                                if (fx.status === 'SLP') defMon.sleepTurns = 1 + Math.floor(Math.random() * 3);
                                 log.push(`<span class="status-${fx.status}">${defMon.name} was afflicted with ${fx.status}!</span>`);
                             }
                         }
@@ -1479,9 +1591,33 @@
             }
 
             // 4. End of turn effects
+
+            // Clear protect flags
+            for (const uid of [p1Uid, p2Uid]) {
+                const mon = getMon(uid);
+                if (!move || !(move.effects && move.effects.protect)) {
+                    // Reset protect if this mon didn't use protect this turn
+                }
+                mon.protecting = false;
+                if (actions[uid]?.type !== 'move' || !(MOVES[actions[uid]?.val]?.effects?.protect)) {
+                    mon.protectLastTurn = false;
+                }
+            }
+
+            // Weather countdown
+            if (state.weatherTurns > 0) {
+                state.weatherTurns--;
+                if (state.weatherTurns === 0) {
+                    const wNames = { Sun: 'harsh sunlight', Rain: 'rain', Sand: 'the sandstorm', Snow: 'the snow' };
+                    log.push(`> ${wNames[state.weather] || 'The weather'} subsided!`);
+                    state.weather = null;
+                }
+            }
+
             for (const uid of [p1Uid, p2Uid]) {
                 const mon = getMon(uid);
                 if (mon.currentHp > 0) {
+                    // Leftovers
                     if (mon.item === 'Leftovers') {
                         const heal = Math.floor(mon.hp / 16) || 1;
                         if (mon.currentHp < mon.hp) {
@@ -1489,11 +1625,60 @@
                             log.push(`<span class="item-text">${mon.name} restored a little HP using its Leftovers!</span>`);
                         }
                     }
+                    // Black Sludge (Poison types heal, non-Poison take damage)
+                    if (mon.item === 'Black Sludge') {
+                        if (mon.types.includes('Poison')) {
+                            const heal = Math.floor(mon.hp / 16) || 1;
+                            if (mon.currentHp < mon.hp) {
+                                mon.currentHp = Math.min(mon.hp, mon.currentHp + heal);
+                                log.push(`<span class="item-text">${mon.name} restored HP using Black Sludge!</span>`);
+                            }
+                        } else {
+                            const dmg = Math.floor(mon.hp / 8) || 1;
+                            mon.currentHp = Math.max(0, mon.currentHp - dmg);
+                            log.push(`<span class="notvery">${mon.name} was hurt by Black Sludge!</span>`);
+                        }
+                    }
+                    // Burn / Poison
                     if (mon.status === 'BRN' || mon.status === 'PSN') {
                         const dmg = Math.floor(mon.hp / 8) || 1;
                         mon.currentHp = Math.max(0, mon.currentHp - dmg);
-                        log.push(`<span class="notvery">${mon.name} was hurt by its condition!</span>`);
+                        log.push(`<span class="notvery">${mon.name} was hurt by its ${mon.status === 'BRN' ? 'burn' : 'poisoning'}!</span>`);
                         if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
+                    }
+                    // Toxic (escalating)
+                    if (mon.status === 'TOX') {
+                        const counter = mon.toxicCounter || 1;
+                        const dmg = Math.floor(mon.hp * counter / 16) || 1;
+                        mon.currentHp = Math.max(0, mon.currentHp - dmg);
+                        mon.toxicCounter = counter + 1;
+                        log.push(`<span class="notvery">${mon.name} was hurt by poison!</span>`);
+                        if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
+                    }
+                    // Weather damage: Sandstorm (non-Rock/Ground/Steel take 1/16)
+                    if (state.weather === 'Sand') {
+                        const immune = mon.types.includes('Rock') || mon.types.includes('Ground') || mon.types.includes('Steel');
+                        if (!immune) {
+                            const dmg = Math.floor(mon.hp / 16) || 1;
+                            mon.currentHp = Math.max(0, mon.currentHp - dmg);
+                            log.push(`<span class="notvery">${mon.name} is buffeted by the sandstorm!</span>`);
+                            if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
+                        }
+                    }
+                }
+            }
+
+            // Intimidate on switch-in
+            for (const uid of [p1Uid, p2Uid]) {
+                if (actions[uid]?.type === 'switch') {
+                    const mon = getMon(uid);
+                    if (mon.ability === 'Intimidate' && mon.currentHp > 0) {
+                        const oppUid2 = uid === p1Uid ? p2Uid : p1Uid;
+                        const oppMon = getMon(oppUid2);
+                        if (oppMon.currentHp > 0) {
+                            oppMon.boosts.atk = Math.max(-6, oppMon.boosts.atk - 1);
+                            log.push(`> ${mon.name}'s Intimidate lowered ${oppMon.name}'s Attack!`);
+                        }
                     }
                 }
             }
@@ -1513,9 +1698,11 @@
                     await updateDoc(roomRef, {
                         'state.resolving': false,
                         'state.actions': {},
-                        'state.faintReplacement': true, // DO NOT increment turn
+                        'state.faintReplacement': true,
                         'state.log': log,
                         'state.active': activeIdx,
+                        'state.weather': state.weather || null,
+                        'state.weatherTurns': state.weatherTurns || 0,
                         [`players.${p1Uid}.team`]: teams[p1Uid],
                         [`players.${p2Uid}.team`]: teams[p2Uid]
                     });
@@ -1529,6 +1716,8 @@
                 await updateDoc(roomRef, {
                     status: 'finished',
                     'state.log': log,
+                    'state.weather': state.weather || null,
+                    'state.weatherTurns': state.weatherTurns || 0,
                     [`players.${p1Uid}.team`]: teams[p1Uid],
                     [`players.${p2Uid}.team`]: teams[p2Uid]
                 });
@@ -1539,6 +1728,8 @@
                     'state.turn': state.turn + 1,
                     'state.log': log,
                     'state.active': activeIdx,
+                    'state.weather': state.weather || null,
+                    'state.weatherTurns': state.weatherTurns || 0,
                     [`players.${p1Uid}.team`]: teams[p1Uid],
                     [`players.${p2Uid}.team`]: teams[p2Uid]
                 });
@@ -1711,6 +1902,11 @@
                         ` : (amIWaiting && !state.faintReplacement) ? `
                             <p class="text-muted" style="text-align:left;">Waiting for opponent to act...</p>
                             <div class="spinner" style="margin: 0; width: 25px; height: 25px;"></div>
+                            ${state.actions && state.actions[myUid] && !state.resolving ? `
+                               <div style="text-align:center; margin-top:20px;">
+                                   <button class="btn" style="background:var(--danger); color:white;" onclick="window.cancelAction()">Cancel Action</button>
+                               </div>
+                            ` : ''}
                         ` : state.faintReplacement ? `
                             <p class="warning-text" style="display:block; text-align:left; color: var(--warning);">Waiting for opponent to send out a replacement...</p>
                             <div class="spinner" style="margin: 0; width: 25px; height: 25px;"></div>
@@ -1730,7 +1926,13 @@
                     else if (eff === 0) { effColor = '#475569'; effText = '(0x)'; }
                 }
                 let fxText = m.effects && m.effects.desc ? `<div style="font-size:0.65rem; color: rgba(255,255,255,0.8); margin-top:2px; line-height:1;">${m.effects.desc}</div>` : '';
-                return `<button class="btn-move bg-${m.type}" onclick="window.sendAction('move', '${moveId}')" style="display:flex; flex-direction:column; justify-content:center;">
+
+                let disBtn = '';
+                if (myActive.choiceLock && myActive.choiceLock !== moveId) {
+                    disBtn = 'disabled style="opacity:0.3; cursor:not-allowed;"';
+                }
+
+                return `<button class="btn-move bg-${m.type}" ${disBtn} onclick="window.sendAction('move', '${moveId}')" style="display:flex; flex-direction:column; justify-content:center;">
                                             <div class="move-name" style="color: ${effColor}; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">${esc(m.name)} ${effText}</div>
                                             <div class="move-meta type-${m.type}">${m.type} / Pow: ${m.power} / Acc: ${m.accuracy}</div>
                                             ${fxText}
@@ -1766,6 +1968,9 @@
             }).join('')}
                 </div>
                     </div>
+                </div>
+                <div style="text-align:right; margin-top:15px; padding-top:15px; border-top:1px solid rgba(255,255,255,0.1);">
+                    <button class="btn btn-sm" style="background:var(--card-hover);" onclick="window.surrenderMatch()">Surrender</button>
                 </div>
             `;
 

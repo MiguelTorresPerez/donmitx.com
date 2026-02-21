@@ -40,6 +40,387 @@ export const MOVES = {
         "recoilPerc": 0.25,
         "desc": "User takes 25% recoil damage."
     },
+    "swords-dance": {
+        "name": "Swords Dance",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "atk": 2
+            },
+            "desc": "Raises Attack by 2."
+        }
+    },
+    "dragon-dance": {
+        "name": "Dragon Dance",
+        "type": "Dragon",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "atk": 1,
+                "spe": 1
+            },
+            "desc": "Raises Attack and Speed by 1."
+        }
+    },
+    "nasty-plot": {
+        "name": "Nasty Plot",
+        "type": "Dark",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "spa": 2
+            },
+            "desc": "Raises Sp. Atk by 2."
+        }
+    },
+    "agility": {
+        "name": "Agility",
+        "type": "Psychic",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "spe": 2
+            },
+            "desc": "Raises Speed by 2."
+        }
+    },
+    "calm-mind": {
+        "name": "Calm Mind",
+        "type": "Psychic",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "spa": 1,
+                "spd": 1
+            },
+            "desc": "Raises Sp. Atk and Sp. Def by 1."
+        }
+    },
+    "bulk-up": {
+        "name": "Bulk Up",
+        "type": "Fighting",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "atk": 1,
+                "def": 1
+            },
+            "desc": "Raises Attack and Defense by 1."
+        }
+    },
+    "shell-smash": {
+        "name": "Shell Smash",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "atk": 2,
+                "spa": 2,
+                "spe": 2
+            },
+            "selfDrop": {
+                "def": -1,
+                "spd": -1
+            },
+            "desc": "Raises Atk, SpA, Spe by 2. Lowers Def, SpD by 1."
+        }
+    },
+    "quiver-dance": {
+        "name": "Quiver Dance",
+        "type": "Bug",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "spa": 1,
+                "spd": 1,
+                "spe": 1
+            },
+            "desc": "Raises Sp. Atk, Sp. Def, Speed by 1."
+        }
+    },
+    "geomancy": {
+        "name": "Geomancy",
+        "type": "Fairy",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "selfBoost": {
+                "spa": 2,
+                "spd": 2,
+                "spe": 2
+            },
+            "desc": "Raises Sp. Atk, Sp. Def, Speed by 2."
+        }
+    },
+    "roost": {
+        "name": "Roost",
+        "type": "Flying",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "healPerc": 0.5,
+            "desc": "Heals 50% max HP."
+        }
+    },
+    "recover": {
+        "name": "Recover",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "healPerc": 0.5,
+            "desc": "Heals 50% max HP."
+        }
+    },
+    "soft-boiled": {
+        "name": "Soft Boiled",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "healPerc": 0.5,
+            "desc": "Heals 50% max HP."
+        }
+    },
+    "synthesis": {
+        "name": "Synthesis",
+        "type": "Grass",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "healPerc": 0.5,
+            "desc": "Heals 50% max HP."
+        }
+    },
+    "morning-sun": {
+        "name": "Morning Sun",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "healPerc": 0.5,
+            "desc": "Heals 50% max HP."
+        }
+    },
+    "moonlight": {
+        "name": "Moonlight",
+        "type": "Fairy",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "healPerc": 0.5,
+            "desc": "Heals 50% max HP."
+        }
+    },
+    "spore": {
+        "name": "Spore",
+        "type": "Grass",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "status": "SLP",
+            "desc": "Puts target to sleep."
+        }
+    },
+    "sleep-powder": {
+        "name": "Sleep Powder",
+        "type": "Grass",
+        "power": 0,
+        "accuracy": 75,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "status": "SLP",
+            "desc": "Puts target to sleep."
+        }
+    },
+    "hypnosis": {
+        "name": "Hypnosis",
+        "type": "Psychic",
+        "power": 0,
+        "accuracy": 60,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "status": "SLP",
+            "desc": "Puts target to sleep."
+        }
+    },
+    "yawn": {
+        "name": "Yawn",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "status": "SLP",
+            "desc": "Puts target to sleep."
+        }
+    },
+    "will-o-wisp": {
+        "name": "Will O Wisp",
+        "type": "Fire",
+        "power": 0,
+        "accuracy": 85,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "status": "BRN",
+            "desc": "Burns the target."
+        }
+    },
+    "toxic": {
+        "name": "Toxic",
+        "type": "Poison",
+        "power": 0,
+        "accuracy": 90,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "status": "TOX",
+            "desc": "Badly poisons the target."
+        }
+    },
+    "thunder-wave": {
+        "name": "Thunder Wave",
+        "type": "Electric",
+        "power": 0,
+        "accuracy": 90,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "status": "PAR",
+            "desc": "Paralyzes the target."
+        }
+    },
+    "protect": {
+        "name": "Protect",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 4,
+        "effects": {
+            "protect": true,
+            "priority": 4,
+            "desc": "Prevents moves from affecting the user this turn."
+        }
+    },
+    "detect": {
+        "name": "Detect",
+        "type": "Fighting",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 4,
+        "effects": {
+            "protect": true,
+            "priority": 4,
+            "desc": "Prevents moves from affecting the user this turn."
+        }
+    },
+    "sunny-day": {
+        "name": "Sunny Day",
+        "type": "Fire",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "weather": "Sun",
+            "desc": "Sets Sunny weather for 5 turns."
+        }
+    },
+    "rain-dance": {
+        "name": "Rain Dance",
+        "type": "Water",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "weather": "Rain",
+            "desc": "Sets Rainy weather for 5 turns."
+        }
+    },
+    "sandstorm": {
+        "name": "Sandstorm",
+        "type": "Rock",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "weather": "Sand",
+            "desc": "Sets Sandstorm weather for 5 turns."
+        }
+    },
+    "snowscape": {
+        "name": "Snowscape",
+        "type": "Ice",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "weather": "Snow",
+            "desc": "Sets Snow weather for 5 turns."
+        }
+    },
+    "hail": {
+        "name": "Hail",
+        "type": "Ice",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "weather": "Snow",
+            "desc": "Sets Snow weather for 5 turns."
+        }
+    },
     "razor-wind": {
         "name": "Razor Wind",
         "type": "Normal",

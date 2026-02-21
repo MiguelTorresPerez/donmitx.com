@@ -133,6 +133,33 @@ async function buildData() {
     'Horn Leech': { drainPerc: 0.5, desc: 'Recovers 50% of damage dealt.' },
     'Bitter Blade': { drainPerc: 0.5, desc: 'Recovers 50% of damage dealt.' },
 
+    // MULTI-HIT
+    'Bullet Seed': { multiHit: [2, 5], desc: 'Hits 2-5 times.' },
+    'Icicle Spear': { multiHit: [2, 5], desc: 'Hits 2-5 times.' },
+    'Rock Blast': { multiHit: [2, 5], desc: 'Hits 2-5 times.' },
+    'Tail Slap': { multiHit: [2, 5], desc: 'Hits 2-5 times.' },
+    'Pin Missile': { multiHit: [2, 5], desc: 'Hits 2-5 times.' },
+    'Dual Chop': { multiHit: [2, 2], desc: 'Hits 2 times.' },
+    'Double Hit': { multiHit: [2, 2], desc: 'Hits 2 times.' },
+    'Twin Beam': { multiHit: [2, 2], desc: 'Hits 2 times.' },
+    'Gear Grind': { multiHit: [2, 2], desc: 'Hits 2 times.' },
+    'Dragon Darts': { multiHit: [2, 2], desc: 'Hits 2 times.' },
+
+    // PROTECTION
+    'Protect': { protect: true, priority: 4, desc: 'Prevents moves from affecting the user this turn.' },
+    'Detect': { protect: true, priority: 4, desc: 'Prevents moves from affecting the user this turn.' },
+    'Spiky Shield': { protect: true, priority: 4, protectDamage: 0.125, desc: 'Protects user. Damages attackers.' },
+    'Baneful Bunker': { protect: true, priority: 4, protectStatus: 'PSN', desc: 'Protects user. Poisons attackers.' },
+    'King\'s Shield': { protect: true, priority: 4, protectDrop: { atk: -1 }, desc: 'Protects user. Lowers attacker Atk.' },
+    'Silk Trap': { protect: true, priority: 4, protectDrop: { spe: -1 }, desc: 'Protects user. Lowers attacker Spe.' },
+
+    // WEATHER
+    'Sunny Day': { weather: 'Sun', desc: 'Sets Sunny weather for 5 turns.' },
+    'Rain Dance': { weather: 'Rain', desc: 'Sets Rainy weather for 5 turns.' },
+    'Sandstorm': { weather: 'Sand', desc: 'Sets Sandstorm weather for 5 turns.' },
+    'Snowscape': { weather: 'Snow', desc: 'Sets Snow weather for 5 turns.' },
+    'Hail': { weather: 'Snow', desc: 'Sets Snow weather for 5 turns.' },
+
     // PRIORITY
     'Extreme Speed': { priority: 2, desc: 'Strikes first.' },
     'Sucker Punch': { priority: 1, desc: 'Strikes first (fails if target status moves).' },
@@ -144,6 +171,43 @@ async function buildData() {
   };
 
   MOVES_DB['struggle'] = { name: 'Struggle', type: 'Normal', power: 50, accuracy: 100, category: 'Physical', priority: 0, recoilPerc: 0.25, desc: 'User takes 25% recoil damage.' };
+
+  // Pre-register all status moves from MOVE_EFFECTS so they appear in movepools
+  const statusMoveEntries = {
+    'swords-dance': { name: 'Swords Dance', type: 'Normal', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+    'dragon-dance': { name: 'Dragon Dance', type: 'Dragon', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+    'nasty-plot': { name: 'Nasty Plot', type: 'Dark', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+    'agility': { name: 'Agility', type: 'Psychic', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+    'calm-mind': { name: 'Calm Mind', type: 'Psychic', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+    'bulk-up': { name: 'Bulk Up', type: 'Fighting', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+    'shell-smash': { name: 'Shell Smash', type: 'Normal', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+    'quiver-dance': { name: 'Quiver Dance', type: 'Bug', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+    'geomancy': { name: 'Geomancy', type: 'Fairy', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+    'roost': { name: 'Roost', type: 'Flying', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+    'recover': { name: 'Recover', type: 'Normal', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+    'soft-boiled': { name: 'Soft Boiled', type: 'Normal', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+    'synthesis': { name: 'Synthesis', type: 'Grass', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+    'morning-sun': { name: 'Morning Sun', type: 'Normal', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+    'moonlight': { name: 'Moonlight', type: 'Fairy', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+    'spore': { name: 'Spore', type: 'Grass', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+    'sleep-powder': { name: 'Sleep Powder', type: 'Grass', power: 0, accuracy: 75, category: 'Status', priority: 0 },
+    'hypnosis': { name: 'Hypnosis', type: 'Psychic', power: 0, accuracy: 60, category: 'Status', priority: 0 },
+    'yawn': { name: 'Yawn', type: 'Normal', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+    'will-o-wisp': { name: 'Will O Wisp', type: 'Fire', power: 0, accuracy: 85, category: 'Status', priority: 0 },
+    'toxic': { name: 'Toxic', type: 'Poison', power: 0, accuracy: 90, category: 'Status', priority: 0 },
+    'thunder-wave': { name: 'Thunder Wave', type: 'Electric', power: 0, accuracy: 90, category: 'Status', priority: 0 },
+    'protect': { name: 'Protect', type: 'Normal', power: 0, accuracy: 100, category: 'Status', priority: 4 },
+    'detect': { name: 'Detect', type: 'Fighting', power: 0, accuracy: 100, category: 'Status', priority: 4 },
+    'sunny-day': { name: 'Sunny Day', type: 'Fire', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+    'rain-dance': { name: 'Rain Dance', type: 'Water', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+    'sandstorm': { name: 'Sandstorm', type: 'Rock', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+    'snowscape': { name: 'Snowscape', type: 'Ice', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+    'hail': { name: 'Hail', type: 'Ice', power: 0, accuracy: 100, category: 'Status', priority: 0 },
+  };
+  for (const [id, entry] of Object.entries(statusMoveEntries)) {
+    entry.effects = MOVE_EFFECTS[entry.name] || null;
+    MOVES_DB[id] = entry;
+  }
 
   for (const p of pokemons) {
     // Types
