@@ -1055,7 +1055,18 @@
             const oppTeamFull = oppUid ? roomState.players[oppUid]?.team : undefined;
 
             if (!state || !state.active || !myTeamFull || !oppTeamFull || !oppUid) {
-                return `<div class="spinner"></div><p>Synchronizing battle connection...</p>`;
+                let errs = [];
+                if (!state) errs.push('state');
+                else if (!state.active) errs.push('state.active');
+                if (!myTeamFull) errs.push('myTeamFull');
+                if (!oppUid) errs.push('oppUid');
+                if (!oppTeamFull && oppUid) errs.push('oppTeamFull (oppUid:' + oppUid + ')');
+
+                return `<div class="spinner"></div>
+                    <p>Synchronizing battle connection...</p>
+                    <p style="color:var(--danger); font-size:0.8rem; margin-top:10px; padding:10px; background:rgba(0,0,0,0.5); border-radius:8px;">
+                        <b>Debug Missing Data:</b> ${errs.join(', ')}
+                    </p>`;
             }
 
             const myActiveIdx = state.active[currentUser.uid] ?? 0;
@@ -1065,7 +1076,14 @@
             const oppActive = oppTeamFull[oppActiveIdx];
 
             if (!myActive || !oppActive) {
-                return `<div class="spinner"></div><p>Awaiting Team Data...</p>`;
+                let errs2 = [];
+                if (!myActive) errs2.push('myActive(idx:' + myActiveIdx + ')');
+                if (!oppActive) errs2.push('oppActive(idx:' + oppActiveIdx + ')');
+                return `<div class="spinner"></div>
+                    <p>Awaiting Team Data...</p>
+                    <p style="color:var(--danger); font-size:0.8rem; margin-top:10px; padding:10px; background:rgba(0,0,0,0.5); border-radius:8px;">
+                        <b>Debug Missing Data:</b> ${errs2.join(', ')}
+                    </p>`;
             }
 
             const myHpPct = myActive.currentHp / myActive.hp;
