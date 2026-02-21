@@ -1150,10 +1150,48 @@
             });
         }
 
+        // ---- TEAM PERSISTENCE (localStorage) ----
+        const SAVED_TEAMS_KEY = 'psd_saved_teams';
+
+        function getSavedTeams() {
+            try { return JSON.parse(localStorage.getItem(SAVED_TEAMS_KEY)) || []; }
+            catch { return []; }
+        }
+
+        window.saveCurrentTeam = function () {
+            if (myTeam.length === 0) return alert('Build a team first!');
+            const name = prompt('Team name:', `Team ${getSavedTeams().length + 1}`);
+            if (!name) return;
+            const teams = getSavedTeams();
+            teams.push({
+                name,
+                date: new Date().toLocaleDateString(),
+                members: myTeam.map(t => ({ id: t.id, moves: t.moves || [], item: t.item || 'None' }))
+            });
+            localStorage.setItem(SAVED_TEAMS_KEY, JSON.stringify(teams));
+            render();
+        };
+
+        window.importSavedTeam = function (idx) {
+            const teams = getSavedTeams();
+            if (!teams[idx]) return;
+            myTeam = teams[idx].members.map(m => ({ ...m }));
+            render();
+        };
+
+        window.deleteSavedTeam = function (idx) {
+            const teams = getSavedTeams();
+            teams.splice(idx, 1);
+            localStorage.setItem(SAVED_TEAMS_KEY, JSON.stringify(teams));
+            render();
+        };
+
         function renderTeamBuilder() {
             const isReady = roomState.players[currentUser.uid]?.teamReady;
             const fName = roomState.state?.format?.name;
             const isRandom = roomState.state?.format?.id === 'gen9random';
+            const savedTeams = getSavedTeams();
+
             let html = `
                 <div class="card">
                     <h2>Team Builder - <span style="color:var(--primary)">${esc(fName)}</span></h2>
@@ -1161,9 +1199,41 @@
                         ${Array.from({ length: 6 }).map((_, i) => `<div class="slot ${myTeam[i] ? 'filled' : ''}" ${myTeam[i] && !isReady && !isRandom ? `onclick="window.openConfigModal(${i})" style="cursor:pointer;"` : ''}>${myTeam[i] ? `<img src="${POKEMON_DB.find(p => p.id === myTeam[i].id)?.sprite}" style="width:30px">` : i + 1}</div>`).join('')}
                     </div>
                     ${isReady ? `<p class="text-muted">Waiting for opponent...</p><div class="spinner"></div>`
-                    : `<button class="btn ${myTeam.length > 0 || isRandom ? 'btn-success' : ''}" onclick="window.submitTeam()">${isRandom ? 'GENERATE RANDOM TEAM' : `READY (${myTeam.length}/6)`}</button>`}
+                    : `<div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
+                        <button class="btn ${myTeam.length > 0 || isRandom ? 'btn-success' : ''}" onclick="window.submitTeam()">${isRandom ? 'GENERATE RANDOM TEAM' : `READY (${myTeam.length}/6)`}</button>
+                        ${!isRandom && myTeam.length > 0 ? `<button class="btn" style="background:var(--card-hover);" onclick="window.saveCurrentTeam()">⭐ Save Team</button>` : ''}
+                    </div>`}
                 </div>
             `;
+
+            // Saved Teams Section
+            if (!isReady && !isRandom && savedTeams.length > 0) {
+                html += `<div class="card" style="margin-top:12px;">
+                    <h3 style="font-size:0.95rem; margin:0 0 8px;">⭐ Saved Teams</h3>
+                    <div style="display:flex; flex-direction:column; gap:6px;">
+                        ${savedTeams.map((t, i) => `
+                            <div style="display:flex; align-items:center; justify-content:space-between; background:var(--card-hover); padding:8px 12px; border-radius:8px;">
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <div style="display:flex; gap:2px;">
+                                        ${t.members.map(m => {
+                    const pData = POKEMON_DB.find(p => p.id === m.id);
+                    return pData ? `<img src="${pData.sprite}" style="width:24px; height:24px;">` : '';
+                }).join('')}
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:700; font-size:0.8rem;">${esc(t.name)}</div>
+                                        <div style="font-size:0.65rem; color:var(--text-muted);">${t.members.length} Pokémon · ${t.date || ''}</div>
+                                    </div>
+                                </div>
+                                <div style="display:flex; gap:4px;">
+                                    <button class="btn btn-sm" style="background:var(--primary); color:white; padding:4px 10px; font-size:0.7rem;" onclick="window.importSavedTeam(${i})">Import</button>
+                                    <button class="btn btn-sm" style="background:var(--danger); color:white; padding:4px 8px; font-size:0.7rem;" onclick="window.deleteSavedTeam(${i})">✕</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>`;
+            }
 
             if (!isReady && !isRandom) {
                 html += `<div class="pokemon-grid">
@@ -1781,6 +1851,45 @@
             document.getElementById('modal-mon-info').style.display = 'flex';
         }
 
+        window.showBenchInfo = function (uid, idx) {
+            const mon = roomState.players[uid]?.team?.[idx];
+            if (!mon) return;
+
+            const calcStat = (base, boost) => boost >= 0 ? Math.floor(base * ((2 + boost) / 2)) : Math.floor(base * (2 / (2 - boost)));
+
+            const html = `
+                <div style="display:flex; gap:15px; align-items:flex-start;">
+                    <img src="${mon.sprite}" style="width:80px; height:80px; object-fit:contain;">
+                    <div style="flex:1;">
+                        <h3 style="margin:0 0 5px;">${esc(mon.name)}</h3>
+                        <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">
+                            <div><b>Types:</b> ${mon.types.join(' / ')}</div>
+                            <div><b>Ability:</b> ${mon.ability || 'Unknown'}</div>
+                            <div><b>Item:</b> ${mon.item || 'None'}</div>
+                            ${mon.status ? `<div><b>Status:</b> <span class="status-${mon.status}">${mon.status}</span></div>` : ''}
+                        </div>
+                    </div>
+                </div>
+                <hr style="border-color:rgba(255,255,255,0.1); margin:10px 0;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:0.85rem;">
+                    <div><b>HP:</b> ${mon.currentHp}/${mon.hp}</div>
+                    <div><b>Atk:</b> ${calcStat(mon.atk, mon.boosts?.atk || 0)}</div>
+                    <div><b>Def:</b> ${calcStat(mon.def, mon.boosts?.def || 0)}</div>
+                    <div><b>SpA:</b> ${calcStat(mon.spa, mon.boosts?.spa || 0)}</div>
+                    <div><b>SpD:</b> ${calcStat(mon.spd, mon.boosts?.spd || 0)}</div>
+                    <div><b>Spe:</b> ${calcStat(mon.spe, mon.boosts?.spe || 0)}</div>
+                </div>
+                <div style="margin-top:10px; font-size:0.8rem;">
+                    <b>Moves:</b> ${(mon.moves || []).map(m => MOVES[m]?.name || m).join(', ')}
+                </div>
+                <div style="margin-top:15px; text-align:right;">
+                    <button class="btn btn-sm" onclick="document.getElementById('modal-mon-info').style.display='none'">Close</button>
+                </div>
+            `;
+            document.getElementById('mon-info-content').innerHTML = html;
+            document.getElementById('modal-mon-info').style.display = 'flex';
+        };
+
         function renderBattle() {
             const state = roomState.state;
             const uids = Object.keys(roomState.players || {});
@@ -1958,13 +2067,16 @@
                     else if (state.actions[currentUser.uid]) dis = 'disabled'; // I already picked my replacement
                 }
 
-                return `<button class="btn-switch" ${dis} onclick="window.sendAction('switch', ${i})">
-                                    <img src="${p.sprite}">
-                                    <div style="text-align:left;">
-                                        <div style="font-weight:700; font-size:0.75rem;">${esc(p.name)}</div>
-                                        <div class="sub">${p.currentHp}/${p.hp} HP ${isFainted ? '(FAINTED)' : ''}</div>
-                                    </div>
-                                </button>`;
+                return `<div style="display:flex; align-items:center; gap:4px; width:100%;">
+                                    <button class="btn-switch" style="flex:1;" ${dis} onclick="window.sendAction('switch', ${i})">
+                                        <img src="${p.sprite}">
+                                        <div style="text-align:left;">
+                                            <div style="font-weight:700; font-size:0.75rem;">${esc(p.name)}</div>
+                                            <div class="sub">${p.currentHp}/${p.hp} HP ${isFainted ? '(FAINTED)' : ''}</div>
+                                        </div>
+                                    </button>
+                                    <button class="btn btn-sm" style="padding:4px 6px; background:var(--card-hover); font-size:0.75rem; min-width:28px;" onclick="window.showBenchInfo('${myUid}', ${i})">ℹ️</button>
+                                </div>`;
             }).join('')}
                 </div>
                     </div>
