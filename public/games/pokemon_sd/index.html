@@ -852,8 +852,25 @@
                     } else if (roomState.status === 'playing') {
                         const s = roomState.state;
                         // Turn Execution Phase
-                        if (s && s.actions && s.actions[p1Uid] && s.actions[p2Uid] && !s.resolving) {
-                            executeTurn();
+                        if (s && s.actions && !s.resolving) {
+                            if (s.faintReplacement) {
+                                // Only need actions from players with fainted mons
+                                const activeIdx = s.active;
+                                const p1Mon = roomState.players[p1Uid].team[activeIdx[p1Uid]];
+                                const p2Mon = roomState.players[p2Uid].team[activeIdx[p2Uid]];
+
+                                const p1NeedsAction = p1Mon.currentHp <= 0 && !s.actions[p1Uid];
+                                const p2NeedsAction = p2Mon.currentHp <= 0 && !s.actions[p2Uid];
+
+                                if (!p1NeedsAction && !p2NeedsAction) {
+                                    executeTurn();
+                                }
+                            } else {
+                                // Normal turn: need actions from both
+                                if (s.actions[p1Uid] && s.actions[p2Uid]) {
+                                    executeTurn();
+                                }
+                            }
                         }
                     }
                 }
@@ -1193,12 +1210,23 @@
 
             // 0. Handle Faint Replacement Phase
             if (state.faintReplacement) {
+                let allReplacementsDone = true;
+
                 for (const uid of [p1Uid, p2Uid]) {
-                    if (actions[uid] && actions[uid].type === 'switch') {
-                        const newIdx = actions[uid].val;
-                        activeIdx[uid] = newIdx;
-                        log.push(`${roomState.players[uid].name} sent out ${getMon(uid).name}!`);
+                    if (getMon(uid).currentHp <= 0) {
+                        if (actions[uid] && actions[uid].type === 'switch') {
+                            const newIdx = actions[uid].val;
+                            activeIdx[uid] = newIdx;
+                            log.push(`${roomState.players[uid].name} sent out ${getMon(uid).name}!`);
+                        } else {
+                            allReplacementsDone = false;
+                        }
                     }
+                }
+
+                if (!allReplacementsDone) {
+                    await updateDoc(roomRef, { 'state.resolving': false });
+                    return; // Wait for the other player to pick
                 }
 
                 await updateDoc(roomRef, {
@@ -1470,7 +1498,8 @@
                             <p class="text-muted" style="text-align:left;">Waiting for opponent to act...</p>
                             <div class="spinner" style="margin: 0; width: 25px; height: 25px;"></div>
                         ` : state.faintReplacement ? `
-                            <p class="warning-text" style="display:block; text-align:left; color: var(--warning);">Waiting for replacements to be sent out...</p>
+                            <p class="warning-text" style="display:block; text-align:left; color: var(--warning);">Waiting for opponent to send out a replacement...</p>
+                            <div class="spinner" style="margin: 0; width: 25px; height: 25px;"></div>
                         ` : `
                             <div style="font-size:0.8rem; font-weight:700; margin-bottom:4px; text-align:left;">What will ${esc(myActive.name)} do?</div>
                             <div class="move-grid">
@@ -1503,8 +1532,13 @@
 
                 // If expecting standard turn and waiting, disable.
                 if (amIWaiting && !activeIsFainted && !state.faintReplacement) dis = 'disabled';
-                // If fain replacement phase, and player is waiting (meaning they already picked a switch or don't need to), disable.
-                if (state.faintReplacement && state.actions[currentUser.uid]) dis = 'disabled';
+
+                // Faint replacement phase logic: 
+                // If my Pokémon DID NOT faint, I am completely disabled during this phase (waiting for opponent to switch).
+                if (state.faintReplacement) {
+                    if (!activeIsFainted) dis = 'disabled';
+                    else if (state.actions[currentUser.uid]) dis = 'disabled'; // I already picked my replacement
+                }
 
                 return `<button class="btn-switch" ${dis} onclick="window.sendAction('switch', ${i})">
                                     <img src="${p.sprite}">
@@ -1515,8 +1549,8 @@
                                 </button>`;
             }).join('')}
                 </div>
-                    </div >
-                </div >
+                    </div>
+                </div>
             `;
 
             // Auto-scroll log to bottom
