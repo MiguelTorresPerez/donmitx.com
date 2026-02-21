@@ -561,12 +561,12 @@
             const qIndex = state.currentQuestion;
             const revealed = state.answersRevealed;
 
-            // Host injects the question into state, so we read it from there
             const qData = state.qData;
 
             if (!qData) return `<div class="spinner"></div>`;
 
-            hasAnsweredThisRound = roomState.players[currentUser.uid]?.hasAnswered || false;
+            const isPlayer = !!(roomState.players && roomState.players[currentUser.uid]);
+            hasAnsweredThisRound = isPlayer ? (roomState.players[currentUser.uid]?.hasAnswered || false) : true;
 
             let html = `
             ${renderScoreboard()}
@@ -578,7 +578,7 @@
                 <div class="options">
                     ${qData.a.map((ans, i) => {
                 let classes = 'option-btn';
-                let disabled = hasAnsweredThisRound || revealed ? 'disabled' : '';
+                let disabled = (!isPlayer || hasAnsweredThisRound || revealed) ? 'disabled' : '';
 
                 // If revealed, highlight correct answer
                 if (revealed) {
@@ -687,7 +687,8 @@
         // --- ACTIONS ---
 
         window.submitAnswer = async function (idx) {
-            if (hasAnsweredThisRound || roomState.state.answersRevealed) return;
+            const me = roomState.players && roomState.players[currentUser.uid];
+            if (!me || hasAnsweredThisRound || roomState.state.answersRevealed) return;
             hasAnsweredThisRound = true;
 
             // Highlight chosen physically immediately
@@ -700,7 +701,6 @@
             const isCorrect = (idx === qData.c);
 
             // Calculate new score state locally to send to db
-            const me = roomState.players[currentUser.uid];
             let newScore = me.score || 0;
             let newStreak = me.streak || 0;
             let newCorrect = me.correct || 0;

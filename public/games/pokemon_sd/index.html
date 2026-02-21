@@ -866,8 +866,13 @@
         function render() {
             try {
                 const area = document.getElementById('game-area');
+                const isPlayer = !!(roomState.players && roomState.players[currentUser.uid]);
+
                 if (roomState.status === 'lobby') area.innerHTML = renderLobby();
-                else if (roomState.status === 'teambuilder') area.innerHTML = renderTeamBuilder();
+                else if (roomState.status === 'teambuilder') {
+                    if (!isPlayer) area.innerHTML = '<div class="card"><h2>Spectating</h2><p class="text-muted">Waiting for players to build their teams...</p><div class="spinner"></div></div>';
+                    else area.innerHTML = renderTeamBuilder();
+                }
                 else if (roomState.status === 'playing') area.innerHTML = renderBattle();
                 else area.innerHTML = '<p>Game finished.</p>';
             } catch (err) {
@@ -1034,6 +1039,34 @@
             </div>`;
         }
 
+        window.getSmartMoves = function (p) {
+            let available = p.moves.map(id => ({ id, ...MOVES[id] })).filter(m => m.name);
+            available.forEach(m => {
+                let score = m.power || 0;
+                if (p.types.includes(m.type) && m.category !== 'Status') score *= 1.5;
+                if (m.priority > 0) score += 30;
+                if (m.accuracy < 100) score *= (m.accuracy / 100);
+                if (m.category === 'Status') score = 40;
+                if (['Swords Dance', 'Dragon Dance', 'Nasty Plot', 'Calm Mind'].includes(m.name)) score += 80;
+                m.score = score + Math.random() * 20;
+            });
+            available.sort((a, b) => b.score - a.score);
+
+            let selected = [];
+            let coveredTypes = new Set();
+            for (let m of available) {
+                if (selected.length === 4) break;
+                if (m.category !== 'Status' && coveredTypes.has(m.type) && selected.length >= 2) continue;
+                selected.push(m.id);
+                if (m.category !== 'Status') coveredTypes.add(m.type);
+            }
+            while (selected.length < 4) {
+                let fallback = available.find(m => !selected.includes(m.id))?.id || 'struggle';
+                selected.push(fallback);
+            }
+            return selected;
+        }
+
         window.submitTeam = async function () {
             const format = roomState.state?.format?.id;
 
@@ -1043,9 +1076,7 @@
                     const base = POKEMON_DB[Math.floor(Math.random() * POKEMON_DB.length)];
                     let p = JSON.parse(JSON.stringify(base));
                     p.currentHp = p.hp;
-                    let pool = [...p.moves].sort(() => Math.random() - 0.5);
-                    p.moves = pool.slice(0, 4);
-                    while (p.moves.length < 4) p.moves.push('struggle');
+                    p.moves = window.getSmartMoves(p);
                     const itemKeys = Object.keys(ITEMS);
                     p.item = itemKeys[Math.floor(Math.random() * itemKeys.length)];
                     fullTeam.push(p);
@@ -1070,9 +1101,7 @@
                     p.moves = [...tData.moves];
                     while (p.moves.length < 4) p.moves.push('struggle');
                 } else {
-                    let pool = [...p.moves].sort(() => Math.random() - 0.5);
-                    p.moves = pool.slice(0, 4);
-                    while (p.moves.length < 4) p.moves.push('struggle');
+                    p.moves = window.getSmartMoves(p);
                 }
 
                 // Hackmons overwrite
@@ -1346,8 +1375,13 @@
 
         function renderBattle() {
             const state = roomState.state;
-            const myTeamFull = roomState.players[currentUser.uid]?.team;
-            const oppUid = Object.keys(roomState.players).find(id => id !== currentUser.uid);
+            const uids = Object.keys(roomState.players || {});
+            const isSpectator = !roomState.players[currentUser.uid];
+
+            let myUid = isSpectator ? uids[0] : currentUser.uid;
+            let oppUid = isSpectator ? uids[1] : uids.find(id => id !== myUid);
+
+            const myTeamFull = roomState.players[myUid]?.team;
             const oppTeamFull = oppUid ? roomState.players[oppUid]?.team : undefined;
 
             if (!state || !state.active || !myTeamFull || !oppTeamFull || !oppUid) {
@@ -1356,7 +1390,7 @@
                 else if (!state.active) errs.push('state.active');
                 if (!myTeamFull) errs.push('myTeamFull');
                 if (!oppUid) errs.push('oppUid');
-                if (!oppTeamFull && oppUid) errs.push('oppTeamFull (oppUid:' + oppUid + ')');
+                if (!oppTeamFull && oppUid) errs.push('oppTeamFull');
 
                 return `<div class="spinner"></div>
                     <p>Synchronizing battle connection...</p>
@@ -1365,7 +1399,7 @@
                     </p>`;
             }
 
-            const myActiveIdx = state.active[currentUser.uid] ?? 0;
+            const myActiveIdx = state.active[myUid] ?? 0;
             const oppActiveIdx = state.active[oppUid] ?? 0;
 
             const myActive = myTeamFull[myActiveIdx];
@@ -1373,8 +1407,8 @@
 
             if (!myActive || !oppActive) {
                 let errs2 = [];
-                if (!myActive) errs2.push('myActive(idx:' + myActiveIdx + ')');
-                if (!oppActive) errs2.push('oppActive(idx:' + oppActiveIdx + ')');
+                if (!myActive) errs2.push('myActive');
+                if (!oppActive) errs2.push('oppActive');
                 return `<div class="spinner"></div>
                     <p>Awaiting Team Data...</p>
                     <p style="color:var(--danger); font-size:0.8rem; margin-top:10px; padding:10px; background:rgba(0,0,0,0.5); border-radius:8px;">
@@ -1385,7 +1419,7 @@
             const myHpPct = myActive.currentHp / myActive.hp;
             const oppHpPct = oppActive.currentHp / oppActive.hp;
 
-            const amIWaiting = (state.actions && !!state.actions[currentUser.uid]) || state.resolving;
+            const amIWaiting = isSpectator ? true : ((state.actions && !!state.actions[myUid]) || state.resolving);
             const activeIsFainted = myActive.currentHp <= 0;
 
             let html = `
@@ -1416,7 +1450,20 @@
                         ${(state.log || []).map(l => `<p>${l}</p>`).join('')}
                     </div>
 
-                    <div class="battle-controls">
+                    <div class="battle-controls">`;
+
+            if (isSpectator) {
+                html += `
+                        <div style="display:flex; height:100%; flex-direction:column; justify-content:center; align-items:center;">
+                            <h3 style="color:var(--text-muted); margin-bottom:10px;">Spectating Mode</h3>
+                            <p style="font-size:0.8rem; color:var(--text-muted);">You are watching ${esc(roomState.players[uids[0]].name)} vs ${esc(roomState.players[uids[1]].name)}</p>
+                        </div>
+                    </div>
+                </div>`;
+                return html;
+            }
+
+            html += `
                             ${activeIsFainted ? `
                             <p class="warning-text" style="display:block; text-align:left;">${esc(myActive.name)} fainted! Send out another Pokémon.</p>
                         ` : (amIWaiting && !state.faintReplacement) ? `
@@ -1429,17 +1476,27 @@
                             <div class="move-grid">
                             ${myActive.moves.map((moveId, i) => {
                 const m = MOVES[moveId] || MOVES['struggle'];
+                const eff = getEffectiveness(m.type, oppActive.types);
+                let effColor = '#ffffff';
+                let effText = '';
+                if (m.category !== 'Status') {
+                    if (eff >= 4) { effColor = '#ef4444'; effText = '(4x)'; }
+                    else if (eff >= 2) { effColor = '#f97316'; effText = '(2x)'; }
+                    else if (eff === 0.5) { effColor = '#cbd5e1'; effText = '(0.5x)'; }
+                    else if (eff <= 0.25 && eff > 0) { effColor = '#94a3b8'; effText = '(0.25x)'; }
+                    else if (eff === 0) { effColor = '#475569'; effText = '(0x)'; }
+                }
                 return `<button class="btn-move bg-${m.type}" onclick="window.sendAction('move', '${moveId}')">
-                                    <div class="move-name">${esc(m.name)}</div>
-                                    <div class="move-meta type-${m.type}">${m.type} / Pow: ${m.power} / Acc: ${m.accuracy}</div>
-                                </button>`;
+                                            <div class="move-name" style="color: ${effColor}; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">${esc(m.name)} ${effText}</div>
+                                            <div class="move-meta type-${m.type}">${m.type} / Pow: ${m.power} / Acc: ${m.accuracy}</div>
+                                        </button>`;
             }).join('')}
                             </div>
                         `}
                         
                         <div style="font-size:0.8rem; font-weight:700; margin:10px 0 4px; text-align:left;">Switch Pokémon:</div>
-                        <div class="switch-grid">
-                            ${myTeamFull.map((p, i) => {
+                <div class="switch-grid">
+                    ${myTeamFull.map((p, i) => {
                 const isCurrent = i === myActiveIdx;
                 const isFainted = p.currentHp <= 0;
                 let dis = isCurrent || isFainted ? 'disabled' : '';
@@ -1457,9 +1514,9 @@
                                     </div>
                                 </button>`;
             }).join('')}
-                        </div>
-                    </div>
                 </div>
+                    </div >
+                </div >
             `;
 
             // Auto-scroll log to bottom
