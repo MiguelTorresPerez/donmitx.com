@@ -9,12 +9,13 @@
     <style>
         :root {
             --bg: #0f172a;
-            --card: rgba(30, 41, 59, 0.8);
+            --card: rgba(30, 41, 59, 0.85);
             --card-hover: #334155;
             --primary: #3b82f6;
-            --primary-glow: rgba(59, 130, 246, 0.3);
+            --primary-hover: #2563eb;
             --success: #10b981;
-            --error: #ef4444;
+            --warning: #eab308;
+            --danger: #ef4444;
             --text: #f8fafc;
             --text-muted: #94a3b8;
             --radius: 12px;
@@ -30,17 +31,14 @@
             font-family: 'Inter', system-ui, sans-serif;
             background: transparent;
             color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
+            padding: 10px 20px;
+            overflow-x: hidden;
         }
 
         .game-wrapper {
             width: 100%;
             max-width: 800px;
-            padding-top: 10px;
+            margin: 0 auto;
         }
 
         .header {
@@ -49,17 +47,16 @@
         }
 
         .header h1 {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 800;
             background: linear-gradient(135deg, #60a5fa, #3b82f6);
             -webkit-background-clip: text;
-            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .header .subtitle {
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin-top: 4px;
         }
 
@@ -67,27 +64,27 @@
             background: var(--card);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: var(--radius);
-            padding: 24px;
-            margin-bottom: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
             backdrop-filter: blur(10px);
         }
 
-        /* Lobby */
+        /* UI Elements */
         .setting-group {
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             text-align: left;
         }
 
         .setting-group label {
             display: block;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .setting-group select {
             width: 100%;
-            padding: 10px;
+            padding: 8px;
             border-radius: 8px;
             background: rgba(0, 0, 0, 0.3);
             color: white;
@@ -95,58 +92,81 @@
         }
 
         .warning-text {
-            color: var(--error);
-            font-size: 0.85rem;
-            margin-top: 8px;
+            color: var(--danger);
+            font-size: 0.8rem;
+            margin-top: 6px;
             font-weight: 600;
             display: none;
         }
 
-        /* Buttons */
         .btn {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 12px 24px;
+            padding: 10px 20px;
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
+            text-align: center;
             width: 100%;
         }
 
         .btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px var(--primary-glow);
+            background: var(--primary-hover);
+            transform: translateY(-1px);
         }
 
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            transform: none;
         }
 
         .btn-success {
             background: var(--success);
         }
 
+        .btn-success:hover:not(:disabled) {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #dc2626;
+        }
+
         /* Team Builder */
         .pokemon-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
-            margin-top: 16px;
-            max-height: 400px;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+            max-height: 350px;
             overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .pokemon-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .pokemon-grid::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
         }
 
         .pokemon-card {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 8px;
-            padding: 10px;
+            padding: 8px;
             text-align: center;
             cursor: pointer;
             transition: 0.2s;
+            user-select: none;
         }
 
         .pokemon-card:hover {
@@ -154,18 +174,18 @@
         }
 
         .pokemon-card.selected {
-            background: rgba(59, 130, 246, 0.2);
+            background: rgba(59, 130, 246, 0.3);
             border-color: var(--primary);
         }
 
         .pokemon-card img {
-            width: 60px;
-            height: 60px;
-            image-rendering: pixelated;
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
         }
 
         .pokemon-card .name {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
             margin-top: 4px;
         }
@@ -173,20 +193,21 @@
         .team-slots {
             display: flex;
             gap: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             justify-content: center;
         }
 
         .slot {
-            width: 40px;
-            height: 40px;
-            border-radius: 20px;
-            background: rgba(0, 0, 0, 0.4);
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            background: rgba(0, 0, 0, 0.5);
             border: 2px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 0.7rem;
+            color: var(--text-muted);
         }
 
         .slot.filled {
@@ -194,44 +215,374 @@
             background: rgba(59, 130, 246, 0.2);
         }
 
-        /* Battle */
-        .battle-arena {
+        /* Battle Scene */
+        .battle-scene {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            background: linear-gradient(180deg, #1e3a8a 0%, #0f172a 100%);
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 16px;
+        }
+
+        .platform {
+            position: absolute;
+            width: 220px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.4);
+            transform: scaleY(0.5);
+            border: 2px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .platform.opponent {
+            top: 70px;
+            right: 20px;
+        }
+
+        .platform.player {
+            bottom: 40px;
+            left: -10px;
+            width: 260px;
+            height: 80px;
+        }
+
+        .sprite {
+            position: absolute;
+            transform-origin: bottom center;
+            transition: all 0.3s;
+            z-index: 5;
+            image-rendering: pixelated;
+        }
+
+        .sprite.opponent {
+            width: 120px;
+            height: 120px;
+            right: 70px;
+            top: 40px;
+        }
+
+        .sprite.player {
+            width: 160px;
+            height: 160px;
+            left: 40px;
+            bottom: 60px;
+        }
+
+        .fainted {
+            opacity: 0;
+            transform: translateY(50px) scale(0.8) !important;
+        }
+
+        /* Animations */
+        @keyframes attack {
+            0% {
+                transform: translateX(0);
+            }
+
+            50% {
+                transform: translateX(30px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes hit {
+            0% {
+                filter: brightness(1);
+                transform: translateX(0);
+            }
+
+            20% {
+                filter: brightness(2) opacity(0.5);
+                transform: translateX(-5px);
+            }
+
+            40% {
+                filter: brightness(1);
+                transform: translateX(5px);
+            }
+
+            60% {
+                filter: brightness(2) opacity(0.5);
+                transform: translateX(-5px);
+            }
+
+            80% {
+                filter: brightness(1);
+                transform: translateX(5px);
+            }
+
+            100% {
+                filter: brightness(1);
+                transform: translateX(0);
+            }
+        }
+
+        .anim-attack-p1 {
+            animation: attack 0.4s ease-in-out;
+        }
+
+        .anim-attack-p2 {
+            animation: attack 0.4s ease-in-out reverse;
+        }
+
+        .anim-hit {
+            animation: hit 0.5s linear;
+        }
+
+        /* HP Bars */
+        .hud {
+            position: absolute;
+            background: rgba(15, 23, 42, 0.85);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 200px;
+            z-index: 10;
+            backdrop-filter: blur(4px);
+        }
+
+        .hud.opponent {
+            top: 20px;
+            left: 20px;
+            border-top: 3px solid var(--danger);
+        }
+
+        .hud.player {
+            bottom: 20px;
+            right: 20px;
+            border-top: 3px solid var(--primary);
+        }
+
+        .hud-name {
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .hud-name .level {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .hp-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hp-bar-fill {
+            height: 100%;
+            width: 100%;
+            transition: width 0.5s ease-in-out, background-color 0.5s;
+        }
+
+        .hp-text {
+            font-size: 0.7rem;
+            text-align: right;
+            margin-top: 4px;
+            font-weight: 600;
+            font-family: monospace;
+        }
+
+        /* Status Ailments */
+        .status-badge {
+            font-size: 0.6rem;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+            margin-left: 6px;
+        }
+
+        .status-par {
+            background: #eab308;
+            color: black;
+        }
+
+        .status-brn {
+            background: #ef4444;
+            color: white;
+        }
+
+        .status-psn {
+            background: #a855f7;
+            color: white;
+        }
+
+        .status-slp {
+            background: #94a3b8;
+            color: white;
+        }
+
+        /* Controls */
+        .battle-controls {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .move-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .btn-move {
             display: flex;
             flex-direction: column;
-            gap: 20px;
-        }
-
-        .player-zone {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 16px;
+            align-items: flex-start;
+            padding: 8px 12px;
             border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: left;
+        }
+
+        .btn-move:hover:not(:disabled) {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--primary);
+        }
+
+        .btn-move.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-move .move-name {
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .btn-move .move-meta {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        /* Type Colors */
+        .type-Normal {
+            color: #a8a29e;
+        }
+
+        .type-Fire {
+            color: #f87171;
+        }
+
+        .type-Water {
+            color: #60a5fa;
+        }
+
+        .type-Electric {
+            color: #facc15;
+        }
+
+        .type-Grass {
+            color: #4ade80;
+        }
+
+        .type-Ice {
+            color: #67e8f9;
+        }
+
+        .type-Fighting {
+            color: #f43f5e;
+        }
+
+        .type-Poison {
+            color: #c084fc;
+        }
+
+        .type-Ground {
+            color: #d97706;
+        }
+
+        .type-Flying {
+            color: #818cf8;
+        }
+
+        .type-Psychic {
+            color: #fb7185;
+        }
+
+        .type-Bug {
+            color: #a3e635;
+        }
+
+        .type-Rock {
+            color: #b45309;
+        }
+
+        .type-Ghost {
+            color: #8b5cf6;
+        }
+
+        .type-Dragon {
+            color: #818cf8;
+        }
+
+        .type-Dark {
+            color: #475569;
+        }
+
+        .type-Steel {
+            color: #94a3b8;
+        }
+
+        .type-Fairy {
+            color: #f472b6;
+        }
+
+        /* Battle Log */
+        .battle-log {
+            height: 120px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            color: #cbd5e1;
         }
 
-        .player-zone.opponent {
-            border-top: 3px solid #ef4444;
+        .battle-log p {
+            margin-bottom: 4px;
         }
 
-        .player-zone.me {
-            border-bottom: 3px solid #3b82f6;
-            text-align: right;
+        .battle-log .super {
+            color: var(--warning);
+            font-weight: bold;
         }
 
-        .team-mini {
-            display: flex;
-            gap: 4px;
-            margin-top: 8px;
+        .battle-log .notvery {
+            color: var(--text-muted);
+            font-style: italic;
         }
 
-        .team-mini .slot-mini {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #22c55e;
+        .battle-log .crit {
+            color: var(--danger);
+            font-weight: bold;
         }
 
-        .team-mini .slot-mini.fainted {
-            background: #ef4444;
+        .battle-log .fainted-text {
+            color: var(--danger);
+            text-transform: uppercase;
         }
 
         .spinner {
@@ -249,13 +600,53 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* Switch Menu */
+        .switch-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .btn-switch {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-switch:hover:not(:disabled) {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--success);
+        }
+
+        .btn-switch.selected {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .btn-switch img {
+            width: 30px;
+            height: 30px;
+            margin-right: 8px;
+        }
+
+        .btn-switch .sub {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
     </style>
 </head>
 
 <body>
     <div class="game-wrapper">
         <div class="header">
-            <h1>⚔️ Showdown Match</h1>
+            <h1>Showdown Engine</h1>
             <p class="subtitle" id="room-code">Connecting...</p>
         </div>
         <div id="game-area" style="text-align: center;">
@@ -263,8 +654,11 @@
         </div>
     </div>
 
+    <!-- AUDIO ELEMENTS -->
+    <!-- (Optional: you can dynamically create Audio objects, omitted here for brevity) -->
+
     <script type="module">
-        import { POKEMON_DB, FORMATS } from './data.js';
+        import { POKEMON_DB, FORMATS, MOVES, TYPE_CHART, getEffectiveness } from './data.js';
 
         if (!window.parent.DONMITX_GAME_API) {
             document.getElementById('game-area').innerHTML = '<p class="warning-text" style="display:block">Error: Must be played from Dashboard.</p>';
@@ -281,24 +675,23 @@
         const urlParams = new URLSearchParams(window.location.search);
         const roomId = urlParams.get('roomId');
 
-        if (!roomId) {
-            document.getElementById('game-area').innerHTML = '<p class="warning-text" style="display:block">Error: No Room ID provided.</p>';
-            throw new Error("No roomId");
-        }
+        if (!roomId) throw new Error("No roomId");
 
         let currentUser = null;
         let roomRef = doc(db, 'game_rooms', roomId);
         let roomState = null;
 
-        // Local UI state
+        // Local state
         let myTeam = [];
+        let p1Uid = null;
+        let p2Uid = null;
 
         auth.onAuthStateChanged((user) => {
             if (user) {
                 currentUser = user;
                 initGame();
             } else {
-                document.getElementById('game-area').innerHTML = '<p class="warning-text" style="display:block">You must be logged in to play.</p>';
+                document.getElementById('game-area').innerHTML = '<p class="warning-text" style="display:block">Please log in.</p>';
             }
         });
 
@@ -306,51 +699,53 @@
             document.getElementById('room-code').textContent = `Room ID: ${roomId.substring(0, 6).toUpperCase()}`;
 
             onSnapshot(roomRef, (snapshot) => {
-                if (!snapshot.exists()) {
-                    document.getElementById('game-area').innerHTML = '<p>Room has been closed.</p>';
-                    return;
-                }
-                const oldStatus = roomState?.status;
-                const oldTeamReady = roomState?.players?.[currentUser.uid]?.teamReady;
+                if (!snapshot.exists()) return;
+
+                const prevState = roomState?.status;
+                const prevTurn = roomState?.state?.turn;
                 roomState = snapshot.data();
 
-                // Re-render
+                const playerIds = Object.keys(roomState.players || {});
+                if (playerIds.length === 2 && !p1Uid) {
+                    p1Uid = roomState.hostUid;
+                    p2Uid = playerIds.find(id => id !== p1Uid);
+                }
+
                 render();
 
-                // Host logic checking if everyone is ready in teambuilder
-                if (isHost() && roomState.status === 'teambuilder') {
-                    const players = Object.values(roomState.players);
-                    const allReady = players.length > 0 && players.every(p => p.teamReady);
-                    if (allReady) {
-                        startGameBattle();
+                // State progression logic (Host only)
+                if (isHost()) {
+                    if (roomState.status === 'teambuilder') {
+                        const allReady = playerIds.length === 2 && playerIds.every(id => roomState.players[id].teamReady);
+                        if (allReady) initBattleState();
+                    } else if (roomState.status === 'playing') {
+                        const s = roomState.state;
+                        // Turn Execution Phase
+                        if (s.actions[p1Uid] && s.actions[p2Uid] && !s.resolving) {
+                            executeTurn();
+                        }
                     }
                 }
             });
         }
 
         function isHost() { return currentUser && roomState && roomState.hostUid === currentUser.uid; }
-        function esc(str) {
-            const div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
-        }
+        function esc(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
 
         function render() {
             const area = document.getElementById('game-area');
-            if (roomState.status === 'lobby') {
-                area.innerHTML = renderLobby();
-            } else if (roomState.status === 'teambuilder') {
-                area.innerHTML = renderTeamBuilder();
-            } else if (roomState.status === 'playing') {
-                area.innerHTML = renderBattle();
-            } else {
-                area.innerHTML = `<p>Game is finished.</p><button class="btn" onclick="window.parent.document.querySelector('.btn-close[data-close=\\'modal-play-game\\']').click()">Close</button>`;
-            }
+            if (roomState.status === 'lobby') area.innerHTML = renderLobby();
+            else if (roomState.status === 'teambuilder') area.innerHTML = renderTeamBuilder();
+            else if (roomState.status === 'playing') area.innerHTML = renderBattle();
+            else area.innerHTML = '<p>Game finished.</p>';
         }
 
+        // ------------------
+        // LOBBY & FORMAT
+        // ------------------
+
         window.handleFormatChange = function (e) {
-            const formatId = e.value;
-            const format = FORMATS.find(f => f.id === formatId);
+            const format = FORMATS.find(f => f.id === e.value);
             const warningEl = document.getElementById('format-warning');
             if (format && format.warning) {
                 warningEl.textContent = format.warning;
@@ -362,36 +757,33 @@
 
         window.startTeamBuilder = async function () {
             const formatId = document.getElementById('setting-format').value;
-            const formatName = FORMATS.find(f => f.id === formatId)?.name || 'Custom';
-
+            const format = FORMATS.find(f => f.id === formatId);
             await updateDoc(roomRef, {
                 status: 'teambuilder',
-                'state.format': { id: formatId, name: formatName },
+                'state.format': { id: format.id, name: format.name },
                 ...Object.fromEntries(Object.keys(roomState.players).map(uid => [`players.${uid}.teamReady`, false])),
                 ...Object.fromEntries(Object.keys(roomState.players).map(uid => [`players.${uid}.team`, []]))
             });
         }
 
         function renderLobby() {
-            const players = Object.values(roomState.players);
-            let html = `
-                <div class="card">
-                    <h2>Waiting for players...</h2>
-                    <p class="text-muted" style="margin-top:8px">${players.length}/2 players joined.</p>
-                    <div style="display:flex; justify-content:center; gap:10px; margin-top:16px;">
-                        ${players.map(p => `
-                            <div style="background:rgba(255,255,255,0.05); padding:8px 16px; border-radius:20px; font-size:0.85rem;">
-                                ${esc(p.name)} ${p.uid === roomState.hostUid ? '👑' : ''}
-                            </div>
-                        `).join('')}
-                    </div>
+            const players = Object.values(roomState.players || {});
+            let html = `<div class="card">
+                <h2>Waiting for players...</h2>
+                <p class="text-muted">${players.length}/2 players joined.</p>
+                <div style="display:flex; justify-content:center; gap:10px; margin-top:16px;">
+                    ${players.map(p => `
+                        <div style="background:rgba(255,255,255,0.05); padding:8px 16px; border-radius:20px; font-size:0.85rem;">
+                            ${esc(p.name)} ${p.uid === roomState.hostUid ? '👑' : ''}
+                        </div>
+                    `).join('')}
                 </div>
-            `;
+            </div>`;
 
             if (isHost()) {
                 html += `
                 <div class="card">
-                    <h3 style="margin-bottom: 16px;">⚙️ Host Battle Settings</h3>
+                    <h3 style="margin-bottom: 16px;">⚙️ Host Settings</h3>
                     <div class="setting-group">
                         <label>Format</label>
                         <select id="setting-format" onchange="window.handleFormatChange(this)">
@@ -399,33 +791,52 @@
                         </select>
                         <p class="warning-text" id="format-warning"></p>
                     </div>
-                    <button class="btn" onclick="window.startTeamBuilder()">To Team Builder →</button>
-                </div>
-                `;
+                    <button class="btn" onclick="window.startTeamBuilder()" ${players.length < 2 ? 'disabled' : ''}>To Team Builder →</button>
+                    ${players.length < 2 ? '<p class="text-muted" style="font-size:0.8rem; margin-top:8px;">Need 2 players to start.</p>' : ''}
+                </div>`;
             } else {
-                html += `<p class="text-muted">Waiting for Host to choose format...</p>`;
+                html += `<p class="text-muted">Waiting for Host to configure format...</p>`;
             }
             return html;
         }
 
-        // --- Team Builder ---
-        window.togglePokemon = function (pokemonId) {
-            if (roomState.players[currentUser.uid]?.teamReady) return;
+        // ------------------
+        // TEAM BUILDER
+        // ------------------
 
-            const idx = myTeam.indexOf(pokemonId);
-            if (idx > -1) {
+        window.togglePokemon = function (pId) {
+            if (roomState.players[currentUser.uid]?.teamReady) return;
+            const idx = myTeam.indexOf(pId);
+
+            // Hackmons & AG logic
+            const format = roomState.state?.format?.id;
+            const allowDupes = format === 'gen9anythinggoes' || format === 'gen9hackmons';
+
+            if (idx > -1 && !allowDupes) {
                 myTeam.splice(idx, 1);
-            } else {
-                if (myTeam.length < 6) myTeam.push(pokemonId);
+            } else if (myTeam.length < 6) {
+                myTeam.push(pId);
             }
             render();
         }
 
         window.submitTeam = async function () {
             if (myTeam.length === 0) return alert("Select at least 1 Pokémon!");
+            const format = roomState.state?.format?.id;
 
-            // Map ids to full objects for the battle state
-            const fullTeam = myTeam.map(id => POKEMON_DB.find(p => p.id === id));
+            // Generate deep copy of pokemon with current HP
+            const fullTeam = myTeam.map(id => {
+                const base = POKEMON_DB.find(p => p.id === id);
+                let p = JSON.parse(JSON.stringify(base));
+                p.currentHp = p.hp;
+
+                // Hackmons overwrite
+                if (format === 'gen9hackmons') {
+                    p.atk = 350; p.spa = 350; p.spe = 350;
+                    p.moves = ['dracometeor', 'closecombat', 'hyperbeam', 'waterpump']; // Overpowered moves
+                }
+                return p;
+            });
 
             await updateDoc(roomRef, {
                 [`players.${currentUser.uid}.team`]: fullTeam,
@@ -435,99 +846,286 @@
 
         function renderTeamBuilder() {
             const isReady = roomState.players[currentUser.uid]?.teamReady;
-            const formatName = roomState.state?.format?.name || 'Battle';
-
+            const fName = roomState.state?.format?.name;
             let html = `
                 <div class="card">
-                    <h2>Team Builder - <span style="color:var(--primary)">${esc(formatName)}</span></h2>
-                    
+                    <h2>Team Builder - <span style="color:var(--primary)">${esc(fName)}</span></h2>
                     <div class="team-slots">
-                        ${Array.from({ length: 6 }).map((_, i) => `
-                            <div class="slot ${myTeam[i] ? 'filled' : ''}">
-                                ${myTeam[i] ? `<img src="${POKEMON_DB.find(p => p.id === myTeam[i]).sprite}" style="width:30px">` : i + 1}
-                            </div>
-                        `).join('')}
+                        ${Array.from({ length: 6 }).map((_, i) => `<div class="slot ${myTeam[i] ? 'filled' : ''}">${myTeam[i] ? `<img src="${POKEMON_DB.find(p => p.id === myTeam[i]).sprite}" style="width:30px">` : i + 1}</div>`).join('')}
                     </div>
-                    
-                    ${isReady ? `
-                        <p class="text-muted" style="margin-bottom:16px;">Waiting for opponent to finish building...</p>
-                        <div class="spinner"></div>
-                    ` : `
-                        <button class="btn ${myTeam.length > 0 ? 'btn-success' : ''}" onclick="window.submitTeam()">READY (${myTeam.length}/6)</button>
-                    `}
+                    ${isReady ? `<p class="text-muted">Waiting for opponent...</p><div class="spinner"></div>`
+                    : `<button class="btn ${myTeam.length > 0 ? 'btn-success' : ''}" onclick="window.submitTeam()">READY (${myTeam.length}/6)</button>`}
                 </div>
             `;
 
             if (!isReady) {
-                html += `
-                <div class="pokemon-grid">
+                html += `<div class="pokemon-grid">
                     ${POKEMON_DB.map(p => `
                         <div class="pokemon-card ${myTeam.includes(p.id) ? 'selected' : ''}" onclick="window.togglePokemon('${p.id}')">
                             <img src="${p.sprite}" alt="${p.name}">
                             <div class="name">${p.name}</div>
-                        </div>
-                    `).join('')}
-                </div>
-                `;
+                        </div>`).join('')}
+                </div>`;
             }
             return html;
         }
 
-        // --- Battle ---
-        async function startGameBattle() {
+        // ------------------
+        // BATTLE ENGINE
+        // ------------------
+
+        async function initBattleState() {
             await updateDoc(roomRef, {
                 status: 'playing',
                 'state.turn': 1,
-                'state.log': [`Format: ${roomState.state.format.name}`, `Battle Started!`]
+                'state.log': [`Format: ${roomState.state.format.name}`, `Battle Started!`],
+                'state.actions': {},
+                'state.active': {
+                    [p1Uid]: 0,
+                    [p2Uid]: 0
+                }
             });
         }
 
-        window.endBattle = async function (winnerUid) {
+        // Action Submitter
+        window.sendAction = async function (type, val) {
+            const hasSent = roomState.state.actions[currentUser.uid];
+            if (hasSent || roomState.state.resolving) return;
+
+            // Optimistic UI freeze
+            document.querySelectorAll('.btn-move, .btn-switch').forEach(b => b.disabled = true);
+
             await updateDoc(roomRef, {
-                status: 'finished',
-                'state.log': [...(roomState.state.log || []), `Battle Ended!`]
+                [`state.actions.${currentUser.uid}`]: { type, val }
             });
+        }
+
+        // Core Turn Logic (Host side)
+        async function executeTurn() {
+            await updateDoc(roomRef, { 'state.resolving': true });
+
+            const state = roomState.state;
+            const actions = state.actions;
+            let log = [...(state.log || [])];
+
+            // Deep copy objects to mutate locally
+            const teams = { [p1Uid]: roomState.players[p1Uid].team, [p2Uid]: roomState.players[p2Uid].team };
+            const activeIdx = { ...state.active };
+
+            // Helper to query active mon
+            const getMon = (uid) => teams[uid][activeIdx[uid]];
+
+            // 1. Resolve Switches first (Priority 6)
+            for (const uid of [p1Uid, p2Uid]) {
+                if (actions[uid].type === 'switch') {
+                    const newIdx = actions[uid].val;
+                    activeIdx[uid] = newIdx;
+                    log.push(`${roomState.players[uid].name} withdrew their Pokémon and sent out ${getMon(uid).name}!`);
+                }
+            }
+
+            // 2. Determine Attack Order based on Priority and Speed
+            let attackers = [];
+            for (const uid of [p1Uid, p2Uid]) {
+                if (actions[uid].type === 'move' && getMon(uid).currentHp > 0) {
+                    const move = MOVES[actions[uid].val];
+                    attackers.push({ uid, mon: getMon(uid), move, priority: move.priority || 0, speed: getMon(uid).spe });
+                }
+            }
+
+            // Sort: highest priority, then highest speed
+            attackers.sort((a, b) => {
+                if (b.priority !== a.priority) return b.priority - a.priority;
+                if (b.speed !== a.speed) return b.speed - a.speed;
+                return Math.random() > 0.5 ? 1 : -1; // Speed tie
+            });
+
+            // 3. Execute Attacks
+            let matchOver = false;
+
+            for (const atkData of attackers) {
+                const { uid, mon, move } = atkData;
+                const defUid = uid === p1Uid ? p2Uid : p1Uid;
+                const defMon = getMon(defUid);
+
+                // If attacker fainted before moving, or defender fainted, skip
+                if (mon.currentHp <= 0 || defMon.currentHp <= 0) continue;
+
+                log.push(`${mon.name} used ${move.name}!`);
+
+                // Accuracy Check
+                if (Math.random() * 100 > move.accuracy) {
+                    log.push(`> It's an <span class="notvery">avoided</span> miss!`);
+                    continue;
+                }
+
+                // Damage Calc
+                const level = 100;
+                let statA = move.category === 'Special' ? mon.spa : mon.atk;
+                let statD = move.category === 'Special' ? defMon.spd : defMon.def;
+
+                let damage = Math.floor((((2 * level / 5 + 2) * move.power * statA / statD) / 50) + 2);
+
+                // Modifiers
+                const isSTAB = mon.types.includes(move.type) ? 1.5 : 1;
+                const effectiveness = getEffectiveness(move.type, defMon.types);
+
+                let isCrit = false;
+                if (Math.random() < (move.critRate ? 0.12 : 0.04)) {
+                    isCrit = true;
+                    damage *= 1.5;
+                }
+
+                const rng = (85 + Math.random() * 15) / 100; // 0.85 to 1.00
+                damage = Math.floor(damage * isSTAB * effectiveness * rng);
+
+                if (effectiveness > 1) log.push(`> It's <span class="super">super effective!</span>`);
+                if (effectiveness < 1 && effectiveness > 0) log.push(`> It's <span class="notvery">not very effective...</span>`);
+                if (effectiveness === 0) {
+                    log.push(`> It had <span class="notvery">no effect</span> on ${defMon.name}!`);
+                    damage = 0;
+                }
+                if (isCrit && damage > 0) log.push(`> <span class="crit">A critical hit!</span>`);
+
+                // Apply Damage
+                defMon.currentHp = Math.max(0, defMon.currentHp - damage);
+
+                if (defMon.currentHp === 0) {
+                    log.push(`<span class="fainted-text">${defMon.name} fainted!</span>`);
+                }
+            }
+
+            // Check Win Condition
+            let p1Living = teams[p1Uid].some(p => p.currentHp > 0);
+            let p2Living = teams[p2Uid].some(p => p.currentHp > 0);
+
+            if (!p1Living || !p2Living) {
+                matchOver = true;
+                if (!p1Living && !p2Living) log.push('It is a draw!');
+                else if (p1Living) log.push(`${roomState.players[p1Uid].name} wins the battle!`);
+                else log.push(`${roomState.players[p2Uid].name} wins the battle!`);
+            }
+
+            // Truncate log to keep DB light
+            if (log.length > 20) log = log.slice(-20);
+
+            // Push State
+            if (matchOver) {
+                await updateDoc(roomRef, {
+                    status: 'finished',
+                    'state.log': log,
+                    [`players.${p1Uid}.team`]: teams[p1Uid],
+                    [`players.${p2Uid}.team`]: teams[p2Uid]
+                });
+            } else {
+                await updateDoc(roomRef, {
+                    'state.resolving': false,
+                    'state.actions': {},
+                    'state.turn': state.turn + 1,
+                    'state.log': log,
+                    'state.active': activeIdx,
+                    [`players.${p1Uid}.team`]: teams[p1Uid],
+                    [`players.${p2Uid}.team`]: teams[p2Uid]
+                });
+            }
+        }
+
+        // GUI View
+        function getHpColor(pct) {
+            if (pct > 0.5) return 'var(--success)';
+            if (pct > 0.2) return 'var(--warning)';
+            return 'var(--danger)';
         }
 
         function renderBattle() {
-            const players = Object.values(roomState.players);
-            const opponent = players.find(p => p.uid !== currentUser.uid) || players[0];
-            const me = players.find(p => p.uid === currentUser.uid);
+            const state = roomState.state;
+            const myTeamFull = roomState.players[currentUser.uid].team;
+            const oppUid = Object.keys(roomState.players).find(id => id !== currentUser.uid);
+            const oppTeamFull = roomState.players[oppUid].team;
+
+            const myActiveIdx = state.active[currentUser.uid];
+            const oppActiveIdx = state.active[oppUid];
+
+            const myActive = myTeamFull[myActiveIdx];
+            const oppActive = oppTeamFull[oppActiveIdx];
+
+            const myHpPct = myActive.currentHp / myActive.hp;
+            const oppHpPct = oppActive.currentHp / oppActive.hp;
+
+            const amIWaiting = !!state.actions[currentUser.uid] || state.resolving;
+            const activeIsFainted = myActive.currentHp <= 0;
 
             let html = `
-                <div class="card" style="margin-bottom:20px;">
-                    <div class="battle-arena">
-                        <!-- Opponent -->
-                        <div class="player-zone opponent">
-                            <h3 style="margin:0; font-size:1rem;">${esc(opponent?.name || 'Opponent')}</h3>
-                            <div class="team-mini" style="justify-content:flex-start;">
-                                ${opponent?.team?.map(() => `<div class="slot-mini"></div>`).join('') || ''}
-                            </div>
-                        </div>
+                <!-- Scene -->
+                <div class="battle-scene">
+                    <div class="hud opponent">
+                        <div class="hud-name">${esc(oppActive.name)} <span class="level">Lv100</span></div>
+                        <div class="hp-bar-bg"><div class="hp-bar-fill" style="width:${oppHpPct * 100}%; background-color:${getHpColor(oppHpPct)}"></div></div>
+                        <div class="hp-text">${oppActive.currentHp}/${oppActive.hp}</div>
+                    </div>
+                    
+                    <div class="hud player">
+                        <div class="hud-name">${esc(myActive.name)} <span class="level">Lv100</span></div>
+                        <div class="hp-bar-bg"><div class="hp-bar-fill" style="width:${myHpPct * 100}%; background-color:${getHpColor(myHpPct)}"></div></div>
+                        <div class="hp-text">${myActive.currentHp}/${myActive.hp}</div>
+                    </div>
 
-                        <!-- VS -->
-                        <div style="font-weight:800; font-style:italic; color:var(--text-muted);">VS</div>
+                    <div class="platform opponent"></div>
+                    <img src="${oppActive.sprite}" class="sprite opponent ${oppActive.currentHp <= 0 ? 'fainted' : ''}" style="filter: drop-shadow(0px 10px 10px rgba(0,0,0,0.5));">
+                    
+                    <div class="platform player"></div>
+                    <img src="${myActive.spriteBack}" class="sprite player ${myActive.currentHp <= 0 ? 'fainted' : ''}" style="filter: drop-shadow(0px 10px 10px rgba(0,0,0,0.5));">
+                </div>
 
-                        <!-- Me -->
-                        <div class="player-zone me">
-                            <h3 style="margin:0; font-size:1rem;">${esc(me?.name || 'Me')}</h3>
-                            <div class="team-mini" style="justify-content:flex-end;">
-                                ${me?.team?.map(() => `<div class="slot-mini"></div>`).join('') || ''}
+                <!-- Log & Controls Split -->
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+                    <div class="battle-log" id="b-log">
+                        ${(state.log || []).map(l => `<p>${l}</p>`).join('')}
+                    </div>
+
+                    <div class="battle-controls">
+                        ${activeIsFainted ? `
+                            <p class="warning-text" style="display:block; text-align:left;">${esc(myActive.name)} fainted! Send out another Pokémon.</p>
+                        ` : amIWaiting ? `
+                            <p class="text-muted" style="text-align:left;">Waiting for opponent to act...</p>
+                            <div class="spinner" style="margin: 0; width: 25px; height: 25px;"></div>
+                        ` : `
+                            <div style="font-size:0.8rem; font-weight:700; margin-bottom:4px; text-align:left;">What will ${esc(myActive.name)} do?</div>
+                            <div class="move-grid">
+                            ${myActive.moves.map((moveId, i) => {
+                const m = MOVES[moveId] || MOVES['struggle'];
+                return `<button class="btn-move" onclick="window.sendAction('move', '${moveId}')">
+                                    <div class="move-name">${esc(m.name)}</div>
+                                    <div class="move-meta type-${m.type}">${m.type} / Pow: ${m.power} / Acc: ${m.accuracy}</div>
+                                </button>`;
+            }).join('')}
                             </div>
+                        `}
+                        
+                        <div style="font-size:0.8rem; font-weight:700; margin:10px 0 4px; text-align:left;">Switch Pokémon:</div>
+                        <div class="switch-grid">
+                            ${myTeamFull.map((p, i) => {
+                const isCurrent = i === myActiveIdx;
+                const isFainted = p.currentHp <= 0;
+                const dis = isCurrent || isFainted || (amIWaiting && !activeIsFainted) ? 'disabled' : '';
+                return `<button class="btn-switch" ${dis} onclick="window.sendAction('switch', ${i})">
+                                    <img src="${p.sprite}">
+                                    <div style="text-align:left;">
+                                        <div style="font-weight:700; font-size:0.75rem;">${esc(p.name)}</div>
+                                        <div class="sub">${p.currentHp}/${p.hp} HP ${isFainted ? '(FAINTED)' : ''}</div>
+                                    </div>
+                                </button>`;
+            }).join('')}
                         </div>
                     </div>
                 </div>
-
-                <div class="card" style="text-align:left; font-family:monospace; font-size:0.85rem; height:150px; overflow-y:auto; background:rgba(0,0,0,0.5);">
-                    ${(roomState.state.log || []).map(line => `<div style="margin-bottom:4px;">> ${esc(line)}</div>`).join('')}
-                </div>
             `;
 
-            if (isHost()) {
-                html += `<button class="btn btn-success" style="margin-top:20px;" onclick="window.endBattle()">End Mock Battle</button>`;
-            } else {
-                html += `<p class="text-muted" style="margin-top:20px;">Playing Mock Battle... Waiting for host to end.</p>`;
-            }
+            // Auto-scroll log to bottom
+            setTimeout(() => {
+                const bLog = document.getElementById('b-log');
+                if (bLog) bLog.scrollTop = bLog.scrollHeight;
+            }, 50);
 
             return html;
         }

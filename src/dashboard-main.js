@@ -969,7 +969,7 @@ function setupEventListeners() {
                     } else {
                         actionBtn = `<span class="badge" style="background:var(--primary); color:white; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem;">In Progress</span>`;
                     }
-                } else if (playerCount < 6) {
+                } else if (playerCount < (room.maxPlayers || 6)) {
                     actionBtn = `<button class="btn-primary btn-sm btn-join-room" data-room-id="${room.id}">Join</button>`;
                 } else {
                     actionBtn = '<span class="badge">Full</span>';
@@ -978,7 +978,7 @@ function setupEventListeners() {
                 div.innerHTML = `
                     <div class="chat-info" style="flex:1;">
                         <h4 style="margin:0; font-size:1rem;">Host: ${escapeHtml(room.players[room.hostUid]?.name || 'Unknown')}</h4>
-                        <span class="text-muted" style="font-size:0.85rem;">Players: ${playerCount}/6 ${isPlaying ? '• Playing' : '• Lobby'}</span>
+                        <span class="text-muted" style="font-size:0.85rem;">Players: ${playerCount}/${room.maxPlayers || 6} ${isPlaying ? '• Playing' : '• Lobby'}</span>
                     </div>
                     ${actionBtn}
                 `;
@@ -1019,7 +1019,8 @@ function setupEventListeners() {
         btn.disabled = true;
 
         try {
-            const roomId = await createGameRoom(currentLobbyGameId, currentUser, { maxPlayers: 6 });
+            const maxP = currentLobbyGameId === 'pokemon_sd' ? 2 : 6;
+            const roomId = await createGameRoom(currentLobbyGameId, currentUser, { maxPlayers: maxP });
             closeModal('modal-game-lobby');
             document.getElementById('game-iframe').src = `${currentLobbyAppUrl}?roomId=${roomId}`;
             openModal('modal-play-game');
