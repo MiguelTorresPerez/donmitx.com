@@ -427,13 +427,23 @@
                 }
                 const oldStatus = roomState?.status;
                 const oldQuestion = roomState?.state?.currentQuestion;
+                const oldRevealed = roomState?.state?.answersRevealed;
                 roomState = snapshot.data();
 
                 // Only re-render if major phase change or new question, to avoid UI flicker when players answer
-                if (oldStatus !== roomState.status || oldQuestion !== roomState.state.currentQuestion || roomState.state.answersRevealed) {
+                if (oldStatus !== roomState.status || oldQuestion !== roomState.state.currentQuestion || oldRevealed !== roomState.state.answersRevealed) {
                     render();
                 } else {
                     updateScoreboardSilently();
+                }
+
+                // If host, check if everyone has answered so we can fast-forward the timer
+                if (isHost() && roomState.status === 'playing' && !roomState.state.answersRevealed) {
+                    const players = Object.values(roomState.players);
+                    const allAnswered = players.length > 0 && players.every(p => p.hasAnswered);
+                    if (allAnswered) {
+                        revealAnswers();
+                    }
                 }
             });
         }
@@ -452,7 +462,7 @@
             } else if (roomState.status === 'playing') {
                 area.innerHTML = renderPlaying();
                 if (!roomState.state.answersRevealed) {
-                    startLocalTimer(Q_TIME);
+                    startLocalTimer(roomState.config?.timePerQuestion || 10);
                 }
             } else if (roomState.status === 'finished') {
                 area.innerHTML = renderPodium();
@@ -609,6 +619,17 @@
                     if (isHost()) setTimeout(revealAnswers, 1000); // Host triggers reveal
                 }
             }, 1000);
+        }
+
+        async function revealAnswers() {
+            if (!isHost()) return;
+            try {
+                await updateDoc(roomRef, {
+                    'state.answersRevealed': true
+                });
+            } catch (err) {
+                console.error("Failed to reveal answers:", err);
+            }
         }
 
         // --- END PHASE ---
