@@ -963,12 +963,11 @@ function setupEventListeners() {
                 div.className = 'chat-card'; // Reuse chat card styling for simplicity
 
                 let actionBtn = '';
-                if (isPlaying) {
-                    if (hasMe) {
-                        actionBtn = `<button class="btn-primary btn-sm btn-join-room" data-room-id="${room.id}">Rejoin</button>`;
-                    } else {
-                        actionBtn = `<span class="badge" style="background:var(--primary); color:white; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem;">In Progress</span>`;
-                    }
+                const isStarted = room.status === 'playing' || room.status === 'teambuilder';
+                if (hasMe) {
+                    actionBtn = `<button class="btn-primary btn-sm btn-join-room" data-room-id="${room.id}" data-rejoin="true">Rejoin</button>`;
+                } else if (isStarted) {
+                    actionBtn = `<span class="badge" style="background:var(--primary); color:white; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem;">In Progress</span>`;
                 } else if (playerCount < (room.config?.maxPlayers || 6)) {
                     actionBtn = `<button class="btn-primary btn-sm btn-join-room" data-room-id="${room.id}">Join</button>`;
                 } else {
@@ -989,17 +988,20 @@ function setupEventListeners() {
             document.querySelectorAll('.btn-join-room').forEach(btn => {
                 btn.addEventListener('click', async (joinEvent) => {
                     const roomId = joinEvent.target.dataset.roomId;
+                    const isRejoin = joinEvent.target.dataset.rejoin === 'true';
                     try {
-                        joinEvent.target.textContent = 'Joining...';
+                        joinEvent.target.textContent = isRejoin ? 'Rejoining...' : 'Joining...';
                         joinEvent.target.disabled = true;
-                        await joinGameRoom(roomId, currentUser);
+                        if (!isRejoin) {
+                            await joinGameRoom(roomId, currentUser);
+                        }
                         closeModal('modal-game-lobby');
                         document.getElementById('game-iframe').src = `${currentLobbyAppUrl}?roomId=${roomId}`;
                         openModal('modal-play-game');
                     } catch (err) {
                         console.error('Failed to join:', err);
                         alert('Could not join room.');
-                        joinEvent.target.textContent = 'Join';
+                        joinEvent.target.textContent = isRejoin ? 'Rejoin' : 'Join';
                         joinEvent.target.disabled = false;
                     }
                 });
