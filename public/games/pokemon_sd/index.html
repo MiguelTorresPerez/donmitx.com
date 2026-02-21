@@ -475,77 +475,168 @@
             margin-top: 2px;
         }
 
-        /* Type Colors */
+        /* Type Colors & Backgrounds */
         .type-Normal {
             color: #a8a29e;
+        }
+
+        .bg-Normal {
+            background-color: rgba(168, 162, 158, 0.3) !important;
+            border-color: #a8a29e !important;
         }
 
         .type-Fire {
             color: #f87171;
         }
 
+        .bg-Fire {
+            background-color: rgba(248, 113, 113, 0.3) !important;
+            border-color: #f87171 !important;
+        }
+
         .type-Water {
             color: #60a5fa;
+        }
+
+        .bg-Water {
+            background-color: rgba(96, 165, 250, 0.3) !important;
+            border-color: #60a5fa !important;
         }
 
         .type-Electric {
             color: #facc15;
         }
 
+        .bg-Electric {
+            background-color: rgba(250, 204, 21, 0.3) !important;
+            border-color: #facc15 !important;
+        }
+
         .type-Grass {
             color: #4ade80;
+        }
+
+        .bg-Grass {
+            background-color: rgba(74, 222, 128, 0.3) !important;
+            border-color: #4ade80 !important;
         }
 
         .type-Ice {
             color: #67e8f9;
         }
 
+        .bg-Ice {
+            background-color: rgba(103, 232, 249, 0.3) !important;
+            border-color: #67e8f9 !important;
+        }
+
         .type-Fighting {
             color: #f43f5e;
+        }
+
+        .bg-Fighting {
+            background-color: rgba(244, 63, 94, 0.3) !important;
+            border-color: #f43f5e !important;
         }
 
         .type-Poison {
             color: #c084fc;
         }
 
+        .bg-Poison {
+            background-color: rgba(192, 132, 252, 0.3) !important;
+            border-color: #c084fc !important;
+        }
+
         .type-Ground {
             color: #d97706;
+        }
+
+        .bg-Ground {
+            background-color: rgba(217, 119, 6, 0.3) !important;
+            border-color: #d97706 !important;
         }
 
         .type-Flying {
             color: #818cf8;
         }
 
+        .bg-Flying {
+            background-color: rgba(129, 140, 248, 0.3) !important;
+            border-color: #818cf8 !important;
+        }
+
         .type-Psychic {
             color: #fb7185;
+        }
+
+        .bg-Psychic {
+            background-color: rgba(251, 113, 133, 0.3) !important;
+            border-color: #fb7185 !important;
         }
 
         .type-Bug {
             color: #a3e635;
         }
 
+        .bg-Bug {
+            background-color: rgba(163, 230, 53, 0.3) !important;
+            border-color: #a3e635 !important;
+        }
+
         .type-Rock {
             color: #b45309;
+        }
+
+        .bg-Rock {
+            background-color: rgba(180, 83, 9, 0.3) !important;
+            border-color: #b45309 !important;
         }
 
         .type-Ghost {
             color: #8b5cf6;
         }
 
+        .bg-Ghost {
+            background-color: rgba(139, 92, 246, 0.3) !important;
+            border-color: #8b5cf6 !important;
+        }
+
         .type-Dragon {
             color: #818cf8;
+        }
+
+        /* Should be different from flying but keeps the existing color */
+        .bg-Dragon {
+            background-color: rgba(129, 140, 248, 0.3) !important;
+            border-color: #818cf8 !important;
         }
 
         .type-Dark {
             color: #475569;
         }
 
+        .bg-Dark {
+            background-color: rgba(71, 85, 105, 0.3) !important;
+            border-color: #475569 !important;
+        }
+
         .type-Steel {
             color: #94a3b8;
         }
 
+        .bg-Steel {
+            background-color: rgba(148, 163, 184, 0.3) !important;
+            border-color: #94a3b8 !important;
+        }
+
         .type-Fairy {
             color: #f472b6;
+        }
+
+        .bg-Fairy {
+            background-color: rgba(244, 114, 182, 0.3) !important;
+            border-color: #f472b6 !important;
         }
 
         /* Battle Log */
@@ -586,6 +677,11 @@
             text-transform: uppercase;
         }
 
+        .battle-log .item-text {
+            color: var(--success);
+            font-style: italic;
+        }
+
         .spinner {
             width: 30px;
             height: 30px;
@@ -600,6 +696,40 @@
             to {
                 transform: rotate(360deg);
             }
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal {
+            background: var(--bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius);
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .move-picker-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 16px;
         }
 
         /* Switch Menu */
@@ -659,7 +789,7 @@
     <!-- (Optional: you can dynamically create Audio objects, omitted here for brevity) -->
 
     <script type="module">
-        import { POKEMON_DB, FORMATS, MOVES, TYPE_CHART, getEffectiveness } from './data.js';
+        import { POKEMON_DB, FORMATS, MOVES, TYPE_CHART, getEffectiveness, ITEMS } from './data.js';
 
         if (!window.parent.DONMITX_GAME_API) {
             document.getElementById('game-area').innerHTML = '<p class="warning-text" style="display:block">Error: Must be played from Dashboard.</p>';
@@ -815,9 +945,12 @@
         // TEAM BUILDER
         // ------------------
 
+        window.activeConfigIdx = null;
+        window.tempConfig = null;
+
         window.togglePokemon = function (pId) {
             if (roomState.players[currentUser.uid]?.teamReady) return;
-            const idx = myTeam.indexOf(pId);
+            const idx = myTeam.findIndex(p => p.id === pId);
 
             // Hackmons & AG logic
             const format = roomState.state?.format?.id;
@@ -826,25 +959,126 @@
             if (idx > -1 && !allowDupes) {
                 myTeam.splice(idx, 1);
             } else if (myTeam.length < 6) {
-                myTeam.push(pId);
+                myTeam.push({ id: pId, moves: [], item: 'None' });
+                if (format !== 'gen9random') {
+                    window.openConfigModal(myTeam.length - 1);
+                    return;
+                }
             }
             render();
         }
 
+        window.openConfigModal = function (idx) {
+            const p = myTeam[idx];
+            window.activeConfigIdx = idx;
+            window.tempConfig = { moves: [...p.moves], item: p.item };
+            render();
+        }
+
+        window.closeConfigModal = function () {
+            window.activeConfigIdx = null;
+            window.tempConfig = null;
+            render();
+        }
+
+        window.saveConfigModal = function () {
+            myTeam[window.activeConfigIdx].moves = [...window.tempConfig.moves];
+            myTeam[window.activeConfigIdx].item = document.getElementById('item-select').value;
+            window.closeConfigModal();
+        }
+
+        window.toggleMove = function (mId) {
+            const idx = window.tempConfig.moves.indexOf(mId);
+            if (idx > -1) {
+                window.tempConfig.moves.splice(idx, 1);
+            } else if (window.tempConfig.moves.length < 4) {
+                window.tempConfig.moves.push(mId);
+            }
+            render();
+        }
+
+        function renderConfigModal() {
+            if (window.activeConfigIdx === null) return '';
+            const tData = myTeam[window.activeConfigIdx];
+            const base = POKEMON_DB.find(p => p.id === tData.id);
+            const tm = window.tempConfig;
+
+            return `
+            <div class="modal-overlay">
+                <div class="modal">
+                    <h3 style="margin-bottom:10px;">Configure ${esc(base.name)}</h3>
+                    
+                    <label style="display:block; font-size:0.8rem; margin-bottom:4px; color:var(--text-muted);">Held Item</label>
+                    <select id="item-select" style="width:100%; padding:8px; margin-bottom:16px; background:rgba(0,0,0,0.5); color:white; border:1px solid rgba(255,255,255,0.2); border-radius:4px;">
+                        ${Object.values(ITEMS).map(i => `<option value="${i.name}" ${tm.item === i.name ? 'selected' : ''}>${i.name} - ${i.desc}</option>`).join('')}
+                    </select>
+
+                    <label style="display:block; font-size:0.8rem; margin-bottom:4px; color:var(--text-muted);">Moves (${tm.moves.length}/4)</label>
+                    <div class="move-picker-grid">
+                        ${base.moves.map(mId => {
+                const m = MOVES[mId];
+                if (!m) return '';
+                const selected = tm.moves.includes(mId);
+                return `<div onclick="window.toggleMove('${mId}')" style="cursor:pointer; padding:6px; border-radius:4px; border:1px solid ${selected ? 'var(--primary)' : 'rgba(255,255,255,0.1)'}; background:${selected ? 'rgba(59,130,246,0.3)' : 'rgba(0,0,0,0.3)'};">
+                                <div style="font-size:0.75rem; font-weight:bold;">${esc(m.name)}</div>
+                                <div style="font-size:0.6rem; color:var(--text-muted);">${m.type} | Pow: ${m.power}</div>
+                            </div>`;
+            }).join('')}
+                    </div>
+
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn" style="background:var(--card-hover);" onclick="window.closeConfigModal()">Cancel</button>
+                        <button class="btn btn-success" onclick="window.saveConfigModal()">Save</button>
+                    </div>
+                </div>
+            </div>`;
+        }
+
         window.submitTeam = async function () {
-            if (myTeam.length === 0) return alert("Select at least 1 Pokémon!");
             const format = roomState.state?.format?.id;
 
+            if (format === 'gen9random') {
+                const fullTeam = [];
+                for (let i = 0; i < 6; i++) {
+                    const base = POKEMON_DB[Math.floor(Math.random() * POKEMON_DB.length)];
+                    let p = JSON.parse(JSON.stringify(base));
+                    p.currentHp = p.hp;
+                    let pool = [...p.moves].sort(() => Math.random() - 0.5);
+                    p.moves = pool.slice(0, 4);
+                    while (p.moves.length < 4) p.moves.push('struggle');
+                    const itemKeys = Object.keys(ITEMS);
+                    p.item = itemKeys[Math.floor(Math.random() * itemKeys.length)];
+                    fullTeam.push(p);
+                }
+                await updateDoc(roomRef, {
+                    [`players.${currentUser.uid}.team`]: fullTeam,
+                    [`players.${currentUser.uid}.teamReady`]: true
+                });
+                return;
+            }
+
+            if (myTeam.length === 0) return alert("Select at least 1 Pokémon!");
+
             // Generate deep copy of pokemon with current HP
-            const fullTeam = myTeam.map(id => {
-                const base = POKEMON_DB.find(p => p.id === id);
+            const fullTeam = myTeam.map(tData => {
+                const base = POKEMON_DB.find(p => p.id === tData.id);
                 let p = JSON.parse(JSON.stringify(base));
                 p.currentHp = p.hp;
+                p.item = tData.item || 'None';
+
+                if (tData.moves && tData.moves.length > 0) {
+                    p.moves = [...tData.moves];
+                    while (p.moves.length < 4) p.moves.push('struggle');
+                } else {
+                    let pool = [...p.moves].sort(() => Math.random() - 0.5);
+                    p.moves = pool.slice(0, 4);
+                    while (p.moves.length < 4) p.moves.push('struggle');
+                }
 
                 // Hackmons overwrite
                 if (format === 'gen9hackmons') {
                     p.atk = 350; p.spa = 350; p.spe = 350;
-                    p.moves = ['dracometeor', 'closecombat', 'hyperbeam', 'waterpump']; // Overpowered moves
+                    p.moves = ['draco-meteor', 'close-combat', 'hyper-beam', 'hydro-pump']; // Valid moves
                 }
                 return p;
             });
@@ -858,25 +1092,30 @@
         function renderTeamBuilder() {
             const isReady = roomState.players[currentUser.uid]?.teamReady;
             const fName = roomState.state?.format?.name;
+            const isRandom = roomState.state?.format?.id === 'gen9random';
             let html = `
                 <div class="card">
                     <h2>Team Builder - <span style="color:var(--primary)">${esc(fName)}</span></h2>
                     <div class="team-slots">
-                        ${Array.from({ length: 6 }).map((_, i) => `<div class="slot ${myTeam[i] ? 'filled' : ''}">${myTeam[i] ? `<img src="${POKEMON_DB.find(p => p.id === myTeam[i]).sprite}" style="width:30px">` : i + 1}</div>`).join('')}
+                        ${Array.from({ length: 6 }).map((_, i) => `<div class="slot ${myTeam[i] ? 'filled' : ''}" ${myTeam[i] && !isReady && !isRandom ? `onclick="window.openConfigModal(${i})" style="cursor:pointer;"` : ''}>${myTeam[i] ? `<img src="${POKEMON_DB.find(p => p.id === myTeam[i].id)?.sprite}" style="width:30px">` : i + 1}</div>`).join('')}
                     </div>
                     ${isReady ? `<p class="text-muted">Waiting for opponent...</p><div class="spinner"></div>`
-                    : `<button class="btn ${myTeam.length > 0 ? 'btn-success' : ''}" onclick="window.submitTeam()">READY (${myTeam.length}/6)</button>`}
+                    : `<button class="btn ${myTeam.length > 0 || isRandom ? 'btn-success' : ''}" onclick="window.submitTeam()">${isRandom ? 'GENERATE RANDOM TEAM' : `READY (${myTeam.length}/6)`}</button>`}
                 </div>
             `;
 
-            if (!isReady) {
+            if (!isReady && !isRandom) {
                 html += `<div class="pokemon-grid">
                     ${POKEMON_DB.map(p => `
-                        <div class="pokemon-card ${myTeam.includes(p.id) ? 'selected' : ''}" onclick="window.togglePokemon('${p.id}')">
-                            <img src="${p.sprite}" alt="${p.name}">
+                        <div class="pokemon-card ${myTeam.some(t => t.id === p.id) ? 'selected' : ''}" onclick="window.togglePokemon('${p.id}')">
+                            <img src="${p.sprite}" alt="${p.name}" loading="lazy">
                             <div class="name">${p.name}</div>
                         </div>`).join('')}
                 </div>`;
+            }
+
+            if (window.activeConfigIdx !== null) {
+                html += renderConfigModal();
             }
             return html;
         }
@@ -919,12 +1158,31 @@
             const actions = state.actions;
             let log = [...(state.log || [])];
 
-            // Deep copy objects to mutate locally
             const teams = { [p1Uid]: roomState.players[p1Uid].team, [p2Uid]: roomState.players[p2Uid].team };
             const activeIdx = { ...state.active };
-
-            // Helper to query active mon
             const getMon = (uid) => teams[uid][activeIdx[uid]];
+
+            // 0. Handle Faint Replacement Phase
+            if (state.faintReplacement) {
+                for (const uid of [p1Uid, p2Uid]) {
+                    if (actions[uid] && actions[uid].type === 'switch') {
+                        const newIdx = actions[uid].val;
+                        activeIdx[uid] = newIdx;
+                        log.push(`${roomState.players[uid].name} sent out ${getMon(uid).name}!`);
+                    }
+                }
+
+                await updateDoc(roomRef, {
+                    'state.resolving': false,
+                    'state.actions': {},
+                    'state.faintReplacement': false,
+                    'state.log': log,
+                    'state.active': activeIdx,
+                    [`players.${p1Uid}.team`]: teams[p1Uid],
+                    [`players.${p2Uid}.team`]: teams[p2Uid]
+                });
+                return;
+            }
 
             // 1. Resolve Switches first (Priority 6)
             for (const uid of [p1Uid, p2Uid]) {
@@ -940,15 +1198,16 @@
             for (const uid of [p1Uid, p2Uid]) {
                 if (actions[uid].type === 'move' && getMon(uid).currentHp > 0) {
                     const move = MOVES[actions[uid].val];
-                    attackers.push({ uid, mon: getMon(uid), move, priority: move.priority || 0, speed: getMon(uid).spe });
+                    let speed = getMon(uid).spe;
+                    if (getMon(uid).item === 'Choice Scarf') speed = Math.floor(speed * 1.5);
+                    attackers.push({ uid, mon: getMon(uid), move, priority: move.priority || 0, speed });
                 }
             }
 
-            // Sort: highest priority, then highest speed
             attackers.sort((a, b) => {
                 if (b.priority !== a.priority) return b.priority - a.priority;
                 if (b.speed !== a.speed) return b.speed - a.speed;
-                return Math.random() > 0.5 ? 1 : -1; // Speed tie
+                return Math.random() > 0.5 ? 1 : -1;
             });
 
             // 3. Execute Attacks
@@ -959,25 +1218,26 @@
                 const defUid = uid === p1Uid ? p2Uid : p1Uid;
                 const defMon = getMon(defUid);
 
-                // If attacker fainted before moving, or defender fainted, skip
                 if (mon.currentHp <= 0 || defMon.currentHp <= 0) continue;
 
                 log.push(`${mon.name} used ${move.name}!`);
 
-                // Accuracy Check
                 if (Math.random() * 100 > move.accuracy) {
                     log.push(`> It's an <span class="notvery">avoided</span> miss!`);
                     continue;
                 }
 
-                // Damage Calc
                 const level = 100;
+                const isChoiceBand = mon.item === 'Choice Band' && move.category === 'Physical' ? 1.5 : 1;
+                const isChoiceSpecs = mon.item === 'Choice Specs' && move.category === 'Special' ? 1.5 : 1;
+                const isLifeOrb = mon.item === 'Life Orb' ? 1.3 : 1;
+
                 let statA = move.category === 'Special' ? mon.spa : mon.atk;
+                statA = Math.floor(statA * isChoiceBand * isChoiceSpecs);
                 let statD = move.category === 'Special' ? defMon.spd : defMon.def;
 
                 let damage = Math.floor((((2 * level / 5 + 2) * move.power * statA / statD) / 50) + 2);
 
-                // Modifiers
                 const isSTAB = mon.types.includes(move.type) ? 1.5 : 1;
                 const effectiveness = getEffectiveness(move.type, defMon.types);
 
@@ -987,8 +1247,8 @@
                     damage *= 1.5;
                 }
 
-                const rng = (85 + Math.random() * 15) / 100; // 0.85 to 1.00
-                damage = Math.floor(damage * isSTAB * effectiveness * rng);
+                const rng = (85 + Math.random() * 15) / 100;
+                damage = Math.floor(damage * isSTAB * effectiveness * rng * isLifeOrb);
 
                 if (effectiveness > 1) log.push(`> It's <span class="super">super effective!</span>`);
                 if (effectiveness < 1 && effectiveness > 0) log.push(`> It's <span class="notvery">not very effective...</span>`);
@@ -999,14 +1259,37 @@
                 if (isCrit && damage > 0) log.push(`> <span class="crit">A critical hit!</span>`);
 
                 // Apply Damage
-                defMon.currentHp = Math.max(0, defMon.currentHp - damage);
+                if (damage > 0) {
+                    if (defMon.item === 'Focus Sash' && defMon.currentHp === defMon.hp && damage >= defMon.currentHp) {
+                        defMon.currentHp = 1;
+                        defMon.item = 'None';
+                        log.push(`<span class="item-text">${defMon.name} hung on using its Focus Sash!</span>`);
+                    } else {
+                        defMon.currentHp = Math.max(0, defMon.currentHp - damage);
+                    }
+                    if (defMon.currentHp === 0) log.push(`<span class="fainted-text">${defMon.name} fainted!</span>`);
 
-                if (defMon.currentHp === 0) {
-                    log.push(`<span class="fainted-text">${defMon.name} fainted!</span>`);
+                    if (mon.item === 'Life Orb' && mon.currentHp > 0) {
+                        const recoil = Math.floor(mon.hp / 10) || 1;
+                        mon.currentHp = Math.max(0, mon.currentHp - recoil);
+                        log.push(`<span class="item-text">${mon.name} lost some of its HP!</span>`);
+                        if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
+                    }
                 }
             }
 
-            // Check Win Condition
+            // 4. End of turn effects
+            for (const uid of [p1Uid, p2Uid]) {
+                const mon = getMon(uid);
+                if (mon.currentHp > 0 && mon.item === 'Leftovers') {
+                    const heal = Math.floor(mon.hp / 16) || 1;
+                    if (mon.currentHp < mon.hp) {
+                        mon.currentHp = Math.min(mon.hp, mon.currentHp + heal);
+                        log.push(`<span class="item-text">${mon.name} restored a little HP using its Leftovers!</span>`);
+                    }
+                }
+            }
+
             let p1Living = teams[p1Uid].some(p => p.currentHp > 0);
             let p2Living = teams[p2Uid].some(p => p.currentHp > 0);
 
@@ -1015,12 +1298,25 @@
                 if (!p1Living && !p2Living) log.push('It is a draw!');
                 else if (p1Living) log.push(`${roomState.players[p1Uid].name} wins the battle!`);
                 else log.push(`${roomState.players[p2Uid].name} wins the battle!`);
+            } else {
+                // If match is not over, check for faints to trigger faintReplacement
+                if (getMon(p1Uid).currentHp <= 0 || getMon(p2Uid).currentHp <= 0) {
+                    if (log.length > 20) log = log.slice(-20);
+                    await updateDoc(roomRef, {
+                        'state.resolving': false,
+                        'state.actions': {},
+                        'state.faintReplacement': true, // DO NOT increment turn
+                        'state.log': log,
+                        'state.active': activeIdx,
+                        [`players.${p1Uid}.team`]: teams[p1Uid],
+                        [`players.${p2Uid}.team`]: teams[p2Uid]
+                    });
+                    return;
+                }
             }
 
-            // Truncate log to keep DB light
             if (log.length > 20) log = log.slice(-20);
 
-            // Push State
             if (matchOver) {
                 await updateDoc(roomRef, {
                     status: 'finished',
@@ -1121,17 +1417,19 @@
                     </div>
 
                     <div class="battle-controls">
-                        ${activeIsFainted ? `
+                            ${activeIsFainted ? `
                             <p class="warning-text" style="display:block; text-align:left;">${esc(myActive.name)} fainted! Send out another Pokémon.</p>
-                        ` : amIWaiting ? `
+                        ` : (amIWaiting && !state.faintReplacement) ? `
                             <p class="text-muted" style="text-align:left;">Waiting for opponent to act...</p>
                             <div class="spinner" style="margin: 0; width: 25px; height: 25px;"></div>
+                        ` : state.faintReplacement ? `
+                            <p class="warning-text" style="display:block; text-align:left; color: var(--warning);">Waiting for replacements to be sent out...</p>
                         ` : `
                             <div style="font-size:0.8rem; font-weight:700; margin-bottom:4px; text-align:left;">What will ${esc(myActive.name)} do?</div>
                             <div class="move-grid">
                             ${myActive.moves.map((moveId, i) => {
                 const m = MOVES[moveId] || MOVES['struggle'];
-                return `<button class="btn-move" onclick="window.sendAction('move', '${moveId}')">
+                return `<button class="btn-move bg-${m.type}" onclick="window.sendAction('move', '${moveId}')">
                                     <div class="move-name">${esc(m.name)}</div>
                                     <div class="move-meta type-${m.type}">${m.type} / Pow: ${m.power} / Acc: ${m.accuracy}</div>
                                 </button>`;
@@ -1144,7 +1442,13 @@
                             ${myTeamFull.map((p, i) => {
                 const isCurrent = i === myActiveIdx;
                 const isFainted = p.currentHp <= 0;
-                const dis = isCurrent || isFainted || (amIWaiting && !activeIsFainted) ? 'disabled' : '';
+                let dis = isCurrent || isFainted ? 'disabled' : '';
+
+                // If expecting standard turn and waiting, disable.
+                if (amIWaiting && !activeIsFainted && !state.faintReplacement) dis = 'disabled';
+                // If fain replacement phase, and player is waiting (meaning they already picked a switch or don't need to), disable.
+                if (state.faintReplacement && state.actions[currentUser.uid]) dis = 'disabled';
+
                 return `<button class="btn-switch" ${dis} onclick="window.sendAction('switch', ${i})">
                                     <img src="${p.sprite}">
                                     <div style="text-align:left;">
