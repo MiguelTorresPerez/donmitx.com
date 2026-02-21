@@ -141,7 +141,7 @@ service cloud.firestore {
       // Host can update anything; regular players can only update aspects involving themselves (via Cloud Functions conceptually, but we allow general updates here for the MVP if they affect players/state)
       allow update: if isSignedIn() && (
         isOwner(resource.data.hostUid) || 
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['players', 'answers']) 
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['players', 'answers', 'state']) 
       );
       allow delete: if isOwner(resource.data.hostUid) || isSuperUser();
 
