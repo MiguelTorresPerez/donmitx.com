@@ -1279,7 +1279,7 @@
 
             if (!isReady && !isRandom) {
                 html += `<div class="pokemon-grid">
-                    ${POKEMON_DB.filter(p => !p.isMega).map(p => `
+                    ${POKEMON_DB.filter(p => !p.isMega && !p.isAltForm).map(p => `
                         <div class="pokemon-card ${myTeam.some(t => t.id === p.id) ? 'selected' : ''}" onclick="window.togglePokemon('${p.id}')">
                             <img src="${p.sprite}" alt="${p.name}" loading="lazy">
                             <div class="name">${p.name}</div>
@@ -1421,6 +1421,7 @@
                     oldMon.substituteHp = 0;
                     oldMon.perishSong = 0;
                     oldMon.destinyBond = false;
+                    oldMon.hasBeenSwitchedOut = true; // For Zero to Hero (Palafin)
 
                     const newIdx = actions[uid].val;
                     activeIdx[uid] = newIdx;
@@ -1484,6 +1485,49 @@
                         if (ab === 'drought') { state.weather = 'Sun'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Drought intensified the sun!`); }
                         if (ab === 'sandstream') { state.weather = 'Sand'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Sand Stream whipped up a sandstorm!`); }
                         if (ab === 'snowwarning') { state.weather = 'Snow'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Snow Warning made it snow!`); }
+
+                        // Zero to Hero: Palafin morphs to Hero form on switch-in if it has been switched out at least once
+                        if (ab === 'zerotohero' && newMon.hasBeenSwitchedOut) {
+                            const heroForm = POKEMON_DB.find(p => p.id === 'palafinhero');
+                            if (heroForm && newMon.id !== 'palafinhero') {
+                                newMon.name = heroForm.name;
+                                newMon.id = heroForm.id;
+                                newMon.types = [...heroForm.types];
+                                newMon.atk = heroForm.atk;
+                                newMon.def = heroForm.def;
+                                newMon.spa = heroForm.spa;
+                                newMon.spd = heroForm.spd;
+                                newMon.spe = heroForm.spe;
+                                newMon.sprite = heroForm.sprite;
+                                newMon.spriteBack = heroForm.spriteBack;
+                                log.push(`> <span style="color:var(--accent)">${newMon.name} underwent a heroic transformation!</span>`);
+                            }
+                        }
+
+                        // Forecast: Castform changes based on weather
+                        if (ab === 'forecast' && (newMon.id.includes('castform') || newMon.name === 'Castform')) {
+                            let targetId = 'castform';
+                            if (state.weather === 'Sun') targetId = 'castformsunny';
+                            else if (state.weather === 'Rain') targetId = 'castformrainy';
+                            else if (state.weather === 'Snow') targetId = 'castformsnowy';
+
+                            if (newMon.id !== targetId) {
+                                if (morphToForm(newMon, targetId)) {
+                                    log.push(`> <span style="color:var(--accent)">${newMon.name} transformed!</span>`);
+                                }
+                            }
+                        }
+
+                        // Flower Gift: Cherrim changes based on weather
+                        if (ab === 'flowergift' && (newMon.id.includes('cherrim') || newMon.name === 'Cherrim')) {
+                            const isSun = state.weather === 'Sun';
+                            const targetId = isSun ? 'cherrimsunshine' : 'cherrim';
+                            if (newMon.id !== targetId) {
+                                if (morphToForm(newMon, targetId)) {
+                                    log.push(`> <span style="color:var(--accent)">${newMon.name} transformed!</span>`);
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -1639,12 +1683,43 @@
             // 3. Execute Attacks
             let matchOver = false;
 
+            // Helper: morph a pokemon to a different form by looking up POKEMON_DB
+            const morphToForm = (mon, formId) => {
+                const form = POKEMON_DB.find(p => p.id === formId);
+                if (!form) return false;
+                mon.name = form.name;
+                mon.id = form.id;
+                mon.types = [...form.types];
+                mon.ability = form.abilities?.[0] || mon.ability;
+                mon.atk = form.atk;
+                mon.def = form.def;
+                mon.spa = form.spa;
+                mon.spd = form.spd;
+                mon.spe = form.spe;
+                mon.sprite = form.sprite;
+                mon.spriteBack = form.spriteBack;
+                return true;
+            };
+
             for (const atkData of attackers) {
                 const { uid, mon, move } = atkData;
                 const defUid = uid === p1Uid ? p2Uid : p1Uid;
                 const defMon = getMon(defUid);
 
                 if (mon.currentHp <= 0) continue;
+
+                // --- PRE-ATTACK FORM CHANGES ---
+                // Stance Change: Aegislash
+                if (mon.ability === 'Stance Change') {
+                    if (move.category !== 'Status' && (mon.id === 'aegislash' || mon.id === 'aegislash-shield' || mon.id.includes('aegislash') && !mon.id.includes('blade'))) {
+                        morphToForm(mon, 'aegislashblade');
+                        log.push(`> <span style="color:var(--accent)">${mon.name} changed to Blade Forme!</span>`);
+                    } else if (move.effects && move.effects.protect && (mon.id === 'aegislashblade' || mon.id.includes('blade'))) {
+                        morphToForm(mon, 'aegislash-shield');
+                        if (!POKEMON_DB.find(p => p.id === 'aegislash-shield')) morphToForm(mon, 'aegislash');
+                        log.push(`> <span style="color:var(--accent)">${mon.name} changed to Shield Forme!</span>`);
+                    }
+                }
 
                 log.push(`${mon.name} used ${move.name}!`);
 
@@ -1864,6 +1939,24 @@
                         if (effectiveness < 1 && effectiveness > 0 && h === 0) log.push(`> It's <span class="notvery">not very effective...</span>`);
                         if (effectiveness === 0) { log.push(`> It had <span class="notvery">no effect</span> on ${defMon.name}!`); damage = 0; break; }
                         if (isCrit && damage > 0) log.push(`> <span class="crit">A critical hit!</span>`);
+
+                        // --- PRE-DAMAGE FORM ABILITIES ---
+                        // Disguise: Mimikyu negates first hit
+                        if (damage > 0 && defMon.ability === 'Disguise' && !defMon.disguiseBroken) {
+                            defMon.disguiseBroken = true;
+                            const selfDmg = Math.floor(defMon.hp / 8);
+                            defMon.currentHp = Math.max(0, defMon.currentHp - selfDmg);
+                            morphToForm(defMon, 'mimikyubusted');
+                            log.push(`> <span style="color:var(--accent)">${defMon.name}'s Disguise was busted!</span>`);
+                            damage = 0;
+                        }
+                        // Ice Face: Eiscue blocks first physical hit
+                        if (damage > 0 && defMon.ability === 'Ice Face' && !defMon.iceFaceBroken && move.category === 'Physical') {
+                            defMon.iceFaceBroken = true;
+                            morphToForm(defMon, 'eiscuenoice');
+                            log.push(`> <span style="color:var(--accent)">${defMon.name}'s Ice Face blocked the attack!</span>`);
+                            damage = 0;
+                        }
 
                         if (damage > 0) {
                             const bypassesSub = (move.effects && (move.effects.sound || move.effects.bypassesSubstitute)) || mon.ability === 'Infiltrator';
@@ -2314,6 +2407,91 @@
                     log.push(`> ${mon.name}'s perish count fell to ${mon.perishSong}.`);
                     if (mon.perishSong === 0) {
                         mon.currentHp = 0;
+                    }
+                }
+
+                // End-of-turn form changes
+                // Zen Mode: Darmanitan morphs if HP <= 50%
+                if (mon.ability === 'Zen Mode' && mon.currentHp > 0) {
+                    const hpPct = mon.currentHp / mon.hp;
+                    if (hpPct <= 0.5 && !mon.id.includes('zen')) {
+                        const zenForm = POKEMON_DB.find(p => p.id === 'darmanitanzen' || p.id === 'darmanitangalarzen');
+                        if (zenForm) {
+                            mon.name = zenForm.name; mon.id = zenForm.id;
+                            mon.types = [...zenForm.types]; mon.atk = zenForm.atk; mon.def = zenForm.def;
+                            mon.spa = zenForm.spa; mon.spd = zenForm.spd; mon.spe = zenForm.spe;
+                            mon.sprite = zenForm.sprite; mon.spriteBack = zenForm.spriteBack;
+                            log.push(`> <span style="color:var(--accent)">${mon.name} entered Zen Mode!</span>`);
+                        }
+                    } else if (hpPct > 0.5 && mon.id.includes('zen')) {
+                        const baseForm = POKEMON_DB.find(p => p.id === 'darmanitan' || (p.id.includes('darmanitan') && !p.id.includes('zen')));
+                        if (baseForm) {
+                            mon.name = baseForm.name; mon.id = baseForm.id;
+                            mon.types = [...baseForm.types]; mon.atk = baseForm.atk; mon.def = baseForm.def;
+                            mon.spa = baseForm.spa; mon.spd = baseForm.spd; mon.spe = baseForm.spe;
+                            mon.sprite = baseForm.sprite; mon.spriteBack = baseForm.spriteBack;
+                            log.push(`> <span style="color:var(--accent)">${mon.name} exited Zen Mode!</span>`);
+                        }
+                    }
+                }
+
+                // Ice Face: restores in Snow
+                if (mon.ability === 'Ice Face' && mon.iceFaceBroken && state.weather === 'Snow') {
+                    const iceForm = POKEMON_DB.find(p => p.id === 'eiscue');
+                    if (iceForm) {
+                        mon.name = iceForm.name; mon.id = iceForm.id;
+                        mon.types = [...iceForm.types]; mon.atk = iceForm.atk; mon.def = iceForm.def;
+                        mon.spa = iceForm.spa; mon.spd = iceForm.spd; mon.spe = iceForm.spe;
+                        mon.sprite = iceForm.sprite; mon.spriteBack = iceForm.spriteBack;
+                        mon.iceFaceBroken = false;
+                        log.push(`> <span style="color:var(--accent)">${mon.name}'s Ice Face was restored!</span>`);
+                    }
+                }
+
+                // Schooling: Wishiwashi morphs if HP > 25% and level/stats are sufficient
+                if (mon.ability === 'Schooling' && mon.currentHp > 0) {
+                    const hpPct = mon.currentHp / mon.hp;
+                    if (hpPct > 0.25 && !mon.id.includes('school')) {
+                        if (morphToForm(mon, 'wishiwashischool')) {
+                            log.push(`> <span style="color:var(--accent)">${mon.name} formed a school!</span>`);
+                        }
+                    } else if (hpPct <= 0.25 && mon.id.includes('school')) {
+                        if (morphToForm(mon, 'wishiwashisolo') || morphToForm(mon, 'wishiwashi')) {
+                            log.push(`> <span style="color:var(--accent)">${mon.name}'s school dispersed!</span>`);
+                        }
+                    }
+                }
+
+                // Shields Down: Minior toggles based on HP > 50%
+                if (mon.ability === 'Shields Down' && mon.currentHp > 0) {
+                    const hpPct = mon.currentHp / mon.hp;
+                    if (hpPct <= 0.5 && mon.id.includes('meteor')) {
+                        if (morphToForm(mon, 'minior') || morphToForm(mon, 'miniorred')) {
+                            log.push(`> <span style="color:var(--accent)">${mon.name}'s shell smashed!</span>`);
+                        }
+                    } else if (hpPct > 0.5 && !mon.id.includes('meteor')) {
+                        if (morphToForm(mon, 'miniorredmeteor') || morphToForm(mon, 'miniormeteor')) {
+                            log.push(`> <span style="color:var(--accent)">${mon.name} is protected by its shell!</span>`);
+                        }
+                    }
+                }
+
+                // Power Construct: Zygarde morphs if HP <= 50%
+                if (mon.ability === 'Power Construct' && mon.currentHp > 0 && !mon.id.includes('complete')) {
+                    const hpPct = mon.currentHp / mon.hp;
+                    if (hpPct <= 0.5) {
+                        const completeForm = POKEMON_DB.find(p => p.id === 'zygardecomplete');
+                        if (completeForm) {
+                            const oldMax = mon.hp;
+                            mon.name = completeForm.name; mon.id = completeForm.id;
+                            mon.hp = completeForm.hp;
+                            mon.currentHp += (mon.hp - oldMax); // Heal by the difference
+                            mon.atk = completeForm.atk; mon.def = completeForm.def;
+                            mon.spa = completeForm.spa; mon.spd = completeForm.spd;
+                            mon.spe = completeForm.spe;
+                            mon.sprite = completeForm.sprite; mon.spriteBack = completeForm.spriteBack;
+                            log.push(`> <span style="color:var(--accent)">${mon.name} transformed into its Complete Forme!</span>`);
+                        }
                     }
                 }
 

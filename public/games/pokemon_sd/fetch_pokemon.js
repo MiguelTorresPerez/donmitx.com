@@ -559,37 +559,113 @@ async function buildData() {
   const sdItems = await fetchShowdownObject('https://play.pokemonshowdown.com/data/items.js', 'BattleItems');
   const sdPokedex = await fetchShowdownObject('https://play.pokemonshowdown.com/data/pokedex.js', 'BattlePokedex');
 
-  // Map Mega Evolutions
+  // Map Mega Evolutions & Alt Forms
   let megaCount = 0;
+  let altFormCount = 0;
+  const altFormNames = ['Blade', 'Hero', 'Zen', 'Galar-Zen', 'Noice', 'Busted', 'Sunshine', 'School', 'Meteor', 'Complete', 'Pirouette', 'Sunny', 'Rainy', 'Snowy', 'Hangry'];
+
+  // Pre-pass: ensure base species exist in POKEMON_DB for all forms we care about
+  let supplementedBases = 0;
   for (const [key, sdPoke] of Object.entries(sdPokedex)) {
-    if (sdPoke.baseSpecies && (sdPoke.forme === 'Mega' || (sdPoke.forme && sdPoke.forme.startsWith('Mega-')))) {
-      // Find base form in our DB
-      const baseForm = POKEMON_DB.find(p => p.name.toLowerCase() === sdPoke.baseSpecies.toLowerCase() || p.id === sdPoke.baseSpecies.toLowerCase());
-      if (baseForm) {
-        const base = sdPoke.baseStats;
-        POKEMON_DB.push({
-          id: key,
-          name: sdPoke.name,
-          types: sdPoke.types,
-          abilities: Object.values(sdPoke.abilities),
-          hp: baseForm.hp, // HP doesn't change on Mega forms
-          atk: base.atk * 2 + 5,
-          def: base.def * 2 + 5,
-          spa: base.spa * 2 + 5,
-          spd: base.spd * 2 + 5,
-          spe: base.spe * 2 + 5,
-          moves: [...baseForm.moves], // Copy base form's movepool
-          sprite: `https://play.pokemonshowdown.com/sprites/ani/${key}.gif`,
-          spriteBack: `https://play.pokemonshowdown.com/sprites/ani-back/${key}.gif`,
-          isMega: true,
-          baseSpecies: baseForm.id,
-          requiredItem: sdPoke.requiredItem || null
-        });
-        megaCount++;
+    if (sdPoke.baseSpecies) continue; // skip forms, we want base species
+    if (sdPoke.isNonstandard) continue;
+    const sdId = key; // e.g. "aegislash"
+    const alreadyExists = POKEMON_DB.find(p => p.id === sdId || p.name.toLowerCase() === (sdPoke.name || '').toLowerCase());
+    if (alreadyExists) continue;
+    // Check if any form references this as baseSpecies  
+    const hasRelevantForm = Object.values(sdPokedex).some(f =>
+      f.baseSpecies && f.baseSpecies.toLowerCase() === (sdPoke.name || '').toLowerCase() && f.forme &&
+      (f.forme === 'Mega' || f.forme.startsWith('Mega-') || altFormNames.includes(f.forme))
+    );
+    if (!hasRelevantForm) continue;
+    // Create from Showdown data
+    const base = sdPoke.baseStats;
+    if (!base) continue;
+    const movepool = [];
+    // Grab movepool from sdMoves that this mon learns (we'll rely on Showdown learnsets later, just give empty for now and copy from alt forms)
+    POKEMON_DB.push({
+      id: sdId,
+      name: sdPoke.name,
+      types: sdPoke.types || ['Normal'],
+      abilities: Object.values(sdPoke.abilities || {}),
+      hp: base.hp * 2 + 110,
+      atk: base.atk * 2 + 5,
+      def: base.def * 2 + 5,
+      spa: base.spa * 2 + 5,
+      spd: base.spd * 2 + 5,
+      spe: base.spe * 2 + 5,
+      moves: movepool,
+      sprite: `https://play.pokemonshowdown.com/sprites/ani/${sdId}.gif`,
+      spriteBack: `https://play.pokemonshowdown.com/sprites/ani-back/${sdId}.gif`
+    });
+    supplementedBases++;
+  }
+  console.log(`Supplemented ${supplementedBases} missing base forms from Showdown Pokedex.`);
+
+  // Helper: find base species in POKEMON_DB (fuzzy match accounts for PokeAPI naming differences)
+  const findBase = (speciesName) => {
+    const lower = (speciesName || '').toLowerCase();
+    return POKEMON_DB.find(p =>
+      p.id === lower ||
+      p.name.toLowerCase() === lower ||
+      p.id.startsWith(lower) ||
+      lower.startsWith(p.id.split('-')[0]) && p.name.toLowerCase().includes(lower.split('-')[0])
+    );
+  };
+
+  for (const [key, sdPoke] of Object.entries(sdPokedex)) {
+    if (sdPoke.baseSpecies) {
+      if (sdPoke.forme === 'Mega' || (sdPoke.forme && sdPoke.forme.startsWith('Mega-'))) {
+        const baseForm = findBase(sdPoke.baseSpecies);
+        if (baseForm) {
+          const base = sdPoke.baseStats;
+          POKEMON_DB.push({
+            id: key,
+            name: sdPoke.name,
+            types: sdPoke.types,
+            abilities: Object.values(sdPoke.abilities),
+            hp: baseForm.hp, // HP doesn't change on Mega forms
+            atk: base.atk * 2 + 5,
+            def: base.def * 2 + 5,
+            spa: base.spa * 2 + 5,
+            spd: base.spd * 2 + 5,
+            spe: base.spe * 2 + 5,
+            moves: [...baseForm.moves], // Copy base form's movepool
+            sprite: `https://play.pokemonshowdown.com/sprites/ani/${key}.gif`,
+            spriteBack: `https://play.pokemonshowdown.com/sprites/ani-back/${key}.gif`,
+            isMega: true,
+            baseSpecies: baseForm.id,
+            requiredItem: sdPoke.requiredItem || null
+          });
+          megaCount++;
+        }
+      } else if (sdPoke.forme && altFormNames.includes(sdPoke.forme)) {
+        const baseForm = findBase(sdPoke.baseSpecies);
+        if (baseForm) {
+          const base = sdPoke.baseStats;
+          POKEMON_DB.push({
+            id: key,
+            name: sdPoke.name,
+            types: sdPoke.types,
+            abilities: Object.values(sdPoke.abilities),
+            hp: baseForm.hp,
+            atk: base.atk * 2 + 5,
+            def: base.def * 2 + 5,
+            spa: base.spa * 2 + 5,
+            spd: base.spd * 2 + 5,
+            spe: base.spe * 2 + 5,
+            moves: [...baseForm.moves],
+            sprite: `https://play.pokemonshowdown.com/sprites/ani/${key}.gif`,
+            spriteBack: `https://play.pokemonshowdown.com/sprites/ani-back/${key}.gif`,
+            isAltForm: true,
+            baseSpecies: baseForm.id
+          });
+          altFormCount++;
+        }
       }
     }
   }
-  console.log(`Successfully extracted ${megaCount} Mega Evolutions.`);
+  console.log(`Successfully extracted ${megaCount} Mega Evolutions & ${altFormCount} Alt Forms.`);
 
   // Supplement MOVES_DB with generalized Showdown effects
   let generatedMoves = 0;
