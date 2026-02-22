@@ -53,6 +53,21 @@ async function init() {
     const playGameId = urlParams.get('playGameId');
 
     if (playRoomId && playGameId) {
+        const gameModal = document.getElementById('modal-play-game');
+        const modalInner = gameModal.querySelector('.modal');
+
+        // Force the modal to be true fullscreen when opened via direct link
+        gameModal.style.background = '#0f172a'; // Solid background to hide dashboard completely
+        gameModal.style.backdropFilter = 'none';
+
+        modalInner.style.width = '100vw';
+        modalInner.style.maxWidth = '100vw';
+        modalInner.style.height = '100vh';
+        modalInner.style.maxHeight = '100vh';
+        modalInner.style.margin = '0';
+        modalInner.style.borderRadius = '0';
+        modalInner.style.border = 'none';
+
         document.getElementById('game-iframe').src = `/games/${playGameId}/index.html?roomId=${playRoomId}`;
         openModal('modal-play-game');
     } else {
