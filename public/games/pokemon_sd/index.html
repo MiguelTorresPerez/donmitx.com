@@ -1592,8 +1592,23 @@
                             state.healingWish[uid] = false;
                         }
 
+                        // Natural Cure: heal status on switch-out (applied to the incoming mon if it has the ability)
+                        // Regenerator: heal 1/3 HP on switch-in (actually heals on switch-out, but we apply it to the new mon for simplicity)
+
                         // Apply Hazards
                         const newMon = getMon(uid);
+
+                        // Natural Cure: clears status
+                        if (newMon.ability === 'Natural Cure' && newMon.status) {
+                            log.push(`> ${newMon.name}'s Natural Cure healed its status!`);
+                            newMon.status = null;
+                        }
+                        // Regenerator: restore 1/3 HP
+                        if (newMon.ability === 'Regenerator') {
+                            newMon.currentHp = Math.min(newMon.hp, newMon.currentHp + Math.floor(newMon.hp / 3));
+                            log.push(`> ${newMon.name} restored HP with Regenerator!`);
+                        }
+
                         const hazards = state.hazards[uid] || {};
                         if (newMon.item !== 'Heavy-Duty Boots') {
                             if (hazards['stealth-rock']) {
@@ -2053,16 +2068,19 @@
                             calcStat(mon.spa, calcBoost(mon.boosts.spa, mon.ability)) :
                             calcStat(mon.atk, calcBoost(mon.boosts.atk, mon.ability));
 
-                        if (mon.status === 'BRN' && move.category === 'Physical') statA = Math.floor(statA * 0.5);
+                        if (mon.status === 'BRN' && move.category === 'Physical' && mon.ability !== 'Guts') statA = Math.floor(statA * 0.5);
+                        // Guts: boosts Attack by 50% when statused
+                        if (mon.ability === 'Guts' && mon.status && move.category === 'Physical') statA = Math.floor(statA * 1.5);
+                        // Marvel Scale: boosts Defense by 50% when statused (applied on defender)
                         statA = Math.floor(statA * isChoiceBand * isChoiceSpecs);
 
                         // Offensive Ability Modifiers
                         if (mon.ability === 'Technician' && move.power <= 60) statA = Math.floor(statA * 1.5);
                         if (mon.ability === 'Sheer Force' && move.effects && (move.effects.status || move.effects.enemyDrop || move.effects.selfBoost || move.effects.flinch)) {
                             statA = Math.floor(statA * 1.3);
-                            // Sheer force removes secondary effects (handled in application phase natively by skipping, but we boost here)
                         }
                         if (mon.ability === 'Tough Claws' && move.contact) statA = Math.floor(statA * 1.3);
+                        if (mon.ability === 'Huge Power' || mon.ability === 'Pure Power') { if (move.category === 'Physical') statA = Math.floor(statA * 2); }
 
                         // Weather defensive boosts
                         let wDefMod = 1;
@@ -2071,6 +2089,18 @@
                         if (state.weather === 'Sand' && defMon.types.includes('Rock')) wSpdMod *= 1.5;
 
                         let statD = move.category === 'Special' ? calcStat(defMon.spd, defMon.boosts.spd) * spdMod * wSpdMod : calcStat(defMon.def, defMon.boosts.def) * defMod * wDefMod;
+
+                        // Marvel Scale: boosts Defense by 50% when defender has a status
+                        if (defMon.ability === 'Marvel Scale' && defMon.status && move.category === 'Physical') {
+                            statD = Math.floor(statD * 1.5);
+                        }
+
+                        // Multiscale / Shadow Shield: halves damage when at full HP
+                        let multiscaleMod = 1;
+                        if ((defMon.ability === 'Multiscale' || defMon.ability === 'Shadow Shield') && defMon.currentHp === defMon.hp) {
+                            multiscaleMod = 0.5;
+                        }
+                        // Sturdy: prevents OHKO from full HP (handled in damage application below)
 
                         // Ability: Immunities & Absorptions
                         let effectiveness = getEffectiveness(move.type, defMon.types);
@@ -2121,7 +2151,7 @@
                             const isSTAB = mon.types.includes(move.type) ? 1.5 : 1;
                             if (isCrit) damage = Math.floor(damage * 1.5);
                             const rng = (85 + Math.random() * 15) / 100;
-                            damage = Math.floor(damage * isSTAB * effectiveness * rng * isLifeOrb * weatherMod);
+                            damage = Math.floor(damage * isSTAB * effectiveness * rng * isLifeOrb * weatherMod * multiscaleMod);
 
                             // Semi-invulnerable bypass bonus (e.g. Earthquake vs Dig)
                             if (doubleDamageInvulnerable) damage *= 2;
@@ -2164,6 +2194,9 @@
                                     if (defMon.item === 'Focus Sash' && defMon.currentHp === defMon.hp && damage >= defMon.currentHp) {
                                         defMon.currentHp = 1; defMon.item = 'None';
                                         log.push(`<span class="item-text">${defMon.name} hung on using its Focus Sash!</span>`);
+                                    } else if (defMon.ability === 'Sturdy' && defMon.currentHp === defMon.hp && damage >= defMon.currentHp) {
+                                        defMon.currentHp = 1;
+                                        log.push(`<span class="item-text">${defMon.name} endured the hit using Sturdy!</span>`);
                                     } else { defMon.currentHp = Math.max(0, defMon.currentHp - damage); }
                                     totalDmg += dmgDealt;
                                     log.push(`> <span style="color:#94a3b8; font-size:0.85em;">${defMon.name} took <b>${damage}</b> damage! (${Math.round((damage / defMon.hp) * 100)}%) (${defMon.currentHp}/${defMon.hp} HP)</span>`);
@@ -2176,10 +2209,28 @@
                                     }
 
                                     // Rocky Helmet
-                                    if (defMon.item === 'Rocky Helmet' && move.category === 'Physical' && defMon.currentHp > 0) { // simplified contact check
+                                    if (defMon.item === 'Rocky Helmet' && move.category === 'Physical' && defMon.currentHp > 0) {
                                         const recoil = Math.floor(mon.hp / 6);
                                         mon.currentHp = Math.max(0, mon.currentHp - recoil);
                                         log.push(`> ${mon.name} was hurt by ${defMon.name}'s Rocky Helmet!`);
+                                    }
+
+                                    // Contact Abilities: Static, Flame Body, Rough Skin, Iron Barbs
+                                    if (move.category === 'Physical' && defMon.currentHp > 0 && mon.currentHp > 0) {
+                                        if (defMon.ability === 'Static' && !mon.status && !mon.types.includes('Electric') && Math.random() < 0.3) {
+                                            mon.status = 'PAR';
+                                            log.push(`<span class="status-PAR">${mon.name} was paralyzed by ${defMon.name}'s Static!</span>`);
+                                        }
+                                        if (defMon.ability === 'Flame Body' && !mon.status && !mon.types.includes('Fire') && Math.random() < 0.3) {
+                                            mon.status = 'BRN';
+                                            log.push(`<span class="status-BRN">${mon.name} was burned by ${defMon.name}'s Flame Body!</span>`);
+                                        }
+                                        if ((defMon.ability === 'Rough Skin' || defMon.ability === 'Iron Barbs') && mon.currentHp > 0) {
+                                            const contactDmg = Math.floor(mon.hp / 8) || 1;
+                                            mon.currentHp = Math.max(0, mon.currentHp - contactDmg);
+                                            log.push(`> ${mon.name} was hurt by ${defMon.name}'s ${defMon.ability}!`);
+                                            if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
+                                        }
                                     }
                                     // Air balloon pop
                                     if (defMon.item === 'Air Balloon') {
@@ -2199,10 +2250,23 @@
                             if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
                         }
 
+                        // --- Moxie / Beast Boost: boost on KO (fires on any KO, not just moves with effects) ---
+                        if (defMon.currentHp === 0 && totalDmg > 0) {
+                            if (mon.ability === 'Moxie' && mon.currentHp > 0) {
+                                mon.boosts.atk = Math.min(6, mon.boosts.atk + 1);
+                                log.push(`<span class="super">${mon.name}'s Moxie raised its Attack!</span>`);
+                            }
+                            if (mon.ability === 'Beast Boost' && mon.currentHp > 0) {
+                                const statsObj = { atk: mon.atk, def: mon.def, spa: mon.spa, spd: mon.spd, spe: mon.spe };
+                                const bestStat = Object.entries(statsObj).sort((a, b) => b[1] - a[1])[0][0];
+                                mon.boosts[bestStat] = Math.min(6, mon.boosts[bestStat] + 1);
+                                log.push(`<span class="super">${mon.name}'s Beast Boost raised its ${bestStat.toUpperCase()}!</span>`);
+                            }
+                        }
+
                         // Move effects after damage
                         if (move.effects && totalDmg > 0) {
                             const fx = { ...move.effects };
-
                             // Sheer Force negates secondary effects applied to the target or user from attacking moves
                             if (mon.ability === 'Sheer Force' && (fx.status || fx.enemyDrop || fx.flinch)) {
                                 delete fx.status;
@@ -2571,7 +2635,9 @@
                     }
 
                     // Weather Damage
-                    if (state.weather === 'Sand' && !mon.types.includes('Rock') && !mon.types.includes('Ground') && !mon.types.includes('Steel') && mon.item !== 'Heavy-Duty Boots') {
+                    if (state.weather === 'Sand' && !mon.types.includes('Rock') && !mon.types.includes('Ground') && !mon.types.includes('Steel') && mon.item !== 'Heavy-Duty Boots'
+                        && mon.ability !== 'Sand Veil' && mon.ability !== 'Sand Rush' && mon.ability !== 'Sand Force'
+                        && mon.ability !== 'Overcoat' && mon.ability !== 'Magic Guard') {
                         mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp / 16));
                         log.push(`> ${mon.name} is buffeted by the sandstorm!`);
                     }
@@ -2747,6 +2813,24 @@
                     }
 
                     if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
+
+                    // Speed Boost: raise Speed by 1 at end of turn
+                    if (mon.ability === 'Speed Boost' && mon.currentHp > 0) {
+                        mon.boosts.spe = Math.min(6, mon.boosts.spe + 1);
+                        log.push(`<span class="super">${mon.name}'s Speed Boost raised its Speed!</span>`);
+                    }
+
+                    // Poison Heal: instead of taking poison damage, heals 1/8 HP
+                    if (mon.ability === 'Poison Heal' && (mon.status === 'PSN' || mon.status === 'TOX') && mon.currentHp > 0) {
+                        // Undo the poison damage that was applied above
+                        // (we already applied damage in the status section, so heal back + extra)
+                        // For simplicity just heal 1/8 at end of turn
+                        mon.currentHp = Math.min(mon.hp, mon.currentHp + Math.floor(mon.hp / 8));
+                        log.push(`<span class="item-text">${mon.name}'s Poison Heal restored HP!</span>`);
+                    }
+
+                    // Magic Guard: undo residual damage (simplification: heal back indirect damage from weather/status/hazards)
+                    // Note: Magic Guard is already partially handled by skipping sand damage above
                 }
 
                 // Intimidate on switch-in
