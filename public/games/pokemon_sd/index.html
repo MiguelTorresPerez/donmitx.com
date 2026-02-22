@@ -898,11 +898,6 @@
                                                 [`state.actions.${uid}`]: { type: 'move', val: mon.charging, mega: false }
                                             });
                                         }
-                                        if (mon && mon.recharging && mon.currentHp > 0) {
-                                            updateDoc(roomRef, {
-                                                [`state.actions.${uid}`]: { type: 'move', val: 'recharge', mega: false }
-                                            });
-                                        }
                                     }
                                 }
                                 // Normal turn: need actions from both
@@ -1671,6 +1666,32 @@
                             if (ab === 'drought') { state.weather = 'Sun'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Drought intensified the sun!`); }
                             if (ab === 'sandstream') { state.weather = 'Sand'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Sand Stream whipped up a sandstorm!`); }
                             if (ab === 'snowwarning') { state.weather = 'Snow'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Snow Warning made it snow!`); }
+                            if (ab === 'deltastream') { state.weather = 'DeltaStream'; state.weatherTurns = 5; log.push(`> ${newMon.name} created a mysterious air current!`); }
+
+                            // Terrain and other switch-in abilities
+                            if (ab === 'electricsurge' || ab === 'hadronengine') { state.terrain = 'Electric'; state.terrainTurns = 5; log.push(`> An electric current runs across the battlefield!`); }
+                            if (ab === 'psychicsurge') { state.terrain = 'Psychic'; state.terrainTurns = 5; log.push(`> The battlefield got weird!`); }
+                            if (ab === 'grassysurge') { state.terrain = 'Grassy'; state.terrainTurns = 5; log.push(`> Grass grew to cover the battlefield!`); }
+                            if (ab === 'mistysurge') { state.terrain = 'Misty'; state.terrainTurns = 5; log.push(`> Mist swirled around the battlefield!`); }
+                            if (ab === 'orichalcumpulse') { state.weather = 'Sun'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Orichalcum Pulse turned the sunlight harsh!`); }
+
+                            // Switch-in Stat modifiers / Other
+                            if (ab === 'download' && oppMon.currentHp > 0) {
+                                const defToCompare = calcStat(oppMon.def, oppMon.boosts?.def || 0);
+                                const spdToCompare = calcStat(oppMon.spd, oppMon.boosts?.spd || 0);
+                                if (defToCompare < spdToCompare) { newMon.boosts.atk = Math.min(6, newMon.boosts.atk + 1); log.push(`> ${newMon.name}'s Download boosted its Attack!`); }
+                                else { newMon.boosts.spa = Math.min(6, newMon.boosts.spa + 1); log.push(`> ${newMon.name}'s Download boosted its SpA!`); }
+                            }
+                            if (ab === 'trace' && oppMon.currentHp > 0) {
+                                newMon.ability = oppMon.ability; log.push(`> ${newMon.name} traced ${oppMon.name}'s ${oppMon.ability}!`);
+                            }
+                            if (ab === 'imposter' && oppMon.currentHp > 0) {
+                                morphToForm(newMon, oppMon.id);
+                                log.push(`> <span style="color:var(--accent)">${newMon.name} transformed into ${oppMon.name} using Imposter!</span>`);
+                            }
+                            if (ab === 'supersweetsyrup' && oppMon.currentHp > 0) {
+                                oppMon.boosts.evasion = Math.max(-6, oppMon.boosts.evasion - 1); log.push(`<span class="notvery">A sweet scent lowered ${oppMon.name}'s evasiveness!</span>`);
+                            }
 
                             // Zero to Hero: Palafin morphs to Hero form on switch-in if it has been switched out at least once
                             if (ab === 'zerotohero' && newMon.hasBeenSwitchedOut) {
@@ -1761,6 +1782,12 @@
                             if (ab === 'drought') { state.weather = 'Sun'; state.weatherTurns = 5; log.push(`> ${mon.name}'s Drought intensified the sun!`); }
                             if (ab === 'sandstream') { state.weather = 'Sand'; state.weatherTurns = 5; log.push(`> ${mon.name}'s Sand Stream whipped up a sandstorm!`); }
                             if (ab === 'snowwarning') { state.weather = 'Snow'; state.weatherTurns = 5; log.push(`> ${mon.name}'s Snow Warning made it snow!`); }
+                            if (ab === 'deltastream') { state.weather = 'DeltaStream'; state.weatherTurns = 5; log.push(`> ${mon.name} created a mysterious air current!`); }
+
+                            if (ab === 'electricsurge' || ab === 'hadronengine') { state.terrain = 'Electric'; state.terrainTurns = 5; log.push(`> An electric current runs across the battlefield!`); }
+                            if (ab === 'psychicsurge') { state.terrain = 'Psychic'; state.terrainTurns = 5; log.push(`> The battlefield got weird!`); }
+                            if (ab === 'grassysurge') { state.terrain = 'Grassy'; state.terrainTurns = 5; log.push(`> Grass grew to cover the battlefield!`); }
+                            if (ab === 'mistysurge') { state.terrain = 'Misty'; state.terrainTurns = 5; log.push(`> Mist swirled around the battlefield!`); }
                         }
                     }
                 }
@@ -1924,6 +1951,12 @@
                         log.push(`${mon.name} used ${move.name}!`);
                         playSound('move');
 
+                        // Protean / Libero Type Change
+                        if (['Protean', 'Libero'].includes(mon.ability) && move.type !== '???' && !mon.types.includes(move.type)) {
+                            mon.types = [move.type];
+                            log.push(`> <span style="color:var(--accent)">${mon.name}'s ${mon.ability} changed its type to ${move.type}!</span>`);
+                        }
+
                         // Track used moves for Last Resort logic
                         if (!mon.usedMoves) mon.usedMoves = [];
 
@@ -2007,6 +2040,28 @@
                                 }
                             }
                             continue;
+                        }
+
+                        // --- MAGIC BOUNCE LOGIC ---
+                        const isReflectable = move.category === 'Status' && move.effects && (move.effects.status || move.effects.enemyDrop || move.effects.leechSeed || move.effects.taunt || move.effects.encore || move.effects.hazards || move.effects.hazard || move.effects.forceSwitch);
+                        if (isReflectable && defMon.ability === 'Magic Bounce' && !['Memento', 'Parting Shot'].includes(move.name)) {
+                            log.push(`> <span style="color:var(--accent)">${defMon.name} bounced the ${move.name} back!</span>`);
+                            if (move.effects.status) {
+                                mon.status = move.effects.status; log.push(`<span class="status-${mon.status}">${mon.name} was afflicted with ${mon.status} by Magic Bounce!</span>`);
+                            }
+                            if (move.effects.enemyDrop) {
+                                for (const [s, amt] of Object.entries(move.effects.enemyDrop)) {
+                                    mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
+                                    log.push(`<span class="notvery">${mon.name}'s ${s} fell!</span>`);
+                                }
+                            }
+                            if (move.effects.leechSeed) {
+                                mon.seeded = true; log.push(`> ${mon.name} was seeded!`);
+                            }
+                            if (move.effects.taunt) {
+                                mon.taunt = 3; log.push(`> ${mon.name} fell for the taunt!`);
+                            }
+                            continue; // Skip the rest of the move for the defender
                         }
 
                         // --- ACCURACY CHECK ---
@@ -2099,18 +2154,41 @@
                                 calcStat(mon.atk, calcBoost(mon.boosts.atk, mon.ability));
 
                             if (mon.status === 'BRN' && move.category === 'Physical' && mon.ability !== 'Guts') statA = Math.floor(statA * 0.5);
-                            // Guts: boosts Attack by 50% when statused
-                            if (mon.ability === 'Guts' && mon.status && move.category === 'Physical') statA = Math.floor(statA * 1.5);
+                            if (mon.status && move.category === 'Physical' && mon.ability === 'Guts') statA = Math.floor(statA * 1.5);
+                            if (mon.status === 'BRN' && move.category === 'Special' && mon.ability === 'Flare Boost') statA = Math.floor(statA * 1.5);
+                            if ((mon.status === 'PSN' || mon.status === 'TOX') && move.category === 'Physical' && mon.ability === 'Toxic Boost') statA = Math.floor(statA * 1.5);
                             // Marvel Scale: boosts Defense by 50% when statused (applied on defender)
                             statA = Math.floor(statA * isChoiceBand * isChoiceSpecs);
 
-                            // Offensive Ability Modifiers
-                            if (mon.ability === 'Technician' && move.power <= 60) statA = Math.floor(statA * 1.5);
-                            if (mon.ability === 'Sheer Force' && move.effects && (move.effects.status || move.effects.enemyDrop || move.effects.selfBoost || move.effects.flinch)) {
-                                statA = Math.floor(statA * 1.3);
+                            // --- OFFENSIVE ABILITY MODIFIERS ---
+                            let isContact = move.contact || false;
+                            if (mon.ability === 'Long Reach') isContact = false;
+
+                            let basePwrMultiplier = 1;
+
+                            // HP-based boosts (Overgrow, Blaze, Torrent, Swarm)
+                            if (mon.currentHp <= (mon.hp / 3)) {
+                                if (mon.ability === 'Overgrow' && move.type === 'Grass') basePwrMultiplier *= 1.5;
+                                if (mon.ability === 'Blaze' && move.type === 'Fire') basePwrMultiplier *= 1.5;
+                                if (mon.ability === 'Torrent' && move.type === 'Water') basePwrMultiplier *= 1.5;
+                                if (mon.ability === 'Swarm' && move.type === 'Bug') basePwrMultiplier *= 1.5;
                             }
-                            if (mon.ability === 'Tough Claws' && move.contact) statA = Math.floor(statA * 1.3);
+
+                            if (mon.ability === 'Technician' && move.power <= 60) basePwrMultiplier *= 1.5;
+                            if (mon.ability === 'Sheer Force' && move.effects && (move.effects.status || move.effects.enemyDrop || move.effects.selfBoost || move.effects.flinch)) basePwrMultiplier *= 1.3;
+                            if (mon.ability === 'Tough Claws' && isContact) basePwrMultiplier *= 1.3;
+                            if (mon.ability === 'Strong Jaw' && ['Bite', 'Crunch', 'Fang', 'Jaw'].some(sub => move.name.includes(sub))) basePwrMultiplier *= 1.5;
+                            if (mon.ability === 'Mega Launcher' && ['Pulse', 'Aura'].some(sub => move.name.includes(sub))) basePwrMultiplier *= 1.5;
+                            if (mon.ability === 'Iron Fist' && move.name.includes('Punch')) basePwrMultiplier *= 1.2;
+                            if (mon.ability === 'Reckless' && move.effects?.recoilPerc) basePwrMultiplier *= 1.2;
+                            if (mon.ability === 'Sharpness' && ['Cut', 'Slash', 'Blade', 'Cleave'].some(sub => move.name.includes(sub))) basePwrMultiplier *= 1.5;
+                            if (mon.ability === 'Punk Rock' && move.effects?.sound) basePwrMultiplier *= 1.3;
+                            if (mon.ability === 'Water Bubble' && move.type === 'Water') basePwrMultiplier *= 2;
+                            if (mon.ability === 'Steelworker' && move.type === 'Steel') basePwrMultiplier *= 1.5;
+
+                            statA = Math.floor(statA * basePwrMultiplier);
                             if (mon.ability === 'Huge Power' || mon.ability === 'Pure Power') { if (move.category === 'Physical') statA = Math.floor(statA * 2); }
+                            if (mon.ability === 'Hustle' && move.category === 'Physical') { statA = Math.floor(statA * 1.5); }
 
                             // Weather defensive boosts
                             let wDefMod = 1;
@@ -2132,38 +2210,58 @@
                             }
                             // Sturdy: prevents OHKO from full HP (handled in damage application below)
 
+                            // --- TYPE CHANGING ABILITIES ---
+                            let moveType = move.type;
+                            let typeChangeMod = 1;
+                            if (moveType === 'Normal') {
+                                if (mon.ability === 'Pixilate') { moveType = 'Fairy'; typeChangeMod = 1.2; }
+                                else if (mon.ability === 'Refrigerate') { moveType = 'Ice'; typeChangeMod = 1.2; }
+                                else if (mon.ability === 'Aerilate') { moveType = 'Flying'; typeChangeMod = 1.2; }
+                                else if (mon.ability === 'Galvanize') { moveType = 'Electric'; typeChangeMod = 1.2; }
+                            }
+                            if (mon.ability === 'Liquid Voice' && move.effects?.sound) moveType = 'Water';
+                            if (mon.ability === 'Normalize') { moveType = 'Normal'; typeChangeMod = 1.2; }
+
                             // Ability: Immunities & Absorptions
-                            let effectiveness = getEffectiveness(move.type, defMon.types);
+                            let effectiveness = getEffectiveness(moveType, defMon.types);
                             if (effectiveness > 0) {
-                                if (defMon.ability === 'Levitate' && move.type === 'Ground') {
+                                if (defMon.ability === 'Levitate' && moveType === 'Ground') {
                                     log.push(`> ${defMon.name}'s Levitate makes it immune to Ground moves!`);
                                     effectiveness = 0;
-                                } else if ((defMon.ability === 'Water Absorb' || defMon.ability === 'Dry Skin') && move.type === 'Water') {
+                                } else if ((defMon.ability === 'Water Absorb' || defMon.ability === 'Dry Skin') && moveType === 'Water') {
                                     log.push(`> ${defMon.name}'s ${defMon.ability} absorbed the attack!`);
                                     defMon.currentHp = Math.min(defMon.hp, defMon.currentHp + Math.floor(defMon.hp / 4));
                                     effectiveness = 0;
-                                } else if (defMon.ability === 'Volt Absorb' && move.type === 'Electric') {
+                                } else if (defMon.ability === 'Volt Absorb' && moveType === 'Electric') {
                                     log.push(`> ${defMon.name}'s Volt Absorb absorbed the attack!`);
                                     defMon.currentHp = Math.min(defMon.hp, defMon.currentHp + Math.floor(defMon.hp / 4));
                                     effectiveness = 0;
-                                } else if (defMon.ability === 'Motor Drive' && move.type === 'Electric') {
+                                } else if (defMon.ability === 'Motor Drive' && moveType === 'Electric') {
                                     log.push(`> ${defMon.name}'s Motor Drive raised its Speed!`);
                                     defMon.boosts.spe = Math.min(6, defMon.boosts.spe + 1);
                                     effectiveness = 0;
-                                } else if (defMon.ability === 'Sap Sipper' && move.type === 'Grass') {
+                                } else if (defMon.ability === 'Sap Sipper' && moveType === 'Grass') {
                                     log.push(`> ${defMon.name}'s Sap Sipper raised its Attack!`);
                                     defMon.boosts.atk = Math.min(6, defMon.boosts.atk + 1);
                                     effectiveness = 0;
-                                } else if (defMon.ability === 'Flash Fire' && move.type === 'Fire') {
+                                } else if (defMon.ability === 'Flash Fire' && moveType === 'Fire') {
                                     log.push(`> ${defMon.name}'s Flash Fire neutralized the attack!`);
+                                    effectiveness = 0;
+                                } else if (defMon.ability === 'Earth Eater' && moveType === 'Ground') {
+                                    log.push(`> ${defMon.name}'s Earth Eater absorbed the attack!`);
+                                    defMon.currentHp = Math.min(defMon.hp, defMon.currentHp + Math.floor(defMon.hp / 4));
+                                    effectiveness = 0;
+                                } else if (defMon.ability === 'Well-Baked Body' && moveType === 'Fire') {
+                                    log.push(`> ${defMon.name}'s Well-Baked Body absorbed the attack!`);
+                                    defMon.boosts.def = Math.min(6, defMon.boosts.def + 2);
                                     effectiveness = 0;
                                 }
                             }
 
                             // Weather damage modifiers
                             let weatherMod = 1;
-                            if (state.weather === 'Sun') { if (move.type === 'Fire') weatherMod = 1.5; if (move.type === 'Water') weatherMod = 0.5; }
-                            if (state.weather === 'Rain') { if (move.type === 'Water') weatherMod = 1.5; if (move.type === 'Fire') weatherMod = 0.5; }
+                            if (state.weather === 'Sun') { if (moveType === 'Fire') weatherMod = 1.5; if (moveType === 'Water') weatherMod = 0.5; }
+                            if (state.weather === 'Rain') { if (moveType === 'Water') weatherMod = 1.5; if (moveType === 'Fire') weatherMod = 0.5; }
 
                             // Multi-hit
                             let hits = 1;
@@ -2178,10 +2276,25 @@
                                 if (defMon.currentHp <= 0) break;
 
                                 let damage = Math.floor((((2 * level / 5 + 2) * move.power * statA / statD) / 50) + 2);
-                                const isSTAB = mon.types.includes(move.type) ? 1.5 : 1;
-                                if (isCrit) damage = Math.floor(damage * 1.5);
+                                const isSTAB = mon.types.includes(moveType) ? (mon.ability === 'Adaptability' ? 2 : 1.5) : 1;
+                                if (mon.ability === 'Merciless' && (defMon.status === 'PSN' || defMon.status === 'TOX')) isCrit = true;
+                                if (isCrit) damage = Math.floor(damage * (mon.ability === 'Sniper' ? 1.5 : 1.5)); // Base crits are 1.5, sniper makes it 2.25
+                                if (isCrit && mon.ability === 'Sniper') damage = Math.floor(damage * 1.5);
                                 const rng = (85 + Math.random() * 15) / 100;
-                                damage = Math.floor(damage * isSTAB * effectiveness * rng * isLifeOrb * weatherMod * multiscaleMod);
+
+                                let currentEff = effectiveness;
+                                if (mon.ability === 'Tinted Lens' && currentEff < 1 && currentEff > 0) currentEff *= 2;
+
+                                let defAbilityMod = 1;
+                                if (defMon.ability === 'Fluffy' && isContact) defAbilityMod *= 0.5;
+                                if (defMon.ability === 'Fluffy' && moveType === 'Fire') defAbilityMod *= 2;
+                                if (defMon.ability === 'Water Bubble' && moveType === 'Fire') defAbilityMod *= 0.5;
+                                if (defMon.ability === 'Thick Fat' && (moveType === 'Fire' || moveType === 'Ice')) defAbilityMod *= 0.5;
+                                if (defMon.ability === 'Purifying Salt' && moveType === 'Ghost') defAbilityMod *= 0.5;
+                                if ((defMon.ability === 'Filter' || defMon.ability === 'Solid Rock' || defMon.ability === 'Prism Armor') && currentEff > 1) defAbilityMod *= 0.75;
+                                if (defMon.ability === 'Punk Rock' && move.effects?.sound) defAbilityMod *= 0.5;
+
+                                damage = Math.floor(damage * isSTAB * currentEff * rng * isLifeOrb * weatherMod * multiscaleMod * typeChangeMod * defAbilityMod);
 
                                 // Semi-invulnerable bypass bonus (e.g. Earthquake vs Dig)
                                 if (doubleDamageInvulnerable) damage *= 2;
@@ -2245,20 +2358,68 @@
                                             log.push(`> ${mon.name} was hurt by ${defMon.name}'s Rocky Helmet!`);
                                         }
 
-                                        // Contact Abilities: Static, Flame Body, Rough Skin, Iron Barbs
-                                        if (move.category === 'Physical' && defMon.currentHp > 0 && mon.currentHp > 0) {
+                                        // --- CONTACT ABILITIES ---
+                                        if (isContact && defMon.currentHp > 0 && mon.currentHp > 0) {
+                                            // Status Inflictors
                                             if (defMon.ability === 'Static' && !mon.status && !mon.types.includes('Electric') && Math.random() < 0.3) {
-                                                mon.status = 'PAR';
-                                                log.push(`<span class="status-PAR">${mon.name} was paralyzed by ${defMon.name}'s Static!</span>`);
+                                                mon.status = 'PAR'; log.push(`<span class="status-PAR">${mon.name} was paralyzed by ${defMon.name}'s Static!</span>`);
                                             }
                                             if (defMon.ability === 'Flame Body' && !mon.status && !mon.types.includes('Fire') && Math.random() < 0.3) {
-                                                mon.status = 'BRN';
-                                                log.push(`<span class="status-BRN">${mon.name} was burned by ${defMon.name}'s Flame Body!</span>`);
+                                                mon.status = 'BRN'; log.push(`<span class="status-BRN">${mon.name} was burned by ${defMon.name}'s Flame Body!</span>`);
                                             }
-                                            if ((defMon.ability === 'Rough Skin' || defMon.ability === 'Iron Barbs') && mon.currentHp > 0) {
+                                            if (defMon.ability === 'Poison Point' && !mon.status && !mon.types.includes('Steel') && !mon.types.includes('Poison') && Math.random() < 0.3) {
+                                                mon.status = 'PSN'; log.push(`<span class="status-PSN">${mon.name} was poisoned by ${defMon.name}'s Poison Point!</span>`);
+                                            }
+                                            if (defMon.ability === 'Effect Spore' && !mon.status && Math.random() < 0.3 && !mon.types.includes('Grass')) {
+                                                const rnd = Math.random();
+                                                if (rnd < 0.33 && !mon.types.includes('Poison') && !mon.types.includes('Steel')) {
+                                                    mon.status = 'PSN'; log.push(`<span class="status-PSN">${mon.name} was poisoned by Effect Spore!</span>`);
+                                                } else if (rnd < 0.66 && !mon.types.includes('Electric')) {
+                                                    mon.status = 'PAR'; log.push(`<span class="status-PAR">${mon.name} was paralyzed by Effect Spore!</span>`);
+                                                } else {
+                                                    mon.status = 'SLP'; mon.sleepCounter = 1 + Math.floor(Math.random() * 3); log.push(`<span class="status-SLP">${mon.name} fell asleep from Effect Spore!</span>`);
+                                                }
+                                            }
+                                            if (defMon.ability === 'Cute Charm' && !mon.infatuated && Math.random() < 0.3) {
+                                                mon.infatuated = true; log.push(`<span class="notvery">${mon.name} was infatuated by ${defMon.name}'s Cute Charm!</span>`);
+                                            }
+                                            if (defMon.ability === 'Mummy' && mon.ability !== 'Mummy') {
+                                                mon.ability = 'Mummy'; log.push(`> ${mon.name}'s ability became Mummy!`);
+                                            }
+                                            if (defMon.ability === 'Wandering Spirit') {
+                                                const tStr = mon.ability; mon.ability = defMon.ability; defMon.ability = tStr;
+                                                log.push(`> ${defMon.name} swapped abilities with ${mon.name}!`);
+                                            }
+                                            if (defMon.ability === 'Gooey' || defMon.ability === 'Tangling Hair') {
+                                                mon.boosts.spe = Math.max(-6, mon.boosts.spe - 1); log.push(`<span class="notvery">${mon.name}'s Speed fell due to ${defMon.ability}!</span>`);
+                                            }
+
+                                            if (defMon.ability === 'Rough Skin' || defMon.ability === 'Iron Barbs') {
                                                 const contactDmg = Math.floor(mon.hp / 8) || 1;
                                                 mon.currentHp = Math.max(0, mon.currentHp - contactDmg);
                                                 log.push(`> ${mon.name} was hurt by ${defMon.name}'s ${defMon.ability}!`);
+                                                if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
+                                            }
+
+                                            if (defMon.ability === 'Perish Body' && mon.currentHp > 0 && defMon.currentHp > 0) {
+                                                if (mon.perishSong === 0) { mon.perishSong = 4; log.push(`> ${mon.name}'s perish count fell to 3!`); }
+                                                if (defMon.perishSong === 0) { defMon.perishSong = 4; log.push(`> ${defMon.name}'s perish count fell to 3!`); }
+                                            }
+                                        }
+
+                                        // Attacker Contact Effects
+                                        if (isContact && mon.currentHp > 0 && defMon.currentHp > 0 && !defMon.status) {
+                                            if (mon.ability === 'Poison Touch' && !defMon.types.includes('Steel') && !defMon.types.includes('Poison') && Math.random() < 0.3) {
+                                                defMon.status = 'PSN'; log.push(`<span class="status-PSN">${defMon.name} was poisoned by ${mon.name}'s Poison Touch!</span>`);
+                                            }
+                                        }
+
+                                        // Defender Post-KO Contact triggers
+                                        if (defMon.currentHp === 0 && isContact && mon.currentHp > 0) {
+                                            if (defMon.ability === 'Aftermath' && mon.ability !== 'Damp' && defMon.ability !== 'Damp') {
+                                                const afterDmg = Math.floor(mon.hp / 4) || 1;
+                                                mon.currentHp = Math.max(0, mon.currentHp - afterDmg);
+                                                log.push(`> ${mon.name} was caught in ${defMon.name}'s Aftermath!`);
                                                 if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
                                             }
                                         }
@@ -2350,30 +2511,50 @@
                                 // selfBoost: for Status moves always; for attacking moves only if NOT a twoTurn charge (already applied during charge turn)
                                 const doSelfBoost = fx.selfBoost && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100);
                                 if (doSelfBoost) {
-                                    // twoTurn moves apply selfBoost on charge turn only (handled in the charge block above)
                                     if (!fx.twoTurn || !isAttacking) {
                                         playSound('buff');
                                         for (const [s, amt] of Object.entries(fx.selfBoost)) {
-                                            mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
-                                            log.push(`<span class="super">${mon.name}'s ${s} rose!</span>`);
+                                            const finalAmt = mon.ability === 'Contrary' ? -amt : (mon.ability === 'Simple' ? amt * 2 : amt);
+                                            const oldVal = mon.boosts[s];
+                                            mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + finalAmt));
+                                            if (mon.boosts[s] > oldVal) log.push(`<span class="super">${mon.name}'s ${s} rose!</span>`);
+                                            else if (mon.boosts[s] < oldVal) log.push(`<span class="notvery">${mon.name}'s ${s} fell!</span>`);
                                         }
                                     }
                                 }
-                                // selfDrop: works for ALL move categories (Close Combat, Superpower, Overheat, etc.)
                                 if (fx.selfDrop && mon.currentHp > 0) {
                                     playSound('debuff');
+                                    let dropped = false;
                                     for (const [s, amt] of Object.entries(fx.selfDrop)) {
-                                        mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
-                                        log.push(`<span class="notvery">${mon.name}'s ${s} fell!</span>`);
+                                        const finalAmt = mon.ability === 'Contrary' ? -amt : (mon.ability === 'Simple' ? amt * 2 : amt);
+                                        const oldVal = mon.boosts[s];
+                                        mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + finalAmt));
+                                        if (mon.boosts[s] < oldVal) { dropped = true; log.push(`<span class="notvery">${mon.name}'s ${s} fell!</span>`); }
+                                        else if (mon.boosts[s] > oldVal) log.push(`<span class="super">${mon.name}'s ${s} rose!</span>`);
+                                    }
+                                    if (dropped) {
+                                        if (mon.ability === 'Defiant') { mon.boosts.atk = Math.min(6, mon.boosts.atk + 2); log.push(`<span class="super">${mon.name}'s Defiant sharply raised its Attack!</span>`); }
+                                        if (mon.ability === 'Competitive') { mon.boosts.spa = Math.min(6, mon.boosts.spa + 2); log.push(`<span class="super">${mon.name}'s Competitive sharply raised its Sp. Atk!</span>`); }
                                     }
                                 }
-                                // enemyDrop: for attacking moves requires damage dealt; for Status moves requires alive target
                                 if (fx.enemyDrop && defMon.currentHp > 0 && !subBlocks && Math.random() * 100 < (fx.dropRate || 100)) {
                                     if (didDamage || !isAttacking) {
-                                        playSound('debuff');
-                                        for (const [s, amt] of Object.entries(fx.enemyDrop)) {
-                                            defMon.boosts[s] = Math.max(-6, Math.min(6, defMon.boosts[s] + amt));
-                                            log.push(`<span class="notvery">${defMon.name}'s ${s} fell!</span>`);
+                                        if (!mon.ability.includes('Mold Breaker') && ['Clear Body', 'White Smoke', 'Full Metal Body'].includes(defMon.ability)) {
+                                            log.push(`> ${defMon.name}'s ${defMon.ability} prevents its stats from being lowered!`);
+                                        } else {
+                                            playSound('debuff');
+                                            let dropped = false;
+                                            for (const [s, amt] of Object.entries(fx.enemyDrop)) {
+                                                const finalAmt = defMon.ability === 'Contrary' ? -amt : (defMon.ability === 'Simple' ? amt * 2 : amt);
+                                                const oldVal = defMon.boosts[s];
+                                                defMon.boosts[s] = Math.max(-6, Math.min(6, defMon.boosts[s] + finalAmt));
+                                                if (defMon.boosts[s] < oldVal) { dropped = true; log.push(`<span class="notvery">${defMon.name}'s ${s} fell!</span>`); }
+                                                else if (defMon.boosts[s] > oldVal) log.push(`<span class="super">${defMon.name}'s ${s} rose!</span>`);
+                                            }
+                                            if (dropped) {
+                                                if (defMon.ability === 'Defiant') { defMon.boosts.atk = Math.min(6, defMon.boosts.atk + 2); log.push(`<span class="super">${defMon.name}'s Defiant sharply raised its Attack!</span>`); }
+                                                if (defMon.ability === 'Competitive') { defMon.boosts.spa = Math.min(6, defMon.boosts.spa + 2); log.push(`<span class="super">${defMon.name}'s Competitive sharply raised its Sp. Atk!</span>`); }
+                                            }
                                         }
                                     }
                                 }
@@ -2389,31 +2570,52 @@
                                 // --- STATUS INFLICTION ---
                                 if (fx.status && defMon.currentHp > 0 && !defMon.status && !subBlocks && Math.random() * 100 < (fx.statusRate || 100)) {
                                     let canApply = true;
-                                    if (fx.status === 'SLP' && state.format?.clauses?.includes('Sleep Clause Mod')) {
-                                        if (teams[defUid].some(p => p.status === 'SLP')) { canApply = false; log.push(`> Sleep Clause Mod blocked!`); }
+                                    const grounded = !defMon.types.includes('Flying') && defMon.ability !== 'Levitate' && defMon.item !== 'Air Balloon';
+
+                                    // Universal Immunities
+                                    if (state.terrain === 'Misty' && grounded) canApply = false;
+                                    if (['Purifying Salt', 'Comatose', 'Leaf Guard', 'Shield Dust'].includes(defMon.ability)) canApply = false;
+
+                                    if (fx.status === 'SLP') {
+                                        if (state.terrain === 'Electric' && grounded) canApply = false;
+                                        if (['Insomnia', 'Vital Spirit', 'Sweet Veil'].includes(defMon.ability)) canApply = false;
+                                        if (state.format?.clauses?.includes('Sleep Clause Mod') && teams[defUid].some(p => p.status === 'SLP')) {
+                                            canApply = false; log.push(`> Sleep Clause Mod blocked!`);
+                                        }
                                     }
-                                    if (fx.status === 'PAR' && defMon.types.includes('Electric')) canApply = false;
-                                    if (fx.status === 'PAR' && move.name === 'Thunder Wave' && defMon.types.includes('Ground')) {
-                                        canApply = false;
-                                        log.push(`> It doesn't affect ${defMon.name}...`);
+                                    if (fx.status === 'PAR') {
+                                        if (defMon.types.includes('Electric') || defMon.ability === 'Limber') canApply = false;
+                                        if (move.name === 'Thunder Wave' && defMon.types.includes('Ground')) { canApply = false; log.push(`> It doesn't affect ${defMon.name}...`); }
                                     }
-                                    if (fx.status === 'BRN' && defMon.types.includes('Fire')) canApply = false;
-                                    if ((fx.status === 'PSN' || fx.status === 'TOX') && (defMon.types.includes('Poison') || defMon.types.includes('Steel'))) canApply = false;
-                                    if (fx.status === 'FRZ' && defMon.types.includes('Ice')) canApply = false;
-                                    if (fx.powder && defMon.types.includes('Grass')) {
-                                        canApply = false;
-                                        log.push(`> It doesn't affect ${defMon.name}...`);
+                                    if (fx.status === 'BRN') {
+                                        if (defMon.types.includes('Fire') || ['Water Veil', 'Water Bubble'].includes(defMon.ability)) canApply = false;
                                     }
-                                    if (mon.ability === 'Prankster' && move.category === 'Status' && defMon.types.includes('Dark')) {
-                                        canApply = false;
-                                        log.push(`> It doesn't affect ${defMon.name}...`);
+                                    if (fx.status === 'PSN' || fx.status === 'TOX') {
+                                        if (mon.ability !== 'Corrosion') {
+                                            if (defMon.types.includes('Poison') || defMon.types.includes('Steel') || ['Immunity', 'Pastel Veil'].includes(defMon.ability)) canApply = false;
+                                        }
                                     }
+                                    if (fx.status === 'FRZ') {
+                                        if (defMon.types.includes('Ice') || defMon.ability === 'Magma Armor') canApply = false;
+                                    }
+
+                                    if (fx.powder && defMon.types.includes('Grass')) { canApply = false; log.push(`> It doesn't affect ${defMon.name}...`); }
+                                    if (mon.ability === 'Prankster' && move.category === 'Status' && defMon.types.includes('Dark')) { canApply = false; log.push(`> It doesn't affect ${defMon.name}...`); }
                                     if (canApply) {
                                         defMon.status = fx.status;
                                         if (fx.status === 'TOX') defMon.toxicCounter = 1;
                                         if (fx.status === 'SLP') defMon.sleepTurns = 1 + Math.floor(Math.random() * 3);
                                         log.push(`<span class="status-${fx.status}">${defMon.name} was afflicted with ${fx.status}!</span>`);
                                         playSound('status');
+
+                                        if (defMon.ability === 'Synchronize' && ['PSN', 'TOX', 'PAR', 'BRN'].includes(fx.status)) {
+                                            if (!mon.status && mon.currentHp > 0) {
+                                                mon.status = fx.status;
+                                                if (fx.status === 'TOX') mon.toxicCounter = 1;
+                                                log.push(`> <span class="status-${fx.status}">${mon.name} was afflicted with ${fx.status} by Synchronize!</span>`);
+                                                playSound('status');
+                                            }
+                                        }
                                     }
                                 }
 
@@ -2702,16 +2904,23 @@
                     }
 
                     // Status Damage
-                    if (mon.status === 'BRN') {
-                        mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp / 16));
-                        log.push(`> ${mon.name} was hurt by its burn!`);
-                    } else if (mon.status === 'PSN') {
-                        mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp / 8));
-                        log.push(`> ${mon.name} was hurt by poison!`);
-                    } else if (mon.status === 'TOX') {
-                        mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp * (mon.toxicCounter / 16)));
-                        mon.toxicCounter++;
-                        log.push(`> ${mon.name} was hurt by toxic poison!`);
+                    if (mon.ability === 'Poison Heal' && (mon.status === 'PSN' || mon.status === 'TOX')) {
+                        mon.currentHp = Math.min(mon.hp, mon.currentHp + Math.floor(mon.hp / 8));
+                        log.push(`> ${mon.name} restored HP using its Poison Heal!`);
+                    } else if (mon.ability === 'Magic Guard') {
+                        // Takes no indirect damage
+                    } else {
+                        if (mon.status === 'BRN') {
+                            mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp / 16));
+                            log.push(`> ${mon.name} was hurt by its burn!`);
+                        } else if (mon.status === 'PSN') {
+                            mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp / 8));
+                            log.push(`> ${mon.name} was hurt by poison!`);
+                        } else if (mon.status === 'TOX') {
+                            mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp * (mon.toxicCounter / 16)));
+                            mon.toxicCounter++;
+                            log.push(`> ${mon.name} was hurt by toxic poison!`);
+                        }
                     }
 
                     // Cursed
@@ -3317,7 +3526,7 @@
 
             const isCharging = myActive.charging && myActive.currentHp > 0;
             const isRecharging = myActive.recharging && myActive.currentHp > 0;
-            const amIWaiting = isSpectator ? true : ((state.actions && !!state.actions[myUid]) || state.resolving || isCharging || isRecharging);
+            const amIWaiting = isSpectator ? true : ((state.actions && !!state.actions[myUid]) || state.resolving || isCharging);
             const activeIsFainted = myActive.currentHp <= 0;
 
             const isTrapped = (myActive.trapped || (oppActive.ability === 'Shadow Tag' && myActive.ability !== 'Shadow Tag') || (oppActive.ability === 'Arena Trap' && !myActive.types.includes('Flying') && myActive.ability !== 'Levitate')) && !myActive.types.includes('Ghost');
@@ -3392,7 +3601,7 @@
                             ${activeIsFainted ? `
                             <p class="warning-text" style="display:block; text-align:left;">${esc(myActive.name)} fainted! Send out another Pokémon.</p>
                         ` : (amIWaiting && !state.faintReplacement) ? `
-                            <p class="text-muted" style="text-align:left;">${isCharging ? `${esc(myActive.name)} is charging up its move...` : isRecharging ? `${esc(myActive.name)} must recharge...` : 'Waiting for opponent to act...'}</p>
+                            <p class="text-muted" style="text-align:left;">${isCharging ? `${esc(myActive.name)} is charging up its move...` : 'Waiting for opponent to act...'}</p>
                             <div class="spinner" style="margin: 0; width: 25px; height: 25px;"></div>
                             ${state.actions && state.actions[myUid] && !state.resolving && !isCharging && !isRecharging ? `
                                <div style="text-align:center; margin-top:20px;">
@@ -3413,7 +3622,13 @@
                     return '';
                 })()}
                             <div class="move-grid">
-                            ${myActive.moves.map((moveId, i) => {
+                            ${isRecharging ? `
+                                <button class="btn-move bg-Normal" onclick="window.sendAction('move', 'recharge')" style="display:flex; flex-direction:column; justify-content:center; grid-column: 1 / -1; align-items:center;">
+                                    <div class="move-name" style="color: #ffffff; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">Recharge (Skip Turn)</div>
+                                    <div class="move-meta type-Normal">Normal / Pow: - / Acc: -</div>
+                                    <div style="font-size:0.65rem; color: rgba(255,255,255,0.8); margin-top:2px; line-height:1;">Must recharge after using a powerful move.</div>
+                                </button>
+                            ` : myActive.moves.map((moveId, i) => {
                     const m = MOVES[moveId] || MOVES['struggle'];
                     const eff = getEffectiveness(m.type, oppActive.types);
                     let effColor = '#ffffff';
