@@ -880,6 +880,22 @@
                                     executeTurn();
                                 }
                             } else {
+                                // Auto-submit for charging mons (two-turn moves)
+                                for (const uid of [p1Uid, p2Uid]) {
+                                    if (!s.actions[uid]) {
+                                        const mon = roomState.players[uid].team[s.active[uid]];
+                                        if (mon && mon.charging && mon.currentHp > 0) {
+                                            updateDoc(roomRef, {
+                                                [`state.actions.${uid}`]: { type: 'move', val: mon.charging, mega: false }
+                                            });
+                                        }
+                                        if (mon && mon.recharging && mon.currentHp > 0) {
+                                            updateDoc(roomRef, {
+                                                [`state.actions.${uid}`]: { type: 'move', val: 'recharge', mega: false }
+                                            });
+                                        }
+                                    }
+                                }
                                 // Normal turn: need actions from both
                                 if (s.actions[p1Uid] && s.actions[p2Uid]) {
                                     executeTurn();
@@ -1133,21 +1149,102 @@
             return selected;
         }
 
+        // Curated list of competitively viable Pokemon (UU and up)
+        const VIABLE_POKEMON_IDS = [
+            // OU staples
+            'dragapult', 'garchomp', 'landorustherian', 'heatran', 'toxapex', 'ferrothorn', 'clefable',
+            'corviknight', 'tyranitar', 'scizor', 'volcarona', 'rotomwash', 'magnezone', 'excadrill',
+            'slowbro', 'hippowdon', 'skarmory', 'blissey', 'weavile', 'dragonite', 'gengar',
+            'alakazam', 'starmie', 'gyarados', 'pelipper', 'kingdra', 'blaziken', 'infernape',
+            'lucario', 'breloom', 'conkeldurr', 'mienshao', 'hydreigon', 'salamence', 'metagross',
+            'aegislash', 'mimikyu', 'tapukoko', 'tapulele', 'tapufini', 'tapubulu',
+            'kartana', 'celesteela', 'pheromosa', 'buzzwole', 'nihilego', 'xurkitree',
+            'magearna', 'urshifurapid', 'urshifu', 'rillaboom', 'cinderace', 'inteleon',
+            'toxtricity', 'grimmsnarl', 'hatterene', 'dracovish', 'barraskewda',
+            'zapdos', 'moltres', 'articuno', 'suicune', 'raikou', 'entei',
+            'latios', 'latias', 'jirachi', 'celebi', 'mew', 'azumarill',
+            'swampert', 'sceptile', 'milotic', 'togekiss', 'gliscor', 'porygonz',
+            'chansey', 'tangrowth', 'amoonguss', 'gastrodon', 'quagsire', 'dondozo',
+            'clodsire', 'garganacl', 'annihilape', 'ironvaliant', 'ironhands',
+            'ironbundle', 'ironthorns', 'ironmoth', 'greattusk', 'roaringmoon',
+            'fluttermane', 'palafin', 'ceruledge', 'armarouge', 'espathra', 'kingambit',
+            'gholdengo', 'baxcalibur', 'tinkaton', 'dondozo', 'revavroom',
+            'brambleghast', 'toedscruel', 'rabsca', 'grafaiai', 'kilowattrel',
+            'mabosstiff', 'maushold', 'arcanine', 'ninetales', 'ninetalesalola',
+            'marowak', 'marowakalola', 'slowking', 'slowkinggalar', 'politoed',
+            'bisharp', 'reuniclus', 'chandelure', 'darmanitan',
+            'crawdaunt', 'sharpedo', 'manaphy', 'tornadustherian', 'thundurustherian',
+            'serperior', 'primarina', 'decidueye', 'zeraora', 'marshadow',
+            'naganadel', 'blacephalon', 'stakataka', 'regieleki', 'regidrago',
+            'spectrier', 'glastrier', 'calyrexice', 'calyrexshadow',
+            'zacian', 'zamazenta', 'eternatus'
+        ];
+
+        // Smart item assignment based on Pokemon stats and role
+        function getSmartItem(p) {
+            const physAtk = p.atk >= p.spa;
+            const isFast = p.spe >= 90;
+            const isBulky = (p.def + p.spd) >= 180;
+            const hasSetupMove = p.moves.some(m => {
+                const mv = MOVES[m];
+                return mv && mv.effects && mv.effects.selfBoost;
+            });
+
+            // Role-based items
+            if (isBulky && !hasSetupMove) {
+                const bulkyItems = ['Leftovers', 'Rocky Helmet', 'Heavy-Duty Boots'];
+                if (p.types.includes('Poison')) bulkyItems.push('Black Sludge');
+                return bulkyItems[Math.floor(Math.random() * bulkyItems.length)];
+            }
+            if (hasSetupMove) {
+                const setupItems = ['Life Orb', 'Leftovers', 'Lum Berry', 'Heavy-Duty Boots'];
+                if (isFast) setupItems.push('Focus Sash');
+                return setupItems[Math.floor(Math.random() * setupItems.length)];
+            }
+            if (isFast && !isBulky) {
+                const fastItems = ['Choice Scarf', 'Life Orb', 'Focus Sash', 'Heavy-Duty Boots'];
+                if (physAtk) fastItems.push('Choice Band');
+                else fastItems.push('Choice Specs');
+                return fastItems[Math.floor(Math.random() * fastItems.length)];
+            }
+            // Default offensive
+            const offItems = ['Life Orb', 'Choice Band', 'Choice Specs', 'Choice Scarf', 'Heavy-Duty Boots', 'Expert Belt', 'Assault Vest'];
+            return offItems[Math.floor(Math.random() * offItems.length)];
+        }
+
         window.submitTeam = async function () {
             const format = roomState.state?.format?.id;
 
             if (format === 'gen9random') {
+                // Filter to viable mons only (UU+), fallback to BST >= 480 if not in list
+                const viablePool = POKEMON_DB.filter(p => {
+                    if (p.isMega || p.isAltForm) return false;
+                    if (VIABLE_POKEMON_IDS.includes(p.id)) return true;
+                    // Fallback: high BST Pokemon are generally viable
+                    const bst = (p.hp || 0) + (p.atk || 0) + (p.def || 0) + (p.spa || 0) + (p.spd || 0) + (p.spe || 0);
+                    return bst >= 480;
+                });
+
+                const pool = viablePool.length >= 20 ? viablePool : POKEMON_DB.filter(p => !p.isMega && !p.isAltForm);
+                const usedIds = new Set();
                 const fullTeam = [];
+
                 for (let i = 0; i < 6; i++) {
-                    const base = POKEMON_DB[Math.floor(Math.random() * POKEMON_DB.length)];
+                    let base;
+                    let attempts = 0;
+                    do {
+                        base = pool[Math.floor(Math.random() * pool.length)];
+                        attempts++;
+                    } while (usedIds.has(base.id) && attempts < 100);
+                    usedIds.add(base.id);
+
                     let p = JSON.parse(JSON.stringify(base));
                     p.currentHp = p.hp;
                     p.moves = window.getSmartMoves(p);
-                    const itemKeys = Object.keys(ITEMS);
-                    p.item = itemKeys[Math.floor(Math.random() * itemKeys.length)];
+                    p.item = getSmartItem(p);
                     p.ability = p.abilities[Math.floor(Math.random() * p.abilities.length)] || '';
                     p.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
-                    p.status = null; // 'SLP', 'BRN', 'PAR', 'TOX', 'PSN', 'FRZ'
+                    p.status = null;
                     p.recharging = false;
                     fullTeam.push(p);
                 }
@@ -2117,13 +2214,20 @@
                             const wNames = { Sun: 'harsh sunlight', Rain: 'rain', Sand: 'a sandstorm', Snow: 'a snowstorm' };
                             log.push(`> The weather changed to ${wNames[state.weather]}!`);
                         }
-                        if (fx.hazards) {
-                            const h = fx.hazards;
+                        if (fx.terrain) {
+                            state.terrain = fx.terrain;
+                            state.terrainTurns = 5;
+                            log.push(`> The battlefield is now covered in ${fx.terrain} Terrain!`);
+                        }
+                        if (fx.hazards || fx.hazard) {
+                            const rawH = fx.hazards || fx.hazard;
+                            // Normalize: 'Stealth Rock' -> 'stealth-rock', 'Toxic Spikes' -> 'toxic-spikes'
+                            const h = rawH.toLowerCase().replace(/\s+/g, '-');
                             if (!state.hazards[defUid]) state.hazards[defUid] = {};
                             if (h === 'stealth-rock' || h === 'sticky-web') {
                                 if (!state.hazards[defUid][h]) {
                                     state.hazards[defUid][h] = 1;
-                                    log.push(`> ${h.replace('-', ' ')} was set around ${roomState.players[defUid].name}'s team!`);
+                                    log.push(`> ${rawH} was set around ${roomState.players[defUid].name}'s team!`);
                                 }
                             } else if (h === 'spikes') {
                                 state.hazards[defUid][h] = Math.min(3, (state.hazards[defUid][h] || 0) + 1);
@@ -2713,7 +2817,9 @@
             const myHpPct = myActive.currentHp / myActive.hp;
             const oppHpPct = oppActive.currentHp / oppActive.hp;
 
-            const amIWaiting = isSpectator ? true : ((state.actions && !!state.actions[myUid]) || state.resolving);
+            const isCharging = myActive.charging && myActive.currentHp > 0;
+            const isRecharging = myActive.recharging && myActive.currentHp > 0;
+            const amIWaiting = isSpectator ? true : ((state.actions && !!state.actions[myUid]) || state.resolving || isCharging || isRecharging);
             const activeIsFainted = myActive.currentHp <= 0;
 
             const isTrapped = (myActive.trapped || (oppActive.ability === 'Shadow Tag' && myActive.ability !== 'Shadow Tag') || (oppActive.ability === 'Arena Trap' && !myActive.types.includes('Flying') && myActive.ability !== 'Levitate')) && !myActive.types.includes('Ghost');
@@ -2788,9 +2894,9 @@
                             ${activeIsFainted ? `
                             <p class="warning-text" style="display:block; text-align:left;">${esc(myActive.name)} fainted! Send out another Pokémon.</p>
                         ` : (amIWaiting && !state.faintReplacement) ? `
-                            <p class="text-muted" style="text-align:left;">Waiting for opponent to act...</p>
+                            <p class="text-muted" style="text-align:left;">${isCharging ? `${esc(myActive.name)} is charging up its move...` : isRecharging ? `${esc(myActive.name)} must recharge...` : 'Waiting for opponent to act...'}</p>
                             <div class="spinner" style="margin: 0; width: 25px; height: 25px;"></div>
-                            ${state.actions && state.actions[myUid] && !state.resolving ? `
+                            ${state.actions && state.actions[myUid] && !state.resolving && !isCharging && !isRecharging ? `
                                <div style="text-align:center; margin-top:20px;">
                                    <button class="btn" style="background:var(--danger); color:white;" onclick="window.cancelAction()">Cancel Action</button>
                                </div>
