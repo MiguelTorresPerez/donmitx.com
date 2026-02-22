@@ -1555,7 +1555,10 @@
 
                         if (!mon.charging && !skipCharge) {
                             mon.charging = actions[uid].val;
-                            mon.semiInvulnerable = true;
+                            const invulnMoves = ['Fly', 'Bounce', 'Dig', 'Dive', 'Phantom Force', 'Shadow Force', 'Sky Drop'];
+                            if (invulnMoves.includes(move.name)) {
+                                mon.semiInvulnerable = true;
+                            }
                             log.push(`> ${mon.name} is charging up ${move.name}!`);
                             // Apply charge-turn boosts (Meteor Beam)
                             if (move.effects.selfBoost) {
@@ -1697,13 +1700,47 @@
 
                 // --- ACCURACY CHECK ---
                 if (defMon.currentHp > 0) {
-                    // Semi-invulnerable (Fly, Bounce, Phantom Force, etc.)
+                    // Semi-invulnerable Counters
+                    let bypassedInvulnerability = false;
+                    let doubleDamageInvulnerable = false;
+
                     if (defMon.semiInvulnerable) {
-                        log.push(`> ${mon.name}'s attack missed! ${defMon.name} is semi-invulnerable.`);
-                        continue;
+                        const stateCauser = defMon.charging; // The move that caused it (e.g. "Fly", "Dig", "Dive")
+                        const mName = move.name;
+
+                        // Fly / Bounce counters
+                        if ((stateCauser === 'Fly' || stateCauser === 'Bounce' || stateCauser === 'Sky Drop') &&
+                            ['Gust', 'Twister', 'Thunder', 'Hurricane', 'Sky Uppercut', 'Smack Down'].includes(mName)) {
+                            bypassedInvulnerability = true;
+                            if (mName === 'Gust' || mName === 'Twister') doubleDamageInvulnerable = true;
+                        }
+                        // Dig counters
+                        else if (stateCauser === 'Dig' && ['Earthquake', 'Magnitude'].includes(mName)) {
+                            bypassedInvulnerability = true;
+                            if (mName === 'Earthquake' || mName === 'Magnitude') doubleDamageInvulnerable = true;
+                        }
+                        // Dive counters
+                        else if (stateCauser === 'Dive' && ['Surf', 'Whirlpool'].includes(mName)) {
+                            bypassedInvulnerability = true;
+                            if (mName === 'Surf' || mName === 'Whirlpool') doubleDamageInvulnerable = true;
+                        }
+                        // Phantom Force / Shadow Force bypass Protect, but have no specific move counters here
+
+                        if (!bypassedInvulnerability) {
+                            // Standard miss against semi-invulnerable
+                            log.push(`> ${mon.name}'s attack missed! ${defMon.name} is semi-invulnerable.`);
+                            continue;
+                        } else {
+                            log.push(`> ${mon.name} caught ${defMon.name} during its vulnerability!`);
+                        }
                     }
 
-                    if (move.accuracy && move.accuracy < 100) {
+                    // Accuracy bypass in specific Weather
+                    let skipsAccuracy = false;
+                    if (state.weather === 'Rain' && ['Thunder', 'Hurricane'].includes(move.name)) skipsAccuracy = true;
+                    if (state.weather === 'Snow' && move.name === 'Blizzard') skipsAccuracy = true;
+
+                    if (!skipsAccuracy && move.accuracy && move.accuracy < 100) {
                         let accStage = (mon.boosts.accuracy || 0) - (defMon.boosts.evasion || 0);
                         accStage = Math.max(-6, Math.min(6, accStage));
                         const accMul = accStage >= 0 ? (3 + accStage) / 3 : 3 / (3 - accStage);
@@ -1740,17 +1777,61 @@
                     if (defMon.item === 'Eviolite') { defMod *= 1.5; spdMod *= 1.5; } // Simplified NFE check
                     if (defMon.item === 'Assault Vest') { spdMod *= 1.5; }
 
-                    let statA = move.category === 'Special' ? calcStat(mon.spa, mon.boosts.spa) : calcStat(mon.atk, mon.boosts.atk);
+                    let calcBoost = (boost, ability) => {
+                        if (ability === 'Simple') boost *= 2;
+                        if (ability === 'Contrary') boost *= -1;
+                        return Math.max(-6, Math.min(6, boost));
+                    };
+
+                    let statA = move.category === 'Special' ?
+                        calcStat(mon.spa, calcBoost(mon.boosts.spa, mon.ability)) :
+                        calcStat(mon.atk, calcBoost(mon.boosts.atk, mon.ability));
+
                     if (mon.status === 'BRN' && move.category === 'Physical') statA = Math.floor(statA * 0.5);
                     statA = Math.floor(statA * isChoiceBand * isChoiceSpecs);
 
-                    let statD = move.category === 'Special' ? calcStat(defMon.spd, defMon.boosts.spd) * spdMod : calcStat(defMon.def, defMon.boosts.def) * defMod;
+                    // Offensive Ability Modifiers
+                    if (mon.ability === 'Technician' && move.power <= 60) statA = Math.floor(statA * 1.5);
+                    if (mon.ability === 'Sheer Force' && move.effects && (move.effects.status || move.effects.enemyDrop || move.effects.selfBoost || move.effects.flinch)) {
+                        statA = Math.floor(statA * 1.3);
+                        // Sheer force removes secondary effects (handled in application phase natively by skipping, but we boost here)
+                    }
+                    if (mon.ability === 'Tough Claws' && move.contact) statA = Math.floor(statA * 1.3);
 
-                    // Ability: Levitate
+                    // Weather defensive boosts
+                    let wDefMod = 1;
+                    let wSpdMod = 1;
+                    if (state.weather === 'Snow' && defMon.types.includes('Ice')) wDefMod *= 1.5;
+                    if (state.weather === 'Sand' && defMon.types.includes('Rock')) wSpdMod *= 1.5;
+
+                    let statD = move.category === 'Special' ? calcStat(defMon.spd, defMon.boosts.spd) * spdMod * wSpdMod : calcStat(defMon.def, defMon.boosts.def) * defMod * wDefMod;
+
+                    // Ability: Immunities & Absorptions
                     let effectiveness = getEffectiveness(move.type, defMon.types);
-                    if (defMon.ability === 'Levitate' && move.type === 'Ground') {
-                        log.push(`> ${defMon.name}'s Levitate makes it immune!`);
-                        effectiveness = 0;
+                    if (effectiveness > 0) {
+                        if (defMon.ability === 'Levitate' && move.type === 'Ground') {
+                            log.push(`> ${defMon.name}'s Levitate makes it immune to Ground moves!`);
+                            effectiveness = 0;
+                        } else if ((defMon.ability === 'Water Absorb' || defMon.ability === 'Dry Skin') && move.type === 'Water') {
+                            log.push(`> ${defMon.name}'s ${defMon.ability} absorbed the attack!`);
+                            defMon.currentHp = Math.min(defMon.hp, defMon.currentHp + Math.floor(defMon.hp / 4));
+                            effectiveness = 0;
+                        } else if (defMon.ability === 'Volt Absorb' && move.type === 'Electric') {
+                            log.push(`> ${defMon.name}'s Volt Absorb absorbed the attack!`);
+                            defMon.currentHp = Math.min(defMon.hp, defMon.currentHp + Math.floor(defMon.hp / 4));
+                            effectiveness = 0;
+                        } else if (defMon.ability === 'Motor Drive' && move.type === 'Electric') {
+                            log.push(`> ${defMon.name}'s Motor Drive raised its Speed!`);
+                            defMon.boosts.spe = Math.min(6, defMon.boosts.spe + 1);
+                            effectiveness = 0;
+                        } else if (defMon.ability === 'Sap Sipper' && move.type === 'Grass') {
+                            log.push(`> ${defMon.name}'s Sap Sipper raised its Attack!`);
+                            defMon.boosts.atk = Math.min(6, defMon.boosts.atk + 1);
+                            effectiveness = 0;
+                        } else if (defMon.ability === 'Flash Fire' && move.type === 'Fire') {
+                            log.push(`> ${defMon.name}'s Flash Fire neutralized the attack!`);
+                            effectiveness = 0;
+                        }
                     }
 
                     // Weather damage modifiers
@@ -1776,13 +1857,17 @@
                         const rng = (85 + Math.random() * 15) / 100;
                         damage = Math.floor(damage * isSTAB * effectiveness * rng * isLifeOrb * weatherMod);
 
+                        // Semi-invulnerable bypass bonus (e.g. Earthquake vs Dig)
+                        if (doubleDamageInvulnerable) damage *= 2;
+
                         if (effectiveness > 1 && h === 0) log.push(`> It's <span class="super">super effective!</span>`);
                         if (effectiveness < 1 && effectiveness > 0 && h === 0) log.push(`> It's <span class="notvery">not very effective...</span>`);
                         if (effectiveness === 0) { log.push(`> It had <span class="notvery">no effect</span> on ${defMon.name}!`); damage = 0; break; }
                         if (isCrit && damage > 0) log.push(`> <span class="crit">A critical hit!</span>`);
 
                         if (damage > 0) {
-                            if (defMon.substituteHp > 0 && !move.effects?.sound) {
+                            const bypassesSub = (move.effects && (move.effects.sound || move.effects.bypassesSubstitute)) || mon.ability === 'Infiltrator';
+                            if (defMon.substituteHp > 0 && !bypassesSub) {
                                 defMon.substituteHp -= damage;
                                 log.push(`> The substitute took damage for ${defMon.name}!`);
                                 if (defMon.substituteHp <= 0) {
@@ -1830,7 +1915,17 @@
 
                     // Move effects after damage
                     if (move.effects && totalDmg > 0) {
-                        const fx = move.effects;
+                        const fx = { ...move.effects };
+
+                        // Sheer Force negates secondary effects applied to the target or user from attacking moves
+                        if (mon.ability === 'Sheer Force' && (fx.status || fx.enemyDrop || fx.flinch)) {
+                            delete fx.status;
+                            delete fx.enemyDrop;
+                            delete fx.flinch;
+                            // selfBoost is kept only if the move is explicitly a boosting move, but Sheer Force typically negates Power-Up Punch style boosts too. For simplicity, we'll negate secondary selfBoosts but keep primary modifiers untouched.
+                            if (!fx.recharge && !fx.twoTurn) delete fx.selfBoost;
+                        }
+
                         if (fx.recharge) mon.recharging = true;
                         if (fx.recoilPerc && mon.currentHp > 0) {
                             const r = Math.floor(totalDmg * fx.recoilPerc) || 1;
@@ -1861,8 +1956,10 @@
                 // --- STATUS & NON-DAMAGING MOVE EFFECTS ---
                 if (move.category === 'Status' || (move.effects && defMon.currentHp > 0)) {
                     const fx = move.effects;
+
                     // Substitute block status & drops
-                    const subBlocks = defMon.substituteHp > 0 && !(move.effects && (move.effects.sound || move.effects.clearHazards || move.effects.haze));
+                    const bypassesSubStatus = (fx && (fx.sound || fx.bypassesSubstitute)) || mon.ability === 'Infiltrator' || (fx && (fx.clearHazards || fx.haze));
+                    const subBlocks = defMon.substituteHp > 0 && !bypassesSubStatus;
 
                     if (fx) {
                         if (fx.selfBoost && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100)) {
@@ -1895,9 +1992,25 @@
                                 if (teams[defUid].some(p => p.status === 'SLP')) { canApply = false; log.push(`> Sleep Clause Mod blocked!`); }
                             }
                             if (fx.status === 'PAR' && defMon.types.includes('Electric')) canApply = false;
+                            if (fx.status === 'PAR' && move.name === 'Thunder Wave' && defMon.types.includes('Ground')) {
+                                canApply = false;
+                                log.push(`> It doesn't affect ${defMon.name}...`);
+                            }
                             if (fx.status === 'BRN' && defMon.types.includes('Fire')) canApply = false;
                             if ((fx.status === 'PSN' || fx.status === 'TOX') && (defMon.types.includes('Poison') || defMon.types.includes('Steel'))) canApply = false;
                             if (fx.status === 'FRZ' && defMon.types.includes('Ice')) canApply = false;
+
+                            // Powder/Spore moves vs Grass
+                            if (fx.powder && defMon.types.includes('Grass')) {
+                                canApply = false;
+                                log.push(`> It doesn't affect ${defMon.name}...`);
+                            }
+                            // Prankster vs Dark
+                            if (mon.ability === 'Prankster' && move.category === 'Status' && defMon.types.includes('Dark')) {
+                                canApply = false;
+                                log.push(`> It doesn't affect ${defMon.name}...`);
+                            }
+
                             if (canApply) {
                                 defMon.status = fx.status;
                                 if (fx.status === 'TOX') defMon.toxicCounter = 1;
@@ -2026,21 +2139,25 @@
                             defMon.item = null;
                         }
                         if (fx.forceSwitch && defMon.currentHp > 0 && !subBlocks) {
-                            const aliveBenched = teams[defUid].map((m, i) => m.currentHp > 0 && i !== activeIdx[defUid] ? i : -1).filter(i => i !== -1);
-                            if (aliveBenched.length > 0) {
-                                const oldMon = getMon(defUid);
-                                oldMon.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
-                                oldMon.choiceLock = null;
-                                oldMon.seeded = false;
-                                oldMon.taunt = 0;
-                                oldMon.encore = 0;
-                                oldMon.substituteHp = 0;
-                                oldMon.perishSong = 0;
-                                oldMon.destinyBond = false;
+                            if (defMon.ability === 'Suction Cups' || defMon.ingrained) {
+                                log.push(`> ${defMon.name} anchors itself!`);
+                            } else {
+                                const aliveBenched = teams[defUid].map((m, i) => m.currentHp > 0 && i !== activeIdx[defUid] ? i : -1).filter(i => i !== -1);
+                                if (aliveBenched.length > 0) {
+                                    const oldMon = getMon(defUid);
+                                    oldMon.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
+                                    oldMon.choiceLock = null;
+                                    oldMon.seeded = false;
+                                    oldMon.taunt = 0;
+                                    oldMon.encore = 0;
+                                    oldMon.substituteHp = 0;
+                                    oldMon.perishSong = 0;
+                                    oldMon.destinyBond = false;
 
-                                const newIdx = aliveBenched[Math.floor(Math.random() * aliveBenched.length)];
-                                activeIdx[defUid] = newIdx;
-                                log.push(`> ${defMon.name} was dragged out! ${getMon(defUid).name} was dragged in!`);
+                                    const newIdx = aliveBenched[Math.floor(Math.random() * aliveBenched.length)];
+                                    activeIdx[defUid] = newIdx;
+                                    log.push(`> ${defMon.name} was dragged out! ${getMon(defUid).name} was dragged in!`);
+                                }
                             }
                         }
                         if (fx.pivot) {
@@ -2403,6 +2520,8 @@
 
             const amIWaiting = isSpectator ? true : ((state.actions && !!state.actions[myUid]) || state.resolving);
             const activeIsFainted = myActive.currentHp <= 0;
+
+            const isTrapped = (myActive.trapped || (oppActive.ability === 'Shadow Tag' && myActive.ability !== 'Shadow Tag') || (oppActive.ability === 'Arena Trap' && !myActive.types.includes('Flying') && myActive.ability !== 'Levitate')) && !myActive.types.includes('Ghost');
 
             const renderStatusBadges = (mon) => {
                 let s = '';
