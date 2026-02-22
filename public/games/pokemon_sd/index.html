@@ -2301,7 +2301,17 @@
                 // Taunt / Encore / Destiny Bond fading
                 if (mon.taunt > 0) { mon.taunt--; if (mon.taunt === 0) log.push(`> ${mon.name}'s taunt wore off!`); }
                 if (mon.encore > 0) { mon.encore--; if (mon.encore === 0) log.push(`> ${mon.name}'s encore ended!`); }
+                if (mon.disable > 0) { mon.disable--; if (mon.disable === 0) log.push(`> ${mon.name} is no longer disabled!`); }
                 mon.destinyBond = false;
+            }
+
+            // Terrain countdown
+            if (state.terrainTurns > 0) {
+                state.terrainTurns--;
+                if (state.terrainTurns === 0) {
+                    log.push(`> The ${state.terrain} Terrain disappeared!`);
+                    state.terrain = null;
+                }
             }
 
             // Weather countdown
@@ -2330,6 +2340,13 @@
                 if (state.weather === 'Sand' && !mon.types.includes('Rock') && !mon.types.includes('Ground') && !mon.types.includes('Steel') && mon.item !== 'Heavy-Duty Boots') {
                     mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp / 16));
                     log.push(`> ${mon.name} is buffeted by the sandstorm!`);
+                }
+
+                // Grassy Terrain Healing
+                const grounded = !mon.types.includes('Flying') && mon.ability !== 'Levitate' && mon.item !== 'Air Balloon';
+                if (state.terrain === 'Grassy' && grounded && mon.currentHp < mon.hp) {
+                    mon.currentHp = Math.min(mon.hp, mon.currentHp + Math.floor(mon.hp / 16));
+                    log.push(`> ${mon.name} restored a little HP from the Grassy Terrain!`);
                 }
 
                 // Status Damage

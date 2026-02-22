@@ -882,6 +882,50 @@ export const TYPE_CHART = {
             "desc": "Sets Snow weather for 5 turns."
         }
     },
+    "electric-terrain": {
+        "name": "Electric Terrain",
+        "type": "Electric",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "desc": "5 turns. Grounded: +Electric power, can't sleep."
+        }
+    },
+    "grassy-terrain": {
+        "name": "Grassy Terrain",
+        "type": "Grass",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "desc": "5 turns. Grounded: +Grass power, +1/16 max HP."
+        }
+    },
+    "misty-terrain": {
+        "name": "Misty Terrain",
+        "type": "Fairy",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "desc": "5 turns. Can't status,-Dragon power vs grounded."
+        }
+    },
+    "psychic-terrain": {
+        "name": "Psychic Terrain",
+        "type": "Psychic",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "desc": "5 turns. Grounded: +Psychic power, priority-safe."
+        }
+    },
     "stealth-rock": {
         "name": "Stealth Rock",
         "type": "Rock",
@@ -928,6 +972,17 @@ export const TYPE_CHART = {
         "effects": {
             "hazards": "sticky-web",
             "desc": "Lowers Speed of opponents switching in."
+        }
+    },
+    "court-change": {
+        "name": "Court Change",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "desc": "Swaps user's field effects with the opposing side."
         }
     },
     "reflect": {
@@ -1012,6 +1067,17 @@ export const TYPE_CHART = {
         "effects": {
             "encore": 3,
             "desc": "Forces target to repeat last move for 3 turns."
+        }
+    },
+    "disable": {
+        "name": "Disable",
+        "type": "Normal",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "desc": "For 4 turns, disables the target's last move used."
         }
     },
     "trick": {
@@ -1202,6 +1268,46 @@ export const TYPE_CHART = {
             },
             "healPerc": -1,
             "desc": "User faints. Lowers target Atk/SpA by 2."
+        }
+    },
+    "rapid-spin": {
+        "name": "Rapid Spin",
+        "type": "Normal",
+        "power": 50,
+        "accuracy": 100,
+        "category": "Physical",
+        "priority": 0,
+        "effects": {
+            "boostRate": 100,
+            "selfBoost": {
+                "spe": 1
+            },
+            "clearMyHazards": true,
+            "desc": "Clears hazards. Raises Speed."
+        }
+    },
+    "mortal-spin": {
+        "name": "Mortal Spin",
+        "type": "Poison",
+        "power": 30,
+        "accuracy": 100,
+        "category": "Physical",
+        "priority": 0,
+        "effects": {
+            "statusRate": 100,
+            "status": "PSN",
+            "desc": "Poisons foes, frees user from hazards/bind/leech."
+        }
+    },
+    "tailwind": {
+        "name": "Tailwind",
+        "type": "Flying",
+        "power": 0,
+        "accuracy": 100,
+        "category": "Status",
+        "priority": 0,
+        "effects": {
+            "desc": "For 4 turns, allies' Speed is doubled."
         }
     },
     "charm": {
@@ -2638,22 +2744,6 @@ export const TYPE_CHART = {
                 "spe": -1
             },
             "desc": "100% chance to lower target Speed."
-        }
-    },
-    "rapid-spin": {
-        "name": "Rapid Spin",
-        "type": "Normal",
-        "power": 50,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "boostRate": 100,
-            "selfBoost": {
-                "spe": 1
-            },
-            "clearMyHazards": true,
-            "desc": "Clears hazards. Raises Speed."
         }
     },
     "fake-out": {
@@ -6980,17 +7070,6 @@ export const TYPE_CHART = {
             "desc": "If hit by physical attack, returns double damage."
         }
     },
-    "court-change": {
-        "name": "Court Change",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "Swaps user's field effects with the opposing side."
-        }
-    },
     "crush-grip": {
         "name": "Crush Grip",
         "type": "Normal",
@@ -7044,17 +7123,6 @@ export const TYPE_CHART = {
                 "def": 1
             },
             "desc": "Raises the user's Defense by 1."
-        }
-    },
-    "disable": {
-        "name": "Disable",
-        "type": "Normal",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "For 4 turns, disables the target's last move used."
         }
     },
     "disarming-voice": {
@@ -7169,17 +7237,6 @@ export const TYPE_CHART = {
         "priority": 0,
         "effects": {
             "desc": "Removes 3 PP from the target's last move."
-        }
-    },
-    "electric-terrain": {
-        "name": "Electric Terrain",
-        "type": "Electric",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "5 turns. Grounded: +Electric power, can't sleep."
         }
     },
     "electro-ball": {
@@ -7514,17 +7571,6 @@ export const TYPE_CHART = {
         "priority": 0,
         "effects": {
             "desc": "More power the heavier the target."
-        }
-    },
-    "grassy-terrain": {
-        "name": "Grassy Terrain",
-        "type": "Grass",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "5 turns. Grounded: +Grass power, +1/16 max HP."
         }
     },
     "gravity": {
@@ -8010,30 +8056,6 @@ export const TYPE_CHART = {
             "desc": "For 5 turns, protects user's party from stat drops."
         }
     },
-    "misty-terrain": {
-        "name": "Misty Terrain",
-        "type": "Fairy",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "5 turns. Can't status,-Dragon power vs grounded."
-        }
-    },
-    "mortal-spin": {
-        "name": "Mortal Spin",
-        "type": "Poison",
-        "power": 30,
-        "accuracy": 100,
-        "category": "Physical",
-        "priority": 0,
-        "effects": {
-            "statusRate": 100,
-            "status": "PSN",
-            "desc": "Poisons foes, frees user from hazards/bind/leech."
-        }
-    },
     "mountain-gale": {
         "name": "Mountain Gale",
         "type": "Ice",
@@ -8254,17 +8276,6 @@ export const TYPE_CHART = {
         "priority": 0,
         "effects": {
             "desc": "40, 80, 120 power, or heals target 1/4 max HP."
-        }
-    },
-    "psychic-terrain": {
-        "name": "Psychic Terrain",
-        "type": "Psychic",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "5 turns. Grounded: +Psychic power, priority-safe."
         }
     },
     "psych-up": {
@@ -8814,17 +8825,6 @@ export const TYPE_CHART = {
                 5
             ],
             "desc": "Hits 2-5 times in one turn."
-        }
-    },
-    "tailwind": {
-        "name": "Tailwind",
-        "type": "Flying",
-        "power": 0,
-        "accuracy": 100,
-        "category": "Status",
-        "priority": 0,
-        "effects": {
-            "desc": "For 4 turns, allies' Speed is doubled."
         }
     },
     "take-heart": {
