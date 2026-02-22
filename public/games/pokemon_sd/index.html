@@ -811,7 +811,7 @@
     <!-- (Optional: you can dynamically create Audio objects, omitted here for brevity) -->
 
     <script type="module">
-        import { POKEMON_DB, MOVES, TYPE_CHART, ITEMS, FORMATS, ABILITIES } from './data.js';
+        import { POKEMON_DB, MOVES, TYPE_CHART, ITEMS, FORMATS, ABILITIES, getEffectiveness } from './data.js';
 
         // Force window bindings since Firebase module isn't strictly exporting everything
         if (!window.parent.DONMITX_GAME_API) {
