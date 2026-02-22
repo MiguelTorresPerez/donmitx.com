@@ -811,8 +811,9 @@
     <!-- (Optional: you can dynamically create Audio objects, omitted here for brevity) -->
 
     <script type="module">
-        import { POKEMON_DB, FORMATS, MOVES, TYPE_CHART, getEffectiveness, ITEMS } from './data.js';
+        import { POKEMON_DB, MOVES, TYPE_CHART, ITEMS, FORMATS, ABILITIES } from './data.js';
 
+        // Force window bindings since Firebase module isn't strictly exporting everything
         if (!window.parent.DONMITX_GAME_API) {
             document.getElementById('game-area').innerHTML = '<p class="warning-text" style="display:block">Error: Must be played from Dashboard.</p>';
             throw new Error("Game API missing");
@@ -821,7 +822,7 @@
         const { db, auth, doc, onSnapshot, updateDoc: _updateDoc } = window.parent.DONMITX_GAME_API;
 
         const updateDoc = async (ref, data) => {
-            const pureData = window.parent.JSON.parse(JSON.stringify(data));
+            const pureData = window.parent.JSON.parse(window.parent.JSON.stringify(data));
             return _updateDoc(ref, pureData);
         };
 
@@ -1908,7 +1909,6 @@
 
                         // Track used moves for Last Resort logic
                         if (!mon.usedMoves) mon.usedMoves = [];
-                        if (!mon.usedMoves.includes(actions[uid].val)) mon.usedMoves.push(actions[uid].val);
 
                         // Last Resort fail check: must have used all other moves at least once
                         if (move.effects && move.effects.lastResort) {
@@ -1919,6 +1919,8 @@
                                 continue;
                             }
                         }
+
+                        if (!mon.usedMoves.includes(actions[uid].val)) mon.usedMoves.push(actions[uid].val);
 
                         if (mon.item && mon.item.startsWith('Choice ') && !mon.choiceLock) {
                             mon.choiceLock = actions[uid].val;
@@ -2275,16 +2277,18 @@
                                 }
                             }
 
+                            // Initialize fx for all post-damage and secondary effects
+                            let fx = move.effects ? { ...move.effects } : null;
+
                             // Move effects after damage
-                            if (move.effects && totalDmg > 0) {
-                                const fx = { ...move.effects };
+                            if (fx && totalDmg > 0) {
                                 // Sheer Force negates secondary effects applied to the target or user from attacking moves
                                 if (mon.ability === 'Sheer Force' && (fx.status || fx.enemyDrop || fx.flinch)) {
-                                    delete fx.status;
-                                    delete fx.enemyDrop;
-                                    delete fx.flinch;
-                                    // selfBoost is kept only if the move is explicitly a boosting move, but Sheer Force typically negates Power-Up Punch style boosts too. For simplicity, we'll negate secondary selfBoosts but keep primary modifiers untouched.
-                                    if (!fx.recharge && !fx.twoTurn) delete fx.selfBoost;
+                                    fx.status = null;
+                                    fx.enemyDrop = null;
+                                    fx.flinch = null;
+                                    // selfBoost is kept only if the move is explicitly a boosting move
+                                    if (!fx.recharge && !fx.twoTurn) fx.selfBoost = null;
                                 }
 
                                 if (fx.recharge) mon.recharging = true;
@@ -2306,7 +2310,7 @@
                                         log.push(`<span class="notvery">${defMon.name}'s ${s} fell!</span>`);
                                     }
                                 }
-                                if (fx.selfBoost && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100)) {
+                                if (fx.selfBoost && !fx.twoTurn && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100)) {
                                     playSound('buff');
                                     for (const [s, amt] of Object.entries(fx.selfBoost || {})) {
                                         mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
@@ -2318,14 +2322,20 @@
 
                         // --- STATUS & NON-DAMAGING MOVE EFFECTS ---
                         if (move.category === 'Status' || (move.effects && defMon.currentHp > 0)) {
-                            const fx = move.effects;
+                            let fx = move.effects ? { ...move.effects } : null;
+                            if (move.category !== 'Status' && mon.ability === 'Sheer Force' && (fx.status || fx.enemyDrop || fx.flinch)) {
+                                fx.status = null;
+                                fx.enemyDrop = null;
+                                fx.flinch = null;
+                                if (!fx.recharge && !fx.twoTurn) fx.selfBoost = null;
+                            }
 
                             // Substitute block status & drops
                             const bypassesSubStatus = (fx && (fx.sound || fx.bypassesSubstitute)) || mon.ability === 'Infiltrator' || (fx && (fx.clearHazards || fx.haze));
                             const subBlocks = defMon.substituteHp > 0 && !bypassesSubStatus;
 
                             if (fx) {
-                                if (fx.selfBoost && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100)) {
+                                if (fx.selfBoost && move.category === 'Status' && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100)) {
                                     playSound('buff');
                                     for (const [s, amt] of Object.entries(fx.selfBoost || {})) {
                                         mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));

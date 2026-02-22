@@ -53,7 +53,7 @@ async function init() {
     const playGameId = urlParams.get('playGameId');
 
     if (playRoomId && playGameId) {
-        document.getElementById('game-iframe').src = `/public/games/${playGameId}/index.html?roomId=${playRoomId}`;
+        document.getElementById('game-iframe').src = `/games/${playGameId}/index.html?roomId=${playRoomId}`;
         openModal('modal-play-game');
     } else {
         navigateToTab('library');
