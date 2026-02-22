@@ -799,6 +799,14 @@
         </div>
     </div>
 
+    <!-- Detail Info Modal (Type/Ability/Item) -->
+    <div class="modal-overlay" id="modal-detail-info"
+        style="display:none; z-index:10001; align-items:flex-end; padding-bottom:20px;">
+        <div class="modal" id="detail-info-content" style="max-width:350px;">
+            <!-- Injected dynamically -->
+        </div>
+    </div>
+
     <!-- AUDIO ELEMENTS -->
     <!-- (Optional: you can dynamically create Audio objects, omitted here for brevity) -->
 
@@ -914,6 +922,7 @@
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSound(type) {
             try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.connect(gain);
@@ -927,12 +936,32 @@
                     osc.type = 'sawtooth'; osc.frequency.setValueAtTime(600, t); osc.frequency.linearRampToValueAtTime(900, t + 0.1);
                     osc.frequency.linearRampToValueAtTime(1200, t + 0.2); gain.gain.linearRampToValueAtTime(0, t + 0.25);
                     osc.start(t); osc.stop(t + 0.25);
+                } else if (type === 'notvery') {
+                    osc.type = 'square'; osc.frequency.setValueAtTime(200, t); osc.frequency.linearRampToValueAtTime(150, t + 0.15);
+                    gain.gain.linearRampToValueAtTime(0, t + 0.15); osc.start(t); osc.stop(t + 0.15);
+                } else if (type === 'hit') {
+                    osc.type = 'triangle'; osc.frequency.setValueAtTime(300, t); osc.frequency.linearRampToValueAtTime(200, t + 0.1);
+                    gain.gain.linearRampToValueAtTime(0, t + 0.1); osc.start(t); osc.stop(t + 0.1);
                 } else if (type === 'faint') {
                     osc.type = 'sine'; osc.frequency.setValueAtTime(500, t); osc.frequency.linearRampToValueAtTime(100, t + 0.5);
                     gain.gain.linearRampToValueAtTime(0, t + 0.5); osc.start(t); osc.stop(t + 0.5);
                 } else if (type === 'switch') {
                     osc.type = 'triangle'; osc.frequency.setValueAtTime(300, t); osc.frequency.linearRampToValueAtTime(600, t + 0.15);
                     gain.gain.linearRampToValueAtTime(0, t + 0.2); osc.start(t); osc.stop(t + 0.2);
+                } else if (type === 'heal') {
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(600, t); osc.frequency.linearRampToValueAtTime(1200, t + 0.2);
+                    gain.gain.setValueAtTime(0, t); gain.gain.linearRampToValueAtTime(0.15, t + 0.1); gain.gain.linearRampToValueAtTime(0, t + 0.2);
+                    osc.start(t); osc.stop(t + 0.2);
+                } else if (type === 'buff') {
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(400, t); osc.frequency.linearRampToValueAtTime(800, t + 0.2);
+                    gain.gain.linearRampToValueAtTime(0, t + 0.2); osc.start(t); osc.stop(t + 0.2);
+                } else if (type === 'debuff') {
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(400, t); osc.frequency.linearRampToValueAtTime(200, t + 0.2);
+                    gain.gain.linearRampToValueAtTime(0, t + 0.2); osc.start(t); osc.stop(t + 0.2);
+                } else if (type === 'status') {
+                    osc.type = 'square'; osc.frequency.setValueAtTime(300, t); osc.frequency.linearRampToValueAtTime(350, t + 0.1);
+                    osc.frequency.linearRampToValueAtTime(250, t + 0.2); gain.gain.linearRampToValueAtTime(0, t + 0.2);
+                    osc.start(t); osc.stop(t + 0.2);
                 }
             } catch (e) { /* audio not supported */ }
         }
@@ -1865,7 +1894,7 @@
                             moveId: actions[uid].val,
                             userUid: uid,
                             targetUid: defUid,
-                            turnsLeft: 2,
+                            turnsLeft: 3,
                             power: move.power,
                             type: move.type,
                             category: move.category,
@@ -2084,7 +2113,8 @@
                             if (doubleDamageInvulnerable) damage *= 2;
 
                             if (effectiveness > 1 && h === 0) { log.push(`> It's <span class="super">super effective!</span>`); playSound('supereffective'); }
-                            if (effectiveness < 1 && effectiveness > 0 && h === 0) log.push(`> It's <span class="notvery">not very effective...</span>`);
+                            if (effectiveness < 1 && effectiveness > 0 && h === 0) { log.push(`> It's <span class="notvery">not very effective...</span>`); playSound('notvery'); }
+                            if (effectiveness === 1 && damage > 0 && h === 0) { playSound('hit'); }
                             if (effectiveness === 0) { log.push(`> It had <span class="notvery">no effect</span> on ${defMon.name}!`); damage = 0; break; }
                             if (isCrit && damage > 0) log.push(`> <span class="crit">A critical hit!</span>`);
 
@@ -2122,7 +2152,7 @@
                                         log.push(`<span class="item-text">${defMon.name} hung on using its Focus Sash!</span>`);
                                     } else { defMon.currentHp = Math.max(0, defMon.currentHp - damage); }
                                     totalDmg += dmgDealt;
-                                    log.push(`> <span style="color:#94a3b8; font-size:0.85em;">${defMon.name} took <b>${damage}</b> damage! (${defMon.currentHp}/${defMon.hp} HP)</span>`);
+                                    log.push(`> <span style="color:#94a3b8; font-size:0.85em;">${defMon.name} took <b>${damage}</b> damage! (${Math.round((damage / defMon.hp) * 100)}%) (${defMon.currentHp}/${defMon.hp} HP)</span>`);
                                     if (defMon.currentHp === 0) { log.push(`<span class="fainted-text">${defMon.name} fainted!</span>`); playSound('faint'); }
 
                                     // Destiny Bond
@@ -2181,12 +2211,14 @@
                                 log.push(`<span class="item-text">${mon.name} had its energy drained!</span>`);
                             }
                             if (fx.enemyDrop && defMon.currentHp > 0 && Math.random() * 100 < (fx.dropRate || 100)) {
+                                playSound('debuff');
                                 for (const [s, amt] of Object.entries(fx.enemyDrop)) {
                                     defMon.boosts[s] = Math.max(-6, Math.min(6, defMon.boosts[s] + amt));
                                     log.push(`<span class="notvery">${defMon.name}'s ${s} fell!</span>`);
                                 }
                             }
                             if (fx.selfBoost && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100)) {
+                                playSound('buff');
                                 for (const [s, amt] of Object.entries(fx.selfBoost)) {
                                     mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
                                     log.push(`<span class="super">${mon.name}'s ${s} rose!</span>`);
@@ -2205,18 +2237,21 @@
 
                         if (fx) {
                             if (fx.selfBoost && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100)) {
+                                playSound('buff');
                                 for (const [s, amt] of Object.entries(fx.selfBoost)) {
                                     mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
                                     log.push(`<span class="super">${mon.name}'s ${s} rose!</span>`);
                                 }
                             }
                             if (fx.selfDrop && mon.currentHp > 0) {
+                                playSound('debuff');
                                 for (const [s, amt] of Object.entries(fx.selfDrop)) {
                                     mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
                                     log.push(`<span class="notvery">${mon.name}'s ${s} fell!</span>`);
                                 }
                             }
                             if (fx.enemyDrop && defMon.currentHp > 0 && move.category === 'Status' && Math.random() * 100 < (fx.dropRate || 100) && !subBlocks) {
+                                playSound('debuff');
                                 for (const [s, amt] of Object.entries(fx.enemyDrop)) {
                                     defMon.boosts[s] = Math.max(-6, Math.min(6, defMon.boosts[s] + amt));
                                     log.push(`<span class="notvery">${defMon.name}'s ${s} fell!</span>`);
@@ -2226,6 +2261,7 @@
                                 const heal = Math.floor(mon.hp * fx.healPerc);
                                 mon.currentHp = Math.min(mon.hp, mon.currentHp + heal);
                                 log.push(`<span class="item-text">${mon.name} recovered HP!</span>`);
+                                playSound('heal');
                             }
                             // Status
                             if (fx.status && defMon.currentHp > 0 && !defMon.status && Math.random() * 100 < (fx.statusRate || 100) && !subBlocks) {
@@ -2258,6 +2294,7 @@
                                     if (fx.status === 'TOX') defMon.toxicCounter = 1;
                                     if (fx.status === 'SLP') defMon.sleepTurns = 1 + Math.floor(Math.random() * 3);
                                     log.push(`<span class="status-${fx.status}">${defMon.name} was afflicted with ${fx.status}!</span>`);
+                                    playSound('status');
                                 }
                             }
                             if (fx.weather) {
@@ -2477,9 +2514,10 @@
                             damage = Math.max(1, damage);
                             target.currentHp = Math.max(0, target.currentHp - damage);
                             log.push(`> <b>${moveName}</b> hit ${target.name}!`);
-                            log.push(`> <span style="color:#94a3b8; font-size:0.85em;">${target.name} took <b>${damage}</b> damage! (${target.currentHp}/${target.hp} HP)</span>`);
-                            if (eff > 1) log.push(`> It's <span class="super">super effective!</span>`);
-                            if (eff < 1 && eff > 0) log.push(`> It's <span class="notvery">not very effective...</span>`);
+                            log.push(`> <span style="color:#94a3b8; font-size:0.85em;">${target.name} took <b>${damage}</b> damage! (${Math.round((damage / target.hp) * 100)}%) (${target.currentHp}/${target.hp} HP)</span>`);
+                            if (eff > 1) { log.push(`> It's <span class="super">super effective!</span>`); playSound('supereffective'); }
+                            if (eff < 1 && eff > 0) { log.push(`> It's <span class="notvery">not very effective...</span>`); playSound('notvery'); }
+                            if (eff === 1 && damage > 0) { playSound('hit'); }
                             if (target.currentHp === 0) { log.push(`<span class="fainted-text">${target.name} fainted!</span>`); playSound('faint'); }
                         }
                         return false; // remove from list
@@ -2804,9 +2842,9 @@
                     <div style="flex:1;">
                         <h3 style="margin:0 0 5px;">${esc(mon.name)}</h3>
                         <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">
-                            <div><b>Types:</b> ${mon.types.join(' / ')}</div>
-                            <div><b>Ability:</b> ${mon.ability || 'Unknown'}</div>
-                            <div><b>Item:</b> ${mon.item || 'None'}</div>
+                            <div><b>Types:</b> ${mon.types.map(t => `<a href="#" onclick="showDetailInfo('type', '${t}')" style="color:var(--primary); text-decoration:none;">${t}</a>`).join(' / ')}</div>
+                            <div><b>Ability:</b> ${mon.ability ? `<a href="#" onclick="showDetailInfo('ability', '${mon.ability.replace(/'/g, "\\'")}')" style="color:var(--primary); text-decoration:none;">${mon.ability}</a>` : 'Unknown'}</div>
+                            <div><b>Item:</b> ${mon.item ? `<a href="#" onclick="showDetailInfo('item', '${mon.item.replace(/'/g, "\\'")}')" style="color:var(--primary); text-decoration:none;">${mon.item}</a>` : 'None'}</div>
                             ${mon.status ? `<div><b>Status:</b> <span class="status-${mon.status}">${mon.status}</span></div>` : ''}
                         </div>
                     </div>
@@ -2828,6 +2866,32 @@
             document.getElementById('modal-mon-info').style.display = 'flex';
         }
 
+        window.showDetailInfo = function (category, name) {
+            let desc = 'No detailed information available.';
+            let titleColor = 'var(--primary)';
+
+            if (category === 'type') {
+                desc = `Type effectiveness for <b>${name}</b> interacts with various attack types.`;
+            } else if (category === 'item') {
+                const itemKey = Object.keys(ITEMS || {}).find(k => ITEMS[k].name === name || k === name.toLowerCase().replace(/[\\s']/g, '-'));
+                if (itemKey && ITEMS[itemKey].desc) desc = ITEMS[itemKey].desc;
+            } else if (category === 'ability') {
+                desc = `Passive effect for the Pokémon.`;
+            }
+
+            const html = `
+                <div style="padding: 10px;">
+                    <h3 style="margin: 0 0 10px 0; color:${titleColor};">${esc(name)}</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">${desc}</p>
+                    <div style="margin-top:15px; text-align:right;">
+                        <button class="btn btn-sm" onclick="document.getElementById('modal-detail-info').style.display='none'">Close</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('detail-info-content').innerHTML = html;
+            document.getElementById('modal-detail-info').style.display = 'flex';
+        };
+
         window.showBenchInfo = function (uid, idx) {
             const mon = roomState.players[uid]?.team?.[idx];
             if (!mon) return;
@@ -2840,9 +2904,9 @@
                     <div style="flex:1;">
                         <h3 style="margin:0 0 5px;">${esc(mon.name)}</h3>
                         <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;">
-                            <div><b>Types:</b> ${mon.types.join(' / ')}</div>
-                            <div><b>Ability:</b> ${mon.ability || 'Unknown'}</div>
-                            <div><b>Item:</b> ${mon.item || 'None'}</div>
+                            <div><b>Types:</b> ${mon.types.map(t => `<a href="#" onclick="showDetailInfo('type', '${t}')" style="color:var(--primary); text-decoration:none;">${t}</a>`).join(' / ')}</div>
+                            <div><b>Ability:</b> ${mon.ability ? `<a href="#" onclick="showDetailInfo('ability', '${mon.ability.replace(/'/g, "\\'")}')" style="color:var(--primary); text-decoration:none;">${mon.ability}</a>` : 'Unknown'}</div>
+                            <div><b>Item:</b> ${mon.item ? `<a href="#" onclick="showDetailInfo('item', '${mon.item.replace(/'/g, "\\'")}')" style="color:var(--primary); text-decoration:none;">${mon.item}</a>` : 'None'}</div>
                             ${mon.status ? `<div><b>Status:</b> <span class="status-${mon.status}">${mon.status}</span></div>` : ''}
                         </div>
                     </div>

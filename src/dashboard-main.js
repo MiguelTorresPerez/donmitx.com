@@ -552,6 +552,7 @@ async function loadAdmin() {
                 <td>${room.createdAt ? timeAgo(room.createdAt) : '—'}</td>
                 <td>
                     <button class="btn-xs btn-outline btn-admin-delete-room" data-id="${room.id}">🗑️ Delete</button>
+                    <a href="${room.gameId ? `/public/games/${room.gameId}/index.html` : '#'}?roomId=${room.id}" target="_blank" class="btn-xs btn-outline" style="text-decoration:none; display:inline-block; margin-left:4px;">↗️ New Tab</a>
                 </td>
             `;
             roomTbody.appendChild(tr);
@@ -974,12 +975,17 @@ function setupEventListeners() {
                     actionBtn = '<span class="badge">Full</span>';
                 }
 
+                const openNewTabBtn = `<a href="${currentLobbyAppUrl}?roomId=${room.id}" target="_blank" class="btn-outline btn-sm" style="display:inline-block; margin-left:8px; text-decoration:none;" title="Open in New Tab">↗️ New Tab</a>`;
+
                 div.innerHTML = `
                     <div class="chat-info" style="flex:1;">
                         <h4 style="margin:0; font-size:1rem;">Host: ${escapeHtml(room.players[room.hostUid]?.name || 'Unknown')}</h4>
                         <span class="text-muted" style="font-size:0.85rem;">Players: ${playerCount}/${room.config?.maxPlayers || 6} ${isPlaying ? '• Playing' : '• Lobby'}</span>
                     </div>
-                    ${actionBtn}
+                    <div>
+                        ${actionBtn}
+                        ${openNewTabBtn}
+                    </div>
                 `;
                 list.appendChild(div);
             });
