@@ -1457,23 +1457,67 @@
         // ------------------
 
         async function initBattleState() {
-            await updateDoc(roomRef, {
-                status: 'playing',
-                'state.turn': 1,
-                'state.log': [`Format: ${roomState.state.format.name}`, `Battle Started!`],
-                'state.actions': {},
-                'state.weather': null,
-                'state.weatherTurns': 0,
-                'state.terrain': null,
-                'state.terrainTurns': 0,
-                'state.hazards': { [p1Uid]: {}, [p2Uid]: {} },
-                'state.screens': { [p1Uid]: {}, [p2Uid]: {} },
-                'state.futureMoves': [],
-                'state.active': {
+            const p1Uid = Object.keys(roomState.players)[0];
+            const p2Uid = Object.keys(roomState.players)[1];
+
+            let stateLog = [
+                `Format: ${roomState.state.format.name}`,
+                `<strong style="color:var(--accent)">══════ Turn 0 — Battle Start ══════</strong>`,
+                `${roomState.players[p1Uid].name} sent out ${roomState.players[p1Uid].team[0].name}!`,
+                `${roomState.players[p2Uid].name} sent out ${roomState.players[p2Uid].team[0].name}!`
+            ];
+            let initialState = {
+                turn: 1,
+                log: stateLog,
+                actions: {},
+                weather: null,
+                weatherTurns: 0,
+                terrain: null,
+                terrainTurns: 0,
+                hazards: { [p1Uid]: {}, [p2Uid]: {} },
+                screens: { [p1Uid]: {}, [p2Uid]: {} },
+                futureMoves: [],
+                active: {
                     [p1Uid]: 0,
                     [p2Uid]: 0
                 }
+            };
+
+            const getMon = (targetUid) => roomState.players[targetUid].team[0];
+            const mon1 = getMon(p1Uid);
+            const mon2 = getMon(p2Uid);
+
+            // Resolve speed for ability ordering (faster mon's ability triggers first)
+            let p1GoesFirst = mon1.spe > mon2.spe;
+            if (mon1.spe === mon2.spe) p1GoesFirst = Math.random() < 0.5;
+
+            if (p1GoesFirst) {
+                if (mon1) triggerSwitchInEffects(mon1, p1Uid, getMon, initialState, stateLog);
+                if (mon2) triggerSwitchInEffects(mon2, p2Uid, getMon, initialState, stateLog);
+            } else {
+                if (mon2) triggerSwitchInEffects(mon2, p2Uid, getMon, initialState, stateLog);
+                if (mon1) triggerSwitchInEffects(mon1, p1Uid, getMon, initialState, stateLog);
+            }
+
+            // Push updated state to Firebase
+            await updateDoc(roomRef, {
+                status: 'playing',
+                'state.turn': initialState.turn,
+                'state.log': initialState.log,
+                'state.actions': initialState.actions,
+                'state.weather': initialState.weather,
+                'state.weatherTurns': initialState.weatherTurns,
+                'state.terrain': initialState.terrain,
+                'state.terrainTurns': initialState.terrainTurns,
+                'state.hazards': initialState.hazards,
+                'state.screens': initialState.screens,
+                'state.futureMoves': initialState.futureMoves,
+                'state.active': initialState.active,
+                [`players.${p1Uid}.team`]: roomState.players[p1Uid].team,
+                [`players.${p2Uid}.team`]: roomState.players[p2Uid].team
             });
+            // Update local memory
+            roomState.state = { ...roomState.state, ...initialState };
         }
 
         // Action Submitter
@@ -1523,12 +1567,62 @@
         };
 
         // Core Turn Logic (Host side)
+        function triggerSwitchInEffects(newMon, uid, getMon, state, log) {
+            if (newMon.currentHp > 0) {
+                const p1Uid = Object.keys(roomState.players)[0];
+                const p2Uid = Object.keys(roomState.players)[1];
+                const oppUid = uid === p1Uid ? p2Uid : p1Uid;
+                const oppMon = getMon(oppUid);
+                const ab = (newMon.ability || '').toLowerCase().replace(/\s+/g, '');
+
+                const calcStat = (base, boost) => {
+                    if (boost >= 0) return Math.floor(base * ((2 + boost) / 2));
+                    return Math.floor(base * (2 / (2 - boost)));
+                };
+
+                // Intimidate
+                if (ab === 'intimidate' && oppMon.currentHp > 0) {
+                    oppMon.boosts.atk = Math.max(-6, oppMon.boosts.atk - 1);
+                    log.push(`<span class="notvery">${newMon.name}'s Intimidate lowered ${oppMon.name}'s Attack!</span>`);
+                }
+                // Weather abilities
+                if (ab === 'drizzle') { state.weather = 'Rain'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Drizzle made it rain!`); }
+                if (ab === 'drought') { state.weather = 'Sun'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Drought intensified the sun!`); }
+                if (ab === 'sandstream') { state.weather = 'Sand'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Sand Stream whipped up a sandstorm!`); }
+                if (ab === 'snowwarning') { state.weather = 'Snow'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Snow Warning made it snow!`); }
+                if (ab === 'deltastream') { state.weather = 'DeltaStream'; state.weatherTurns = 5; log.push(`> ${newMon.name} created a mysterious air current!`); }
+
+                // Terrain and other switch-in abilities
+                if (ab === 'electricsurge' || ab === 'hadronengine') { state.terrain = 'Electric'; state.terrainTurns = 5; log.push(`> An electric current runs across the battlefield!`); }
+                if (ab === 'psychicsurge') { state.terrain = 'Psychic'; state.terrainTurns = 5; log.push(`> The battlefield got weird!`); }
+                if (ab === 'grassysurge') { state.terrain = 'Grassy'; state.terrainTurns = 5; log.push(`> Grass grew to cover the battlefield!`); }
+                if (ab === 'mistysurge') { state.terrain = 'Misty'; state.terrainTurns = 5; log.push(`> Mist swirled around the battlefield!`); }
+                if (ab === 'orichalcumpulse') { state.weather = 'Sun'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Orichalcum Pulse turned the sunlight harsh!`); }
+
+                // Switch-in Stat modifiers / Other
+                if (ab === 'download' && oppMon.currentHp > 0) {
+                    const defToCompare = calcStat(oppMon.def, oppMon.boosts?.def || 0);
+                    const spdToCompare = calcStat(oppMon.spd, oppMon.boosts?.spd || 0);
+                    if (defToCompare < spdToCompare) {
+                        newMon.boosts.atk = Math.min(6, newMon.boosts.atk + 1);
+                        log.push(`<span class="super">${newMon.name}'s Download boosted its Attack!</span>`);
+                    } else {
+                        newMon.boosts.spa = Math.min(6, newMon.boosts.spa + 1);
+                        log.push(`<span class="super">${newMon.name}'s Download boosted its Sp. Atk!</span>`);
+                    }
+                }
+                if (ab === 'intrepidsword') { newMon.boosts.atk = Math.min(6, newMon.boosts.atk + 1); log.push(`<span class="super">${newMon.name}'s Intrepid Sword boosted its Attack!</span>`); }
+                if (ab === 'dauntlessshield') { newMon.boosts.def = Math.min(6, newMon.boosts.def + 1); log.push(`<span class="super">${newMon.name}'s Dauntless Shield boosted its Defense!</span>`); }
+            }
+        }
+
         async function executeTurn() {
             await updateDoc(roomRef, { 'state.resolving': true });
             try {
                 const state = roomState.state;
                 const actions = state.actions;
                 let log = [...(state.log || [])];
+                log.push(`<strong style="color:var(--accent)">══════ Turn ${state.turn} ══════</strong>`);
 
                 const teams = { [p1Uid]: roomState.players[p1Uid].team, [p2Uid]: roomState.players[p2Uid].team };
                 const activeIdx = { ...state.active };
@@ -1651,88 +1745,57 @@
                         if (newMon.currentHp === 0) log.push(`<span class="fainted-text">${newMon.name} fainted!</span>`);
 
                         // Ability triggers on switch-in
-                        if (newMon.currentHp > 0) {
-                            const oppUid = uid === p1Uid ? p2Uid : p1Uid;
-                            const oppMon = getMon(oppUid);
-                            const ab = (newMon.ability || '').toLowerCase().replace(/\s+/g, '');
+                        triggerSwitchInEffects(newMon, uid, getMon, state, log);
 
-                            // Intimidate
-                            if (ab === 'intimidate' && oppMon.currentHp > 0) {
-                                oppMon.boosts.atk = Math.max(-6, oppMon.boosts.atk - 1);
-                                log.push(`<span class="notvery">${newMon.name}'s Intimidate lowered ${oppMon.name}'s Attack!</span>`);
-                            }
-                            // Weather abilities
-                            if (ab === 'drizzle') { state.weather = 'Rain'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Drizzle made it rain!`); }
-                            if (ab === 'drought') { state.weather = 'Sun'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Drought intensified the sun!`); }
-                            if (ab === 'sandstream') { state.weather = 'Sand'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Sand Stream whipped up a sandstorm!`); }
-                            if (ab === 'snowwarning') { state.weather = 'Snow'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Snow Warning made it snow!`); }
-                            if (ab === 'deltastream') { state.weather = 'DeltaStream'; state.weatherTurns = 5; log.push(`> ${newMon.name} created a mysterious air current!`); }
+                        // Additional switch-in abilities that need the opponent reference
+                        const oppUidSw = uid === p1Uid ? p2Uid : p1Uid;
+                        const oppMonSw = getMon(oppUidSw);
+                        const abSw = (newMon.ability || '').toLowerCase().replace(/\s+/g, '');
 
-                            // Terrain and other switch-in abilities
-                            if (ab === 'electricsurge' || ab === 'hadronengine') { state.terrain = 'Electric'; state.terrainTurns = 5; log.push(`> An electric current runs across the battlefield!`); }
-                            if (ab === 'psychicsurge') { state.terrain = 'Psychic'; state.terrainTurns = 5; log.push(`> The battlefield got weird!`); }
-                            if (ab === 'grassysurge') { state.terrain = 'Grassy'; state.terrainTurns = 5; log.push(`> Grass grew to cover the battlefield!`); }
-                            if (ab === 'mistysurge') { state.terrain = 'Misty'; state.terrainTurns = 5; log.push(`> Mist swirled around the battlefield!`); }
-                            if (ab === 'orichalcumpulse') { state.weather = 'Sun'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Orichalcum Pulse turned the sunlight harsh!`); }
+                        if (abSw === 'trace' && oppMonSw.currentHp > 0) {
+                            newMon.ability = oppMonSw.ability; log.push(`> ${newMon.name} traced ${oppMonSw.name}'s ${oppMonSw.ability}!`);
+                        }
+                        if (abSw === 'imposter' && oppMonSw.currentHp > 0) {
+                            morphToForm(newMon, oppMonSw.id);
+                            log.push(`> <span style="color:var(--accent)">${newMon.name} transformed into ${oppMonSw.name} using Imposter!</span>`);
+                        }
+                        if (abSw === 'supersweetsyrup' && oppMonSw.currentHp > 0) {
+                            oppMonSw.boosts.evasion = Math.max(-6, oppMonSw.boosts.evasion - 1); log.push(`<span class="notvery">A sweet scent lowered ${oppMonSw.name}'s evasiveness!</span>`);
+                        }
 
-                            // Switch-in Stat modifiers / Other
-                            if (ab === 'download' && oppMon.currentHp > 0) {
-                                const defToCompare = calcStat(oppMon.def, oppMon.boosts?.def || 0);
-                                const spdToCompare = calcStat(oppMon.spd, oppMon.boosts?.spd || 0);
-                                if (defToCompare < spdToCompare) { newMon.boosts.atk = Math.min(6, newMon.boosts.atk + 1); log.push(`> ${newMon.name}'s Download boosted its Attack!`); }
-                                else { newMon.boosts.spa = Math.min(6, newMon.boosts.spa + 1); log.push(`> ${newMon.name}'s Download boosted its SpA!`); }
+                        // Zero to Hero: Palafin morphs to Hero form
+                        if (abSw === 'zerotohero' && newMon.hasBeenSwitchedOut) {
+                            const heroForm = POKEMON_DB.find(p => p.id === 'palafinhero');
+                            if (heroForm && newMon.id !== 'palafinhero') {
+                                newMon.name = heroForm.name; newMon.id = heroForm.id;
+                                newMon.types = [...heroForm.types];
+                                newMon.atk = heroForm.atk; newMon.def = heroForm.def;
+                                newMon.spa = heroForm.spa; newMon.spd = heroForm.spd; newMon.spe = heroForm.spe;
+                                newMon.sprite = heroForm.sprite; newMon.spriteBack = heroForm.spriteBack;
+                                log.push(`> <span style="color:var(--accent)">${newMon.name} underwent a heroic transformation!</span>`);
                             }
-                            if (ab === 'trace' && oppMon.currentHp > 0) {
-                                newMon.ability = oppMon.ability; log.push(`> ${newMon.name} traced ${oppMon.name}'s ${oppMon.ability}!`);
-                            }
-                            if (ab === 'imposter' && oppMon.currentHp > 0) {
-                                morphToForm(newMon, oppMon.id);
-                                log.push(`> <span style="color:var(--accent)">${newMon.name} transformed into ${oppMon.name} using Imposter!</span>`);
-                            }
-                            if (ab === 'supersweetsyrup' && oppMon.currentHp > 0) {
-                                oppMon.boosts.evasion = Math.max(-6, oppMon.boosts.evasion - 1); log.push(`<span class="notvery">A sweet scent lowered ${oppMon.name}'s evasiveness!</span>`);
-                            }
+                        }
 
-                            // Zero to Hero: Palafin morphs to Hero form on switch-in if it has been switched out at least once
-                            if (ab === 'zerotohero' && newMon.hasBeenSwitchedOut) {
-                                const heroForm = POKEMON_DB.find(p => p.id === 'palafinhero');
-                                if (heroForm && newMon.id !== 'palafinhero') {
-                                    newMon.name = heroForm.name;
-                                    newMon.id = heroForm.id;
-                                    newMon.types = [...heroForm.types];
-                                    newMon.atk = heroForm.atk;
-                                    newMon.def = heroForm.def;
-                                    newMon.spa = heroForm.spa;
-                                    newMon.spd = heroForm.spd;
-                                    newMon.spe = heroForm.spe;
-                                    newMon.sprite = heroForm.sprite;
-                                    newMon.spriteBack = heroForm.spriteBack;
-                                    log.push(`> <span style="color:var(--accent)">${newMon.name} underwent a heroic transformation!</span>`);
+                        // Forecast: Castform changes based on weather
+                        if (abSw === 'forecast' && (newMon.id.includes('castform') || newMon.name === 'Castform')) {
+                            let targetId = 'castform';
+                            if (state.weather === 'Sun') targetId = 'castformsunny';
+                            else if (state.weather === 'Rain') targetId = 'castformrainy';
+                            else if (state.weather === 'Snow') targetId = 'castformsnowy';
+                            if (newMon.id !== targetId) {
+                                if (morphToForm(newMon, targetId)) {
+                                    log.push(`> <span style="color:var(--accent)">${newMon.name} transformed!</span>`);
                                 }
                             }
+                        }
 
-                            // Forecast: Castform changes based on weather
-                            if (ab === 'forecast' && (newMon.id.includes('castform') || newMon.name === 'Castform')) {
-                                let targetId = 'castform';
-                                if (state.weather === 'Sun') targetId = 'castformsunny';
-                                else if (state.weather === 'Rain') targetId = 'castformrainy';
-                                else if (state.weather === 'Snow') targetId = 'castformsnowy';
-
-                                if (newMon.id !== targetId) {
-                                    if (morphToForm(newMon, targetId)) {
-                                        log.push(`> <span style="color:var(--accent)">${newMon.name} transformed!</span>`);
-                                    }
-                                }
-                            }
-
-                            // Flower Gift: Cherrim changes based on weather
-                            if (ab === 'flowergift' && (newMon.id.includes('cherrim') || newMon.name === 'Cherrim')) {
-                                const isSun = state.weather === 'Sun';
-                                const targetId = isSun ? 'cherrimsunshine' : 'cherrim';
-                                if (newMon.id !== targetId) {
-                                    if (morphToForm(newMon, targetId)) {
-                                        log.push(`> <span style="color:var(--accent)">${newMon.name} transformed!</span>`);
-                                    }
+                        // Flower Gift: Cherrim changes based on weather
+                        if (abSw === 'flowergift' && (newMon.id.includes('cherrim') || newMon.name === 'Cherrim')) {
+                            const isSun = state.weather === 'Sun';
+                            const targetId = isSun ? 'cherrimsunshine' : 'cherrim';
+                            if (newMon.id !== targetId) {
+                                if (morphToForm(newMon, targetId)) {
+                                    log.push(`> <span style="color:var(--accent)">${newMon.name} transformed!</span>`);
                                 }
                             }
                         }
@@ -3543,6 +3606,51 @@
             }
         }
 
+        // ---- FIELD STATUS INDICATOR HELPERS ----
+        function renderFieldIndicators(state, myUid, oppUid) {
+            let indicators = '';
+            const weatherIcons = { Sun: '☀️', Rain: '🌧️', Sand: '⛱️', Snow: '❄️', DeltaStream: '🌪️' };
+            if (state.weather) {
+                indicators += `<span style="background:rgba(255,255,255,0.1); padding:2px 8px; border-radius:12px; font-size:0.75rem; margin-right:4px;">${weatherIcons[state.weather] || '🌤️'} ${state.weather} (${state.weatherTurns}t)</span>`;
+            }
+            const terrainIcons = { Electric: '⚡', Psychic: '🔮', Grassy: '🌿', Misty: '🌫️' };
+            if (state.terrain) {
+                indicators += `<span style="background:rgba(255,255,255,0.1); padding:2px 8px; border-radius:12px; font-size:0.75rem; margin-right:4px;">${terrainIcons[state.terrain] || '🏔️'} ${state.terrain} Terrain (${state.terrainTurns}t)</span>`;
+            }
+            // Screens
+            for (const uid of [myUid, oppUid]) {
+                const screens = state.screens?.[uid] || {};
+                const side = uid === myUid ? 'Your' : 'Opp';
+                if (screens['reflect']) indicators += `<span style="background:rgba(244,63,94,0.2); border:1px solid #f43f5e; padding:1px 6px; border-radius:8px; font-size:0.65rem; margin-right:3px;">🛡️ ${side} Reflect (${screens['reflect']}t)</span>`;
+                if (screens['light-screen']) indicators += `<span style="background:rgba(250,204,21,0.2); border:1px solid #facc15; padding:1px 6px; border-radius:8px; font-size:0.65rem; margin-right:3px;">✨ ${side} L-Screen (${screens['light-screen']}t)</span>`;
+                if (screens['aurora-veil']) indicators += `<span style="background:rgba(103,232,249,0.2); border:1px solid #67e8f9; padding:1px 6px; border-radius:8px; font-size:0.65rem; margin-right:3px;">🌈 ${side} A-Veil (${screens['aurora-veil']}t)</span>`;
+            }
+            return indicators;
+        }
+
+        function renderHazardIndicators(state, uid) {
+            const hazards = state.hazards?.[uid] || {};
+            let badges = '';
+            if (hazards['stealth-rock']) badges += `<span style="background:rgba(180,83,9,0.3); border:1px solid #b45309; padding:1px 6px; border-radius:8px; font-size:0.65rem; margin-right:3px;">🪨 SR</span>`;
+            if (hazards['spikes']) badges += `<span style="background:rgba(148,163,184,0.3); border:1px solid #94a3b8; padding:1px 6px; border-radius:8px; font-size:0.65rem; margin-right:3px;">⬆️ Spikes x${hazards['spikes']}</span>`;
+            if (hazards['toxic-spikes']) badges += `<span style="background:rgba(192,132,252,0.3); border:1px solid #c084fc; padding:1px 6px; border-radius:8px; font-size:0.65rem; margin-right:3px;">☠️ T-Spikes x${hazards['toxic-spikes']}</span>`;
+            if (hazards['sticky-web']) badges += `<span style="background:rgba(163,230,53,0.3); border:1px solid #a3e635; padding:1px 6px; border-radius:8px; font-size:0.65rem; margin-right:3px;">🕸️ Web</span>`;
+            return badges;
+        }
+
+        function renderVolatileIndicators(mon) {
+            let badges = '';
+            if (mon.substituteHp > 0) badges += `<span style="background:rgba(59,130,246,0.3); border:1px solid #3b82f6; padding:1px 6px; border-radius:8px; font-size:0.65rem; margin:1px;">🛡️ Sub</span>`;
+            if (mon.confused || mon.confusionTurns > 0) badges += `<span style="background:rgba(251,113,133,0.3); border:1px solid #fb7185; padding:1px 6px; border-radius:8px; font-size:0.65rem; margin:1px;">💫 Confused</span>`;
+            if (mon.taunt > 0) badges += `<span style="background:rgba(239,68,68,0.3); border:1px solid #ef4444; padding:1px 6px; border-radius:8px; font-size:0.65rem; margin:1px;">🤬 Taunt</span>`;
+            if (mon.encore > 0) badges += `<span style="background:rgba(245,158,11,0.3); border:1px solid #f59e0b; padding:1px 6px; border-radius:8px; font-size:0.65rem; margin:1px;">🔁 Encore</span>`;
+            if (mon.seeded) badges += `<span style="background:rgba(74,222,128,0.3); border:1px solid #4ade80; padding:1px 6px; border-radius:8px; font-size:0.65rem; margin:1px;">🌱 Seeded</span>`;
+            if (mon.cursed) badges += `<span style="background:rgba(139,92,246,0.3); border:1px solid #8b5cf6; padding:1px 6px; border-radius:8px; font-size:0.65rem; margin:1px;">👻 Curse</span>`;
+            if (mon.perishSong > 0) badges += `<span style="background:rgba(239,68,68,0.3); border:1px solid #ef4444; padding:1px 6px; border-radius:8px; font-size:0.65rem; margin:1px;">🎵 Perish ${mon.perishSong}</span>`;
+            if (mon.trapped) badges += `<span style="background:rgba(71,85,105,0.3); border:1px solid #475569; padding:1px 6px; border-radius:8px; font-size:0.65rem; margin:1px;">⛓️ Trapped</span>`;
+            return badges;
+        }
+
         // GUI View
         function getHpColor(pct) {
             if (pct > 0.5) return 'var(--success)';
@@ -3914,6 +4022,12 @@
                 return s;
             };
 
+            const myVolatiles = renderVolatileIndicators(myActive);
+            const oppVolatiles = renderVolatileIndicators(oppActive);
+            const myHazards = renderHazardIndicators(state, myUid, 'Your');
+            const oppHazards = renderHazardIndicators(state, oppUid, 'Opp');
+            const fieldIndicators = renderFieldIndicators(state, myUid, oppUid);
+
             let html = `
                 <!-- Scene -->
                 <div class="battle-scene">
@@ -3925,6 +4039,7 @@
                         </div>
                         <div class="hp-bar-bg"><div class="hp-bar-fill" style="width:${oppHpPct * 100}%; background-color:${getHpColor(oppHpPct)}"></div></div>
                         <div class="hp-text">${oppActive.currentHp}/${oppActive.hp}</div>
+                        ${oppVolatiles ? `<div style="margin-top:2px; display:flex; flex-wrap:wrap; gap:2px;">${oppVolatiles}</div>` : ''}
                     </div>
                     
                     <div class="hud player">
@@ -3935,6 +4050,7 @@
                         </div>
                         <div class="hp-bar-bg"><div class="hp-bar-fill" style="width:${myHpPct * 100}%; background-color:${getHpColor(myHpPct)}"></div></div>
                         <div class="hp-text">${myActive.currentHp}/${myActive.hp}</div>
+                        ${myVolatiles ? `<div style="margin-top:2px; display:flex; flex-wrap:wrap; gap:2px;">${myVolatiles}</div>` : ''}
                     </div>
 
                     <div class="platform opponent"></div>
@@ -3943,6 +4059,17 @@
                     <div class="platform player"></div>
                     <img src="${myActive.spriteBack}" class="sprite player ${myActive.currentHp <= 0 ? 'fainted' : ''}" style="filter: drop-shadow(0px 10px 10px rgba(0,0,0,0.5));">
                 </div>
+
+                <!-- Field Status Bar -->
+                ${(fieldIndicators || myHazards || oppHazards) ? `
+                <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px; padding:4px 8px; background:rgba(0,0,0,0.3); border-radius:8px; align-items:center; font-size:0.75rem;">
+                    ${fieldIndicators}
+                    ${myHazards ? `<span style="color:var(--text-muted); margin:0 2px;">|</span> <span style="font-size:0.65rem; color:var(--text-muted);">Your side:</span> ${myHazards}` : ''}
+                    ${oppHazards ? `<span style="color:var(--text-muted); margin:0 2px;">|</span> <span style="font-size:0.65rem; color:var(--text-muted);">Opp side:</span> ${oppHazards}` : ''}
+                </div>` : ''}
+
+                <!-- Turn indicator -->
+                <div style="text-align:center; font-size:0.7rem; color:var(--text-muted); margin-bottom:4px;">Turn ${state.turn || 1}</div>
 
                 <!-- Log below battlefield -->
                 <div class="battle-log" id="b-log" style="max-height:100px; overflow-y:auto; margin-bottom:12px; font-size:0.75rem;">
