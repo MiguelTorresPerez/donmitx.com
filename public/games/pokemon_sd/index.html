@@ -910,6 +910,33 @@
         function isHost() { return currentUser && roomState && roomState.hostUid === currentUser.uid; }
         function esc(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
 
+        // Sound effects using Web Audio API
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                gain.gain.value = 0.15;
+                const t = audioCtx.currentTime;
+                if (type === 'move') {
+                    osc.type = 'square'; osc.frequency.setValueAtTime(440, t); osc.frequency.linearRampToValueAtTime(220, t + 0.15);
+                    gain.gain.linearRampToValueAtTime(0, t + 0.15); osc.start(t); osc.stop(t + 0.15);
+                } else if (type === 'supereffective') {
+                    osc.type = 'sawtooth'; osc.frequency.setValueAtTime(600, t); osc.frequency.linearRampToValueAtTime(900, t + 0.1);
+                    osc.frequency.linearRampToValueAtTime(1200, t + 0.2); gain.gain.linearRampToValueAtTime(0, t + 0.25);
+                    osc.start(t); osc.stop(t + 0.25);
+                } else if (type === 'faint') {
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(500, t); osc.frequency.linearRampToValueAtTime(100, t + 0.5);
+                    gain.gain.linearRampToValueAtTime(0, t + 0.5); osc.start(t); osc.stop(t + 0.5);
+                } else if (type === 'switch') {
+                    osc.type = 'triangle'; osc.frequency.setValueAtTime(300, t); osc.frequency.linearRampToValueAtTime(600, t + 0.15);
+                    gain.gain.linearRampToValueAtTime(0, t + 0.2); osc.start(t); osc.stop(t + 0.2);
+                }
+            } catch (e) { /* audio not supported */ }
+        }
+
         function render() {
             try {
                 const area = document.getElementById('game-area');
@@ -1406,6 +1433,7 @@
                 'state.terrainTurns': 0,
                 'state.hazards': { [p1Uid]: {}, [p2Uid]: {} },
                 'state.screens': { [p1Uid]: {}, [p2Uid]: {} },
+                'state.futureMoves': [],
                 'state.active': {
                     [p1Uid]: 0,
                     [p2Uid]: 0
@@ -1821,12 +1849,33 @@
                     }
 
                     log.push(`${mon.name} used ${move.name}!`);
+                    playSound('move');
 
                     if (mon.item && mon.item.startsWith('Choice ') && !mon.choiceLock) {
                         mon.choiceLock = actions[uid].val;
                     }
 
                     const calcStat = (base, boost) => boost >= 0 ? Math.floor(base * ((2 + boost) / 2)) : Math.floor(base * (2 / (2 - boost)));
+
+                    // --- DELAYED MOVE LOGIC (Future Sight, Doom Desire) ---
+                    const DELAYED_MOVES = ['future-sight', 'doom-desire'];
+                    if (DELAYED_MOVES.includes(actions[uid]?.val)) {
+                        if (!state.futureMoves) state.futureMoves = [];
+                        state.futureMoves.push({
+                            moveId: actions[uid].val,
+                            userUid: uid,
+                            targetUid: defUid,
+                            turnsLeft: 2,
+                            power: move.power,
+                            type: move.type,
+                            category: move.category,
+                            spa: mon.spa,
+                            atk: mon.atk
+                        });
+                        log.push(`> ${mon.name} foresaw an attack!`);
+                        playSound('move');
+                        continue;
+                    }
 
                     // --- PROTECT LOGIC ---
                     if (move.effects && move.effects.protect) {
@@ -2034,7 +2083,7 @@
                             // Semi-invulnerable bypass bonus (e.g. Earthquake vs Dig)
                             if (doubleDamageInvulnerable) damage *= 2;
 
-                            if (effectiveness > 1 && h === 0) log.push(`> It's <span class="super">super effective!</span>`);
+                            if (effectiveness > 1 && h === 0) { log.push(`> It's <span class="super">super effective!</span>`); playSound('supereffective'); }
                             if (effectiveness < 1 && effectiveness > 0 && h === 0) log.push(`> It's <span class="notvery">not very effective...</span>`);
                             if (effectiveness === 0) { log.push(`> It had <span class="notvery">no effect</span> on ${defMon.name}!`); damage = 0; break; }
                             if (isCrit && damage > 0) log.push(`> <span class="crit">A critical hit!</span>`);
@@ -2073,7 +2122,8 @@
                                         log.push(`<span class="item-text">${defMon.name} hung on using its Focus Sash!</span>`);
                                     } else { defMon.currentHp = Math.max(0, defMon.currentHp - damage); }
                                     totalDmg += dmgDealt;
-                                    if (defMon.currentHp === 0) log.push(`<span class="fainted-text">${defMon.name} fainted!</span>`);
+                                    log.push(`> <span style="color:#94a3b8; font-size:0.85em;">${defMon.name} took <b>${damage}</b> damage! (${defMon.currentHp}/${defMon.hp} HP)</span>`);
+                                    if (defMon.currentHp === 0) { log.push(`<span class="fainted-text">${defMon.name} fainted!</span>`); playSound('faint'); }
 
                                     // Destiny Bond
                                     if (defMon.currentHp === 0 && defMon.destinyBond) {
@@ -2411,6 +2461,32 @@
                     mon.destinyBond = false;
                 }
 
+                // --- DELAYED MOVE RESOLUTION (Future Sight, Doom Desire) ---
+                if (!state.futureMoves) state.futureMoves = [];
+                state.futureMoves = state.futureMoves.filter(fm => {
+                    fm.turnsLeft--;
+                    if (fm.turnsLeft <= 0) {
+                        const target = getMon(fm.targetUid);
+                        if (target && target.currentHp > 0) {
+                            const moveName = MOVES[fm.moveId]?.name || fm.moveId;
+                            const statA = fm.category === 'Special' ? fm.spa : fm.atk;
+                            const statD = fm.category === 'Special' ? target.spd : target.def;
+                            let damage = Math.floor((((2 * 100 / 5 + 2) * fm.power * statA / statD) / 50) + 2);
+                            const eff = getEffectiveness(fm.type, target.types);
+                            damage = Math.floor(damage * eff * ((85 + Math.random() * 15) / 100));
+                            damage = Math.max(1, damage);
+                            target.currentHp = Math.max(0, target.currentHp - damage);
+                            log.push(`> <b>${moveName}</b> hit ${target.name}!`);
+                            log.push(`> <span style="color:#94a3b8; font-size:0.85em;">${target.name} took <b>${damage}</b> damage! (${target.currentHp}/${target.hp} HP)</span>`);
+                            if (eff > 1) log.push(`> It's <span class="super">super effective!</span>`);
+                            if (eff < 1 && eff > 0) log.push(`> It's <span class="notvery">not very effective...</span>`);
+                            if (target.currentHp === 0) { log.push(`<span class="fainted-text">${target.name} fainted!</span>`); playSound('faint'); }
+                        }
+                        return false; // remove from list
+                    }
+                    return true; // keep for next turn
+                });
+
                 // Terrain countdown
                 if (state.terrainTurns > 0) {
                     state.terrainTurns--;
@@ -2689,6 +2765,7 @@
                         'state.weatherTurns': state.weatherTurns || 0,
                         'state.terrain': state.terrain || null,
                         'state.terrainTurns': state.terrainTurns || 0,
+                        'state.futureMoves': state.futureMoves || [],
                         [`players.${p1Uid}.team`]: teams[p1Uid],
                         [`players.${p2Uid}.team`]: teams[p2Uid]
                     });
