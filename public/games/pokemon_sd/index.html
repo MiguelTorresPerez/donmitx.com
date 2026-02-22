@@ -1279,7 +1279,7 @@
 
             if (!isReady && !isRandom) {
                 html += `<div class="pokemon-grid">
-                    ${POKEMON_DB.map(p => `
+                    ${POKEMON_DB.filter(p => !p.isMega).map(p => `
                         <div class="pokemon-card ${myTeam.some(t => t.id === p.id) ? 'selected' : ''}" onclick="window.togglePokemon('${p.id}')">
                             <img src="${p.sprite}" alt="${p.name}" loading="lazy">
                             <div class="name">${p.name}</div>
@@ -1322,8 +1322,14 @@
             // Optimistic UI freeze
             document.querySelectorAll('.btn-move, .btn-switch').forEach(b => b.disabled = true);
 
+            let mega = false;
+            const megaCheckbox = document.getElementById('mega-evolve-checkbox');
+            if (type === 'move' && megaCheckbox && megaCheckbox.checked) {
+                mega = true;
+            }
+
             await updateDoc(roomRef, {
-                [`state.actions.${currentUser.uid}`]: { type, val }
+                [`state.actions.${currentUser.uid}`]: { type, val, mega }
             });
         }
 
@@ -1478,6 +1484,53 @@
                         if (ab === 'drought') { state.weather = 'Sun'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Drought intensified the sun!`); }
                         if (ab === 'sandstream') { state.weather = 'Sand'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Sand Stream whipped up a sandstorm!`); }
                         if (ab === 'snowwarning') { state.weather = 'Snow'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Snow Warning made it snow!`); }
+                    }
+                }
+            }
+
+            // 1.5. Mega Evolution (Priority 5.5)
+            state.megaEvolved = state.megaEvolved || {};
+            for (const uid of [p1Uid, p2Uid]) {
+                const action = actions[uid];
+                if (action.type === 'move' && action.mega && !state.megaEvolved[uid]) {
+                    const mon = getMon(uid);
+                    // Find the mega form
+                    const megaForm = POKEMON_DB.find(p => p.isMega && p.baseSpecies === mon.id && p.requiredItem === mon.item);
+                    if (megaForm) {
+                        state.megaEvolved[uid] = true;
+
+                        log.push(`> <strong>${roomState.players[uid].name}'s ${mon.name} is reacting to its ${mon.item}!</strong>`);
+                        log.push(`> <span style="color:var(--accent)">${mon.name} Mega Evolved into ${megaForm.name}!</span>`);
+
+                        // Morph the current mon to Mega form
+                        mon.id = megaForm.id;
+                        mon.name = megaForm.name;
+                        mon.types = megaForm.types;
+                        mon.ability = megaForm.abilities[0]; // Take primary mega ability
+                        mon.sprite = megaForm.sprite;
+                        mon.spriteBack = megaForm.spriteBack;
+
+                        // Overwrite base stats
+                        mon.stats = {
+                            atk: megaForm.atk,
+                            def: megaForm.def,
+                            spa: megaForm.spa,
+                            spd: megaForm.spd,
+                            spe: megaForm.spe
+                        };
+
+                        // Trigger Mega Ability on switch-in
+                        const oppUid = uid === p1Uid ? p2Uid : p1Uid;
+                        const oppMon = getMon(oppUid);
+                        const ab = (mon.ability || '').toLowerCase().replace(/\s+/g, '');
+                        if (ab === 'intimidate' && oppMon.currentHp > 0) {
+                            oppMon.boosts.atk = Math.max(-6, oppMon.boosts.atk - 1);
+                            log.push(`<span class="notvery">${mon.name}'s Intimidate lowered ${oppMon.name}'s Attack!</span>`);
+                        }
+                        if (ab === 'drizzle') { state.weather = 'Rain'; state.weatherTurns = 5; log.push(`> ${mon.name}'s Drizzle made it rain!`); }
+                        if (ab === 'drought') { state.weather = 'Sun'; state.weatherTurns = 5; log.push(`> ${mon.name}'s Drought intensified the sun!`); }
+                        if (ab === 'sandstream') { state.weather = 'Sand'; state.weatherTurns = 5; log.push(`> ${mon.name}'s Sand Stream whipped up a sandstorm!`); }
+                        if (ab === 'snowwarning') { state.weather = 'Snow'; state.weatherTurns = 5; log.push(`> ${mon.name}'s Snow Warning made it snow!`); }
                     }
                 }
             }
@@ -2433,62 +2486,70 @@
                             <div class="spinner" style="margin: 0; width: 25px; height: 25px;"></div>
                         ` : `
                             <div style="font-size:0.8rem; font-weight:700; margin-bottom:4px; text-align:left;">What will ${esc(myActive.name)} do?</div>
+                            ${(() => {
+                    if (state.megaEvolved && state.megaEvolved[myUid]) return '';
+                    const megaForm = POKEMON_DB.find(p => p.isMega && p.baseSpecies === myActive.id && p.requiredItem === myActive.item);
+                    if (megaForm) {
+                        return `<div style="margin-bottom: 8px;"><label style="font-size:0.8rem; font-weight:bold; color:var(--accent); cursor:pointer;"><input type="checkbox" id="mega-evolve-checkbox" style="margin-right: 4px;"> <span class="crystal-icon">💎</span> Mega Evolve</label></div>`;
+                    }
+                    return '';
+                })()}
                             <div class="move-grid">
                             ${myActive.moves.map((moveId, i) => {
-                const m = MOVES[moveId] || MOVES['struggle'];
-                const eff = getEffectiveness(m.type, oppActive.types);
-                let effColor = '#ffffff';
-                let effText = '';
-                if (m.category !== 'Status') {
-                    if (eff >= 4) { effColor = '#ef4444'; effText = '(4x)'; }
-                    else if (eff >= 2) { effColor = '#f97316'; effText = '(2x)'; }
-                    else if (eff === 0.5) { effColor = '#cbd5e1'; effText = '(0.5x)'; }
-                    else if (eff <= 0.25 && eff > 0) { effColor = '#94a3b8'; effText = '(0.25x)'; }
-                    else if (eff === 0) { effColor = '#475569'; effText = '(0x)'; }
-                }
-                let fxText = m.effects && m.effects.desc ? `<div style="font-size:0.65rem; color: rgba(255,255,255,0.8); margin-top:2px; line-height:1;">${m.effects.desc}</div>` : '';
+                    const m = MOVES[moveId] || MOVES['struggle'];
+                    const eff = getEffectiveness(m.type, oppActive.types);
+                    let effColor = '#ffffff';
+                    let effText = '';
+                    if (m.category !== 'Status') {
+                        if (eff >= 4) { effColor = '#ef4444'; effText = '(4x)'; }
+                        else if (eff >= 2) { effColor = '#f97316'; effText = '(2x)'; }
+                        else if (eff === 0.5) { effColor = '#cbd5e1'; effText = '(0.5x)'; }
+                        else if (eff <= 0.25 && eff > 0) { effColor = '#94a3b8'; effText = '(0.25x)'; }
+                        else if (eff === 0) { effColor = '#475569'; effText = '(0x)'; }
+                    }
+                    let fxText = m.effects && m.effects.desc ? `<div style="font-size:0.65rem; color: rgba(255,255,255,0.8); margin-top:2px; line-height:1;">${m.effects.desc}</div>` : '';
 
-                let disBtn = '';
-                let lockDisabled = false;
+                    let disBtn = '';
+                    let lockDisabled = false;
 
-                if (myActive.choiceLock && myActive.choiceLock !== moveId) {
-                    lockDisabled = true;
-                }
-                if (m.category === 'Status' && (myActive.item === 'Assault Vest' || myActive.taunt > 0)) {
-                    lockDisabled = true;
-                }
+                    if (myActive.choiceLock && myActive.choiceLock !== moveId) {
+                        lockDisabled = true;
+                    }
+                    if (m.category === 'Status' && (myActive.item === 'Assault Vest' || myActive.taunt > 0)) {
+                        lockDisabled = true;
+                    }
 
-                if (lockDisabled) {
-                    disBtn = 'disabled style="opacity:0.3; cursor:not-allowed;"';
-                }
+                    if (lockDisabled) {
+                        disBtn = 'disabled style="opacity:0.3; cursor:not-allowed;"';
+                    }
 
-                return `<button class="btn-move bg-${m.type}" ${disBtn} onclick="window.sendAction('move', '${moveId}')" style="display:flex; flex-direction:column; justify-content:center;">
+                    return `<button class="btn-move bg-${m.type}" ${disBtn} onclick="window.sendAction('move', '${moveId}')" style="display:flex; flex-direction:column; justify-content:center;">
                                             <div class="move-name" style="color: ${effColor}; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">${esc(m.name)} ${effText}</div>
                                             <div class="move-meta type-${m.type}">${m.type} / Pow: ${m.power} / Acc: ${m.accuracy}</div>
                                             ${fxText}
                                         </button>`;
-            }).join('')}
+                }).join('')}
                             </div>
                         `}
                         
                         <div style="font-size:0.8rem; font-weight:700; margin:10px 0 4px; text-align:left;">Switch Pokémon:</div>
                 <div class="switch-grid">
                     ${myTeamFull.map((p, i) => {
-                const isCurrent = i === myActiveIdx;
-                const isFainted = p.currentHp <= 0;
-                let dis = isCurrent || isFainted ? 'disabled' : '';
+                    const isCurrent = i === myActiveIdx;
+                    const isFainted = p.currentHp <= 0;
+                    let dis = isCurrent || isFainted ? 'disabled' : '';
 
-                // If expecting standard turn and waiting, disable.
-                if (amIWaiting && !activeIsFainted && !state.faintReplacement) dis = 'disabled';
+                    // If expecting standard turn and waiting, disable.
+                    if (amIWaiting && !activeIsFainted && !state.faintReplacement) dis = 'disabled';
 
-                // Faint replacement phase logic: 
-                // If my Pokémon DID NOT faint, I am completely disabled during this phase (waiting for opponent to switch).
-                if (state.faintReplacement) {
-                    if (!activeIsFainted) dis = 'disabled';
-                    else if (state.actions[currentUser.uid]) dis = 'disabled'; // I already picked my replacement
-                }
+                    // Faint replacement phase logic: 
+                    // If my Pokémon DID NOT faint, I am completely disabled during this phase (waiting for opponent to switch).
+                    if (state.faintReplacement) {
+                        if (!activeIsFainted) dis = 'disabled';
+                        else if (state.actions[currentUser.uid]) dis = 'disabled'; // I already picked my replacement
+                    }
 
-                return `<div style="display:flex; align-items:center; gap:4px; width:100%;">
+                    return `<div style="display:flex; align-items:center; gap:4px; width:100%;">
                                     <button class="btn-switch" style="flex:1;" ${dis} onclick="window.sendAction('switch', ${i})">
                                         <img src="${p.sprite}">
                                         <div style="text-align:left;">
@@ -2498,7 +2559,7 @@
                                     </button>
                                     <button class="btn btn-sm" style="padding:4px 6px; background:var(--card-hover); font-size:0.75rem; min-width:28px;" onclick="window.showBenchInfo('${myUid}', ${i})">ℹ️</button>
                                 </div>`;
-            }).join('')}
+                }).join('')}
                 </div>
                     </div>
                 <div style="text-align:right; margin-top:15px; padding-top:15px; border-top:1px solid rgba(255,255,255,0.1);">

@@ -553,10 +553,43 @@ async function buildData() {
     });
   }
 
-  // --- SHOWDOWN ITEMS & EXTENDED MOVES ---
+  // --- SHOWDOWN ITEMS, MOVES & MEGA EVOLUTIONS ---
   console.log("Fetching exhausted Showdown data...");
   const sdMoves = await fetchShowdownObject('https://play.pokemonshowdown.com/data/moves.js', 'BattleMovedex');
   const sdItems = await fetchShowdownObject('https://play.pokemonshowdown.com/data/items.js', 'BattleItems');
+  const sdPokedex = await fetchShowdownObject('https://play.pokemonshowdown.com/data/pokedex.js', 'BattlePokedex');
+
+  // Map Mega Evolutions
+  let megaCount = 0;
+  for (const [key, sdPoke] of Object.entries(sdPokedex)) {
+    if (sdPoke.baseSpecies && (sdPoke.forme === 'Mega' || (sdPoke.forme && sdPoke.forme.startsWith('Mega-')))) {
+      // Find base form in our DB
+      const baseForm = POKEMON_DB.find(p => p.name.toLowerCase() === sdPoke.baseSpecies.toLowerCase() || p.id === sdPoke.baseSpecies.toLowerCase());
+      if (baseForm) {
+        const base = sdPoke.baseStats;
+        POKEMON_DB.push({
+          id: key,
+          name: sdPoke.name,
+          types: sdPoke.types,
+          abilities: Object.values(sdPoke.abilities),
+          hp: baseForm.hp, // HP doesn't change on Mega forms
+          atk: base.atk * 2 + 5,
+          def: base.def * 2 + 5,
+          spa: base.spa * 2 + 5,
+          spd: base.spd * 2 + 5,
+          spe: base.spe * 2 + 5,
+          moves: [...baseForm.moves], // Copy base form's movepool
+          sprite: `https://play.pokemonshowdown.com/sprites/ani/${key}.gif`,
+          spriteBack: `https://play.pokemonshowdown.com/sprites/ani-back/${key}.gif`,
+          isMega: true,
+          baseSpecies: baseForm.id,
+          requiredItem: sdPoke.requiredItem || null
+        });
+        megaCount++;
+      }
+    }
+  }
+  console.log(`Successfully extracted ${megaCount} Mega Evolutions.`);
 
   // Supplement MOVES_DB with generalized Showdown effects
   let generatedMoves = 0;
@@ -631,49 +664,52 @@ async function buildData() {
   // Write to JS file
   const output = `
 export const TYPE_CHART = {
-    Normal:  { Rock: 0.5, Ghost: 0, Steel: 0.5 },
-    Fire:    { Fire: 0.5, Water: 0.5, Grass: 2, Ice: 2, Bug: 2, Rock: 0.5, Dragon: 0.5, Steel: 2 },
-    Water:   { Fire: 2, Water: 0.5, Grass: 0.5, Ground: 2, Rock: 2, Dragon: 0.5 },
-    Electric:{ Water: 2, Electric: 0.5, Grass: 0.5, Ground: 0, Flying: 2, Dragon: 0.5 },
-    Grass:   { Fire: 0.5, Water: 2, Grass: 0.5, Poison: 0.5, Ground: 2, Flying: 0.5, Bug: 0.5, Rock: 2, Dragon: 0.5, Steel: 0.5 },
-    Ice:     { Fire: 0.5, Water: 0.5, Grass: 2, Ice: 0.5, Ground: 2, Flying: 2, Dragon: 2, Steel: 0.5 },
-    Fighting:{ Normal: 2, Ice: 2, Poison: 0.5, Flying: 0.5, Psychic: 0.5, Bug: 0.5, Rock: 2, Ghost: 0, Dark: 2, Steel: 2, Fairy: 0.5 },
-    Poison:  { Grass: 2, Poison: 0.5, Ground: 0.5, Rock: 0.5, Ghost: 0.5, Steel: 0, Fairy: 2 },
-    Ground:  { Fire: 2, Electric: 2, Grass: 0.5, Poison: 2, Flying: 0, Bug: 0.5, Rock: 2, Steel: 2 },
-    Flying:  { Electric: 0.5, Grass: 2, Fighting: 2, Bug: 2, Rock: 0.5, Steel: 0.5 },
-    Psychic: { Fighting: 2, Poison: 2, Psychic: 0.5, Dark: 0, Steel: 0.5 },
-    Bug:     { Fire: 0.5, Grass: 2, Fighting: 0.5, Poison: 0.5, Flying: 0.5, Psychic: 2, Ghost: 0.5, Dark: 2, Steel: 0.5, Fairy: 0.5 },
-    Rock:    { Fire: 2, Ice: 2, Fighting: 0.5, Ground: 0.5, Flying: 2, Bug: 2, Steel: 0.5 },
-    Ghost:   { Normal: 0, Psychic: 2, Ghost: 2, Dark: 0.5 },
-    Dragon:  { Dragon: 2, Steel: 0.5, Fairy: 0 },
-    Dark:    { Fighting: 0.5, Psychic: 2, Ghost: 2, Dark: 0.5, Fairy: 0.5 },
-    Steel:   { Fire: 0.5, Water: 0.5, Electric: 0.5, Ice: 2, Rock: 2, Steel: 0.5, Fairy: 2 },
-    Fairy:   { Fire: 0.5, Fighting: 2, Poison: 0.5, Dragon: 2, Dark: 2, Steel: 0.5 }
-};
+          Normal: { Rock: 0.5, Ghost: 0, Steel: 0.5 },
+          Fire: { Fire: 0.5, Water: 0.5, Grass: 2, Ice: 2, Bug: 2, Rock: 0.5, Dragon: 0.5, Steel: 2 },
+          Water: { Fire: 2, Water: 0.5, Grass: 0.5, Ground: 2, Rock: 2, Dragon: 0.5 },
+          Electric: { Water: 2, Electric: 0.5, Grass: 0.5, Ground: 0, Flying: 2, Dragon: 0.5 },
+          Grass: { Fire: 0.5, Water: 2, Grass: 0.5, Poison: 0.5, Ground: 2, Flying: 0.5, Bug: 0.5, Rock: 2, Dragon: 0.5, Steel: 0.5 },
+          Ice: { Fire: 0.5, Water: 0.5, Grass: 2, Ice: 0.5, Ground: 2, Flying: 2, Dragon: 2, Steel: 0.5 },
+          Fighting: { Normal: 2, Ice: 2, Poison: 0.5, Flying: 0.5, Psychic: 0.5, Bug: 0.5, Rock: 2, Ghost: 0, Dark: 2, Steel: 2, Fairy: 0.5 },
+          Poison: { Grass: 2, Poison: 0.5, Ground: 0.5, Rock: 0.5, Ghost: 0.5, Steel: 0, Fairy: 2 },
+          Ground: { Fire: 2, Electric: 2, Grass: 0.5, Poison: 2, Flying: 0, Bug: 0.5, Rock: 2, Steel: 2 },
+          Flying: { Electric: 0.5, Grass: 2, Fighting: 2, Bug: 2, Rock: 0.5, Steel: 0.5 },
+          Psychic: { Fighting: 2, Poison: 2, Psychic: 0.5, Dark: 0, Steel: 0.5 },
+          Bug: { Fire: 0.5, Grass: 2, Fighting: 0.5, Poison: 0.5, Flying: 0.5, Psychic: 2, Ghost: 0.5, Dark: 2, Steel: 0.5, Fairy: 0.5 },
+          Rock: { Fire: 2, Ice: 2, Fighting: 0.5, Ground: 0.5, Flying: 2, Bug: 2, Steel: 0.5 },
+          Ghost: { Normal: 0, Psychic: 2, Ghost: 2, Dark: 0.5 },
+          Dragon: { Dragon: 2, Steel: 0.5, Fairy: 0 },
+          Dark: { Fighting: 0.5, Psychic: 2, Ghost: 2, Dark: 0.5, Fairy: 0.5 },
+          Steel: { Fire: 0.5, Water: 0.5, Electric: 0.5, Ice: 2, Rock: 2, Steel: 0.5, Fairy: 2 },
+          Fairy: { Fire: 0.5, Fighting: 2, Poison: 0.5, Dragon: 2, Dark: 2, Steel: 0.5 }
+        };
 
-export function getEffectiveness(attackType, targetTypes) {
-    let multiplier = 1;
-    for (const tType of targetTypes) {
-        if (TYPE_CHART[attackType] && TYPE_CHART[attackType][tType] !== undefined) {
-            multiplier *= TYPE_CHART[attackType][tType];
+        export function getEffectiveness(attackType, targetTypes) {
+          let multiplier = 1;
+          for (const tType of targetTypes) {
+            if (TYPE_CHART[attackType] && TYPE_CHART[attackType][tType] !== undefined) {
+              multiplier *= TYPE_CHART[attackType][tType];
+            }
+          }
+          return multiplier;
         }
-    }
-    return multiplier;
-}
 
-export const MOVES = ${JSON.stringify(MOVES_DB, null, 4)};
+        export const MOVES = ${JSON.stringify(MOVES_DB, null, 4)
+    };
 
-export const POKEMON_DB = ${JSON.stringify(POKEMON_DB, null, 4)};
+      export const POKEMON_DB = ${JSON.stringify(POKEMON_DB, null, 4)
+    };
 
-export const ITEMS = ${JSON.stringify(FINAL_ITEMS, null, 4)};
+    export const ITEMS = ${JSON.stringify(FINAL_ITEMS, null, 4)
+    };
 
-export const FORMATS = [
+  export const FORMATS = [
     { id: 'gen9random', name: '[Gen 9] Random Battle', clauses: ['Sleep Clause Mod', 'HP Percentage Mod', 'Cancel Mod'], warning: 'Pokemon, moves, and items are completely randomized.' },
     { id: 'gen9ou', name: '[Gen 9] OU', clauses: ['Sleep Clause Mod', 'Species Clause', 'OHKO Clause', 'Evasion Moves Clause', 'Endless Battle Clause', 'HP Percentage Mod', 'Cancel Mod'], warning: '' },
     { id: 'gen9anythinggoes', name: '[Gen 9] Anything Goes', clauses: ['Endless Battle Clause', 'HP Percentage Mod', 'Cancel Mod'], warning: 'WARNING: Anything Goes format allows teams of identical Pokémon.' },
     { id: 'gen9hackmons', name: '[Gen 9] Unlimited Hackmons', clauses: ['HP Percentage Mod', 'Cancel Mod'], warning: 'WARNING: Pure Chaos!' }
-];
-`;
+  ];
+  `;
 
   fs.writeFileSync('data.js', output.trim());
   console.log("Successfully wrote data.js");
