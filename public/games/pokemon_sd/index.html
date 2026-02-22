@@ -1833,6 +1833,13 @@
                             }
                         }
 
+                        // Flinch check (set by faster moves like Iron Head, Air Slash, etc.)
+                        if (mon.flinched) {
+                            mon.flinched = false;
+                            log.push(`${mon.name} flinched and couldn't move!`);
+                            continue;
+                        }
+
                         // Taunt & Encore Check
                         if (mon.taunt > 0 && move.category === 'Status') {
                             log.push(`${mon.name} can't use ${move.name} after the taunt!`);
@@ -2277,95 +2284,95 @@
                                 }
                             }
 
-                            // Initialize fx for all post-damage and secondary effects
-                            let fx = move.effects ? { ...move.effects } : null;
+                        }
 
-                            // Move effects after damage
-                            if (fx && totalDmg > 0) {
-                                // Sheer Force negates secondary effects applied to the target or user from attacking moves
-                                if (mon.ability === 'Sheer Force' && (fx.status || fx.enemyDrop || fx.flinch)) {
+                        // ========================================================
+                        // UNIFIED EFFECT RESOLUTION PIPELINE
+                        // All move effects (post-damage, status, field) processed
+                        // in a single pass to prevent double-application bugs.
+                        // ========================================================
+                        {
+                            const fx = move.effects ? { ...move.effects } : null;
+                            if (fx) {
+                                const isAttacking = move.category !== 'Status';
+                                const didDamage = isAttacking && (typeof totalDmg !== 'undefined') && totalDmg > 0;
+
+                                // --- Sheer Force: negate secondary effects ONCE ---
+                                if (isAttacking && mon.ability === 'Sheer Force' && (fx.status || fx.enemyDrop || fx.flinch)) {
                                     fx.status = null;
                                     fx.enemyDrop = null;
                                     fx.flinch = null;
-                                    // selfBoost is kept only if the move is explicitly a boosting move
                                     if (!fx.recharge && !fx.twoTurn) fx.selfBoost = null;
                                 }
 
-                                if (fx.recharge) mon.recharging = true;
-                                if (fx.recoilPerc && mon.currentHp > 0) {
-                                    const r = Math.floor(totalDmg * fx.recoilPerc) || 1;
-                                    mon.currentHp = Math.max(0, mon.currentHp - r);
-                                    log.push(`<span class="item-text">${mon.name} is damaged by recoil!</span>`);
-                                    if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
-                                }
-                                if (fx.drainPerc && mon.currentHp > 0) {
-                                    const h2 = Math.floor(totalDmg * fx.drainPerc) || 1;
-                                    mon.currentHp = Math.min(mon.hp, mon.currentHp + h2);
-                                    log.push(`<span class="item-text">${mon.name} had its energy drained!</span>`);
-                                }
-                                if (fx.enemyDrop && defMon.currentHp > 0 && Math.random() * 100 < (fx.dropRate || 100)) {
-                                    playSound('debuff');
-                                    for (const [s, amt] of Object.entries(fx.enemyDrop || {})) {
-                                        defMon.boosts[s] = Math.max(-6, Math.min(6, defMon.boosts[s] + amt));
-                                        log.push(`<span class="notvery">${defMon.name}'s ${s} fell!</span>`);
+                                // Substitute blocking for target-directed effects
+                                const bypassesSub = fx.sound || fx.bypassesSubstitute || mon.ability === 'Infiltrator' || fx.clearHazards || fx.haze;
+                                const subBlocks = defMon.substituteHp > 0 && !bypassesSub;
+
+                                // --- POST-DAMAGE EFFECTS (only if move dealt damage) ---
+                                if (didDamage) {
+                                    if (fx.recharge) mon.recharging = true;
+                                    if (fx.recoilPerc && mon.currentHp > 0) {
+                                        const r = Math.floor(totalDmg * fx.recoilPerc) || 1;
+                                        mon.currentHp = Math.max(0, mon.currentHp - r);
+                                        log.push(`<span class="item-text">${mon.name} is damaged by recoil!</span>`);
+                                        if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
+                                    }
+                                    if (fx.drainPerc && mon.currentHp > 0) {
+                                        const h2 = Math.floor(totalDmg * fx.drainPerc) || 1;
+                                        mon.currentHp = Math.min(mon.hp, mon.currentHp + h2);
+                                        log.push(`<span class="item-text">${mon.name} had its energy drained!</span>`);
+                                    }
+                                    // Flinch (was never actually applied before!)
+                                    if (fx.flinch && defMon.currentHp > 0 && !subBlocks && Math.random() * 100 < (fx.flinchRate || 30)) {
+                                        defMon.flinched = true;
                                     }
                                 }
-                                if (fx.selfBoost && !fx.twoTurn && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100)) {
-                                    playSound('buff');
-                                    for (const [s, amt] of Object.entries(fx.selfBoost || {})) {
-                                        mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
-                                        log.push(`<span class="super">${mon.name}'s ${s} rose!</span>`);
+
+                                // --- STAT CHANGES ---
+                                // selfBoost: for Status moves always; for attacking moves only if NOT a twoTurn charge (already applied during charge turn)
+                                const doSelfBoost = fx.selfBoost && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100);
+                                if (doSelfBoost) {
+                                    // twoTurn moves apply selfBoost on charge turn only (handled in the charge block above)
+                                    if (!fx.twoTurn || !isAttacking) {
+                                        playSound('buff');
+                                        for (const [s, amt] of Object.entries(fx.selfBoost)) {
+                                            mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
+                                            log.push(`<span class="super">${mon.name}'s ${s} rose!</span>`);
+                                        }
                                     }
                                 }
-                            }
-                        }
-
-                        // --- STATUS & NON-DAMAGING MOVE EFFECTS ---
-                        if (move.category === 'Status' || (move.effects && defMon.currentHp > 0)) {
-                            let fx = move.effects ? { ...move.effects } : null;
-                            if (move.category !== 'Status' && mon.ability === 'Sheer Force' && (fx.status || fx.enemyDrop || fx.flinch)) {
-                                fx.status = null;
-                                fx.enemyDrop = null;
-                                fx.flinch = null;
-                                if (!fx.recharge && !fx.twoTurn) fx.selfBoost = null;
-                            }
-
-                            // Substitute block status & drops
-                            const bypassesSubStatus = (fx && (fx.sound || fx.bypassesSubstitute)) || mon.ability === 'Infiltrator' || (fx && (fx.clearHazards || fx.haze));
-                            const subBlocks = defMon.substituteHp > 0 && !bypassesSubStatus;
-
-                            if (fx) {
-                                if (fx.selfBoost && move.category === 'Status' && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100)) {
-                                    playSound('buff');
-                                    for (const [s, amt] of Object.entries(fx.selfBoost || {})) {
-                                        mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
-                                        log.push(`<span class="super">${mon.name}'s ${s} rose!</span>`);
-                                    }
-                                }
+                                // selfDrop: works for ALL move categories (Close Combat, Superpower, Overheat, etc.)
                                 if (fx.selfDrop && mon.currentHp > 0) {
                                     playSound('debuff');
-                                    for (const [s, amt] of Object.entries(fx.selfDrop || {})) {
+                                    for (const [s, amt] of Object.entries(fx.selfDrop)) {
                                         mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
                                         log.push(`<span class="notvery">${mon.name}'s ${s} fell!</span>`);
                                     }
                                 }
-                                if (fx.enemyDrop && defMon.currentHp > 0 && move.category === 'Status' && Math.random() * 100 < (fx.dropRate || 100) && !subBlocks) {
-                                    playSound('debuff');
-                                    for (const [s, amt] of Object.entries(fx.enemyDrop || {})) {
-                                        defMon.boosts[s] = Math.max(-6, Math.min(6, defMon.boosts[s] + amt));
-                                        log.push(`<span class="notvery">${defMon.name}'s ${s} fell!</span>`);
+                                // enemyDrop: for attacking moves requires damage dealt; for Status moves requires alive target
+                                if (fx.enemyDrop && defMon.currentHp > 0 && !subBlocks && Math.random() * 100 < (fx.dropRate || 100)) {
+                                    if (didDamage || !isAttacking) {
+                                        playSound('debuff');
+                                        for (const [s, amt] of Object.entries(fx.enemyDrop)) {
+                                            defMon.boosts[s] = Math.max(-6, Math.min(6, defMon.boosts[s] + amt));
+                                            log.push(`<span class="notvery">${defMon.name}'s ${s} fell!</span>`);
+                                        }
                                     }
                                 }
+
+                                // --- HEALING ---
                                 if (fx.healPerc && mon.currentHp > 0) {
                                     const heal = Math.floor(mon.hp * fx.healPerc);
                                     mon.currentHp = Math.min(mon.hp, mon.currentHp + heal);
                                     log.push(`<span class="item-text">${mon.name} recovered HP!</span>`);
                                     playSound('heal');
                                 }
-                                // Status
-                                if (fx.status && defMon.currentHp > 0 && !defMon.status && Math.random() * 100 < (fx.statusRate || 100) && !subBlocks) {
+
+                                // --- STATUS INFLICTION ---
+                                if (fx.status && defMon.currentHp > 0 && !defMon.status && !subBlocks && Math.random() * 100 < (fx.statusRate || 100)) {
                                     let canApply = true;
-                                    if (fx.status === 'SLP' && state.format.clauses?.includes('Sleep Clause Mod')) {
+                                    if (fx.status === 'SLP' && state.format?.clauses?.includes('Sleep Clause Mod')) {
                                         if (teams[defUid].some(p => p.status === 'SLP')) { canApply = false; log.push(`> Sleep Clause Mod blocked!`); }
                                     }
                                     if (fx.status === 'PAR' && defMon.types.includes('Electric')) canApply = false;
@@ -2376,18 +2383,14 @@
                                     if (fx.status === 'BRN' && defMon.types.includes('Fire')) canApply = false;
                                     if ((fx.status === 'PSN' || fx.status === 'TOX') && (defMon.types.includes('Poison') || defMon.types.includes('Steel'))) canApply = false;
                                     if (fx.status === 'FRZ' && defMon.types.includes('Ice')) canApply = false;
-
-                                    // Powder/Spore moves vs Grass
                                     if (fx.powder && defMon.types.includes('Grass')) {
                                         canApply = false;
                                         log.push(`> It doesn't affect ${defMon.name}...`);
                                     }
-                                    // Prankster vs Dark
                                     if (mon.ability === 'Prankster' && move.category === 'Status' && defMon.types.includes('Dark')) {
                                         canApply = false;
                                         log.push(`> It doesn't affect ${defMon.name}...`);
                                     }
-
                                     if (canApply) {
                                         defMon.status = fx.status;
                                         if (fx.status === 'TOX') defMon.toxicCounter = 1;
@@ -2396,6 +2399,8 @@
                                         playSound('status');
                                     }
                                 }
+
+                                // --- FIELD EFFECTS ---
                                 if (fx.weather) {
                                     state.weather = fx.weather;
                                     state.weatherTurns = 5;
@@ -2409,7 +2414,6 @@
                                 }
                                 if (fx.hazards || fx.hazard) {
                                     const rawH = fx.hazards || fx.hazard;
-                                    // Normalize: 'Stealth Rock' -> 'stealth-rock', 'Toxic Spikes' -> 'toxic-spikes'
                                     const h = rawH.toLowerCase().replace(/\s+/g, '-');
                                     if (!state.hazards[defUid]) state.hazards[defUid] = {};
                                     if (h === 'stealth-rock' || h === 'sticky-web') {
@@ -2445,6 +2449,8 @@
                                         log.push(`> ${move.name} raised ${roomState.players[uid].name}'s team defenses!`);
                                     }
                                 }
+
+                                // --- VOLATILE / FIELD CONTROL ---
                                 if (fx.substitute) {
                                     if (mon.currentHp > mon.hp / 4) {
                                         const cost = Math.floor(mon.hp / 4);
@@ -2494,6 +2500,8 @@
                                         log.push(`> ${mon.name}'s Speed fell! Its Attack and Defense rose!`);
                                     }
                                 }
+
+                                // --- DELAYED/SPECIAL EFFECTS ---
                                 if (fx.destinyBond) {
                                     mon.destinyBond = true;
                                     log.push(`> ${mon.name} is hoping to take its attacker down with it!`);
@@ -2523,6 +2531,8 @@
                                     log.push(`> ${mon.name} knocked off ${defMon.name}'s ${defMon.item}!`);
                                     defMon.item = null;
                                 }
+
+                                // --- SWITCHING EFFECTS ---
                                 if (fx.forceSwitch && defMon.currentHp > 0 && !subBlocks) {
                                     if (defMon.ability === 'Suction Cups' || defMon.ingrained) {
                                         log.push(`> ${defMon.name} anchors itself!`);
@@ -2548,7 +2558,6 @@
                                 if (fx.pivot) {
                                     const aliveBenched = teams[uid].filter((m, i) => m.currentHp > 0 && i !== activeIdx[uid]);
                                     if (aliveBenched.length > 0) {
-                                        // For simplicity, we auto switch them to the first alive benched
                                         const oldMon = getMon(uid);
                                         oldMon.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
                                         oldMon.choiceLock = null;
@@ -2599,6 +2608,7 @@
                     if (mon.encore > 0) { mon.encore--; if (mon.encore === 0) log.push(`> ${mon.name}'s encore ended!`); }
                     if (mon.disable > 0) { mon.disable--; if (mon.disable === 0) log.push(`> ${mon.name} is no longer disabled!`); }
                     mon.destinyBond = false;
+                    mon.flinched = false;
                 }
 
                 // --- DELAYED MOVE RESOLUTION (Future Sight, Doom Desire) ---
