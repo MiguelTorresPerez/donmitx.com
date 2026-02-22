@@ -1461,6 +1461,24 @@
                         }
                     }
                     if (newMon.currentHp === 0) log.push(`<span class="fainted-text">${newMon.name} fainted!</span>`);
+
+                    // Ability triggers on switch-in
+                    if (newMon.currentHp > 0) {
+                        const oppUid = uid === p1Uid ? p2Uid : p1Uid;
+                        const oppMon = getMon(oppUid);
+                        const ab = (newMon.ability || '').toLowerCase().replace(/\s+/g, '');
+
+                        // Intimidate
+                        if (ab === 'intimidate' && oppMon.currentHp > 0) {
+                            oppMon.boosts.atk = Math.max(-6, oppMon.boosts.atk - 1);
+                            log.push(`<span class="notvery">${newMon.name}'s Intimidate lowered ${oppMon.name}'s Attack!</span>`);
+                        }
+                        // Weather abilities
+                        if (ab === 'drizzle') { state.weather = 'Rain'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Drizzle made it rain!`); }
+                        if (ab === 'drought') { state.weather = 'Sun'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Drought intensified the sun!`); }
+                        if (ab === 'sandstream') { state.weather = 'Sand'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Sand Stream whipped up a sandstorm!`); }
+                        if (ab === 'snowwarning') { state.weather = 'Snow'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Snow Warning made it snow!`); }
+                    }
                 }
             }
 
@@ -1475,6 +1493,29 @@
                         log.push(`${mon.name} must recharge!`);
                         mon.recharging = false;
                         continue;
+                    }
+
+                    // 2-turn move handling (Fly, Bounce, Dig, etc.)
+                    if (move.effects && move.effects.twoTurn) {
+                        // Skip charge turn for Solar Beam/Blade in Sun
+                        const skipCharge = (move.name === 'Solar Beam' || move.name === 'Solar Blade') && state.weather === 'Sun';
+
+                        if (!mon.charging && !skipCharge) {
+                            mon.charging = actions[uid].val;
+                            mon.semiInvulnerable = true;
+                            log.push(`> ${mon.name} is charging up ${move.name}!`);
+                            // Apply charge-turn boosts (Meteor Beam)
+                            if (move.effects.selfBoost) {
+                                for (const [s, amt] of Object.entries(move.effects.selfBoost)) {
+                                    mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
+                                }
+                                log.push(`> ${mon.name}'s stats changed!`);
+                            }
+                            continue;
+                        }
+                        // Attack turn - clear charging state
+                        mon.charging = null;
+                        mon.semiInvulnerable = false;
                     }
 
                     // Paralyze skip
@@ -1602,14 +1643,22 @@
                 }
 
                 // --- ACCURACY CHECK ---
-                if (defMon.currentHp > 0 && move.accuracy && move.accuracy < 100) {
-                    let accStage = (mon.boosts.accuracy || 0) - (defMon.boosts.evasion || 0);
-                    accStage = Math.max(-6, Math.min(6, accStage));
-                    const accMul = accStage >= 0 ? (3 + accStage) / 3 : 3 / (3 - accStage);
-                    const finalAcc = move.accuracy * accMul;
-                    if (Math.random() * 100 > finalAcc) {
-                        log.push(`> ${mon.name}'s attack missed!`);
+                if (defMon.currentHp > 0) {
+                    // Semi-invulnerable (Fly, Bounce, Phantom Force, etc.)
+                    if (defMon.semiInvulnerable) {
+                        log.push(`> ${mon.name}'s attack missed! ${defMon.name} is semi-invulnerable.`);
                         continue;
+                    }
+
+                    if (move.accuracy && move.accuracy < 100) {
+                        let accStage = (mon.boosts.accuracy || 0) - (defMon.boosts.evasion || 0);
+                        accStage = Math.max(-6, Math.min(6, accStage));
+                        const accMul = accStage >= 0 ? (3 + accStage) / 3 : 3 / (3 - accStage);
+                        const finalAcc = move.accuracy * accMul;
+                        if (Math.random() * 100 > finalAcc) {
+                            log.push(`> ${mon.name}'s attack missed!`);
+                            continue;
+                        }
                     }
                 }
 

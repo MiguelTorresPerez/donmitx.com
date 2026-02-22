@@ -21,7 +21,7 @@ query fetchPokemon {
         name
       }
     }
-    pokemon_v2_pokemonmoves(where: {pokemon_v2_move: {power: {_gt: 0}}}, distinct_on: move_id) {
+    pokemon_v2_pokemonmoves(distinct_on: move_id) {
       pokemon_v2_move {
         name
         power
@@ -39,9 +39,22 @@ query fetchPokemon {
 }
 `;
 
+async function fetchShowdownObject(url, exportName) {
+  try {
+    const res = await axios.get(url, { responseType: 'text' });
+    const exports = {}; // Mock node exports for eval
+    eval(res.data);
+    return exports[exportName] || {};
+  } catch (e) {
+    console.error(`Error fetching Showdown ${exportName}:`, e.message);
+    return {};
+  }
+}
+
 async function buildData() {
   console.log("Fetching Pokemon via PokeAPI GraphQL...");
   const res = await axios.post('https://beta.pokeapi.co/graphql/v1beta', { query: QUERY });
+
   const pokemons = res.data.data.pokemon_v2_pokemon;
 
   const MOVES_DB = {};
@@ -64,6 +77,21 @@ async function buildData() {
     'Double Edge': { recoilPerc: 0.33, desc: 'User takes 33% recoil damage.' },
     'Volt Tackle': { recoilPerc: 0.33, statusRate: 10, status: 'PAR', desc: 'User takes 33% recoil damage. 10% Paralyze.' },
     'Chloroblast': { recoilPerc: 0.5, desc: 'User takes 50% max HP recoil damage.' },
+    'Head Smash': { recoilPerc: 0.5, desc: 'User takes 50% recoil damage.' },
+    'Wild Charge': { recoilPerc: 0.25, desc: 'User takes 25% recoil damage.' },
+    'Take Down': { recoilPerc: 0.25, desc: 'User takes 25% recoil damage.' },
+
+    // 2-TURN MOVES
+    'Fly': { twoTurn: true, desc: 'Flies up turn 1, strikes turn 2. Semi-invulnerable.' },
+    'Bounce': { twoTurn: true, statusRate: 30, status: 'PAR', desc: '2 turns. 30% Paralyze.' },
+    'Dig': { twoTurn: true, desc: 'Digs underground turn 1, strikes turn 2.' },
+    'Dive': { twoTurn: true, desc: 'Dives underwater turn 1, strikes turn 2.' },
+    'Phantom Force': { twoTurn: true, desc: 'Vanishes turn 1, strikes turn 2. Bypasses Protect.' },
+    'Shadow Force': { twoTurn: true, desc: 'Vanishes turn 1, strikes turn 2. Bypasses Protect.' },
+    'Solar Beam': { twoTurn: true, desc: 'Charges turn 1, fires turn 2. Instant in Sun.' },
+    'Solar Blade': { twoTurn: true, desc: 'Charges turn 1, strikes turn 2. Instant in Sun.' },
+    'Meteor Beam': { twoTurn: true, selfBoost: { spa: 1 }, desc: 'Charges turn 1 (+1 SpA), fires turn 2.' },
+    'Sky Attack': { twoTurn: true, critRate: true, desc: 'Charges turn 1, strikes turn 2. High crit.' },
 
     // STAT BOOSTS (SELF) - +2
     'Swords Dance': { selfBoost: { atk: 2 }, desc: 'Raises Attack by 2.' },
@@ -467,28 +495,36 @@ async function buildData() {
       return n.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
     });
 
-    // Moves
+    // Moves - fetch ALL moves including status
     const moves = [];
     p.pokemon_v2_pokemonmoves.forEach(m => {
       const md = m.pokemon_v2_move;
-      if (!md || !md.power) return;
+      if (!md) return;
       const mName = md.name;
-      // Only add strongly damaging moves (power > 50)
-      if (md.power > 50 || md.priority > 0) {
+      const typeName = md.pokemon_v2_type?.name || 'normal';
+      const catName = md.pokemon_v2_movedamageclass?.name || 'physical';
+      const formalName = mName.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      const cat = catName.charAt(0).toUpperCase() + catName.slice(1);
+      const power = md.power || 0;
+
+      // Include: damaging moves with power > 40, all priority moves, and all status moves that are in MOVE_EFFECTS
+      const hasEffect = !!MOVE_EFFECTS[formalName];
+      const isGoodDamaging = power > 40;
+      const hasPriority = (md.priority || 0) > 0;
+      const isStatusWithEffect = cat === 'Status' && hasEffect;
+
+      if (isGoodDamaging || hasPriority || isStatusWithEffect) {
         moves.push(mName);
         if (!MOVES_DB[mName]) {
-          const typeName = md.pokemon_v2_type?.name || 'normal';
-          const catName = md.pokemon_v2_movedamageclass?.name || 'physical';
-          const formalName = mName.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-
+          const effectSet = MOVE_EFFECTS[formalName];
           MOVES_DB[mName] = {
             name: formalName,
             type: typeName.charAt(0).toUpperCase() + typeName.slice(1),
-            power: md.power,
+            power: power,
             accuracy: md.accuracy || 100,
-            category: catName.charAt(0).toUpperCase() + catName.slice(1),
-            priority: md.priority || 0,
-            effects: MOVE_EFFECTS[formalName] || null
+            category: cat,
+            priority: effectSet?.priority || md.priority || 0,
+            effects: effectSet || null
           };
         }
       }
@@ -517,7 +553,80 @@ async function buildData() {
     });
   }
 
-  console.log(`Successfully parsed ${POKEMON_DB.length} Pokemon and ${Object.keys(MOVES_DB).length} distinct moves.`);
+  // --- SHOWDOWN ITEMS & EXTENDED MOVES ---
+  console.log("Fetching exhausted Showdown data...");
+  const sdMoves = await fetchShowdownObject('https://play.pokemonshowdown.com/data/moves.js', 'BattleMovedex');
+  const sdItems = await fetchShowdownObject('https://play.pokemonshowdown.com/data/items.js', 'BattleItems');
+
+  // Supplement MOVES_DB with generalized Showdown effects
+  let generatedMoves = 0;
+  for (const [sdId, sdMove] of Object.entries(sdMoves)) {
+    if (sdMove.isNonstandard || sdMove.isMax || sdMove.isZ) continue;
+    const name = sdMove.name;
+    const formalName = name;
+    const hyphenId = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+
+    // If it's already in MOVES_DB, we might safely map missing effects unless it already has manual effects
+    if (!MOVES_DB[hyphenId] && !MOVES_DB[sdId]) {
+      // We can just add it
+      MOVES_DB[hyphenId] = {
+        name: sdMove.name,
+        type: sdMove.type,
+        power: sdMove.basePower || 0,
+        accuracy: sdMove.accuracy === true ? 100 : sdMove.accuracy,
+        category: sdMove.category,
+        priority: sdMove.priority || 0,
+        effects: null
+      };
+    }
+
+    const targetMove = MOVES_DB[hyphenId] || MOVES_DB[sdId] || MOVES_DB[name] || MOVES_DB[name.toLowerCase().replace(/[^a-z0-9]/g, '')];
+    if (targetMove && !targetMove.effects) {
+      // Generate effects
+      const fx = {};
+      if (sdMove.boosts) fx.enemyDrop = sdMove.boosts;
+      if (sdMove.self && sdMove.self.boosts) fx.selfBoost = sdMove.self.boosts;
+      if (sdMove.status) fx.status = sdMove.status.toUpperCase();
+      if (sdMove.secondary && sdMove.secondary.status) {
+        fx.statusRate = sdMove.secondary.chance || 10;
+        fx.status = sdMove.secondary.status.toUpperCase();
+      }
+      if (sdMove.secondary && sdMove.secondary.boosts) {
+        fx[sdMove.secondary.self ? 'selfBoost' : 'enemyDrop'] = sdMove.secondary.boosts;
+      }
+      if (sdMove.volatileStatus) {
+        if (['flinch', 'confusion', 'taunt', 'encore', 'leechseed', 'substitute'].includes(sdMove.volatileStatus)) {
+          fx[sdMove.volatileStatus] = true;
+        }
+      }
+      if (sdMove.heal) fx.healPerc = sdMove.heal[0] / sdMove.heal[1];
+      if (sdMove.drain) fx.drainPerc = sdMove.drain[0] / sdMove.drain[1];
+      if (sdMove.recoil) fx.recoilPerc = sdMove.recoil[0] / sdMove.recoil[1];
+      if (sdMove.multihit) fx.multiHit = Array.isArray(sdMove.multihit) ? sdMove.multihit : [sdMove.multihit, sdMove.multihit];
+
+      if (Object.keys(fx).length > 0) {
+        fx.desc = sdMove.shortDesc || sdMove.desc;
+        targetMove.effects = fx;
+        generatedMoves++;
+      } else if (sdMove.shortDesc) {
+        targetMove.effects = { desc: sdMove.shortDesc };
+        generatedMoves++;
+      }
+    }
+  }
+
+  // Parse Items
+  const FINAL_ITEMS = {};
+  for (const [sdId, sdItem] of Object.entries(sdItems)) {
+    if (sdItem.isNonstandard) continue;
+    FINAL_ITEMS[sdItem.name] = {
+      name: sdItem.name,
+      desc: sdItem.shortDesc || sdItem.desc || ""
+    };
+  }
+
+  console.log(`Successfully mapped ${generatedMoves} Showdown generic effects.`);
+  console.log(`Successfully parsed ${POKEMON_DB.length} Pokemon, ${Object.keys(MOVES_DB).length} distinct moves, and ${Object.keys(FINAL_ITEMS).length} items.`);
 
   // Write to JS file
   const output = `
@@ -556,31 +665,7 @@ export const MOVES = ${JSON.stringify(MOVES_DB, null, 4)};
 
 export const POKEMON_DB = ${JSON.stringify(POKEMON_DB, null, 4)};
 
-export const ITEMS = {
-    'Leftovers': { name: 'Leftovers', desc: 'Heals 1/16 of max HP at the end of each turn.' },
-    'Life Orb': { name: 'Life Orb', desc: 'Attacks deal 1.3x damage but user loses 1/10 max HP.' },
-    'Choice Band': { name: 'Choice Band', desc: 'Attack is 1.5x, but only first selected move can be used.' },
-    'Choice Specs': { name: 'Choice Specs', desc: 'Sp. Atk is 1.5x, but only first selected move can be used.' },
-    'Choice Scarf': { name: 'Choice Scarf', desc: 'Speed is 1.5x, but only first selected move can be used.' },
-    'Focus Sash': { name: 'Focus Sash', desc: 'If at full HP, survives one hit with 1 HP. Single use.' },
-    'Heavy-Duty Boots': { name: 'Heavy-Duty Boots', desc: 'Holder bypasses entry hazards on switch-in.' },
-    'Assault Vest': { name: 'Assault Vest', desc: '1.5x Sp. Def but cannot use Status moves.' },
-    'Eviolite': { name: 'Eviolite', desc: '1.5x Def and Sp. Def for not-fully-evolved Pokémon.' },
-    'Rocky Helmet': { name: 'Rocky Helmet', desc: 'Contact moves deal 1/6 max HP to the attacker.' },
-    'Air Balloon': { name: 'Air Balloon', desc: 'Immune to Ground-type moves. Pops when hit.' },
-    'Expert Belt': { name: 'Expert Belt', desc: '1.2x damage on super effective hits.' },
-    'Black Sludge': { name: 'Black Sludge', desc: 'Poison types heal 1/16 HP per turn. Others lose 1/8.' },
-    'Toxic Orb': { name: 'Toxic Orb', desc: 'Badly poisons the holder at end of turn.' },
-    'Flame Orb': { name: 'Flame Orb', desc: 'Burns the holder at end of turn.' },
-    'Sitrus Berry': { name: 'Sitrus Berry', desc: 'Heals 25% HP when falling below 50%. Single use.' },
-    'Lum Berry': { name: 'Lum Berry', desc: 'Cures any status condition. Single use.' },
-    'White Herb': { name: 'White Herb', desc: 'Restores negative stat drops. Single use.' },
-    'Light Clay': { name: 'Light Clay', desc: 'Extends Reflect/Light Screen/Aurora Veil to 8 turns.' },
-    'Mental Herb': { name: 'Mental Herb', desc: 'Cures Encore/Taunt/Disable. Single use.' },
-    'Weakness Policy': { name: 'Weakness Policy', desc: 'When hit super effectively, raises Atk and SpA by 2. Single use.' },
-    'Booster Energy': { name: 'Booster Energy', desc: 'Raises highest stat for Paradox Pokémon.' },
-    'None': { name: 'None', desc: 'No item.' }
-};
+export const ITEMS = ${JSON.stringify(FINAL_ITEMS, null, 4)};
 
 export const FORMATS = [
     { id: 'gen9random', name: '[Gen 9] Random Battle', clauses: ['Sleep Clause Mod', 'HP Percentage Mod', 'Cancel Mod'], warning: 'Pokemon, moves, and items are completely randomized.' },
@@ -593,5 +678,4 @@ export const FORMATS = [
   fs.writeFileSync('data.js', output.trim());
   console.log("Successfully wrote data.js");
 }
-
 buildData().catch(console.error);
