@@ -52,9 +52,9 @@ async function init() {
     const playRoomId = urlParams.get('playRoomId');
     const playGameId = urlParams.get('playGameId');
 
-    if (playRoomId && playGameId && window.openModal) {
+    if (playRoomId && playGameId) {
         document.getElementById('game-iframe').src = `/public/games/${playGameId}/index.html?roomId=${playRoomId}`;
-        window.openModal('modal-play-game');
+        openModal('modal-play-game');
     } else {
         navigateToTab('library');
     }
