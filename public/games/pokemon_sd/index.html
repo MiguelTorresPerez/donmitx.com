@@ -1402,6 +1402,8 @@
                 'state.actions': {},
                 'state.weather': null,
                 'state.weatherTurns': 0,
+                'state.terrain': null,
+                'state.terrainTurns': 0,
                 'state.hazards': { [p1Uid]: {}, [p2Uid]: {} },
                 'state.screens': { [p1Uid]: {}, [p2Uid]: {} },
                 'state.active': {
@@ -1460,888 +1462,908 @@
         // Core Turn Logic (Host side)
         async function executeTurn() {
             await updateDoc(roomRef, { 'state.resolving': true });
+            try {
+                const state = roomState.state;
+                const actions = state.actions;
+                let log = [...(state.log || [])];
 
-            const state = roomState.state;
-            const actions = state.actions;
-            let log = [...(state.log || [])];
+                const teams = { [p1Uid]: roomState.players[p1Uid].team, [p2Uid]: roomState.players[p2Uid].team };
+                const activeIdx = { ...state.active };
+                const getMon = (uid) => teams[uid][activeIdx[uid]];
 
-            const teams = { [p1Uid]: roomState.players[p1Uid].team, [p2Uid]: roomState.players[p2Uid].team };
-            const activeIdx = { ...state.active };
-            const getMon = (uid) => teams[uid][activeIdx[uid]];
+                // 0. Handle Faint Replacement Phase
+                if (state.faintReplacement) {
+                    let allReplacementsDone = true;
 
-            // 0. Handle Faint Replacement Phase
-            if (state.faintReplacement) {
-                let allReplacementsDone = true;
+                    for (const uid of [p1Uid, p2Uid]) {
+                        if (getMon(uid).currentHp <= 0) {
+                            if (actions[uid] && actions[uid].type === 'switch') {
+                                const oldMon = getMon(uid);
+                                oldMon.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
+                                oldMon.choiceLock = null;
 
+                                const newIdx = actions[uid].val;
+                                activeIdx[uid] = newIdx;
+                                log.push(`${roomState.players[uid].name} sent out ${getMon(uid).name}!`);
+                            } else {
+                                allReplacementsDone = false;
+                            }
+                        }
+                    }
+
+                    if (!allReplacementsDone) {
+                        await updateDoc(roomRef, { 'state.resolving': false });
+                        return; // Wait for the other player to pick
+                    }
+
+                    await updateDoc(roomRef, {
+                        'state.resolving': false,
+                        'state.actions': {},
+                        'state.faintReplacement': false,
+                        'state.log': log,
+                        'state.active': activeIdx,
+                        [`players.${p1Uid}.team`]: teams[p1Uid],
+                        [`players.${p2Uid}.team`]: teams[p2Uid]
+                    });
+                    return;
+                }
+
+                // 1. Resolve Switches first (Priority 6)
                 for (const uid of [p1Uid, p2Uid]) {
-                    if (getMon(uid).currentHp <= 0) {
-                        if (actions[uid] && actions[uid].type === 'switch') {
-                            const oldMon = getMon(uid);
-                            oldMon.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
-                            oldMon.choiceLock = null;
+                    if (actions[uid].type === 'switch') {
+                        const oldMon = getMon(uid);
+                        oldMon.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
+                        oldMon.choiceLock = null;
+                        oldMon.seeded = false;
+                        oldMon.taunt = 0;
+                        oldMon.encore = 0;
+                        oldMon.substituteHp = 0;
+                        oldMon.perishSong = 0;
+                        oldMon.destinyBond = false;
+                        oldMon.hasBeenSwitchedOut = true; // For Zero to Hero (Palafin)
 
-                            const newIdx = actions[uid].val;
-                            activeIdx[uid] = newIdx;
-                            log.push(`${roomState.players[uid].name} sent out ${getMon(uid).name}!`);
-                        } else {
-                            allReplacementsDone = false;
+                        const newIdx = actions[uid].val;
+                        activeIdx[uid] = newIdx;
+                        log.push(`${roomState.players[uid].name} withdrew their Pokémon and sent out ${getMon(uid).name}!`);
+
+                        // Apply Healing Wish if active
+                        if (state.healingWish && state.healingWish[uid]) {
+                            const newMon = getMon(uid);
+                            newMon.currentHp = newMon.hp;
+                            newMon.status = null;
+                            log.push(`<span class="item-text">The healing wish came true for ${newMon.name}!</span>`);
+                            state.healingWish[uid] = false;
                         }
-                    }
-                }
 
-                if (!allReplacementsDone) {
-                    await updateDoc(roomRef, { 'state.resolving': false });
-                    return; // Wait for the other player to pick
-                }
-
-                await updateDoc(roomRef, {
-                    'state.resolving': false,
-                    'state.actions': {},
-                    'state.faintReplacement': false,
-                    'state.log': log,
-                    'state.active': activeIdx,
-                    [`players.${p1Uid}.team`]: teams[p1Uid],
-                    [`players.${p2Uid}.team`]: teams[p2Uid]
-                });
-                return;
-            }
-
-            // 1. Resolve Switches first (Priority 6)
-            for (const uid of [p1Uid, p2Uid]) {
-                if (actions[uid].type === 'switch') {
-                    const oldMon = getMon(uid);
-                    oldMon.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
-                    oldMon.choiceLock = null;
-                    oldMon.seeded = false;
-                    oldMon.taunt = 0;
-                    oldMon.encore = 0;
-                    oldMon.substituteHp = 0;
-                    oldMon.perishSong = 0;
-                    oldMon.destinyBond = false;
-                    oldMon.hasBeenSwitchedOut = true; // For Zero to Hero (Palafin)
-
-                    const newIdx = actions[uid].val;
-                    activeIdx[uid] = newIdx;
-                    log.push(`${roomState.players[uid].name} withdrew their Pokémon and sent out ${getMon(uid).name}!`);
-
-                    // Apply Healing Wish if active
-                    if (state.healingWish && state.healingWish[uid]) {
+                        // Apply Hazards
                         const newMon = getMon(uid);
-                        newMon.currentHp = newMon.hp;
-                        newMon.status = null;
-                        log.push(`<span class="item-text">The healing wish came true for ${newMon.name}!</span>`);
-                        state.healingWish[uid] = false;
-                    }
-
-                    // Apply Hazards
-                    const newMon = getMon(uid);
-                    const hazards = state.hazards[uid] || {};
-                    if (newMon.item !== 'Heavy-Duty Boots') {
-                        if (hazards['stealth-rock']) {
-                            const eff = getEffectiveness('Rock', newMon.types);
-                            const dmg = Math.floor(newMon.hp * (0.125 * eff)) || 1;
-                            newMon.currentHp = Math.max(0, newMon.currentHp - dmg);
-                            log.push(`> Pointed stones dug into ${newMon.name}!`);
-                        }
-                        if (hazards['spikes'] && !newMon.types.includes('Flying') && newMon.ability !== 'Levitate' && newMon.item !== 'Air Balloon') {
-                            const spikesLayers = hazards['spikes'];
-                            const dmg = Math.floor(newMon.hp * (spikesLayers === 1 ? 0.125 : spikesLayers === 2 ? 0.166 : 0.25)) || 1;
-                            newMon.currentHp = Math.max(0, newMon.currentHp - dmg);
-                            log.push(`> ${newMon.name} was hurt by spikes!`);
-                        }
-                        if (hazards['toxic-spikes'] && !newMon.types.includes('Flying') && newMon.ability !== 'Levitate' && newMon.item !== 'Air Balloon') {
-                            if (newMon.types.includes('Poison')) {
-                                hazards['toxic-spikes'] = 0;
-                                log.push(`> The toxic spikes disappeared from the ground around ${roomState.players[uid].name}'s team!`);
-                            } else if (!newMon.status && !newMon.types.includes('Steel')) {
-                                newMon.status = hazards['toxic-spikes'] > 1 ? 'TOX' : 'PSN';
-                                if (newMon.status === 'TOX') newMon.toxicCounter = 1;
-                                log.push(`<span class="status-${newMon.status}">${newMon.name} was poisoned by toxic spikes!</span>`);
+                        const hazards = state.hazards[uid] || {};
+                        if (newMon.item !== 'Heavy-Duty Boots') {
+                            if (hazards['stealth-rock']) {
+                                const eff = getEffectiveness('Rock', newMon.types);
+                                const dmg = Math.floor(newMon.hp * (0.125 * eff)) || 1;
+                                newMon.currentHp = Math.max(0, newMon.currentHp - dmg);
+                                log.push(`> Pointed stones dug into ${newMon.name}!`);
                             }
-                        }
-                        if (hazards['sticky-web'] && !newMon.types.includes('Flying') && newMon.ability !== 'Levitate' && newMon.item !== 'Air Balloon') {
-                            newMon.boosts.spe = Math.max(-6, newMon.boosts.spe - 1);
-                            log.push(`<span class="notvery">${newMon.name} was caught in a sticky web!</span>`);
-                        }
-                    }
-                    if (newMon.currentHp === 0) log.push(`<span class="fainted-text">${newMon.name} fainted!</span>`);
-
-                    // Ability triggers on switch-in
-                    if (newMon.currentHp > 0) {
-                        const oppUid = uid === p1Uid ? p2Uid : p1Uid;
-                        const oppMon = getMon(oppUid);
-                        const ab = (newMon.ability || '').toLowerCase().replace(/\s+/g, '');
-
-                        // Intimidate
-                        if (ab === 'intimidate' && oppMon.currentHp > 0) {
-                            oppMon.boosts.atk = Math.max(-6, oppMon.boosts.atk - 1);
-                            log.push(`<span class="notvery">${newMon.name}'s Intimidate lowered ${oppMon.name}'s Attack!</span>`);
-                        }
-                        // Weather abilities
-                        if (ab === 'drizzle') { state.weather = 'Rain'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Drizzle made it rain!`); }
-                        if (ab === 'drought') { state.weather = 'Sun'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Drought intensified the sun!`); }
-                        if (ab === 'sandstream') { state.weather = 'Sand'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Sand Stream whipped up a sandstorm!`); }
-                        if (ab === 'snowwarning') { state.weather = 'Snow'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Snow Warning made it snow!`); }
-
-                        // Zero to Hero: Palafin morphs to Hero form on switch-in if it has been switched out at least once
-                        if (ab === 'zerotohero' && newMon.hasBeenSwitchedOut) {
-                            const heroForm = POKEMON_DB.find(p => p.id === 'palafinhero');
-                            if (heroForm && newMon.id !== 'palafinhero') {
-                                newMon.name = heroForm.name;
-                                newMon.id = heroForm.id;
-                                newMon.types = [...heroForm.types];
-                                newMon.atk = heroForm.atk;
-                                newMon.def = heroForm.def;
-                                newMon.spa = heroForm.spa;
-                                newMon.spd = heroForm.spd;
-                                newMon.spe = heroForm.spe;
-                                newMon.sprite = heroForm.sprite;
-                                newMon.spriteBack = heroForm.spriteBack;
-                                log.push(`> <span style="color:var(--accent)">${newMon.name} underwent a heroic transformation!</span>`);
+                            if (hazards['spikes'] && !newMon.types.includes('Flying') && newMon.ability !== 'Levitate' && newMon.item !== 'Air Balloon') {
+                                const spikesLayers = hazards['spikes'];
+                                const dmg = Math.floor(newMon.hp * (spikesLayers === 1 ? 0.125 : spikesLayers === 2 ? 0.166 : 0.25)) || 1;
+                                newMon.currentHp = Math.max(0, newMon.currentHp - dmg);
+                                log.push(`> ${newMon.name} was hurt by spikes!`);
                             }
-                        }
-
-                        // Forecast: Castform changes based on weather
-                        if (ab === 'forecast' && (newMon.id.includes('castform') || newMon.name === 'Castform')) {
-                            let targetId = 'castform';
-                            if (state.weather === 'Sun') targetId = 'castformsunny';
-                            else if (state.weather === 'Rain') targetId = 'castformrainy';
-                            else if (state.weather === 'Snow') targetId = 'castformsnowy';
-
-                            if (newMon.id !== targetId) {
-                                if (morphToForm(newMon, targetId)) {
-                                    log.push(`> <span style="color:var(--accent)">${newMon.name} transformed!</span>`);
+                            if (hazards['toxic-spikes'] && !newMon.types.includes('Flying') && newMon.ability !== 'Levitate' && newMon.item !== 'Air Balloon') {
+                                if (newMon.types.includes('Poison')) {
+                                    hazards['toxic-spikes'] = 0;
+                                    log.push(`> The toxic spikes disappeared from the ground around ${roomState.players[uid].name}'s team!`);
+                                } else if (!newMon.status && !newMon.types.includes('Steel')) {
+                                    newMon.status = hazards['toxic-spikes'] > 1 ? 'TOX' : 'PSN';
+                                    if (newMon.status === 'TOX') newMon.toxicCounter = 1;
+                                    log.push(`<span class="status-${newMon.status}">${newMon.name} was poisoned by toxic spikes!</span>`);
                                 }
                             }
+                            if (hazards['sticky-web'] && !newMon.types.includes('Flying') && newMon.ability !== 'Levitate' && newMon.item !== 'Air Balloon') {
+                                newMon.boosts.spe = Math.max(-6, newMon.boosts.spe - 1);
+                                log.push(`<span class="notvery">${newMon.name} was caught in a sticky web!</span>`);
+                            }
                         }
+                        if (newMon.currentHp === 0) log.push(`<span class="fainted-text">${newMon.name} fainted!</span>`);
 
-                        // Flower Gift: Cherrim changes based on weather
-                        if (ab === 'flowergift' && (newMon.id.includes('cherrim') || newMon.name === 'Cherrim')) {
-                            const isSun = state.weather === 'Sun';
-                            const targetId = isSun ? 'cherrimsunshine' : 'cherrim';
-                            if (newMon.id !== targetId) {
-                                if (morphToForm(newMon, targetId)) {
-                                    log.push(`> <span style="color:var(--accent)">${newMon.name} transformed!</span>`);
+                        // Ability triggers on switch-in
+                        if (newMon.currentHp > 0) {
+                            const oppUid = uid === p1Uid ? p2Uid : p1Uid;
+                            const oppMon = getMon(oppUid);
+                            const ab = (newMon.ability || '').toLowerCase().replace(/\s+/g, '');
+
+                            // Intimidate
+                            if (ab === 'intimidate' && oppMon.currentHp > 0) {
+                                oppMon.boosts.atk = Math.max(-6, oppMon.boosts.atk - 1);
+                                log.push(`<span class="notvery">${newMon.name}'s Intimidate lowered ${oppMon.name}'s Attack!</span>`);
+                            }
+                            // Weather abilities
+                            if (ab === 'drizzle') { state.weather = 'Rain'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Drizzle made it rain!`); }
+                            if (ab === 'drought') { state.weather = 'Sun'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Drought intensified the sun!`); }
+                            if (ab === 'sandstream') { state.weather = 'Sand'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Sand Stream whipped up a sandstorm!`); }
+                            if (ab === 'snowwarning') { state.weather = 'Snow'; state.weatherTurns = 5; log.push(`> ${newMon.name}'s Snow Warning made it snow!`); }
+
+                            // Zero to Hero: Palafin morphs to Hero form on switch-in if it has been switched out at least once
+                            if (ab === 'zerotohero' && newMon.hasBeenSwitchedOut) {
+                                const heroForm = POKEMON_DB.find(p => p.id === 'palafinhero');
+                                if (heroForm && newMon.id !== 'palafinhero') {
+                                    newMon.name = heroForm.name;
+                                    newMon.id = heroForm.id;
+                                    newMon.types = [...heroForm.types];
+                                    newMon.atk = heroForm.atk;
+                                    newMon.def = heroForm.def;
+                                    newMon.spa = heroForm.spa;
+                                    newMon.spd = heroForm.spd;
+                                    newMon.spe = heroForm.spe;
+                                    newMon.sprite = heroForm.sprite;
+                                    newMon.spriteBack = heroForm.spriteBack;
+                                    log.push(`> <span style="color:var(--accent)">${newMon.name} underwent a heroic transformation!</span>`);
+                                }
+                            }
+
+                            // Forecast: Castform changes based on weather
+                            if (ab === 'forecast' && (newMon.id.includes('castform') || newMon.name === 'Castform')) {
+                                let targetId = 'castform';
+                                if (state.weather === 'Sun') targetId = 'castformsunny';
+                                else if (state.weather === 'Rain') targetId = 'castformrainy';
+                                else if (state.weather === 'Snow') targetId = 'castformsnowy';
+
+                                if (newMon.id !== targetId) {
+                                    if (morphToForm(newMon, targetId)) {
+                                        log.push(`> <span style="color:var(--accent)">${newMon.name} transformed!</span>`);
+                                    }
+                                }
+                            }
+
+                            // Flower Gift: Cherrim changes based on weather
+                            if (ab === 'flowergift' && (newMon.id.includes('cherrim') || newMon.name === 'Cherrim')) {
+                                const isSun = state.weather === 'Sun';
+                                const targetId = isSun ? 'cherrimsunshine' : 'cherrim';
+                                if (newMon.id !== targetId) {
+                                    if (morphToForm(newMon, targetId)) {
+                                        log.push(`> <span style="color:var(--accent)">${newMon.name} transformed!</span>`);
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            // 1.5. Mega Evolution (Priority 5.5)
-            state.megaEvolved = state.megaEvolved || {};
-            for (const uid of [p1Uid, p2Uid]) {
-                const action = actions[uid];
-                if (action.type === 'move' && action.mega && !state.megaEvolved[uid]) {
+                // 1.5. Mega Evolution (Priority 5.5)
+                state.megaEvolved = state.megaEvolved || {};
+                for (const uid of [p1Uid, p2Uid]) {
+                    const action = actions[uid];
+                    if (action.type === 'move' && action.mega && !state.megaEvolved[uid]) {
+                        const mon = getMon(uid);
+                        // Find the mega form
+                        const megaForm = POKEMON_DB.find(p => p.isMega && p.baseSpecies === mon.id && p.requiredItem === mon.item);
+                        if (megaForm) {
+                            state.megaEvolved[uid] = true;
+
+                            log.push(`> <strong>${roomState.players[uid].name}'s ${mon.name} is reacting to its ${mon.item}!</strong>`);
+                            log.push(`> <span style="color:var(--accent)">${mon.name} Mega Evolved into ${megaForm.name}!</span>`);
+
+                            // Morph the current mon to Mega form
+                            mon.id = megaForm.id;
+                            mon.name = megaForm.name;
+                            mon.types = megaForm.types;
+                            mon.ability = megaForm.abilities[0]; // Take primary mega ability
+                            mon.sprite = megaForm.sprite;
+                            mon.spriteBack = megaForm.spriteBack;
+
+                            // Overwrite base stats
+                            mon.stats = {
+                                atk: megaForm.atk,
+                                def: megaForm.def,
+                                spa: megaForm.spa,
+                                spd: megaForm.spd,
+                                spe: megaForm.spe
+                            };
+
+                            // Trigger Mega Ability on switch-in
+                            const oppUid = uid === p1Uid ? p2Uid : p1Uid;
+                            const oppMon = getMon(oppUid);
+                            const ab = (mon.ability || '').toLowerCase().replace(/\s+/g, '');
+                            if (ab === 'intimidate' && oppMon.currentHp > 0) {
+                                oppMon.boosts.atk = Math.max(-6, oppMon.boosts.atk - 1);
+                                log.push(`<span class="notvery">${mon.name}'s Intimidate lowered ${oppMon.name}'s Attack!</span>`);
+                            }
+                            if (ab === 'drizzle') { state.weather = 'Rain'; state.weatherTurns = 5; log.push(`> ${mon.name}'s Drizzle made it rain!`); }
+                            if (ab === 'drought') { state.weather = 'Sun'; state.weatherTurns = 5; log.push(`> ${mon.name}'s Drought intensified the sun!`); }
+                            if (ab === 'sandstream') { state.weather = 'Sand'; state.weatherTurns = 5; log.push(`> ${mon.name}'s Sand Stream whipped up a sandstorm!`); }
+                            if (ab === 'snowwarning') { state.weather = 'Snow'; state.weatherTurns = 5; log.push(`> ${mon.name}'s Snow Warning made it snow!`); }
+                        }
+                    }
+                }
+
+                // 2. Determine Attack Order based on Priority and Speed
+                let attackers = [];
+                for (const uid of [p1Uid, p2Uid]) {
                     const mon = getMon(uid);
-                    // Find the mega form
-                    const megaForm = POKEMON_DB.find(p => p.isMega && p.baseSpecies === mon.id && p.requiredItem === mon.item);
-                    if (megaForm) {
-                        state.megaEvolved[uid] = true;
+                    if (actions[uid].type === 'move' && mon.currentHp > 0) {
+                        const move = MOVES[actions[uid].val];
 
-                        log.push(`> <strong>${roomState.players[uid].name}'s ${mon.name} is reacting to its ${mon.item}!</strong>`);
-                        log.push(`> <span style="color:var(--accent)">${mon.name} Mega Evolved into ${megaForm.name}!</span>`);
-
-                        // Morph the current mon to Mega form
-                        mon.id = megaForm.id;
-                        mon.name = megaForm.name;
-                        mon.types = megaForm.types;
-                        mon.ability = megaForm.abilities[0]; // Take primary mega ability
-                        mon.sprite = megaForm.sprite;
-                        mon.spriteBack = megaForm.spriteBack;
-
-                        // Overwrite base stats
-                        mon.stats = {
-                            atk: megaForm.atk,
-                            def: megaForm.def,
-                            spa: megaForm.spa,
-                            spd: megaForm.spd,
-                            spe: megaForm.spe
-                        };
-
-                        // Trigger Mega Ability on switch-in
-                        const oppUid = uid === p1Uid ? p2Uid : p1Uid;
-                        const oppMon = getMon(oppUid);
-                        const ab = (mon.ability || '').toLowerCase().replace(/\s+/g, '');
-                        if (ab === 'intimidate' && oppMon.currentHp > 0) {
-                            oppMon.boosts.atk = Math.max(-6, oppMon.boosts.atk - 1);
-                            log.push(`<span class="notvery">${mon.name}'s Intimidate lowered ${oppMon.name}'s Attack!</span>`);
-                        }
-                        if (ab === 'drizzle') { state.weather = 'Rain'; state.weatherTurns = 5; log.push(`> ${mon.name}'s Drizzle made it rain!`); }
-                        if (ab === 'drought') { state.weather = 'Sun'; state.weatherTurns = 5; log.push(`> ${mon.name}'s Drought intensified the sun!`); }
-                        if (ab === 'sandstream') { state.weather = 'Sand'; state.weatherTurns = 5; log.push(`> ${mon.name}'s Sand Stream whipped up a sandstorm!`); }
-                        if (ab === 'snowwarning') { state.weather = 'Snow'; state.weatherTurns = 5; log.push(`> ${mon.name}'s Snow Warning made it snow!`); }
-                    }
-                }
-            }
-
-            // 2. Determine Attack Order based on Priority and Speed
-            let attackers = [];
-            for (const uid of [p1Uid, p2Uid]) {
-                const mon = getMon(uid);
-                if (actions[uid].type === 'move' && mon.currentHp > 0) {
-                    const move = MOVES[actions[uid].val];
-
-                    if (mon.recharging) {
-                        log.push(`${mon.name} must recharge!`);
-                        mon.recharging = false;
-                        continue;
-                    }
-
-                    // 2-turn move handling (Fly, Bounce, Dig, etc.)
-                    if (move.effects && move.effects.twoTurn) {
-                        // Skip charge turn for Solar Beam/Blade in Sun
-                        const skipCharge = (move.name === 'Solar Beam' || move.name === 'Solar Blade') && state.weather === 'Sun';
-
-                        if (!mon.charging && !skipCharge) {
-                            mon.charging = actions[uid].val;
-                            const invulnMoves = ['Fly', 'Bounce', 'Dig', 'Dive', 'Phantom Force', 'Shadow Force', 'Sky Drop'];
-                            if (invulnMoves.includes(move.name)) {
-                                mon.semiInvulnerable = true;
-                            }
-                            log.push(`> ${mon.name} is charging up ${move.name}!`);
-                            // Apply charge-turn boosts (Meteor Beam)
-                            if (move.effects.selfBoost) {
-                                for (const [s, amt] of Object.entries(move.effects.selfBoost)) {
-                                    mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
-                                }
-                                log.push(`> ${mon.name}'s stats changed!`);
-                            }
+                        if (mon.recharging) {
+                            log.push(`${mon.name} must recharge!`);
+                            mon.recharging = false;
                             continue;
                         }
-                        // Attack turn - clear charging state
-                        mon.charging = null;
-                        mon.semiInvulnerable = false;
-                    }
 
-                    // Paralyze skip
-                    if (mon.status === 'PAR' && Math.random() < 0.25) {
-                        log.push(`${mon.name} is fully paralyzed!`);
-                        continue;
-                    }
-                    // Sleep skip (counter-based, 1-3 turns)
-                    if (mon.status === 'SLP') {
-                        if (mon.sleepTurns !== undefined && mon.sleepTurns > 0) {
-                            mon.sleepTurns--;
-                            if (mon.sleepTurns <= 0) {
-                                mon.status = null;
-                                log.push(`${mon.name} woke up!`);
+                        // 2-turn move handling (Fly, Bounce, Dig, etc.)
+                        if (move.effects && move.effects.twoTurn) {
+                            // Skip charge turn for Solar Beam/Blade in Sun
+                            const skipCharge = (move.name === 'Solar Beam' || move.name === 'Solar Blade') && state.weather === 'Sun';
+
+                            if (!mon.charging && !skipCharge) {
+                                mon.charging = actions[uid].val;
+                                const invulnMoves = ['Fly', 'Bounce', 'Dig', 'Dive', 'Phantom Force', 'Shadow Force', 'Sky Drop'];
+                                if (invulnMoves.includes(move.name)) {
+                                    mon.semiInvulnerable = true;
+                                }
+                                log.push(`> ${mon.name} is charging up ${move.name}!`);
+                                // Apply charge-turn boosts (Meteor Beam)
+                                if (move.effects.selfBoost) {
+                                    for (const [s, amt] of Object.entries(move.effects.selfBoost)) {
+                                        mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
+                                    }
+                                    log.push(`> ${mon.name}'s stats changed!`);
+                                }
+                                continue;
+                            }
+                            // Attack turn - clear charging state
+                            mon.charging = null;
+                            mon.semiInvulnerable = false;
+                        }
+
+                        // Paralyze skip
+                        if (mon.status === 'PAR' && Math.random() < 0.25) {
+                            log.push(`${mon.name} is fully paralyzed!`);
+                            continue;
+                        }
+                        // Sleep skip (counter-based, 1-3 turns)
+                        if (mon.status === 'SLP') {
+                            if (mon.sleepTurns !== undefined && mon.sleepTurns > 0) {
+                                mon.sleepTurns--;
+                                if (mon.sleepTurns <= 0) {
+                                    mon.status = null;
+                                    log.push(`${mon.name} woke up!`);
+                                } else {
+                                    log.push(`${mon.name} is fast asleep.`);
+                                    continue;
+                                }
                             } else {
+                                mon.sleepTurns = 1 + Math.floor(Math.random() * 3);
                                 log.push(`${mon.name} is fast asleep.`);
                                 continue;
                             }
-                        } else {
-                            mon.sleepTurns = 1 + Math.floor(Math.random() * 3);
-                            log.push(`${mon.name} is fast asleep.`);
+                        }
+                        // Freeze skip (20% thaw, or thaw if using Fire move)
+                        if (mon.status === 'FRZ') {
+                            if (move.type === 'Fire' || Math.random() < 0.2) {
+                                mon.status = null;
+                                log.push(`${mon.name} thawed out!`);
+                            } else {
+                                log.push(`${mon.name} is frozen solid!`);
+                                continue;
+                            }
+                        }
+
+                        // Taunt & Encore Check
+                        if (mon.taunt > 0 && move.category === 'Status') {
+                            log.push(`${mon.name} can't use ${move.name} after the taunt!`);
                             continue;
                         }
+
+                        // Stat calculation function with boosts
+                        const calcStat = (base, boost) => {
+                            if (boost >= 0) return Math.floor(base * ((2 + boost) / 2));
+                            return Math.floor(base * (2 / (2 - boost)));
+                        };
+
+                        let speed = calcStat(mon.spe, mon.boosts.spe);
+                        if (mon.item === 'Choice Scarf') speed = Math.floor(speed * 1.5);
+                        if (mon.status === 'PAR') speed = Math.floor(speed * 0.5);
+
+                        let priority = move.priority || 0;
+                        if (mon.ability === 'Prankster' && move.category === 'Status') priority += 1;
+
+                        attackers.push({ uid, mon, move, priority, speed });
                     }
-                    // Freeze skip (20% thaw, or thaw if using Fire move)
-                    if (mon.status === 'FRZ') {
-                        if (move.type === 'Fire' || Math.random() < 0.2) {
-                            mon.status = null;
-                            log.push(`${mon.name} thawed out!`);
-                        } else {
-                            log.push(`${mon.name} is frozen solid!`);
-                            continue;
+                }
+
+                attackers.sort((a, b) => {
+                    if (b.priority !== a.priority) return b.priority - a.priority;
+                    if (b.speed !== a.speed) return b.speed - a.speed;
+                    return Math.random() > 0.5 ? 1 : -1;
+                });
+
+                // 3. Execute Attacks
+                let matchOver = false;
+
+                // Helper: morph a pokemon to a different form by looking up POKEMON_DB
+                const morphToForm = (mon, formId) => {
+                    const form = POKEMON_DB.find(p => p.id === formId);
+                    if (!form) return false;
+                    mon.name = form.name;
+                    mon.id = form.id;
+                    mon.types = [...form.types];
+                    mon.ability = form.abilities?.[0] || mon.ability;
+                    mon.atk = form.atk;
+                    mon.def = form.def;
+                    mon.spa = form.spa;
+                    mon.spd = form.spd;
+                    mon.spe = form.spe;
+                    mon.sprite = form.sprite;
+                    mon.spriteBack = form.spriteBack;
+                    return true;
+                };
+
+                for (const atkData of attackers) {
+                    const { uid, mon, move } = atkData;
+                    const defUid = uid === p1Uid ? p2Uid : p1Uid;
+                    const defMon = getMon(defUid);
+
+                    if (mon.currentHp <= 0) continue;
+
+                    // --- PRE-ATTACK FORM CHANGES ---
+                    // Stance Change: Aegislash
+                    if (mon.ability === 'Stance Change') {
+                        if (move.category !== 'Status' && (mon.id === 'aegislash' || mon.id === 'aegislash-shield' || mon.id.includes('aegislash') && !mon.id.includes('blade'))) {
+                            morphToForm(mon, 'aegislashblade');
+                            log.push(`> <span style="color:var(--accent)">${mon.name} changed to Blade Forme!</span>`);
+                        } else if (move.effects && move.effects.protect && (mon.id === 'aegislashblade' || mon.id.includes('blade'))) {
+                            morphToForm(mon, 'aegislash-shield');
+                            if (!POKEMON_DB.find(p => p.id === 'aegislash-shield')) morphToForm(mon, 'aegislash');
+                            log.push(`> <span style="color:var(--accent)">${mon.name} changed to Shield Forme!</span>`);
                         }
                     }
 
-                    // Taunt & Encore Check
-                    if (mon.taunt > 0 && move.category === 'Status') {
-                        log.push(`${mon.name} can't use ${move.name} after the taunt!`);
+                    log.push(`${mon.name} used ${move.name}!`);
+
+                    if (mon.item && mon.item.startsWith('Choice ') && !mon.choiceLock) {
+                        mon.choiceLock = actions[uid].val;
+                    }
+
+                    const calcStat = (base, boost) => boost >= 0 ? Math.floor(base * ((2 + boost) / 2)) : Math.floor(base * (2 / (2 - boost)));
+
+                    // --- PROTECT LOGIC ---
+                    if (move.effects && move.effects.protect) {
+                        if (mon.protectLastTurn) {
+                            if (Math.random() < 0.5) { log.push(`> But it failed!`); continue; }
+                        }
+                        mon.protecting = true;
+                        mon.protectLastTurn = true;
+                        log.push(`> ${mon.name} protected itself!`);
                         continue;
                     }
 
-                    // Stat calculation function with boosts
-                    const calcStat = (base, boost) => {
-                        if (boost >= 0) return Math.floor(base * ((2 + boost) / 2));
-                        return Math.floor(base * (2 / (2 - boost)));
-                    };
-
-                    let speed = calcStat(mon.spe, mon.boosts.spe);
-                    if (mon.item === 'Choice Scarf') speed = Math.floor(speed * 1.5);
-                    if (mon.status === 'PAR') speed = Math.floor(speed * 0.5);
-
-                    let priority = move.priority || 0;
-                    if (mon.ability === 'Prankster' && move.category === 'Status') priority += 1;
-
-                    attackers.push({ uid, mon, move, priority, speed });
-                }
-            }
-
-            attackers.sort((a, b) => {
-                if (b.priority !== a.priority) return b.priority - a.priority;
-                if (b.speed !== a.speed) return b.speed - a.speed;
-                return Math.random() > 0.5 ? 1 : -1;
-            });
-
-            // 3. Execute Attacks
-            let matchOver = false;
-
-            // Helper: morph a pokemon to a different form by looking up POKEMON_DB
-            const morphToForm = (mon, formId) => {
-                const form = POKEMON_DB.find(p => p.id === formId);
-                if (!form) return false;
-                mon.name = form.name;
-                mon.id = form.id;
-                mon.types = [...form.types];
-                mon.ability = form.abilities?.[0] || mon.ability;
-                mon.atk = form.atk;
-                mon.def = form.def;
-                mon.spa = form.spa;
-                mon.spd = form.spd;
-                mon.spe = form.spe;
-                mon.sprite = form.sprite;
-                mon.spriteBack = form.spriteBack;
-                return true;
-            };
-
-            for (const atkData of attackers) {
-                const { uid, mon, move } = atkData;
-                const defUid = uid === p1Uid ? p2Uid : p1Uid;
-                const defMon = getMon(defUid);
-
-                if (mon.currentHp <= 0) continue;
-
-                // --- PRE-ATTACK FORM CHANGES ---
-                // Stance Change: Aegislash
-                if (mon.ability === 'Stance Change') {
-                    if (move.category !== 'Status' && (mon.id === 'aegislash' || mon.id === 'aegislash-shield' || mon.id.includes('aegislash') && !mon.id.includes('blade'))) {
-                        morphToForm(mon, 'aegislashblade');
-                        log.push(`> <span style="color:var(--accent)">${mon.name} changed to Blade Forme!</span>`);
-                    } else if (move.effects && move.effects.protect && (mon.id === 'aegislashblade' || mon.id.includes('blade'))) {
-                        morphToForm(mon, 'aegislash-shield');
-                        if (!POKEMON_DB.find(p => p.id === 'aegislash-shield')) morphToForm(mon, 'aegislash');
-                        log.push(`> <span style="color:var(--accent)">${mon.name} changed to Shield Forme!</span>`);
+                    // --- WEATHER LOGIC ---
+                    if (move.effects && move.effects.weather) {
+                        state.weather = move.effects.weather;
+                        state.weatherTurns = 5;
+                        const wNames = { Sun: 'harsh sunlight', Rain: 'rain', Sand: 'a sandstorm', Snow: 'snow' };
+                        log.push(`> The weather changed to ${wNames[move.effects.weather] || move.effects.weather}!`);
+                        continue;
                     }
-                }
 
-                log.push(`${mon.name} used ${move.name}!`);
-
-                if (mon.item && mon.item.startsWith('Choice ') && !mon.choiceLock) {
-                    mon.choiceLock = actions[uid].val;
-                }
-
-                const calcStat = (base, boost) => boost >= 0 ? Math.floor(base * ((2 + boost) / 2)) : Math.floor(base * (2 / (2 - boost)));
-
-                // --- PROTECT LOGIC ---
-                if (move.effects && move.effects.protect) {
-                    if (mon.protectLastTurn) {
-                        if (Math.random() < 0.5) { log.push(`> But it failed!`); continue; }
-                    }
-                    mon.protecting = true;
-                    mon.protectLastTurn = true;
-                    log.push(`> ${mon.name} protected itself!`);
-                    continue;
-                }
-
-                // --- WEATHER LOGIC ---
-                if (move.effects && move.effects.weather) {
-                    state.weather = move.effects.weather;
-                    state.weatherTurns = 5;
-                    const wNames = { Sun: 'harsh sunlight', Rain: 'rain', Sand: 'a sandstorm', Snow: 'snow' };
-                    log.push(`> The weather changed to ${wNames[move.effects.weather] || move.effects.weather}!`);
-                    continue;
-                }
-
-                // --- CHECK IF DEFENDER IS PROTECTING ---
-                if (defMon.protecting && defMon.currentHp > 0 && move.category !== 'Status') {
-                    log.push(`> ${defMon.name} protected itself!`);
-                    const defFx = defMon._protectFx;
-                    if (defFx) {
-                        if (defFx.protectDamage && mon.currentHp > 0) {
-                            const pd = Math.floor(mon.hp * defFx.protectDamage) || 1;
-                            mon.currentHp = Math.max(0, mon.currentHp - pd);
-                            log.push(`> ${mon.name} was hurt!`);
-                        }
-                        if (defFx.protectDrop) {
-                            for (const [s, a] of Object.entries(defFx.protectDrop)) {
-                                mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + a));
+                    // --- CHECK IF DEFENDER IS PROTECTING ---
+                    if (defMon.protecting && defMon.currentHp > 0 && move.category !== 'Status') {
+                        log.push(`> ${defMon.name} protected itself!`);
+                        const defFx = defMon._protectFx;
+                        if (defFx) {
+                            if (defFx.protectDamage && mon.currentHp > 0) {
+                                const pd = Math.floor(mon.hp * defFx.protectDamage) || 1;
+                                mon.currentHp = Math.max(0, mon.currentHp - pd);
+                                log.push(`> ${mon.name} was hurt!`);
                             }
-                            log.push(`> ${mon.name}'s stats fell!`);
-                        }
-                        if (defFx.protectStatus && !mon.status && mon.currentHp > 0) {
-                            mon.status = defFx.protectStatus;
-                            log.push(`> ${mon.name} was afflicted with ${defFx.protectStatus}!`);
-                        }
-                    }
-                    continue;
-                }
-
-                // --- ACCURACY CHECK ---
-                if (defMon.currentHp > 0) {
-                    // Semi-invulnerable Counters
-                    let bypassedInvulnerability = false;
-                    let doubleDamageInvulnerable = false;
-
-                    if (defMon.semiInvulnerable) {
-                        const stateCauser = defMon.charging; // The move that caused it (e.g. "Fly", "Dig", "Dive")
-                        const mName = move.name;
-
-                        // Fly / Bounce counters
-                        if ((stateCauser === 'Fly' || stateCauser === 'Bounce' || stateCauser === 'Sky Drop') &&
-                            ['Gust', 'Twister', 'Thunder', 'Hurricane', 'Sky Uppercut', 'Smack Down'].includes(mName)) {
-                            bypassedInvulnerability = true;
-                            if (mName === 'Gust' || mName === 'Twister') doubleDamageInvulnerable = true;
-                        }
-                        // Dig counters
-                        else if (stateCauser === 'Dig' && ['Earthquake', 'Magnitude'].includes(mName)) {
-                            bypassedInvulnerability = true;
-                            if (mName === 'Earthquake' || mName === 'Magnitude') doubleDamageInvulnerable = true;
-                        }
-                        // Dive counters
-                        else if (stateCauser === 'Dive' && ['Surf', 'Whirlpool'].includes(mName)) {
-                            bypassedInvulnerability = true;
-                            if (mName === 'Surf' || mName === 'Whirlpool') doubleDamageInvulnerable = true;
-                        }
-                        // Phantom Force / Shadow Force bypass Protect, but have no specific move counters here
-
-                        if (!bypassedInvulnerability) {
-                            // Standard miss against semi-invulnerable
-                            log.push(`> ${mon.name}'s attack missed! ${defMon.name} is semi-invulnerable.`);
-                            continue;
-                        } else {
-                            log.push(`> ${mon.name} caught ${defMon.name} during its vulnerability!`);
-                        }
-                    }
-
-                    // Accuracy bypass in specific Weather
-                    let skipsAccuracy = false;
-                    if (state.weather === 'Rain' && ['Thunder', 'Hurricane'].includes(move.name)) skipsAccuracy = true;
-                    if (state.weather === 'Snow' && move.name === 'Blizzard') skipsAccuracy = true;
-
-                    if (!skipsAccuracy && move.accuracy && move.accuracy < 100) {
-                        let accStage = (mon.boosts.accuracy || 0) - (defMon.boosts.evasion || 0);
-                        accStage = Math.max(-6, Math.min(6, accStage));
-                        const accMul = accStage >= 0 ? (3 + accStage) / 3 : 3 / (3 - accStage);
-                        const finalAcc = move.accuracy * accMul;
-                        if (Math.random() * 100 > finalAcc) {
-                            log.push(`> ${mon.name}'s attack missed!`);
-                            continue;
-                        }
-                    }
-                }
-
-                // --- DAMAGING MOVES ---
-                if (defMon.currentHp > 0 && move.category !== 'Status') {
-                    const level = 100;
-                    const isChoiceBand = mon.item === 'Choice Band' && move.category === 'Physical' ? 1.5 : 1;
-                    const isChoiceSpecs = mon.item === 'Choice Specs' && move.category === 'Special' ? 1.5 : 1;
-                    const isLifeOrb = mon.item === 'Life Orb' ? 1.3 : 1;
-
-                    // Reflect / Light Screen / Aurora Veil
-                    let isCrit = false;
-                    let defMod = 1;
-                    let spdMod = 1;
-
-                    // Crits
-                    if (Math.random() < (move.critRate ? 0.12 : 0.04)) isCrit = true;
-
-                    if (state.screens[defUid]) {
-                        if (state.screens[defUid]['reflect'] && move.category === 'Physical' && !isCrit) defMod *= 2;
-                        if (state.screens[defUid]['light-screen'] && move.category === 'Special' && !isCrit) spdMod *= 2;
-                        if (state.screens[defUid]['aurora-veil'] && !isCrit) { defMod *= 2; spdMod *= 2; }
-                    }
-
-                    // Eviolite / Assault Vest
-                    if (defMon.item === 'Eviolite') { defMod *= 1.5; spdMod *= 1.5; } // Simplified NFE check
-                    if (defMon.item === 'Assault Vest') { spdMod *= 1.5; }
-
-                    let calcBoost = (boost, ability) => {
-                        if (ability === 'Simple') boost *= 2;
-                        if (ability === 'Contrary') boost *= -1;
-                        return Math.max(-6, Math.min(6, boost));
-                    };
-
-                    let statA = move.category === 'Special' ?
-                        calcStat(mon.spa, calcBoost(mon.boosts.spa, mon.ability)) :
-                        calcStat(mon.atk, calcBoost(mon.boosts.atk, mon.ability));
-
-                    if (mon.status === 'BRN' && move.category === 'Physical') statA = Math.floor(statA * 0.5);
-                    statA = Math.floor(statA * isChoiceBand * isChoiceSpecs);
-
-                    // Offensive Ability Modifiers
-                    if (mon.ability === 'Technician' && move.power <= 60) statA = Math.floor(statA * 1.5);
-                    if (mon.ability === 'Sheer Force' && move.effects && (move.effects.status || move.effects.enemyDrop || move.effects.selfBoost || move.effects.flinch)) {
-                        statA = Math.floor(statA * 1.3);
-                        // Sheer force removes secondary effects (handled in application phase natively by skipping, but we boost here)
-                    }
-                    if (mon.ability === 'Tough Claws' && move.contact) statA = Math.floor(statA * 1.3);
-
-                    // Weather defensive boosts
-                    let wDefMod = 1;
-                    let wSpdMod = 1;
-                    if (state.weather === 'Snow' && defMon.types.includes('Ice')) wDefMod *= 1.5;
-                    if (state.weather === 'Sand' && defMon.types.includes('Rock')) wSpdMod *= 1.5;
-
-                    let statD = move.category === 'Special' ? calcStat(defMon.spd, defMon.boosts.spd) * spdMod * wSpdMod : calcStat(defMon.def, defMon.boosts.def) * defMod * wDefMod;
-
-                    // Ability: Immunities & Absorptions
-                    let effectiveness = getEffectiveness(move.type, defMon.types);
-                    if (effectiveness > 0) {
-                        if (defMon.ability === 'Levitate' && move.type === 'Ground') {
-                            log.push(`> ${defMon.name}'s Levitate makes it immune to Ground moves!`);
-                            effectiveness = 0;
-                        } else if ((defMon.ability === 'Water Absorb' || defMon.ability === 'Dry Skin') && move.type === 'Water') {
-                            log.push(`> ${defMon.name}'s ${defMon.ability} absorbed the attack!`);
-                            defMon.currentHp = Math.min(defMon.hp, defMon.currentHp + Math.floor(defMon.hp / 4));
-                            effectiveness = 0;
-                        } else if (defMon.ability === 'Volt Absorb' && move.type === 'Electric') {
-                            log.push(`> ${defMon.name}'s Volt Absorb absorbed the attack!`);
-                            defMon.currentHp = Math.min(defMon.hp, defMon.currentHp + Math.floor(defMon.hp / 4));
-                            effectiveness = 0;
-                        } else if (defMon.ability === 'Motor Drive' && move.type === 'Electric') {
-                            log.push(`> ${defMon.name}'s Motor Drive raised its Speed!`);
-                            defMon.boosts.spe = Math.min(6, defMon.boosts.spe + 1);
-                            effectiveness = 0;
-                        } else if (defMon.ability === 'Sap Sipper' && move.type === 'Grass') {
-                            log.push(`> ${defMon.name}'s Sap Sipper raised its Attack!`);
-                            defMon.boosts.atk = Math.min(6, defMon.boosts.atk + 1);
-                            effectiveness = 0;
-                        } else if (defMon.ability === 'Flash Fire' && move.type === 'Fire') {
-                            log.push(`> ${defMon.name}'s Flash Fire neutralized the attack!`);
-                            effectiveness = 0;
-                        }
-                    }
-
-                    // Weather damage modifiers
-                    let weatherMod = 1;
-                    if (state.weather === 'Sun') { if (move.type === 'Fire') weatherMod = 1.5; if (move.type === 'Water') weatherMod = 0.5; }
-                    if (state.weather === 'Rain') { if (move.type === 'Water') weatherMod = 1.5; if (move.type === 'Fire') weatherMod = 0.5; }
-
-                    // Multi-hit
-                    let hits = 1;
-                    if (move.effects && move.effects.multiHit) {
-                        const [lo, hi] = move.effects.multiHit;
-                        if (lo === hi) hits = lo;
-                        else hits = lo + Math.floor(Math.random() * (hi - lo + 1));
-                    }
-
-                    let totalDmg = 0;
-                    for (let h = 0; h < hits; h++) {
-                        if (defMon.currentHp <= 0) break;
-
-                        let damage = Math.floor((((2 * level / 5 + 2) * move.power * statA / statD) / 50) + 2);
-                        const isSTAB = mon.types.includes(move.type) ? 1.5 : 1;
-                        if (isCrit) damage = Math.floor(damage * 1.5);
-                        const rng = (85 + Math.random() * 15) / 100;
-                        damage = Math.floor(damage * isSTAB * effectiveness * rng * isLifeOrb * weatherMod);
-
-                        // Semi-invulnerable bypass bonus (e.g. Earthquake vs Dig)
-                        if (doubleDamageInvulnerable) damage *= 2;
-
-                        if (effectiveness > 1 && h === 0) log.push(`> It's <span class="super">super effective!</span>`);
-                        if (effectiveness < 1 && effectiveness > 0 && h === 0) log.push(`> It's <span class="notvery">not very effective...</span>`);
-                        if (effectiveness === 0) { log.push(`> It had <span class="notvery">no effect</span> on ${defMon.name}!`); damage = 0; break; }
-                        if (isCrit && damage > 0) log.push(`> <span class="crit">A critical hit!</span>`);
-
-                        // --- PRE-DAMAGE FORM ABILITIES ---
-                        // Disguise: Mimikyu negates first hit
-                        if (damage > 0 && defMon.ability === 'Disguise' && !defMon.disguiseBroken) {
-                            defMon.disguiseBroken = true;
-                            const selfDmg = Math.floor(defMon.hp / 8);
-                            defMon.currentHp = Math.max(0, defMon.currentHp - selfDmg);
-                            morphToForm(defMon, 'mimikyubusted');
-                            log.push(`> <span style="color:var(--accent)">${defMon.name}'s Disguise was busted!</span>`);
-                            damage = 0;
-                        }
-                        // Ice Face: Eiscue blocks first physical hit
-                        if (damage > 0 && defMon.ability === 'Ice Face' && !defMon.iceFaceBroken && move.category === 'Physical') {
-                            defMon.iceFaceBroken = true;
-                            morphToForm(defMon, 'eiscuenoice');
-                            log.push(`> <span style="color:var(--accent)">${defMon.name}'s Ice Face blocked the attack!</span>`);
-                            damage = 0;
-                        }
-
-                        if (damage > 0) {
-                            const bypassesSub = (move.effects && (move.effects.sound || move.effects.bypassesSubstitute)) || mon.ability === 'Infiltrator';
-                            if (defMon.substituteHp > 0 && !bypassesSub) {
-                                defMon.substituteHp -= damage;
-                                log.push(`> The substitute took damage for ${defMon.name}!`);
-                                if (defMon.substituteHp <= 0) {
-                                    log.push(`> ${defMon.name}'s substitute faded!`);
-                                    defMon.substituteHp = 0;
+                            if (defFx.protectDrop) {
+                                for (const [s, a] of Object.entries(defFx.protectDrop)) {
+                                    mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + a));
                                 }
+                                log.push(`> ${mon.name}'s stats fell!`);
+                            }
+                            if (defFx.protectStatus && !mon.status && mon.currentHp > 0) {
+                                mon.status = defFx.protectStatus;
+                                log.push(`> ${mon.name} was afflicted with ${defFx.protectStatus}!`);
+                            }
+                        }
+                        continue;
+                    }
+
+                    // --- ACCURACY CHECK ---
+                    if (defMon.currentHp > 0) {
+                        // Semi-invulnerable Counters
+                        let bypassedInvulnerability = false;
+                        let doubleDamageInvulnerable = false;
+
+                        if (defMon.semiInvulnerable) {
+                            const stateCauser = defMon.charging; // The move that caused it (e.g. "Fly", "Dig", "Dive")
+                            const mName = move.name;
+
+                            // Fly / Bounce counters
+                            if ((stateCauser === 'Fly' || stateCauser === 'Bounce' || stateCauser === 'Sky Drop') &&
+                                ['Gust', 'Twister', 'Thunder', 'Hurricane', 'Sky Uppercut', 'Smack Down'].includes(mName)) {
+                                bypassedInvulnerability = true;
+                                if (mName === 'Gust' || mName === 'Twister') doubleDamageInvulnerable = true;
+                            }
+                            // Dig counters
+                            else if (stateCauser === 'Dig' && ['Earthquake', 'Magnitude'].includes(mName)) {
+                                bypassedInvulnerability = true;
+                                if (mName === 'Earthquake' || mName === 'Magnitude') doubleDamageInvulnerable = true;
+                            }
+                            // Dive counters
+                            else if (stateCauser === 'Dive' && ['Surf', 'Whirlpool'].includes(mName)) {
+                                bypassedInvulnerability = true;
+                                if (mName === 'Surf' || mName === 'Whirlpool') doubleDamageInvulnerable = true;
+                            }
+                            // Phantom Force / Shadow Force bypass Protect, but have no specific move counters here
+
+                            if (!bypassedInvulnerability) {
+                                // Standard miss against semi-invulnerable
+                                log.push(`> ${mon.name}'s attack missed! ${defMon.name} is semi-invulnerable.`);
+                                continue;
                             } else {
-                                let dmgDealt = Math.min(defMon.currentHp, damage);
-                                if (defMon.item === 'Focus Sash' && defMon.currentHp === defMon.hp && damage >= defMon.currentHp) {
-                                    defMon.currentHp = 1; defMon.item = 'None';
-                                    log.push(`<span class="item-text">${defMon.name} hung on using its Focus Sash!</span>`);
-                                } else { defMon.currentHp = Math.max(0, defMon.currentHp - damage); }
-                                totalDmg += dmgDealt;
-                                if (defMon.currentHp === 0) log.push(`<span class="fainted-text">${defMon.name} fainted!</span>`);
+                                log.push(`> ${mon.name} caught ${defMon.name} during its vulnerability!`);
+                            }
+                        }
 
-                                // Destiny Bond
-                                if (defMon.currentHp === 0 && defMon.destinyBond) {
-                                    mon.currentHp = 0;
-                                    log.push(`> ${mon.name} took its attacker down with it!`);
-                                }
+                        // Accuracy bypass in specific Weather
+                        let skipsAccuracy = false;
+                        if (state.weather === 'Rain' && ['Thunder', 'Hurricane'].includes(move.name)) skipsAccuracy = true;
+                        if (state.weather === 'Snow' && move.name === 'Blizzard') skipsAccuracy = true;
 
-                                // Rocky Helmet
-                                if (defMon.item === 'Rocky Helmet' && move.category === 'Physical' && defMon.currentHp > 0) { // simplified contact check
-                                    const recoil = Math.floor(mon.hp / 6);
-                                    mon.currentHp = Math.max(0, mon.currentHp - recoil);
-                                    log.push(`> ${mon.name} was hurt by ${defMon.name}'s Rocky Helmet!`);
-                                }
-                                // Air balloon pop
-                                if (defMon.item === 'Air Balloon') {
-                                    log.push(`> ${defMon.name}'s Air Balloon popped!`);
-                                    defMon.item = null;
-                                }
+                        if (!skipsAccuracy && move.accuracy && move.accuracy < 100) {
+                            let accStage = (mon.boosts.accuracy || 0) - (defMon.boosts.evasion || 0);
+                            accStage = Math.max(-6, Math.min(6, accStage));
+                            const accMul = accStage >= 0 ? (3 + accStage) / 3 : 3 / (3 - accStage);
+                            const finalAcc = move.accuracy * accMul;
+                            if (Math.random() * 100 > finalAcc) {
+                                log.push(`> ${mon.name}'s attack missed!`);
+                                continue;
                             }
                         }
                     }
-                    if (hits > 1) log.push(`> Hit ${hits} time(s)!`);
 
-                    // Life Orb recoil
-                    if (mon.item === 'Life Orb' && mon.currentHp > 0 && totalDmg > 0) {
-                        const recoil = Math.floor(mon.hp / 10) || 1;
-                        mon.currentHp = Math.max(0, mon.currentHp - recoil);
-                        log.push(`<span class="item-text">${mon.name} lost some HP due to Life Orb!</span>`);
-                        if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
-                    }
+                    // --- DAMAGING MOVES ---
+                    if (defMon.currentHp > 0 && move.category !== 'Status') {
+                        const level = 100;
+                        const isChoiceBand = mon.item === 'Choice Band' && move.category === 'Physical' ? 1.5 : 1;
+                        const isChoiceSpecs = mon.item === 'Choice Specs' && move.category === 'Special' ? 1.5 : 1;
+                        const isLifeOrb = mon.item === 'Life Orb' ? 1.3 : 1;
 
-                    // Move effects after damage
-                    if (move.effects && totalDmg > 0) {
-                        const fx = { ...move.effects };
+                        // Reflect / Light Screen / Aurora Veil
+                        let isCrit = false;
+                        let defMod = 1;
+                        let spdMod = 1;
 
-                        // Sheer Force negates secondary effects applied to the target or user from attacking moves
-                        if (mon.ability === 'Sheer Force' && (fx.status || fx.enemyDrop || fx.flinch)) {
-                            delete fx.status;
-                            delete fx.enemyDrop;
-                            delete fx.flinch;
-                            // selfBoost is kept only if the move is explicitly a boosting move, but Sheer Force typically negates Power-Up Punch style boosts too. For simplicity, we'll negate secondary selfBoosts but keep primary modifiers untouched.
-                            if (!fx.recharge && !fx.twoTurn) delete fx.selfBoost;
+                        // Crits
+                        if (Math.random() < (move.critRate ? 0.12 : 0.04)) isCrit = true;
+
+                        if (state.screens[defUid]) {
+                            if (state.screens[defUid]['reflect'] && move.category === 'Physical' && !isCrit) defMod *= 2;
+                            if (state.screens[defUid]['light-screen'] && move.category === 'Special' && !isCrit) spdMod *= 2;
+                            if (state.screens[defUid]['aurora-veil'] && !isCrit) { defMod *= 2; spdMod *= 2; }
                         }
 
-                        if (fx.recharge) mon.recharging = true;
-                        if (fx.recoilPerc && mon.currentHp > 0) {
-                            const r = Math.floor(totalDmg * fx.recoilPerc) || 1;
-                            mon.currentHp = Math.max(0, mon.currentHp - r);
-                            log.push(`<span class="item-text">${mon.name} is damaged by recoil!</span>`);
+                        // Eviolite / Assault Vest
+                        if (defMon.item === 'Eviolite') { defMod *= 1.5; spdMod *= 1.5; } // Simplified NFE check
+                        if (defMon.item === 'Assault Vest') { spdMod *= 1.5; }
+
+                        let calcBoost = (boost, ability) => {
+                            if (ability === 'Simple') boost *= 2;
+                            if (ability === 'Contrary') boost *= -1;
+                            return Math.max(-6, Math.min(6, boost));
+                        };
+
+                        let statA = move.category === 'Special' ?
+                            calcStat(mon.spa, calcBoost(mon.boosts.spa, mon.ability)) :
+                            calcStat(mon.atk, calcBoost(mon.boosts.atk, mon.ability));
+
+                        if (mon.status === 'BRN' && move.category === 'Physical') statA = Math.floor(statA * 0.5);
+                        statA = Math.floor(statA * isChoiceBand * isChoiceSpecs);
+
+                        // Offensive Ability Modifiers
+                        if (mon.ability === 'Technician' && move.power <= 60) statA = Math.floor(statA * 1.5);
+                        if (mon.ability === 'Sheer Force' && move.effects && (move.effects.status || move.effects.enemyDrop || move.effects.selfBoost || move.effects.flinch)) {
+                            statA = Math.floor(statA * 1.3);
+                            // Sheer force removes secondary effects (handled in application phase natively by skipping, but we boost here)
+                        }
+                        if (mon.ability === 'Tough Claws' && move.contact) statA = Math.floor(statA * 1.3);
+
+                        // Weather defensive boosts
+                        let wDefMod = 1;
+                        let wSpdMod = 1;
+                        if (state.weather === 'Snow' && defMon.types.includes('Ice')) wDefMod *= 1.5;
+                        if (state.weather === 'Sand' && defMon.types.includes('Rock')) wSpdMod *= 1.5;
+
+                        let statD = move.category === 'Special' ? calcStat(defMon.spd, defMon.boosts.spd) * spdMod * wSpdMod : calcStat(defMon.def, defMon.boosts.def) * defMod * wDefMod;
+
+                        // Ability: Immunities & Absorptions
+                        let effectiveness = getEffectiveness(move.type, defMon.types);
+                        if (effectiveness > 0) {
+                            if (defMon.ability === 'Levitate' && move.type === 'Ground') {
+                                log.push(`> ${defMon.name}'s Levitate makes it immune to Ground moves!`);
+                                effectiveness = 0;
+                            } else if ((defMon.ability === 'Water Absorb' || defMon.ability === 'Dry Skin') && move.type === 'Water') {
+                                log.push(`> ${defMon.name}'s ${defMon.ability} absorbed the attack!`);
+                                defMon.currentHp = Math.min(defMon.hp, defMon.currentHp + Math.floor(defMon.hp / 4));
+                                effectiveness = 0;
+                            } else if (defMon.ability === 'Volt Absorb' && move.type === 'Electric') {
+                                log.push(`> ${defMon.name}'s Volt Absorb absorbed the attack!`);
+                                defMon.currentHp = Math.min(defMon.hp, defMon.currentHp + Math.floor(defMon.hp / 4));
+                                effectiveness = 0;
+                            } else if (defMon.ability === 'Motor Drive' && move.type === 'Electric') {
+                                log.push(`> ${defMon.name}'s Motor Drive raised its Speed!`);
+                                defMon.boosts.spe = Math.min(6, defMon.boosts.spe + 1);
+                                effectiveness = 0;
+                            } else if (defMon.ability === 'Sap Sipper' && move.type === 'Grass') {
+                                log.push(`> ${defMon.name}'s Sap Sipper raised its Attack!`);
+                                defMon.boosts.atk = Math.min(6, defMon.boosts.atk + 1);
+                                effectiveness = 0;
+                            } else if (defMon.ability === 'Flash Fire' && move.type === 'Fire') {
+                                log.push(`> ${defMon.name}'s Flash Fire neutralized the attack!`);
+                                effectiveness = 0;
+                            }
+                        }
+
+                        // Weather damage modifiers
+                        let weatherMod = 1;
+                        if (state.weather === 'Sun') { if (move.type === 'Fire') weatherMod = 1.5; if (move.type === 'Water') weatherMod = 0.5; }
+                        if (state.weather === 'Rain') { if (move.type === 'Water') weatherMod = 1.5; if (move.type === 'Fire') weatherMod = 0.5; }
+
+                        // Multi-hit
+                        let hits = 1;
+                        if (move.effects && move.effects.multiHit) {
+                            const [lo, hi] = move.effects.multiHit;
+                            if (lo === hi) hits = lo;
+                            else hits = lo + Math.floor(Math.random() * (hi - lo + 1));
+                        }
+
+                        let totalDmg = 0;
+                        for (let h = 0; h < hits; h++) {
+                            if (defMon.currentHp <= 0) break;
+
+                            let damage = Math.floor((((2 * level / 5 + 2) * move.power * statA / statD) / 50) + 2);
+                            const isSTAB = mon.types.includes(move.type) ? 1.5 : 1;
+                            if (isCrit) damage = Math.floor(damage * 1.5);
+                            const rng = (85 + Math.random() * 15) / 100;
+                            damage = Math.floor(damage * isSTAB * effectiveness * rng * isLifeOrb * weatherMod);
+
+                            // Semi-invulnerable bypass bonus (e.g. Earthquake vs Dig)
+                            if (doubleDamageInvulnerable) damage *= 2;
+
+                            if (effectiveness > 1 && h === 0) log.push(`> It's <span class="super">super effective!</span>`);
+                            if (effectiveness < 1 && effectiveness > 0 && h === 0) log.push(`> It's <span class="notvery">not very effective...</span>`);
+                            if (effectiveness === 0) { log.push(`> It had <span class="notvery">no effect</span> on ${defMon.name}!`); damage = 0; break; }
+                            if (isCrit && damage > 0) log.push(`> <span class="crit">A critical hit!</span>`);
+
+                            // --- PRE-DAMAGE FORM ABILITIES ---
+                            // Disguise: Mimikyu negates first hit
+                            if (damage > 0 && defMon.ability === 'Disguise' && !defMon.disguiseBroken) {
+                                defMon.disguiseBroken = true;
+                                const selfDmg = Math.floor(defMon.hp / 8);
+                                defMon.currentHp = Math.max(0, defMon.currentHp - selfDmg);
+                                morphToForm(defMon, 'mimikyubusted');
+                                log.push(`> <span style="color:var(--accent)">${defMon.name}'s Disguise was busted!</span>`);
+                                damage = 0;
+                            }
+                            // Ice Face: Eiscue blocks first physical hit
+                            if (damage > 0 && defMon.ability === 'Ice Face' && !defMon.iceFaceBroken && move.category === 'Physical') {
+                                defMon.iceFaceBroken = true;
+                                morphToForm(defMon, 'eiscuenoice');
+                                log.push(`> <span style="color:var(--accent)">${defMon.name}'s Ice Face blocked the attack!</span>`);
+                                damage = 0;
+                            }
+
+                            if (damage > 0) {
+                                const bypassesSub = (move.effects && (move.effects.sound || move.effects.bypassesSubstitute)) || mon.ability === 'Infiltrator';
+                                if (defMon.substituteHp > 0 && !bypassesSub) {
+                                    defMon.substituteHp -= damage;
+                                    log.push(`> The substitute took damage for ${defMon.name}!`);
+                                    if (defMon.substituteHp <= 0) {
+                                        log.push(`> ${defMon.name}'s substitute faded!`);
+                                        defMon.substituteHp = 0;
+                                    }
+                                } else {
+                                    let dmgDealt = Math.min(defMon.currentHp, damage);
+                                    if (defMon.item === 'Focus Sash' && defMon.currentHp === defMon.hp && damage >= defMon.currentHp) {
+                                        defMon.currentHp = 1; defMon.item = 'None';
+                                        log.push(`<span class="item-text">${defMon.name} hung on using its Focus Sash!</span>`);
+                                    } else { defMon.currentHp = Math.max(0, defMon.currentHp - damage); }
+                                    totalDmg += dmgDealt;
+                                    if (defMon.currentHp === 0) log.push(`<span class="fainted-text">${defMon.name} fainted!</span>`);
+
+                                    // Destiny Bond
+                                    if (defMon.currentHp === 0 && defMon.destinyBond) {
+                                        mon.currentHp = 0;
+                                        log.push(`> ${mon.name} took its attacker down with it!`);
+                                    }
+
+                                    // Rocky Helmet
+                                    if (defMon.item === 'Rocky Helmet' && move.category === 'Physical' && defMon.currentHp > 0) { // simplified contact check
+                                        const recoil = Math.floor(mon.hp / 6);
+                                        mon.currentHp = Math.max(0, mon.currentHp - recoil);
+                                        log.push(`> ${mon.name} was hurt by ${defMon.name}'s Rocky Helmet!`);
+                                    }
+                                    // Air balloon pop
+                                    if (defMon.item === 'Air Balloon') {
+                                        log.push(`> ${defMon.name}'s Air Balloon popped!`);
+                                        defMon.item = null;
+                                    }
+                                }
+                            }
+                        }
+                        if (hits > 1) log.push(`> Hit ${hits} time(s)!`);
+
+                        // Life Orb recoil
+                        if (mon.item === 'Life Orb' && mon.currentHp > 0 && totalDmg > 0) {
+                            const recoil = Math.floor(mon.hp / 10) || 1;
+                            mon.currentHp = Math.max(0, mon.currentHp - recoil);
+                            log.push(`<span class="item-text">${mon.name} lost some HP due to Life Orb!</span>`);
                             if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
                         }
-                        if (fx.drainPerc && mon.currentHp > 0) {
-                            const h2 = Math.floor(totalDmg * fx.drainPerc) || 1;
-                            mon.currentHp = Math.min(mon.hp, mon.currentHp + h2);
-                            log.push(`<span class="item-text">${mon.name} had its energy drained!</span>`);
-                        }
-                        if (fx.enemyDrop && defMon.currentHp > 0 && Math.random() * 100 < (fx.dropRate || 100)) {
-                            for (const [s, amt] of Object.entries(fx.enemyDrop)) {
-                                defMon.boosts[s] = Math.max(-6, Math.min(6, defMon.boosts[s] + amt));
-                                log.push(`<span class="notvery">${defMon.name}'s ${s} fell!</span>`);
+
+                        // Move effects after damage
+                        if (move.effects && totalDmg > 0) {
+                            const fx = { ...move.effects };
+
+                            // Sheer Force negates secondary effects applied to the target or user from attacking moves
+                            if (mon.ability === 'Sheer Force' && (fx.status || fx.enemyDrop || fx.flinch)) {
+                                delete fx.status;
+                                delete fx.enemyDrop;
+                                delete fx.flinch;
+                                // selfBoost is kept only if the move is explicitly a boosting move, but Sheer Force typically negates Power-Up Punch style boosts too. For simplicity, we'll negate secondary selfBoosts but keep primary modifiers untouched.
+                                if (!fx.recharge && !fx.twoTurn) delete fx.selfBoost;
                             }
-                        }
-                        if (fx.selfBoost && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100)) {
-                            for (const [s, amt] of Object.entries(fx.selfBoost)) {
-                                mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
-                                log.push(`<span class="super">${mon.name}'s ${s} rose!</span>`);
+
+                            if (fx.recharge) mon.recharging = true;
+                            if (fx.recoilPerc && mon.currentHp > 0) {
+                                const r = Math.floor(totalDmg * fx.recoilPerc) || 1;
+                                mon.currentHp = Math.max(0, mon.currentHp - r);
+                                log.push(`<span class="item-text">${mon.name} is damaged by recoil!</span>`);
+                                if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
+                            }
+                            if (fx.drainPerc && mon.currentHp > 0) {
+                                const h2 = Math.floor(totalDmg * fx.drainPerc) || 1;
+                                mon.currentHp = Math.min(mon.hp, mon.currentHp + h2);
+                                log.push(`<span class="item-text">${mon.name} had its energy drained!</span>`);
+                            }
+                            if (fx.enemyDrop && defMon.currentHp > 0 && Math.random() * 100 < (fx.dropRate || 100)) {
+                                for (const [s, amt] of Object.entries(fx.enemyDrop)) {
+                                    defMon.boosts[s] = Math.max(-6, Math.min(6, defMon.boosts[s] + amt));
+                                    log.push(`<span class="notvery">${defMon.name}'s ${s} fell!</span>`);
+                                }
+                            }
+                            if (fx.selfBoost && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100)) {
+                                for (const [s, amt] of Object.entries(fx.selfBoost)) {
+                                    mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
+                                    log.push(`<span class="super">${mon.name}'s ${s} rose!</span>`);
+                                }
                             }
                         }
                     }
-                }
 
-                // --- STATUS & NON-DAMAGING MOVE EFFECTS ---
-                if (move.category === 'Status' || (move.effects && defMon.currentHp > 0)) {
-                    const fx = move.effects;
+                    // --- STATUS & NON-DAMAGING MOVE EFFECTS ---
+                    if (move.category === 'Status' || (move.effects && defMon.currentHp > 0)) {
+                        const fx = move.effects;
 
-                    // Substitute block status & drops
-                    const bypassesSubStatus = (fx && (fx.sound || fx.bypassesSubstitute)) || mon.ability === 'Infiltrator' || (fx && (fx.clearHazards || fx.haze));
-                    const subBlocks = defMon.substituteHp > 0 && !bypassesSubStatus;
+                        // Substitute block status & drops
+                        const bypassesSubStatus = (fx && (fx.sound || fx.bypassesSubstitute)) || mon.ability === 'Infiltrator' || (fx && (fx.clearHazards || fx.haze));
+                        const subBlocks = defMon.substituteHp > 0 && !bypassesSubStatus;
 
-                    if (fx) {
-                        if (fx.selfBoost && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100)) {
-                            for (const [s, amt] of Object.entries(fx.selfBoost)) {
-                                mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
-                                log.push(`<span class="super">${mon.name}'s ${s} rose!</span>`);
-                            }
-                        }
-                        if (fx.selfDrop && mon.currentHp > 0) {
-                            for (const [s, amt] of Object.entries(fx.selfDrop)) {
-                                mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
-                                log.push(`<span class="notvery">${mon.name}'s ${s} fell!</span>`);
-                            }
-                        }
-                        if (fx.enemyDrop && defMon.currentHp > 0 && move.category === 'Status' && Math.random() * 100 < (fx.dropRate || 100) && !subBlocks) {
-                            for (const [s, amt] of Object.entries(fx.enemyDrop)) {
-                                defMon.boosts[s] = Math.max(-6, Math.min(6, defMon.boosts[s] + amt));
-                                log.push(`<span class="notvery">${defMon.name}'s ${s} fell!</span>`);
-                            }
-                        }
-                        if (fx.healPerc && mon.currentHp > 0) {
-                            const heal = Math.floor(mon.hp * fx.healPerc);
-                            mon.currentHp = Math.min(mon.hp, mon.currentHp + heal);
-                            log.push(`<span class="item-text">${mon.name} recovered HP!</span>`);
-                        }
-                        // Status
-                        if (fx.status && defMon.currentHp > 0 && !defMon.status && Math.random() * 100 < (fx.statusRate || 100) && !subBlocks) {
-                            let canApply = true;
-                            if (fx.status === 'SLP' && state.format.clauses?.includes('Sleep Clause Mod')) {
-                                if (teams[defUid].some(p => p.status === 'SLP')) { canApply = false; log.push(`> Sleep Clause Mod blocked!`); }
-                            }
-                            if (fx.status === 'PAR' && defMon.types.includes('Electric')) canApply = false;
-                            if (fx.status === 'PAR' && move.name === 'Thunder Wave' && defMon.types.includes('Ground')) {
-                                canApply = false;
-                                log.push(`> It doesn't affect ${defMon.name}...`);
-                            }
-                            if (fx.status === 'BRN' && defMon.types.includes('Fire')) canApply = false;
-                            if ((fx.status === 'PSN' || fx.status === 'TOX') && (defMon.types.includes('Poison') || defMon.types.includes('Steel'))) canApply = false;
-                            if (fx.status === 'FRZ' && defMon.types.includes('Ice')) canApply = false;
-
-                            // Powder/Spore moves vs Grass
-                            if (fx.powder && defMon.types.includes('Grass')) {
-                                canApply = false;
-                                log.push(`> It doesn't affect ${defMon.name}...`);
-                            }
-                            // Prankster vs Dark
-                            if (mon.ability === 'Prankster' && move.category === 'Status' && defMon.types.includes('Dark')) {
-                                canApply = false;
-                                log.push(`> It doesn't affect ${defMon.name}...`);
-                            }
-
-                            if (canApply) {
-                                defMon.status = fx.status;
-                                if (fx.status === 'TOX') defMon.toxicCounter = 1;
-                                if (fx.status === 'SLP') defMon.sleepTurns = 1 + Math.floor(Math.random() * 3);
-                                log.push(`<span class="status-${fx.status}">${defMon.name} was afflicted with ${fx.status}!</span>`);
-                            }
-                        }
-                        if (fx.weather) {
-                            state.weather = fx.weather;
-                            state.weatherTurns = 5;
-                            const wNames = { Sun: 'harsh sunlight', Rain: 'rain', Sand: 'a sandstorm', Snow: 'a snowstorm' };
-                            log.push(`> The weather changed to ${wNames[state.weather]}!`);
-                        }
-                        if (fx.terrain) {
-                            state.terrain = fx.terrain;
-                            state.terrainTurns = 5;
-                            log.push(`> The battlefield is now covered in ${fx.terrain} Terrain!`);
-                        }
-                        if (fx.hazards || fx.hazard) {
-                            const rawH = fx.hazards || fx.hazard;
-                            // Normalize: 'Stealth Rock' -> 'stealth-rock', 'Toxic Spikes' -> 'toxic-spikes'
-                            const h = rawH.toLowerCase().replace(/\s+/g, '-');
-                            if (!state.hazards[defUid]) state.hazards[defUid] = {};
-                            if (h === 'stealth-rock' || h === 'sticky-web') {
-                                if (!state.hazards[defUid][h]) {
-                                    state.hazards[defUid][h] = 1;
-                                    log.push(`> ${rawH} was set around ${roomState.players[defUid].name}'s team!`);
+                        if (fx) {
+                            if (fx.selfBoost && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100)) {
+                                for (const [s, amt] of Object.entries(fx.selfBoost)) {
+                                    mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
+                                    log.push(`<span class="super">${mon.name}'s ${s} rose!</span>`);
                                 }
-                            } else if (h === 'spikes') {
-                                state.hazards[defUid][h] = Math.min(3, (state.hazards[defUid][h] || 0) + 1);
-                                log.push(`> Spikes were scattered all around the feet of ${roomState.players[defUid].name}'s team!`);
-                            } else if (h === 'toxic-spikes') {
-                                state.hazards[defUid][h] = Math.min(2, (state.hazards[defUid][h] || 0) + 1);
-                                log.push(`> Poison darts were scattered all around the feet of ${roomState.players[defUid].name}'s team!`);
                             }
-                        }
-                        if (fx.clearHazards) {
-                            state.hazards[uid] = {};
-                            state.hazards[defUid] = {};
-                            state.screens[uid] = {};
-                            state.screens[defUid] = {};
-                            log.push(`> The entry hazards and screens were cleared from the field!`);
-                        }
-                        if (fx.clearMyHazards) {
-                            state.hazards[uid] = {};
-                            log.push(`> ${mon.name} blew away the hazards!`);
-                        }
-                        if (fx.screen) {
-                            const turns = mon.item === 'Light Clay' ? 8 : 5;
-                            if (fx.screen === 'aurora-veil' && state.weather !== 'Snow') {
-                                log.push(`> But it failed! (Aurora Veil requires Snow)`);
-                            } else {
-                                state.screens[uid][fx.screen] = turns;
-                                log.push(`> ${move.name} raised ${roomState.players[uid].name}'s team defenses!`);
+                            if (fx.selfDrop && mon.currentHp > 0) {
+                                for (const [s, amt] of Object.entries(fx.selfDrop)) {
+                                    mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
+                                    log.push(`<span class="notvery">${mon.name}'s ${s} fell!</span>`);
+                                }
                             }
-                        }
-                        if (fx.substitute) {
-                            if (mon.currentHp > mon.hp / 4) {
-                                const cost = Math.floor(mon.hp / 4);
-                                mon.currentHp -= cost;
-                                mon.substituteHp = cost;
-                                log.push(`> ${mon.name} created a Substitute!`);
-                            } else {
-                                log.push(`> But it failed! ${mon.name} is too weak to make a substitute!`);
+                            if (fx.enemyDrop && defMon.currentHp > 0 && move.category === 'Status' && Math.random() * 100 < (fx.dropRate || 100) && !subBlocks) {
+                                for (const [s, amt] of Object.entries(fx.enemyDrop)) {
+                                    defMon.boosts[s] = Math.max(-6, Math.min(6, defMon.boosts[s] + amt));
+                                    log.push(`<span class="notvery">${defMon.name}'s ${s} fell!</span>`);
+                                }
                             }
-                        }
-                        if (fx.leechSeed && !defMon.types.includes('Grass') && !subBlocks) {
-                            defMon.seeded = true;
-                            log.push(`> ${defMon.name} was seeded!`);
-                        }
-                        if (fx.taunt && !subBlocks) {
-                            defMon.taunt = fx.taunt;
-                            log.push(`> ${defMon.name} fell for the taunt!`);
-                        }
-                        if (fx.encore && !subBlocks && state.actions[defUid]?.type === 'move') {
-                            defMon.encore = fx.encore;
-                            log.push(`> ${defMon.name} received an encore!`);
-                        }
-                        if (fx.trick && !subBlocks) {
-                            const tmp = mon.item;
-                            mon.item = defMon.item;
-                            defMon.item = tmp;
-                            log.push(`> ${mon.name} swapped items with its target!`);
-                        }
-                        if (fx.haze) {
-                            mon.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
-                            defMon.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
-                            log.push(`> All stat changes were eliminated!`);
-                        }
-                        if (fx.hazeTarget && !subBlocks) {
-                            defMon.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
-                            log.push(`> ${defMon.name}'s stat changes were eliminated!`);
-                        }
-                        if (fx.curse && !subBlocks) {
-                            if (mon.types.includes('Ghost')) {
-                                mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp / 2));
-                                defMon.cursed = true;
-                                log.push(`> ${mon.name} cut its own HP and laid a curse on ${defMon.name}!`);
-                            } else {
-                                mon.boosts.spe = Math.max(-6, mon.boosts.spe - 1);
-                                mon.boosts.atk = Math.min(6, mon.boosts.atk + 1);
-                                mon.boosts.def = Math.min(6, mon.boosts.def + 1);
-                                log.push(`> ${mon.name}'s Speed fell! Its Attack and Defense rose!`);
+                            if (fx.healPerc && mon.currentHp > 0) {
+                                const heal = Math.floor(mon.hp * fx.healPerc);
+                                mon.currentHp = Math.min(mon.hp, mon.currentHp + heal);
+                                log.push(`<span class="item-text">${mon.name} recovered HP!</span>`);
                             }
-                        }
-                        if (fx.destinyBond) {
-                            mon.destinyBond = true;
-                            log.push(`> ${mon.name} is hoping to take its attacker down with it!`);
-                        }
-                        if (fx.perishSong) {
-                            mon.perishSong = 4;
-                            defMon.perishSong = 4;
-                            log.push(`> All Pokémon hearing the song will faint in 3 turns!`);
-                        }
-                        if (fx.wish) {
-                            state.wish = state.wish || {};
-                            state.wish[uid] = { hp: Math.floor(mon.hp / 2) };
-                            log.push(`> ${mon.name} made a Wish!`);
-                        }
-                        if (fx.healingWish) {
-                            mon.currentHp = 0;
-                            state.healingWish = state.healingWish || {};
-                            state.healingWish[uid] = true;
-                        }
-                        if (fx.painSplit && !subBlocks) {
-                            const avg = Math.floor((mon.currentHp + defMon.currentHp) / 2);
-                            mon.currentHp = Math.min(mon.hp, avg);
-                            defMon.currentHp = Math.min(defMon.hp, avg);
-                            log.push(`> The battlers shared their pain!`);
-                        }
-                        if (fx.removeTargetItem && defMon.item && !subBlocks) {
-                            log.push(`> ${mon.name} knocked off ${defMon.name}'s ${defMon.item}!`);
-                            defMon.item = null;
-                        }
-                        if (fx.forceSwitch && defMon.currentHp > 0 && !subBlocks) {
-                            if (defMon.ability === 'Suction Cups' || defMon.ingrained) {
-                                log.push(`> ${defMon.name} anchors itself!`);
-                            } else {
-                                const aliveBenched = teams[defUid].map((m, i) => m.currentHp > 0 && i !== activeIdx[defUid] ? i : -1).filter(i => i !== -1);
+                            // Status
+                            if (fx.status && defMon.currentHp > 0 && !defMon.status && Math.random() * 100 < (fx.statusRate || 100) && !subBlocks) {
+                                let canApply = true;
+                                if (fx.status === 'SLP' && state.format.clauses?.includes('Sleep Clause Mod')) {
+                                    if (teams[defUid].some(p => p.status === 'SLP')) { canApply = false; log.push(`> Sleep Clause Mod blocked!`); }
+                                }
+                                if (fx.status === 'PAR' && defMon.types.includes('Electric')) canApply = false;
+                                if (fx.status === 'PAR' && move.name === 'Thunder Wave' && defMon.types.includes('Ground')) {
+                                    canApply = false;
+                                    log.push(`> It doesn't affect ${defMon.name}...`);
+                                }
+                                if (fx.status === 'BRN' && defMon.types.includes('Fire')) canApply = false;
+                                if ((fx.status === 'PSN' || fx.status === 'TOX') && (defMon.types.includes('Poison') || defMon.types.includes('Steel'))) canApply = false;
+                                if (fx.status === 'FRZ' && defMon.types.includes('Ice')) canApply = false;
+
+                                // Powder/Spore moves vs Grass
+                                if (fx.powder && defMon.types.includes('Grass')) {
+                                    canApply = false;
+                                    log.push(`> It doesn't affect ${defMon.name}...`);
+                                }
+                                // Prankster vs Dark
+                                if (mon.ability === 'Prankster' && move.category === 'Status' && defMon.types.includes('Dark')) {
+                                    canApply = false;
+                                    log.push(`> It doesn't affect ${defMon.name}...`);
+                                }
+
+                                if (canApply) {
+                                    defMon.status = fx.status;
+                                    if (fx.status === 'TOX') defMon.toxicCounter = 1;
+                                    if (fx.status === 'SLP') defMon.sleepTurns = 1 + Math.floor(Math.random() * 3);
+                                    log.push(`<span class="status-${fx.status}">${defMon.name} was afflicted with ${fx.status}!</span>`);
+                                }
+                            }
+                            if (fx.weather) {
+                                state.weather = fx.weather;
+                                state.weatherTurns = 5;
+                                const wNames = { Sun: 'harsh sunlight', Rain: 'rain', Sand: 'a sandstorm', Snow: 'a snowstorm' };
+                                log.push(`> The weather changed to ${wNames[state.weather]}!`);
+                            }
+                            if (fx.terrain) {
+                                state.terrain = fx.terrain;
+                                state.terrainTurns = 5;
+                                log.push(`> The battlefield is now covered in ${fx.terrain} Terrain!`);
+                            }
+                            if (fx.hazards || fx.hazard) {
+                                const rawH = fx.hazards || fx.hazard;
+                                // Normalize: 'Stealth Rock' -> 'stealth-rock', 'Toxic Spikes' -> 'toxic-spikes'
+                                const h = rawH.toLowerCase().replace(/\s+/g, '-');
+                                if (!state.hazards[defUid]) state.hazards[defUid] = {};
+                                if (h === 'stealth-rock' || h === 'sticky-web') {
+                                    if (!state.hazards[defUid][h]) {
+                                        state.hazards[defUid][h] = 1;
+                                        log.push(`> ${rawH} was set around ${roomState.players[defUid].name}'s team!`);
+                                    }
+                                } else if (h === 'spikes') {
+                                    state.hazards[defUid][h] = Math.min(3, (state.hazards[defUid][h] || 0) + 1);
+                                    log.push(`> Spikes were scattered all around the feet of ${roomState.players[defUid].name}'s team!`);
+                                } else if (h === 'toxic-spikes') {
+                                    state.hazards[defUid][h] = Math.min(2, (state.hazards[defUid][h] || 0) + 1);
+                                    log.push(`> Poison darts were scattered all around the feet of ${roomState.players[defUid].name}'s team!`);
+                                }
+                            }
+                            if (fx.clearHazards) {
+                                state.hazards[uid] = {};
+                                state.hazards[defUid] = {};
+                                state.screens[uid] = {};
+                                state.screens[defUid] = {};
+                                log.push(`> The entry hazards and screens were cleared from the field!`);
+                            }
+                            if (fx.clearMyHazards) {
+                                state.hazards[uid] = {};
+                                log.push(`> ${mon.name} blew away the hazards!`);
+                            }
+                            if (fx.screen) {
+                                const turns = mon.item === 'Light Clay' ? 8 : 5;
+                                if (fx.screen === 'aurora-veil' && state.weather !== 'Snow') {
+                                    log.push(`> But it failed! (Aurora Veil requires Snow)`);
+                                } else {
+                                    state.screens[uid][fx.screen] = turns;
+                                    log.push(`> ${move.name} raised ${roomState.players[uid].name}'s team defenses!`);
+                                }
+                            }
+                            if (fx.substitute) {
+                                if (mon.currentHp > mon.hp / 4) {
+                                    const cost = Math.floor(mon.hp / 4);
+                                    mon.currentHp -= cost;
+                                    mon.substituteHp = cost;
+                                    log.push(`> ${mon.name} created a Substitute!`);
+                                } else {
+                                    log.push(`> But it failed! ${mon.name} is too weak to make a substitute!`);
+                                }
+                            }
+                            if (fx.leechSeed && !defMon.types.includes('Grass') && !subBlocks) {
+                                defMon.seeded = true;
+                                log.push(`> ${defMon.name} was seeded!`);
+                            }
+                            if (fx.taunt && !subBlocks) {
+                                defMon.taunt = fx.taunt;
+                                log.push(`> ${defMon.name} fell for the taunt!`);
+                            }
+                            if (fx.encore && !subBlocks && state.actions[defUid]?.type === 'move') {
+                                defMon.encore = fx.encore;
+                                log.push(`> ${defMon.name} received an encore!`);
+                            }
+                            if (fx.trick && !subBlocks) {
+                                const tmp = mon.item;
+                                mon.item = defMon.item;
+                                defMon.item = tmp;
+                                log.push(`> ${mon.name} swapped items with its target!`);
+                            }
+                            if (fx.haze) {
+                                mon.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
+                                defMon.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
+                                log.push(`> All stat changes were eliminated!`);
+                            }
+                            if (fx.hazeTarget && !subBlocks) {
+                                defMon.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
+                                log.push(`> ${defMon.name}'s stat changes were eliminated!`);
+                            }
+                            if (fx.curse && !subBlocks) {
+                                if (mon.types.includes('Ghost')) {
+                                    mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp / 2));
+                                    defMon.cursed = true;
+                                    log.push(`> ${mon.name} cut its own HP and laid a curse on ${defMon.name}!`);
+                                } else {
+                                    mon.boosts.spe = Math.max(-6, mon.boosts.spe - 1);
+                                    mon.boosts.atk = Math.min(6, mon.boosts.atk + 1);
+                                    mon.boosts.def = Math.min(6, mon.boosts.def + 1);
+                                    log.push(`> ${mon.name}'s Speed fell! Its Attack and Defense rose!`);
+                                }
+                            }
+                            if (fx.destinyBond) {
+                                mon.destinyBond = true;
+                                log.push(`> ${mon.name} is hoping to take its attacker down with it!`);
+                            }
+                            if (fx.perishSong) {
+                                mon.perishSong = 4;
+                                defMon.perishSong = 4;
+                                log.push(`> All Pokémon hearing the song will faint in 3 turns!`);
+                            }
+                            if (fx.wish) {
+                                state.wish = state.wish || {};
+                                state.wish[uid] = { hp: Math.floor(mon.hp / 2) };
+                                log.push(`> ${mon.name} made a Wish!`);
+                            }
+                            if (fx.healingWish) {
+                                mon.currentHp = 0;
+                                state.healingWish = state.healingWish || {};
+                                state.healingWish[uid] = true;
+                            }
+                            if (fx.painSplit && !subBlocks) {
+                                const avg = Math.floor((mon.currentHp + defMon.currentHp) / 2);
+                                mon.currentHp = Math.min(mon.hp, avg);
+                                defMon.currentHp = Math.min(defMon.hp, avg);
+                                log.push(`> The battlers shared their pain!`);
+                            }
+                            if (fx.removeTargetItem && defMon.item && !subBlocks) {
+                                log.push(`> ${mon.name} knocked off ${defMon.name}'s ${defMon.item}!`);
+                                defMon.item = null;
+                            }
+                            if (fx.forceSwitch && defMon.currentHp > 0 && !subBlocks) {
+                                if (defMon.ability === 'Suction Cups' || defMon.ingrained) {
+                                    log.push(`> ${defMon.name} anchors itself!`);
+                                } else {
+                                    const aliveBenched = teams[defUid].map((m, i) => m.currentHp > 0 && i !== activeIdx[defUid] ? i : -1).filter(i => i !== -1);
+                                    if (aliveBenched.length > 0) {
+                                        const oldMon = getMon(defUid);
+                                        oldMon.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
+                                        oldMon.choiceLock = null;
+                                        oldMon.seeded = false;
+                                        oldMon.taunt = 0;
+                                        oldMon.encore = 0;
+                                        oldMon.substituteHp = 0;
+                                        oldMon.perishSong = 0;
+                                        oldMon.destinyBond = false;
+
+                                        const newIdx = aliveBenched[Math.floor(Math.random() * aliveBenched.length)];
+                                        activeIdx[defUid] = newIdx;
+                                        log.push(`> ${defMon.name} was dragged out! ${getMon(defUid).name} was dragged in!`);
+                                    }
+                                }
+                            }
+                            if (fx.pivot) {
+                                const aliveBenched = teams[uid].filter((m, i) => m.currentHp > 0 && i !== activeIdx[uid]);
                                 if (aliveBenched.length > 0) {
-                                    const oldMon = getMon(defUid);
+                                    // For simplicity, we auto switch them to the first alive benched
+                                    const oldMon = getMon(uid);
                                     oldMon.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
                                     oldMon.choiceLock = null;
                                     oldMon.seeded = false;
@@ -2351,339 +2373,336 @@
                                     oldMon.perishSong = 0;
                                     oldMon.destinyBond = false;
 
-                                    const newIdx = aliveBenched[Math.floor(Math.random() * aliveBenched.length)];
-                                    activeIdx[defUid] = newIdx;
-                                    log.push(`> ${defMon.name} was dragged out! ${getMon(defUid).name} was dragged in!`);
+                                    const benchedIds = teams[uid].map((m, i) => m.currentHp > 0 && i !== activeIdx[uid] ? i : -1).filter(i => i !== -1);
+                                    const newIdx = benchedIds[0];
+                                    activeIdx[uid] = newIdx;
+                                    log.push(`> ${mon.name} went back to ${roomState.players[uid].name}!`);
+                                    log.push(`> ${roomState.players[uid].name} sent out ${getMon(uid).name}!`);
                                 }
                             }
                         }
-                        if (fx.pivot) {
-                            const aliveBenched = teams[uid].filter((m, i) => m.currentHp > 0 && i !== activeIdx[uid]);
-                            if (aliveBenched.length > 0) {
-                                // For simplicity, we auto switch them to the first alive benched
-                                const oldMon = getMon(uid);
-                                oldMon.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
-                                oldMon.choiceLock = null;
-                                oldMon.seeded = false;
-                                oldMon.taunt = 0;
-                                oldMon.encore = 0;
-                                oldMon.substituteHp = 0;
-                                oldMon.perishSong = 0;
-                                oldMon.destinyBond = false;
+                    }
+                }
 
-                                const benchedIds = teams[uid].map((m, i) => m.currentHp > 0 && i !== activeIdx[uid] ? i : -1).filter(i => i !== -1);
-                                const newIdx = benchedIds[0];
-                                activeIdx[uid] = newIdx;
-                                log.push(`> ${mon.name} went back to ${roomState.players[uid].name}!`);
-                                log.push(`> ${roomState.players[uid].name} sent out ${getMon(uid).name}!`);
+                // 4. End of turn effects
+
+                // Clear protect flags
+                for (const uid of [p1Uid, p2Uid]) {
+                    const mon = getMon(uid);
+                    mon.protecting = false;
+                    const usedMove = actions[uid]?.type === 'move' ? MOVES[actions[uid]?.val] : null;
+                    if (!usedMove || !(usedMove.effects && usedMove.effects.protect)) {
+                        mon.protectLastTurn = false;
+                    }
+
+                    // Screen turns
+                    const screens = state.screens[uid] || {};
+                    for (const screen in screens) {
+                        if (screens[screen] > 0) {
+                            screens[screen]--;
+                            if (screens[screen] === 0) log.push(`> ${roomState.players[uid].name}'s ${screen} wore off!`);
+                        }
+                    }
+
+                    // Taunt / Encore / Destiny Bond fading
+                    if (mon.taunt > 0) { mon.taunt--; if (mon.taunt === 0) log.push(`> ${mon.name}'s taunt wore off!`); }
+                    if (mon.encore > 0) { mon.encore--; if (mon.encore === 0) log.push(`> ${mon.name}'s encore ended!`); }
+                    if (mon.disable > 0) { mon.disable--; if (mon.disable === 0) log.push(`> ${mon.name} is no longer disabled!`); }
+                    mon.destinyBond = false;
+                }
+
+                // Terrain countdown
+                if (state.terrainTurns > 0) {
+                    state.terrainTurns--;
+                    if (state.terrainTurns === 0) {
+                        log.push(`> The ${state.terrain} Terrain disappeared!`);
+                        state.terrain = null;
+                    }
+                }
+
+                // Weather countdown
+                if (state.weatherTurns > 0) {
+                    state.weatherTurns--;
+                    if (state.weatherTurns === 0) {
+                        const wNames = { Sun: 'harsh sunlight', Rain: 'rain', Sand: 'the sandstorm', Snow: 'the snow' };
+                        log.push(`> ${wNames[state.weather] || 'The weather'} subsided!`);
+                        state.weather = null;
+                    }
+                }
+
+                // End of turn damage/healing
+                for (const uid of [p1Uid, p2Uid]) {
+                    const mon = getMon(uid);
+                    if (mon.currentHp === 0) continue;
+
+                    // Wish
+                    if (state.wish && state.wish[uid]) {
+                        mon.currentHp = Math.min(mon.hp, mon.currentHp + state.wish[uid].hp);
+                        log.push(`> ${mon.name}'s wish came true!`);
+                        state.wish[uid] = null;
+                    }
+
+                    // Weather Damage
+                    if (state.weather === 'Sand' && !mon.types.includes('Rock') && !mon.types.includes('Ground') && !mon.types.includes('Steel') && mon.item !== 'Heavy-Duty Boots') {
+                        mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp / 16));
+                        log.push(`> ${mon.name} is buffeted by the sandstorm!`);
+                    }
+
+                    // Grassy Terrain Healing
+                    const grounded = !mon.types.includes('Flying') && mon.ability !== 'Levitate' && mon.item !== 'Air Balloon';
+                    if (state.terrain === 'Grassy' && grounded && mon.currentHp < mon.hp) {
+                        mon.currentHp = Math.min(mon.hp, mon.currentHp + Math.floor(mon.hp / 16));
+                        log.push(`> ${mon.name} restored a little HP from the Grassy Terrain!`);
+                    }
+
+                    // Status Damage
+                    if (mon.status === 'BRN') {
+                        mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp / 16));
+                        log.push(`> ${mon.name} was hurt by its burn!`);
+                    } else if (mon.status === 'PSN') {
+                        mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp / 8));
+                        log.push(`> ${mon.name} was hurt by poison!`);
+                    } else if (mon.status === 'TOX') {
+                        mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp * (mon.toxicCounter / 16)));
+                        mon.toxicCounter++;
+                        log.push(`> ${mon.name} was hurt by toxic poison!`);
+                    }
+
+                    // Cursed
+                    if (mon.cursed) {
+                        mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp / 4));
+                        log.push(`> ${mon.name} is afflicted by the curse!`);
+                    }
+
+                    // Leech Seed
+                    if (mon.seeded) {
+                        const dmg = Math.floor(mon.hp / 8) || 1;
+                        mon.currentHp = Math.max(0, mon.currentHp - dmg);
+                        const enemyUid = uid === p1Uid ? p2Uid : p1Uid;
+                        const enemyMon = getMon(enemyUid);
+                        if (enemyMon.currentHp > 0) {
+                            enemyMon.currentHp = Math.min(enemyMon.hp, enemyMon.currentHp + dmg);
+                        }
+                        log.push(`> ${mon.name}'s health is sapped by Leech Seed!`);
+                    }
+
+                    // Items
+                    if (mon.item === 'Leftovers') {
+                        mon.currentHp = Math.min(mon.hp, mon.currentHp + Math.floor(mon.hp / 16));
+                        log.push(`> ${mon.name} restored a little HP using its Leftovers!`);
+                    } else if (mon.item === 'Black Sludge') {
+                        if (mon.types.includes('Poison')) {
+                            mon.currentHp = Math.min(mon.hp, mon.currentHp + Math.floor(mon.hp / 16));
+                            log.push(`> ${mon.name} restored a little HP using its Black Sludge!`);
+                        } else {
+                            mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp / 8));
+                            log.push(`> ${mon.name} was hurt by its Black Sludge!`);
+                        }
+                    } else if (mon.item === 'Toxic Orb' && !mon.status && !mon.types.includes('Steel') && !mon.types.includes('Poison')) {
+                        mon.status = 'TOX'; mon.toxicCounter = 1;
+                        log.push(`<span class="status-TOX">${mon.name} was badly poisoned by the Toxic Orb!</span>`);
+                    } else if (mon.item === 'Flame Orb' && !mon.status && !mon.types.includes('Fire')) {
+                        mon.status = 'BRN';
+                        log.push(`<span class="status-BRN">${mon.name} was burned by the Flame Orb!</span>`);
+                    } else if ((mon.item === 'Sitrus Berry' || mon.item === 'Lum Berry') && mon.currentHp > 0) {
+                        if (mon.item === 'Sitrus Berry' && mon.currentHp <= mon.hp / 2) {
+                            mon.currentHp = Math.min(mon.hp, Math.floor(mon.currentHp + (mon.hp / 4)));
+                            log.push(`> ${mon.name} restored HP using its Sitrus Berry!`);
+                            mon.item = null;
+                        } else if (mon.item === 'Lum Berry' && mon.status) {
+                            log.push(`> ${mon.name} cured its ${mon.status} using its Lum Berry!`);
+                            mon.status = null;
+                            mon.item = null;
+                        }
+                    } else if (mon.item === 'White Herb') {
+                        let used = false;
+                        for (const s in mon.boosts) {
+                            if (mon.boosts[s] < 0) { mon.boosts[s] = 0; used = true; }
+                        }
+                        if (used) {
+                            log.push(`> ${mon.name} restored its stats using its White Herb!`);
+                            mon.item = null;
+                        }
+                    }
+
+                    if (mon.perishSong > 0) {
+                        mon.perishSong--;
+                        log.push(`> ${mon.name}'s perish count fell to ${mon.perishSong}.`);
+                        if (mon.perishSong === 0) {
+                            mon.currentHp = 0;
+                        }
+                    }
+
+                    // End-of-turn form changes
+                    // Zen Mode: Darmanitan morphs if HP <= 50%
+                    if (mon.ability === 'Zen Mode' && mon.currentHp > 0) {
+                        const hpPct = mon.currentHp / mon.hp;
+                        if (hpPct <= 0.5 && !mon.id.includes('zen')) {
+                            const zenForm = POKEMON_DB.find(p => p.id === 'darmanitanzen' || p.id === 'darmanitangalarzen');
+                            if (zenForm) {
+                                mon.name = zenForm.name; mon.id = zenForm.id;
+                                mon.types = [...zenForm.types]; mon.atk = zenForm.atk; mon.def = zenForm.def;
+                                mon.spa = zenForm.spa; mon.spd = zenForm.spd; mon.spe = zenForm.spe;
+                                mon.sprite = zenForm.sprite; mon.spriteBack = zenForm.spriteBack;
+                                log.push(`> <span style="color:var(--accent)">${mon.name} entered Zen Mode!</span>`);
+                            }
+                        } else if (hpPct > 0.5 && mon.id.includes('zen')) {
+                            const baseForm = POKEMON_DB.find(p => p.id === 'darmanitan' || (p.id.includes('darmanitan') && !p.id.includes('zen')));
+                            if (baseForm) {
+                                mon.name = baseForm.name; mon.id = baseForm.id;
+                                mon.types = [...baseForm.types]; mon.atk = baseForm.atk; mon.def = baseForm.def;
+                                mon.spa = baseForm.spa; mon.spd = baseForm.spd; mon.spe = baseForm.spe;
+                                mon.sprite = baseForm.sprite; mon.spriteBack = baseForm.spriteBack;
+                                log.push(`> <span style="color:var(--accent)">${mon.name} exited Zen Mode!</span>`);
+                            }
+                        }
+                    }
+
+                    // Ice Face: restores in Snow
+                    if (mon.ability === 'Ice Face' && mon.iceFaceBroken && state.weather === 'Snow') {
+                        const iceForm = POKEMON_DB.find(p => p.id === 'eiscue');
+                        if (iceForm) {
+                            mon.name = iceForm.name; mon.id = iceForm.id;
+                            mon.types = [...iceForm.types]; mon.atk = iceForm.atk; mon.def = iceForm.def;
+                            mon.spa = iceForm.spa; mon.spd = iceForm.spd; mon.spe = iceForm.spe;
+                            mon.sprite = iceForm.sprite; mon.spriteBack = iceForm.spriteBack;
+                            mon.iceFaceBroken = false;
+                            log.push(`> <span style="color:var(--accent)">${mon.name}'s Ice Face was restored!</span>`);
+                        }
+                    }
+
+                    // Schooling: Wishiwashi morphs if HP > 25% and level/stats are sufficient
+                    if (mon.ability === 'Schooling' && mon.currentHp > 0) {
+                        const hpPct = mon.currentHp / mon.hp;
+                        if (hpPct > 0.25 && !mon.id.includes('school')) {
+                            if (morphToForm(mon, 'wishiwashischool')) {
+                                log.push(`> <span style="color:var(--accent)">${mon.name} formed a school!</span>`);
+                            }
+                        } else if (hpPct <= 0.25 && mon.id.includes('school')) {
+                            if (morphToForm(mon, 'wishiwashisolo') || morphToForm(mon, 'wishiwashi')) {
+                                log.push(`> <span style="color:var(--accent)">${mon.name}'s school dispersed!</span>`);
+                            }
+                        }
+                    }
+
+                    // Shields Down: Minior toggles based on HP > 50%
+                    if (mon.ability === 'Shields Down' && mon.currentHp > 0) {
+                        const hpPct = mon.currentHp / mon.hp;
+                        if (hpPct <= 0.5 && mon.id.includes('meteor')) {
+                            if (morphToForm(mon, 'minior') || morphToForm(mon, 'miniorred')) {
+                                log.push(`> <span style="color:var(--accent)">${mon.name}'s shell smashed!</span>`);
+                            }
+                        } else if (hpPct > 0.5 && !mon.id.includes('meteor')) {
+                            if (morphToForm(mon, 'miniorredmeteor') || morphToForm(mon, 'miniormeteor')) {
+                                log.push(`> <span style="color:var(--accent)">${mon.name} is protected by its shell!</span>`);
+                            }
+                        }
+                    }
+
+                    // Power Construct: Zygarde morphs if HP <= 50%
+                    if (mon.ability === 'Power Construct' && mon.currentHp > 0 && !mon.id.includes('complete')) {
+                        const hpPct = mon.currentHp / mon.hp;
+                        if (hpPct <= 0.5) {
+                            const completeForm = POKEMON_DB.find(p => p.id === 'zygardecomplete');
+                            if (completeForm) {
+                                const oldMax = mon.hp;
+                                mon.name = completeForm.name; mon.id = completeForm.id;
+                                mon.hp = completeForm.hp;
+                                mon.currentHp += (mon.hp - oldMax); // Heal by the difference
+                                mon.atk = completeForm.atk; mon.def = completeForm.def;
+                                mon.spa = completeForm.spa; mon.spd = completeForm.spd;
+                                mon.spe = completeForm.spe;
+                                mon.sprite = completeForm.sprite; mon.spriteBack = completeForm.spriteBack;
+                                log.push(`> <span style="color:var(--accent)">${mon.name} transformed into its Complete Forme!</span>`);
+                            }
+                        }
+                    }
+
+                    if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
+                }
+
+                // Intimidate on switch-in
+                for (const uid of [p1Uid, p2Uid]) {
+                    if (actions[uid]?.type === 'switch') {
+                        const mon = getMon(uid);
+                        if (mon.ability === 'Intimidate' && mon.currentHp > 0) {
+                            const oppUid2 = uid === p1Uid ? p2Uid : p1Uid;
+                            const oppMon = getMon(oppUid2);
+                            if (oppMon.currentHp > 0) {
+                                oppMon.boosts.atk = Math.max(-6, oppMon.boosts.atk - 1);
+                                log.push(`> ${mon.name}'s Intimidate lowered ${oppMon.name}'s Attack!`);
                             }
                         }
                     }
                 }
-            }
 
-            // 4. End of turn effects
+                let p1Living = teams[p1Uid].some(p => p.currentHp > 0);
+                let p2Living = teams[p2Uid].some(p => p.currentHp > 0);
 
-            // Clear protect flags
-            for (const uid of [p1Uid, p2Uid]) {
-                const mon = getMon(uid);
-                mon.protecting = false;
-                const usedMove = actions[uid]?.type === 'move' ? MOVES[actions[uid]?.val] : null;
-                if (!usedMove || !(usedMove.effects && usedMove.effects.protect)) {
-                    mon.protectLastTurn = false;
-                }
-
-                // Screen turns
-                const screens = state.screens[uid] || {};
-                for (const screen in screens) {
-                    if (screens[screen] > 0) {
-                        screens[screen]--;
-                        if (screens[screen] === 0) log.push(`> ${roomState.players[uid].name}'s ${screen} wore off!`);
+                if (!p1Living || !p2Living) {
+                    matchOver = true;
+                    if (!p1Living && !p2Living) log.push('It is a draw!');
+                    else if (p1Living) log.push(`${roomState.players[p1Uid].name} wins the battle!`);
+                    else log.push(`${roomState.players[p2Uid].name} wins the battle!`);
+                } else {
+                    // If match is not over, check for faints to trigger faintReplacement
+                    if (getMon(p1Uid).currentHp <= 0 || getMon(p2Uid).currentHp <= 0) {
+                        if (log.length > 20) log = log.slice(-20);
+                        await updateDoc(roomRef, {
+                            'state.resolving': false,
+                            'state.actions': {},
+                            'state.faintReplacement': true,
+                            'state.log': log,
+                            'state.active': activeIdx,
+                            'state.weather': state.weather || null,
+                            'state.weatherTurns': state.weatherTurns || 0,
+                            'state.terrain': state.terrain || null,
+                            'state.terrainTurns': state.terrainTurns || 0,
+                            [`players.${p1Uid}.team`]: teams[p1Uid],
+                            [`players.${p2Uid}.team`]: teams[p2Uid]
+                        });
+                        return;
                     }
                 }
 
-                // Taunt / Encore / Destiny Bond fading
-                if (mon.taunt > 0) { mon.taunt--; if (mon.taunt === 0) log.push(`> ${mon.name}'s taunt wore off!`); }
-                if (mon.encore > 0) { mon.encore--; if (mon.encore === 0) log.push(`> ${mon.name}'s encore ended!`); }
-                if (mon.disable > 0) { mon.disable--; if (mon.disable === 0) log.push(`> ${mon.name} is no longer disabled!`); }
-                mon.destinyBond = false;
-            }
+                if (log.length > 20) log = log.slice(-20);
 
-            // Terrain countdown
-            if (state.terrainTurns > 0) {
-                state.terrainTurns--;
-                if (state.terrainTurns === 0) {
-                    log.push(`> The ${state.terrain} Terrain disappeared!`);
-                    state.terrain = null;
-                }
-            }
-
-            // Weather countdown
-            if (state.weatherTurns > 0) {
-                state.weatherTurns--;
-                if (state.weatherTurns === 0) {
-                    const wNames = { Sun: 'harsh sunlight', Rain: 'rain', Sand: 'the sandstorm', Snow: 'the snow' };
-                    log.push(`> ${wNames[state.weather] || 'The weather'} subsided!`);
-                    state.weather = null;
-                }
-            }
-
-            // End of turn damage/healing
-            for (const uid of [p1Uid, p2Uid]) {
-                const mon = getMon(uid);
-                if (mon.currentHp === 0) continue;
-
-                // Wish
-                if (state.wish && state.wish[uid]) {
-                    mon.currentHp = Math.min(mon.hp, mon.currentHp + state.wish[uid].hp);
-                    log.push(`> ${mon.name}'s wish came true!`);
-                    state.wish[uid] = null;
-                }
-
-                // Weather Damage
-                if (state.weather === 'Sand' && !mon.types.includes('Rock') && !mon.types.includes('Ground') && !mon.types.includes('Steel') && mon.item !== 'Heavy-Duty Boots') {
-                    mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp / 16));
-                    log.push(`> ${mon.name} is buffeted by the sandstorm!`);
-                }
-
-                // Grassy Terrain Healing
-                const grounded = !mon.types.includes('Flying') && mon.ability !== 'Levitate' && mon.item !== 'Air Balloon';
-                if (state.terrain === 'Grassy' && grounded && mon.currentHp < mon.hp) {
-                    mon.currentHp = Math.min(mon.hp, mon.currentHp + Math.floor(mon.hp / 16));
-                    log.push(`> ${mon.name} restored a little HP from the Grassy Terrain!`);
-                }
-
-                // Status Damage
-                if (mon.status === 'BRN') {
-                    mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp / 16));
-                    log.push(`> ${mon.name} was hurt by its burn!`);
-                } else if (mon.status === 'PSN') {
-                    mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp / 8));
-                    log.push(`> ${mon.name} was hurt by poison!`);
-                } else if (mon.status === 'TOX') {
-                    mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp * (mon.toxicCounter / 16)));
-                    mon.toxicCounter++;
-                    log.push(`> ${mon.name} was hurt by toxic poison!`);
-                }
-
-                // Cursed
-                if (mon.cursed) {
-                    mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp / 4));
-                    log.push(`> ${mon.name} is afflicted by the curse!`);
-                }
-
-                // Leech Seed
-                if (mon.seeded) {
-                    const dmg = Math.floor(mon.hp / 8) || 1;
-                    mon.currentHp = Math.max(0, mon.currentHp - dmg);
-                    const enemyUid = uid === p1Uid ? p2Uid : p1Uid;
-                    const enemyMon = getMon(enemyUid);
-                    if (enemyMon.currentHp > 0) {
-                        enemyMon.currentHp = Math.min(enemyMon.hp, enemyMon.currentHp + dmg);
-                    }
-                    log.push(`> ${mon.name}'s health is sapped by Leech Seed!`);
-                }
-
-                // Items
-                if (mon.item === 'Leftovers') {
-                    mon.currentHp = Math.min(mon.hp, mon.currentHp + Math.floor(mon.hp / 16));
-                    log.push(`> ${mon.name} restored a little HP using its Leftovers!`);
-                } else if (mon.item === 'Black Sludge') {
-                    if (mon.types.includes('Poison')) {
-                        mon.currentHp = Math.min(mon.hp, mon.currentHp + Math.floor(mon.hp / 16));
-                        log.push(`> ${mon.name} restored a little HP using its Black Sludge!`);
-                    } else {
-                        mon.currentHp = Math.max(0, mon.currentHp - Math.floor(mon.hp / 8));
-                        log.push(`> ${mon.name} was hurt by its Black Sludge!`);
-                    }
-                } else if (mon.item === 'Toxic Orb' && !mon.status && !mon.types.includes('Steel') && !mon.types.includes('Poison')) {
-                    mon.status = 'TOX'; mon.toxicCounter = 1;
-                    log.push(`<span class="status-TOX">${mon.name} was badly poisoned by the Toxic Orb!</span>`);
-                } else if (mon.item === 'Flame Orb' && !mon.status && !mon.types.includes('Fire')) {
-                    mon.status = 'BRN';
-                    log.push(`<span class="status-BRN">${mon.name} was burned by the Flame Orb!</span>`);
-                } else if ((mon.item === 'Sitrus Berry' || mon.item === 'Lum Berry') && mon.currentHp > 0) {
-                    if (mon.item === 'Sitrus Berry' && mon.currentHp <= mon.hp / 2) {
-                        mon.currentHp = Math.min(mon.hp, Math.floor(mon.currentHp + (mon.hp / 4)));
-                        log.push(`> ${mon.name} restored HP using its Sitrus Berry!`);
-                        mon.item = null;
-                    } else if (mon.item === 'Lum Berry' && mon.status) {
-                        log.push(`> ${mon.name} cured its ${mon.status} using its Lum Berry!`);
-                        mon.status = null;
-                        mon.item = null;
-                    }
-                } else if (mon.item === 'White Herb') {
-                    let used = false;
-                    for (const s in mon.boosts) {
-                        if (mon.boosts[s] < 0) { mon.boosts[s] = 0; used = true; }
-                    }
-                    if (used) {
-                        log.push(`> ${mon.name} restored its stats using its White Herb!`);
-                        mon.item = null;
-                    }
-                }
-
-                if (mon.perishSong > 0) {
-                    mon.perishSong--;
-                    log.push(`> ${mon.name}'s perish count fell to ${mon.perishSong}.`);
-                    if (mon.perishSong === 0) {
-                        mon.currentHp = 0;
-                    }
-                }
-
-                // End-of-turn form changes
-                // Zen Mode: Darmanitan morphs if HP <= 50%
-                if (mon.ability === 'Zen Mode' && mon.currentHp > 0) {
-                    const hpPct = mon.currentHp / mon.hp;
-                    if (hpPct <= 0.5 && !mon.id.includes('zen')) {
-                        const zenForm = POKEMON_DB.find(p => p.id === 'darmanitanzen' || p.id === 'darmanitangalarzen');
-                        if (zenForm) {
-                            mon.name = zenForm.name; mon.id = zenForm.id;
-                            mon.types = [...zenForm.types]; mon.atk = zenForm.atk; mon.def = zenForm.def;
-                            mon.spa = zenForm.spa; mon.spd = zenForm.spd; mon.spe = zenForm.spe;
-                            mon.sprite = zenForm.sprite; mon.spriteBack = zenForm.spriteBack;
-                            log.push(`> <span style="color:var(--accent)">${mon.name} entered Zen Mode!</span>`);
-                        }
-                    } else if (hpPct > 0.5 && mon.id.includes('zen')) {
-                        const baseForm = POKEMON_DB.find(p => p.id === 'darmanitan' || (p.id.includes('darmanitan') && !p.id.includes('zen')));
-                        if (baseForm) {
-                            mon.name = baseForm.name; mon.id = baseForm.id;
-                            mon.types = [...baseForm.types]; mon.atk = baseForm.atk; mon.def = baseForm.def;
-                            mon.spa = baseForm.spa; mon.spd = baseForm.spd; mon.spe = baseForm.spe;
-                            mon.sprite = baseForm.sprite; mon.spriteBack = baseForm.spriteBack;
-                            log.push(`> <span style="color:var(--accent)">${mon.name} exited Zen Mode!</span>`);
-                        }
-                    }
-                }
-
-                // Ice Face: restores in Snow
-                if (mon.ability === 'Ice Face' && mon.iceFaceBroken && state.weather === 'Snow') {
-                    const iceForm = POKEMON_DB.find(p => p.id === 'eiscue');
-                    if (iceForm) {
-                        mon.name = iceForm.name; mon.id = iceForm.id;
-                        mon.types = [...iceForm.types]; mon.atk = iceForm.atk; mon.def = iceForm.def;
-                        mon.spa = iceForm.spa; mon.spd = iceForm.spd; mon.spe = iceForm.spe;
-                        mon.sprite = iceForm.sprite; mon.spriteBack = iceForm.spriteBack;
-                        mon.iceFaceBroken = false;
-                        log.push(`> <span style="color:var(--accent)">${mon.name}'s Ice Face was restored!</span>`);
-                    }
-                }
-
-                // Schooling: Wishiwashi morphs if HP > 25% and level/stats are sufficient
-                if (mon.ability === 'Schooling' && mon.currentHp > 0) {
-                    const hpPct = mon.currentHp / mon.hp;
-                    if (hpPct > 0.25 && !mon.id.includes('school')) {
-                        if (morphToForm(mon, 'wishiwashischool')) {
-                            log.push(`> <span style="color:var(--accent)">${mon.name} formed a school!</span>`);
-                        }
-                    } else if (hpPct <= 0.25 && mon.id.includes('school')) {
-                        if (morphToForm(mon, 'wishiwashisolo') || morphToForm(mon, 'wishiwashi')) {
-                            log.push(`> <span style="color:var(--accent)">${mon.name}'s school dispersed!</span>`);
-                        }
-                    }
-                }
-
-                // Shields Down: Minior toggles based on HP > 50%
-                if (mon.ability === 'Shields Down' && mon.currentHp > 0) {
-                    const hpPct = mon.currentHp / mon.hp;
-                    if (hpPct <= 0.5 && mon.id.includes('meteor')) {
-                        if (morphToForm(mon, 'minior') || morphToForm(mon, 'miniorred')) {
-                            log.push(`> <span style="color:var(--accent)">${mon.name}'s shell smashed!</span>`);
-                        }
-                    } else if (hpPct > 0.5 && !mon.id.includes('meteor')) {
-                        if (morphToForm(mon, 'miniorredmeteor') || morphToForm(mon, 'miniormeteor')) {
-                            log.push(`> <span style="color:var(--accent)">${mon.name} is protected by its shell!</span>`);
-                        }
-                    }
-                }
-
-                // Power Construct: Zygarde morphs if HP <= 50%
-                if (mon.ability === 'Power Construct' && mon.currentHp > 0 && !mon.id.includes('complete')) {
-                    const hpPct = mon.currentHp / mon.hp;
-                    if (hpPct <= 0.5) {
-                        const completeForm = POKEMON_DB.find(p => p.id === 'zygardecomplete');
-                        if (completeForm) {
-                            const oldMax = mon.hp;
-                            mon.name = completeForm.name; mon.id = completeForm.id;
-                            mon.hp = completeForm.hp;
-                            mon.currentHp += (mon.hp - oldMax); // Heal by the difference
-                            mon.atk = completeForm.atk; mon.def = completeForm.def;
-                            mon.spa = completeForm.spa; mon.spd = completeForm.spd;
-                            mon.spe = completeForm.spe;
-                            mon.sprite = completeForm.sprite; mon.spriteBack = completeForm.spriteBack;
-                            log.push(`> <span style="color:var(--accent)">${mon.name} transformed into its Complete Forme!</span>`);
-                        }
-                    }
-                }
-
-                if (mon.currentHp === 0) log.push(`<span class="fainted-text">${mon.name} fainted!</span>`);
-            }
-
-            // Intimidate on switch-in
-            for (const uid of [p1Uid, p2Uid]) {
-                if (actions[uid]?.type === 'switch') {
-                    const mon = getMon(uid);
-                    if (mon.ability === 'Intimidate' && mon.currentHp > 0) {
-                        const oppUid2 = uid === p1Uid ? p2Uid : p1Uid;
-                        const oppMon = getMon(oppUid2);
-                        if (oppMon.currentHp > 0) {
-                            oppMon.boosts.atk = Math.max(-6, oppMon.boosts.atk - 1);
-                            log.push(`> ${mon.name}'s Intimidate lowered ${oppMon.name}'s Attack!`);
-                        }
-                    }
-                }
-            }
-
-            let p1Living = teams[p1Uid].some(p => p.currentHp > 0);
-            let p2Living = teams[p2Uid].some(p => p.currentHp > 0);
-
-            if (!p1Living || !p2Living) {
-                matchOver = true;
-                if (!p1Living && !p2Living) log.push('It is a draw!');
-                else if (p1Living) log.push(`${roomState.players[p1Uid].name} wins the battle!`);
-                else log.push(`${roomState.players[p2Uid].name} wins the battle!`);
-            } else {
-                // If match is not over, check for faints to trigger faintReplacement
-                if (getMon(p1Uid).currentHp <= 0 || getMon(p2Uid).currentHp <= 0) {
-                    if (log.length > 20) log = log.slice(-20);
+                if (matchOver) {
+                    await updateDoc(roomRef, {
+                        status: 'finished',
+                        'state.log': log,
+                        'state.weather': state.weather || null,
+                        'state.weatherTurns': state.weatherTurns || 0,
+                        'state.terrain': state.terrain || null,
+                        'state.terrainTurns': state.terrainTurns || 0,
+                        [`players.${p1Uid}.team`]: teams[p1Uid],
+                        [`players.${p2Uid}.team`]: teams[p2Uid]
+                    });
+                } else {
                     await updateDoc(roomRef, {
                         'state.resolving': false,
                         'state.actions': {},
-                        'state.faintReplacement': true,
+                        'state.turn': state.turn + 1,
                         'state.log': log,
                         'state.active': activeIdx,
                         'state.weather': state.weather || null,
                         'state.weatherTurns': state.weatherTurns || 0,
+                        'state.terrain': state.terrain || null,
+                        'state.terrainTurns': state.terrainTurns || 0,
                         [`players.${p1Uid}.team`]: teams[p1Uid],
                         [`players.${p2Uid}.team`]: teams[p2Uid]
                     });
-                    return;
                 }
-            }
-
-            if (log.length > 20) log = log.slice(-20);
-
-            if (matchOver) {
-                await updateDoc(roomRef, {
-                    status: 'finished',
-                    'state.log': log,
-                    'state.weather': state.weather || null,
-                    'state.weatherTurns': state.weatherTurns || 0,
-                    [`players.${p1Uid}.team`]: teams[p1Uid],
-                    [`players.${p2Uid}.team`]: teams[p2Uid]
-                });
-            } else {
-                await updateDoc(roomRef, {
-                    'state.resolving': false,
-                    'state.actions': {},
-                    'state.turn': state.turn + 1,
-                    'state.log': log,
-                    'state.active': activeIdx,
-                    'state.weather': state.weather || null,
-                    'state.weatherTurns': state.weatherTurns || 0,
-                    [`players.${p1Uid}.team`]: teams[p1Uid],
-                    [`players.${p2Uid}.team`]: teams[p2Uid]
-                });
+            } catch (err) {
+                console.error('[ExecuteTurn Error]', err);
+                // CRITICAL: Reset resolving so the game doesn't freeze
+                try {
+                    await updateDoc(roomRef, {
+                        'state.resolving': false,
+                        'state.actions': {},
+                        'state.log': [...(roomState.state?.log || []), `[Engine Error] ${err.message} — turn skipped.`]
+                    });
+                } catch (e2) { console.error('Failed to reset resolving:', e2); }
             }
         }
 
