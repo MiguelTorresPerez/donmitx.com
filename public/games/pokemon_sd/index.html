@@ -1873,10 +1873,10 @@
                     }
 
                     // --- ACCURACY CHECK ---
+                    let bypassedInvulnerability = false;
+                    let doubleDamageInvulnerable = false;
                     if (defMon.currentHp > 0) {
                         // Semi-invulnerable Counters
-                        let bypassedInvulnerability = false;
-                        let doubleDamageInvulnerable = false;
 
                         if (defMon.semiInvulnerable) {
                             const stateCauser = defMon.charging; // The move that caused it (e.g. "Fly", "Dig", "Dive")
