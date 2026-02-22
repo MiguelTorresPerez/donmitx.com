@@ -1880,6 +1880,20 @@
                     log.push(`${mon.name} used ${move.name}!`);
                     playSound('move');
 
+                    // Track used moves for Last Resort logic
+                    if (!mon.usedMoves) mon.usedMoves = [];
+                    if (!mon.usedMoves.includes(actions[uid].val)) mon.usedMoves.push(actions[uid].val);
+
+                    // Last Resort fail check: must have used all other moves at least once
+                    if (move.effects && move.effects.lastResort) {
+                        const otherMoves = (mon.moves || []).filter(mId => mId !== actions[uid].val);
+                        const allUsed = otherMoves.length > 0 && otherMoves.every(mId => mon.usedMoves.includes(mId));
+                        if (!allUsed) {
+                            log.push(`> But it failed! ${mon.name} hasn't used all its other moves yet.`);
+                            continue;
+                        }
+                    }
+
                     if (mon.item && mon.item.startsWith('Choice ') && !mon.choiceLock) {
                         mon.choiceLock = actions[uid].val;
                     }
@@ -2871,12 +2885,52 @@
             let titleColor = 'var(--primary)';
 
             if (category === 'type') {
-                desc = `Type effectiveness for <b>${name}</b> interacts with various attack types.`;
+                const weakTo = [];
+                const resists = [];
+                const immuneFrom = [];
+                const superEffective = [];
+                const notVeryEffective = [];
+                const noEffectOn = [];
+                if (window.TYPE_CHART || (typeof TYPE_CHART !== 'undefined')) {
+                    const chart = window.TYPE_CHART || TYPE_CHART;
+                    // Defensive: what attacks this type is weak/resistant/immune to
+                    for (const atkType of Object.keys(chart)) {
+                        const eff = chart[atkType][name];
+                        if (eff !== undefined) {
+                            if (eff >= 2) weakTo.push(atkType);
+                            else if (eff <= 0.5 && eff > 0) resists.push(atkType);
+                            else if (eff === 0) immuneFrom.push(atkType);
+                        }
+                    }
+                    // Offensive: what this type deals super effective/not very effective/no effect on
+                    if (chart[name]) {
+                        for (const [defType, mult] of Object.entries(chart[name])) {
+                            if (mult >= 2) superEffective.push(defType);
+                            else if (mult <= 0.5 && mult > 0) notVeryEffective.push(defType);
+                            else if (mult === 0) noEffectOn.push(defType);
+                        }
+                    }
+                }
+                desc = `<div style="margin-bottom:12px;"><strong style="font-size:0.9rem;">⚔️ Offensive (attacking with ${esc(name)}):</strong></div>`;
+                desc += `<div style="margin-bottom:6px;"><b>Super effective against:</b> ${superEffective.length ? superEffective.map(t => '<span style="color:var(--success)">' + t + '</span>').join(', ') : 'None'}</div>`;
+                desc += `<div style="margin-bottom:6px;"><b>Not very effective against:</b> ${notVeryEffective.length ? notVeryEffective.map(t => '<span style="color:var(--warning)">' + t + '</span>').join(', ') : 'None'}</div>`;
+                desc += `<div style="margin-bottom:12px;"><b>No effect on:</b> ${noEffectOn.length ? noEffectOn.map(t => '<span style="color:var(--text-muted)">' + t + '</span>').join(', ') : 'None'}</div>`;
+                desc += `<hr style="border-color:rgba(255,255,255,0.1); margin:10px 0;">`;
+                desc += `<div style="margin-bottom:12px;"><strong style="font-size:0.9rem;">🛡️ Defensive (when attacked as ${esc(name)}):</strong></div>`;
+                desc += `<div style="margin-bottom:6px;"><b>Weak to (2x+):</b> ${weakTo.length ? weakTo.map(t => '<span style="color:var(--danger)">' + t + '</span>').join(', ') : 'None'}</div>`;
+                desc += `<div style="margin-bottom:6px;"><b>Resists (0.5x):</b> ${resists.length ? resists.map(t => '<span style="color:var(--warning)">' + t + '</span>').join(', ') : 'None'}</div>`;
+                desc += `<div><b>Immune to (0x):</b> ${immuneFrom.length ? immuneFrom.map(t => '<span style="color:var(--text-muted)">' + t + '</span>').join(', ') : 'None'}</div>`;
             } else if (category === 'item') {
-                const itemKey = Object.keys(ITEMS || {}).find(k => ITEMS[k].name === name || k === name.toLowerCase().replace(/[\\s']/g, '-'));
-                if (itemKey && ITEMS[itemKey].desc) desc = ITEMS[itemKey].desc;
+                const ITEMS_DICT = window.ITEMS || (typeof ITEMS !== 'undefined' ? ITEMS : {});
+                const itemKey = Object.keys(ITEMS_DICT).find(k => ITEMS_DICT[k].name === name || k === name.toLowerCase().replace(/[\\s']/g, '-'));
+                if (itemKey && ITEMS_DICT[itemKey].desc) desc = ITEMS_DICT[itemKey].desc;
             } else if (category === 'ability') {
-                desc = `Passive effect for the Pokémon.`;
+                const ABILITIES_DICT = window.ABILITIES || (typeof ABILITIES !== 'undefined' ? ABILITIES : {});
+                if (ABILITIES_DICT[name] && ABILITIES_DICT[name].desc) {
+                    desc = ABILITIES_DICT[name].desc;
+                } else {
+                    desc = 'Passive effect for the Pokémon.';
+                }
             }
 
             const html = `
@@ -3097,6 +3151,13 @@
                     }
                     if (m.category === 'Status' && (myActive.item === 'Assault Vest' || myActive.taunt > 0)) {
                         lockDisabled = true;
+                    }
+                    // Last Resort: disable until all other moves have been used
+                    if (m.effects && m.effects.lastResort) {
+                        const otherMoveIds = (myActive.moves || []).filter(mId => mId !== moveId);
+                        const usedList = myActive.usedMoves || [];
+                        const allOthersUsed = otherMoveIds.length > 0 && otherMoveIds.every(mId => usedList.includes(mId));
+                        if (!allOthersUsed) lockDisabled = true;
                     }
 
                     if (lockDisabled) {
