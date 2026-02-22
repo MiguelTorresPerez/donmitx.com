@@ -2212,14 +2212,14 @@
                             }
                             if (fx.enemyDrop && defMon.currentHp > 0 && Math.random() * 100 < (fx.dropRate || 100)) {
                                 playSound('debuff');
-                                for (const [s, amt] of Object.entries(fx.enemyDrop)) {
+                                for (const [s, amt] of Object.entries(fx.enemyDrop || {})) {
                                     defMon.boosts[s] = Math.max(-6, Math.min(6, defMon.boosts[s] + amt));
                                     log.push(`<span class="notvery">${defMon.name}'s ${s} fell!</span>`);
                                 }
                             }
                             if (fx.selfBoost && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100)) {
                                 playSound('buff');
-                                for (const [s, amt] of Object.entries(fx.selfBoost)) {
+                                for (const [s, amt] of Object.entries(fx.selfBoost || {})) {
                                     mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
                                     log.push(`<span class="super">${mon.name}'s ${s} rose!</span>`);
                                 }
@@ -2238,21 +2238,21 @@
                         if (fx) {
                             if (fx.selfBoost && mon.currentHp > 0 && Math.random() * 100 < (fx.boostRate || 100)) {
                                 playSound('buff');
-                                for (const [s, amt] of Object.entries(fx.selfBoost)) {
+                                for (const [s, amt] of Object.entries(fx.selfBoost || {})) {
                                     mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
                                     log.push(`<span class="super">${mon.name}'s ${s} rose!</span>`);
                                 }
                             }
                             if (fx.selfDrop && mon.currentHp > 0) {
                                 playSound('debuff');
-                                for (const [s, amt] of Object.entries(fx.selfDrop)) {
+                                for (const [s, amt] of Object.entries(fx.selfDrop || {})) {
                                     mon.boosts[s] = Math.max(-6, Math.min(6, mon.boosts[s] + amt));
                                     log.push(`<span class="notvery">${mon.name}'s ${s} fell!</span>`);
                                 }
                             }
                             if (fx.enemyDrop && defMon.currentHp > 0 && move.category === 'Status' && Math.random() * 100 < (fx.dropRate || 100) && !subBlocks) {
                                 playSound('debuff');
-                                for (const [s, amt] of Object.entries(fx.enemyDrop)) {
+                                for (const [s, amt] of Object.entries(fx.enemyDrop || {})) {
                                     defMon.boosts[s] = Math.max(-6, Math.min(6, defMon.boosts[s] + amt));
                                     log.push(`<span class="notvery">${defMon.name}'s ${s} fell!</span>`);
                                 }

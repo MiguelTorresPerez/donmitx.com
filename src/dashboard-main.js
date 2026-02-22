@@ -46,7 +46,18 @@ async function init() {
 
     initParticleCanvas();
     setupEventListeners();
-    navigateToTab('library');
+
+    // Check if we need to auto-load a game from URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const playRoomId = urlParams.get('playRoomId');
+    const playGameId = urlParams.get('playGameId');
+
+    if (playRoomId && playGameId && window.openModal) {
+        document.getElementById('game-iframe').src = `/public/games/${playGameId}/index.html?roomId=${playRoomId}`;
+        window.openModal('modal-play-game');
+    } else {
+        navigateToTab('library');
+    }
 }
 
 function initParticleCanvas() {
@@ -552,7 +563,7 @@ async function loadAdmin() {
                 <td>${room.createdAt ? timeAgo(room.createdAt) : '—'}</td>
                 <td>
                     <button class="btn-xs btn-outline btn-admin-delete-room" data-id="${room.id}">🗑️ Delete</button>
-                    <a href="${room.gameId ? `/public/games/${room.gameId}/index.html` : '#'}?roomId=${room.id}" target="_blank" class="btn-xs btn-outline" style="text-decoration:none; display:inline-block; margin-left:4px;">↗️ New Tab</a>
+                    <a href="/dashboard.html?playGameId=${room.gameId}&playRoomId=${room.id}" target="_blank" class="btn-xs btn-outline" style="text-decoration:none; display:inline-block; margin-left:4px;">↗️ New Tab</a>
                 </td>
             `;
             roomTbody.appendChild(tr);
@@ -975,7 +986,7 @@ function setupEventListeners() {
                     actionBtn = '<span class="badge">Full</span>';
                 }
 
-                const openNewTabBtn = `<a href="${currentLobbyAppUrl}?roomId=${room.id}" target="_blank" class="btn-outline btn-sm" style="display:inline-block; margin-left:8px; text-decoration:none;" title="Open in New Tab">↗️ New Tab</a>`;
+                const openNewTabBtn = `<a href="/dashboard.html?playGameId=${currentLobbyGameId}&playRoomId=${room.id}" target="_blank" class="btn-outline btn-sm" style="display:inline-block; margin-left:8px; text-decoration:none;" title="Open in New Tab">↗️ New Tab</a>`;
 
                 div.innerHTML = `
                     <div class="chat-info" style="flex:1;">
