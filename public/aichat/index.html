@@ -727,6 +727,22 @@
         }
 
         function checkOllamaStatus() {
+            if (window.location.protocol === 'https:' && OLLAMA_URL.startsWith('http://')) {
+                isOnline = false;
+                const badge = document.getElementById('status-badge');
+                if (badge) {
+                    badge.innerText = "Mixed Content Blocked";
+                    badge.className = "badge status-offline";
+                    badge.title = "Your site is on HTTPS but Ollama is on HTTP. To fix this, use an HTTPS tunnel (e.g. ngrok) for Ollama or run locally.";
+                }
+                const area = document.getElementById('chat-history');
+                if (area && !area.querySelector('.mixed-content-warning')) {
+                    area.innerHTML += `<div class="message ai mixed-content-warning" style="margin-bottom: 8px;"><div class="bubble" style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #f87171;"><strong>Connection Blocked:</strong> The dashboard is loaded over secure HTTPS, but the Ollama URL is configured as insecure HTTP (<code>${OLLAMA_URL}</code>). Browser security policies block this connection.<br/><br/>To resolve this:<br/>1. Expose your Ollama instance via an HTTPS tunnel (e.g., ngrok, Cloudflare Tunnel).<br/>2. Update the <code>OLLAMA_URL</code> in <code>public/aichat/index.html</code>.</div></div>`;
+                }
+                if (btnSend) btnSend.disabled = true;
+                return;
+            }
+
             const start = performance.now();
             fetch(`${OLLAMA_URL}/api/tags`)
                 .then(res => {

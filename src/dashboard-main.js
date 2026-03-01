@@ -69,7 +69,11 @@ async function init() {
         modalInner.style.borderRadius = '0';
         modalInner.style.border = 'none';
 
-        document.getElementById('game-iframe').src = `/games/${playGameId}/index.html?roomId=${playRoomId}`;
+        let iframeSrc = `/games/${playGameId}/index.html?roomId=${playRoomId}`;
+        if (playGameId === 'aichat') {
+            iframeSrc = `/aichat/index.html?roomId=${playRoomId}`;
+        }
+        document.getElementById('game-iframe').src = iframeSrc;
         openModal('modal-play-game');
     } else {
         navigateToTab('library');
