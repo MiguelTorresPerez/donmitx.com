@@ -4,314 +4,968 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DONMITX — AI Chat</title>
-    <!-- Use same fonts as main dashboard -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"
-        rel="stylesheet">
-
-    <!-- Link to dashboard styles to reuse components -->
-    <link rel="stylesheet" href="../css/index.css">
-    <link rel="stylesheet" href="../css/dashboard.css">
+    <title>AI Chat - Live Room</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            background: transparent;
-            /* Seamless iframe integration */
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-            font-family: var(--font-body), sans-serif;
+        :root {
+            --bg: #0a0e1a;
+            --card: rgba(20, 25, 41, 0.7);
+            --card-hover: #1c2238;
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.3);
+            --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.15);
+            --error: #ef4444;
+            --error-bg: rgba(239, 68, 68, 0.15);
+            --text: #f1f5f9;
+            --text-muted: #64748b;
+            --gold: #f59e0b;
+            --radius: 16px;
         }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: transparent;
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 10px;
+            align-items: center;
+        }
+
+        /* --- Room Wrapper & Shared Styles --- */
+        .game-wrapper {
+            width: 100%;
+            max-width: 800px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-top: 10px;
+            flex-shrink: 0;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header .subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius);
+            backdrop-filter: blur(10px);
+        }
+
+        .animate-in {
+            animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+            margin: 40px auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .btn-host {
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .btn-host:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+        }
+
+        .btn-host:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* --- Chat Interface --- */
         .chat-container {
             flex: 1;
             display: flex;
             flex-direction: column;
-            width: 100%;
-            height: 100%;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(20, 25, 41, 0.85);
+            border-radius: var(--radius);
         }
 
-        /* Override defaults for full width inside iframe */
-        #chat-panel {
-            flex: 1;
-            margin: 0;
-            max-width: 100%;
-            border-radius: 0;
-            border: none;
+        .chat-topbar {
+            padding: 12px 20px;
             display: flex;
-            flex-direction: column;
-            background: rgba(10, 11, 22, 0.6);
-            backdrop-filter: blur(12px);
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(10, 14, 26, 0.5);
+            flex-shrink: 0;
         }
 
-        .ai-status-indicator {
-            padding: 4px 10px;
-            border-radius: var(--radius-full);
+        .chat-topbar h2 {
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .status-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
             font-size: 0.75rem;
             font-weight: 600;
-            border: 1px solid transparent;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
 
-        .ai-online {
-            background: rgba(16, 185, 129, 0.15);
+        .status-checking {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .status-online {
+            background: rgba(16, 185, 129, 0.1);
             color: #10b981;
-            border-color: rgba(16, 185, 129, 0.3);
+            border: 1px solid rgba(16, 185, 129, 0.2);
         }
 
-        .ai-offline {
-            background: rgba(239, 68, 68, 0.15);
+        .status-offline {
+            background: rgba(239, 68, 68, 0.1);
             color: #ef4444;
-            border-color: rgba(239, 68, 68, 0.3);
+            border: 1px solid rgba(239, 68, 68, 0.2);
         }
 
-        /* Ensure scrolling area takes remaining space */
-        .chat-messages {
+        .spectator-badge {
+            background: rgba(99, 102, 241, 0.1);
+            color: #818cf8;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .chat-history {
             flex: 1;
             overflow-y: auto;
-            padding: var(--space-4);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
 
-        .chat-input-area {
-            background: var(--bg-card);
-            border-top: 1px solid var(--border-glass);
-            padding: var(--space-3);
+        .message {
+            display: flex;
+            flex-direction: column;
+            max-width: 80%;
+            animation: fadeIn 0.3s ease;
         }
 
-        .model-info {
-            text-align: center;
-            font-size: 0.75rem;
+        .message.user {
+            align-self: flex-end;
+            align-items: flex-end;
+        }
+
+        .message.ai {
+            align-self: flex-start;
+            align-items: flex-start;
+        }
+
+        .bubble {
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .message.user .bubble {
+            background: linear-gradient(135deg, var(--primary), #818cf8);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.ai .bubble {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
             color: var(--text-muted);
-            padding: 4px;
-            background: var(--bg-card);
+            margin-top: 4px;
+            padding: 0 4px;
+        }
+
+        .input-area {
+            padding: 16px;
+            background: rgba(10, 14, 26, 0.8);
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            flex-shrink: 0;
+        }
+
+        .chat-form {
+            display: flex;
+            gap: 12px;
+        }
+
+        .user-input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: none;
+            height: 52px;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+
+        .user-input:focus {
+            border-color: var(--primary);
+        }
+
+        .user-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn-send {
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .btn-send:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-send svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            border-bottom-left-radius: 4px;
+            width: fit-content;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0);
+            }
+
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .player-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 16px;
+            text-align: left;
+        }
+
+        .player-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .player-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+        }
+
+        .player-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .host-badge {
+            font-size: 0.7rem;
+            background: var(--gold);
+            color: #000;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .spectator-blocker {
+            text-align: center;
+            padding: 16px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-style: italic;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="chat-container">
-        <div class="chat-area" id="chat-panel">
-            <div class="chat-header">
-                <div class="chat-user-info">
-                    <div
-                        style="font-size: 28px; margin-right: 12px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; background: rgba(255,255,255,0.05); border-radius: 50%; border: 1px solid var(--border-glass);">
-                        🤖</div>
-                    <div class="chat-titles" style="display:flex; flex-direction:column;">
-                        <h4 id="chat-username" style="margin:0;"><span class="gradient-text">DON</span><span
-                                class="gradient-text-accent">MITX</span> AI</h4>
-                        <span id="chat-subtitle" style="font-size:0.75rem; color:var(--text-muted);">Intelligent Swarm
-                            Assistant</span>
-                    </div>
-                </div>
-                <div class="chat-actions" style="display:flex; gap:8px; align-items:center;">
-                    <span id="status-badge" class="ai-status-indicator ai-offline">Offline</span>
-                </div>
-            </div>
+    <div class="game-wrapper">
+        <div class="header">
+            <h1>🤖 AI Chat Room</h1>
+            <p class="subtitle" id="room-code">Connecting to room...</p>
+        </div>
 
-            <div class="chat-messages" id="chat-messages">
-                <!-- Initial Welcome Message -->
-                <div class="chat-message other">
-                    <div class="msg-content">
-                        <div class="msg-bubble">Hello! I am the DONMITX AI Assistant. How can I help you today?</div>
-                    </div>
-                </div>
-            </div>
-
-            <form class="chat-input-area" id="chat-form">
-                <input type="text" id="user-input" placeholder="Message DONMITX AI..." autocomplete="off" required>
-                <button type="submit" class="btn-primary btn-icon" id="btn-send">
-                    ➤
-                </button>
-            </form>
-
-            <div class="model-info">
-                Model: Qwen 2.5 Coder 14B <span id="latency" style="margin-left: 8px;"></span>
-            </div>
+        <div id="app-area" style="text-align: center; height: 100%; display: flex; flex-direction: column;">
+            <div class="spinner"></div>
         </div>
     </div>
 
-    <script type="module">
+    <script>
         // --- CONFIGURATION ---
         const OLLAMA_URL = "http://34.155.103.125:11434";
         const MODEL = "qwen2.5-coder:14b";
 
-        // DOM Elements
-        const chatHistory = document.getElementById('chat-messages');
-        const chatForm = document.getElementById('chat-form');
-        const userInput = document.getElementById('user-input');
-        const statusBadge = document.getElementById('status-badge');
-        const latencyDisplay = document.getElementById('latency');
-        const sendBtn = document.getElementById('btn-send');
-
-        // Access Firebase from parent dashboard
-        const api = window.parent.DONMITX_GAME_API;
-        const currentUser = api?.auth?.currentUser;
-
-        // Optional: Keep full conversation history for context to the model
-        let conversationContext = [];
-
-        // Check Connection to Ollama
-        async function checkStatus() {
-            try {
-                const res = await fetch(`${OLLAMA_URL}/api/tags`);
-                if (res.ok) {
-                    statusBadge.innerText = "Online";
-                    statusBadge.className = "ai-status-indicator ai-online";
-                }
-            } catch (e) {
-                console.error("AI Connection failed", e);
-            }
+        // Access Firebase via parent window (Dashboard)
+        if (!window.parent.DONMITX_GAME_API) {
+            document.getElementById('app-area').innerHTML = '<p class="text-error" style="color:var(--error); margin-top:20px;">Error: Must be played from Dashboard.</p>';
+            throw new Error("Game API missing");
         }
-        checkStatus();
+        const { db, auth, doc, onSnapshot, updateDoc: _updateDoc, collection, addDoc, getDocs, query, orderBy } = window.parent.DONMITX_GAME_API;
 
-        // Load History from Firebase across sessions
-        async function loadHistory() {
-            if (!api || !currentUser) return;
-            try {
-                // We use standard db operations exposed by the parent
-                const q = api.query(
-                    api.collection(api.db, 'users', currentUser.uid, 'ai_chats'),
-                    api.orderBy('timestamp', 'asc')
-                );
-                const snap = await api.getDocs(q);
+        const updateDoc = async (ref, data) => {
+            const pureData = window.parent.JSON.parse(JSON.stringify(data));
+            return _updateDoc(ref, pureData);
+        };
 
-                if (!snap.empty) {
-                    // Clear the default welcome message if there's history
-                    chatHistory.innerHTML = '';
-                    conversationContext = [];
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomId = urlParams.get('roomId');
 
-                    snap.docs.forEach(doc => {
-                        const data = doc.data();
-                        addMessageToUI(data.text, data.role === 'user');
-                        conversationContext.push({ role: data.role, content: data.text });
-                    });
+        if (!roomId) {
+            document.getElementById('app-area').innerHTML = '<p class="text-error" style="color:var(--error); margin-top:20px;">Error: No Room ID provided.</p>';
+            throw new Error("No roomId");
+        }
+
+        let currentUser = null;
+        let roomRef = doc(db, 'game_rooms', roomId);
+        let roomState = null;
+
+        // Chat state
+        let messagesUnsubscribe = null;
+        let isOnline = false;
+        let isGenerating = false;
+        let localMessageContext = []; // Stored sequentially for Ollama completion
+        let displayedMessageIds = new Set();
+        let streamingBubble = null;
+
+        // Elements
+        let chatHistory = null;
+        let userInput = null;
+        let btnSend = null;
+        let typingIndicator = null;
+
+        // Listen for Auth State
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                initRoom();
+            } else {
+                document.getElementById('app-area').innerHTML = '<p class="text-error" style="color:var(--error); margin-top:20px;">You must be logged in to participate.</p>';
+            }
+        });
+
+        function initRoom() {
+            document.getElementById('room-code').textContent = `Room ID: ${roomId.substring(0, 6).toUpperCase()}`;
+
+            onSnapshot(roomRef, (snapshot) => {
+                if (!snapshot.exists()) {
+                    document.getElementById('app-area').innerHTML = '<p style="margin-top:20px;">Room has been closed by the host.</p>';
+                    return;
+                }
+
+                const oldStatus = roomState?.status;
+                const wasTyping = roomState?.state?.isAiTyping;
+                roomState = snapshot.data();
+
+                // Re-render full phase if status changed (lobby -> playing)
+                if (oldStatus !== roomState.status) {
+                    render();
+                }
+
+                // If in playing phase, update participants UI or typing state
+                if (roomState.status === 'playing') {
+                    if (isHost()) {
+                        updateHostOllamaBadge();
+                    } else {
+                        updateSpectatorTypingState(roomState.state?.isAiTyping);
+                    }
+                }
+            });
+        }
+
+        function isHost() {
+            return currentUser && roomState && roomState.hostUid === currentUser.uid;
+        }
+
+        // --- RENDER LOGIC ---
+
+        function render() {
+            const area = document.getElementById('app-area');
+
+            if (roomState.status === 'lobby') {
+                area.innerHTML = renderLobby();
+                if (isHost()) setupLobbyControls();
+            } else if (roomState.status === 'playing') {
+                area.innerHTML = renderPlaying();
+                setupChatControls();
+                subscribeToMessages();
+                if (isHost()) {
+                    checkOllamaStatus();
                 } else {
-                    // Initialize context with a system prompt if desired, or skip
+                    updateSpectatorTypingState(roomState.state?.isAiTyping);
                 }
-            } catch (e) {
-                console.error("Failed to load AI chat history:", e);
+            } else if (roomState.status === 'finished') {
+                area.innerHTML = `<div class="card" style="padding: 40px;"><h2>Session Ended</h2></div>`;
             }
         }
 
-        // Run setup
-        if (currentUser) {
-            loadHistory();
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g,
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
         }
 
-        // Helper: Convert markdown-like syntax or returns to HTML safely
-        function formatMessage(text) {
-            return text
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/```([\s\S]*?)```/g, '<pre style="background:rgba(0,0,0,0.3); padding:8px; border-radius:8px; overflow-x:auto;"><code>$1</code></pre>')
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\n/g, "<br>");
+        // --- LOBBY PHASE ---
+
+        function renderLobby() {
+            const players = Object.values(roomState.players || {});
+
+            let html = `
+                <div class="card animate-in" style="padding: 40px 20px; width: 100%; max-width: 500px; margin: 0 auto;">
+                    <h2 style="margin-bottom: 10px;">Waiting in Lobby...</h2>
+                    <p class="text-muted">${players.length} / ${roomState.config?.maxPlayers || 10} participants</p>
+                    
+                    <div class="player-list">
+                        ${players.map(p => `
+                            <div class="player-item">
+                                <img src="${p.photoURL || 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2364748b\'%3E%3Cpath d=\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\'/%3E%3C/svg%3E'}" class="player-avatar" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'%2364748b\\'%3E%3Cpath d=\\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\\'/%3E%3C/svg%3E'"/>
+                                <span class="player-name">${escapeHTML(p.name)}</span>
+                                ${p.uid === roomState.hostUid ? `<span class="host-badge">HOST</span>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+            `;
+
+            if (isHost()) {
+                html += `<button class="btn-host" id="btn-start-session">Start Session</button>`;
+            } else {
+                html += `<div style="margin-top: 24px; color: var(--text-muted); font-size: 0.9rem;">Waiting for Host to start the session...</div>`;
+            }
+
+            html += `</div>`;
+            return html;
         }
 
-        // Render message to chat bubble
-        function addMessageToUI(text, isUser = false) {
-            const el = document.createElement('div');
-            el.className = `chat-message ${isUser ? 'own' : 'other'}`;
+        function setupLobbyControls() {
+            document.getElementById('btn-start-session').addEventListener('click', async (e) => {
+                e.target.disabled = true;
+                e.target.textContent = 'Starting...';
+                try {
+                    await updateDoc(roomRef, {
+                        status: 'playing',
+                        'state.isAiTyping': false
+                    });
+                } catch (err) {
+                    console.error('Failed to start:', err);
+                    alert('Could not start room.');
+                    e.target.disabled = false;
+                    e.target.textContent = 'Start Session';
+                }
+            });
+        }
 
-            el.innerHTML = `
-                <div class="msg-content">
-                    <div class="msg-bubble">${formatMessage(text)}</div>
+        // --- PLAYING PHASE ---
+
+        function renderPlaying() {
+            const hostDisplay = roomState.players[roomState.hostUid]?.name || 'Host';
+            const inputHtml = isHost() ? `
+                <div class="input-area">
+                    <form class="chat-form" id="chat-form">
+                        <textarea class="user-input" id="user-input" placeholder="Message Ollama..." rows="1" autofocus></textarea>
+                        <button type="submit" class="btn-send" id="btn-send" disabled>
+                            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+                        </button>
+                    </form>
+                </div>
+            ` : `
+                <div class="spectator-blocker">
+                    You are spectating outside of the host's session.<br/>
+                    Prompting is restricted to <strong>${escapeHTML(hostDisplay)}</strong>.
                 </div>
             `;
-            chatHistory.appendChild(el);
-            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            const topbarHtml = isHost() ? `
+                <div class="chat-topbar">
+                    <h2>Connection Status</h2>
+                    <div class="status-container">
+                        <span id="latency" style="font-size: 0.8rem; color: var(--text-muted);"></span>
+                        <div id="status-badge" class="badge status-checking">Checking...</div>
+                    </div>
+                </div>
+            ` : `
+                <div class="chat-topbar">
+                    <h2>Session Hosted by ${escapeHTML(hostDisplay)}</h2>
+                    <div class="badge spectator-badge">Spectator Read-Only</div>
+                </div>
+            `;
+
+            return `
+                <div class="chat-container animate-in">
+                    ${topbarHtml}
+                    
+                    <div class="chat-history" id="chat-history">
+                        <div class="message ai" style="margin-bottom: 8px;">
+                            <div class="bubble">Session started! Waiting for ${isHost() ? 'your' : 'the host\'s'} prompt.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="typing-indicator" id="typing-indicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+
+                    ${inputHtml}
+                </div>
+            `;
         }
 
-        // Persist message
-        async function saveMessage(text, role) {
-            if (!api || !currentUser) return;
-            try {
-                await api.addDoc(api.collection(api.db, 'users', currentUser.uid, 'ai_chats'), {
-                    text,
-                    role,
-                    timestamp: api.serverTimestamp ? api.serverTimestamp() : new Date().toISOString()
+        function setupChatControls() {
+            chatHistory = document.getElementById('chat-history');
+            typingIndicator = document.getElementById('typing-indicator');
+
+            if (isHost()) {
+                userInput = document.getElementById('user-input');
+                btnSend = document.getElementById('btn-send');
+
+                userInput.addEventListener('input', function () {
+                    this.style.height = '52px';
+                    const newHeight = Math.min(this.scrollHeight, 120);
+                    if (newHeight > 52) this.style.height = newHeight + 'px';
+                    btnSend.disabled = !isOnline || isGenerating || this.value.trim() === '';
                 });
-            } catch (e) {
-                console.error("Failed to save message to Firebase", e);
+
+                userInput.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        if (!btnSend.disabled) handleSendHostMessage();
+                    }
+                });
+
+                document.getElementById('chat-form').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    if (!btnSend.disabled) handleSendHostMessage();
+                });
             }
         }
 
-        // Handle Chat Submission
-        chatForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const text = userInput.value.trim();
-            if (!text) return;
+        function updateHostOllamaBadge() {
+            const badge = document.getElementById('status-badge');
+            if (!badge) return;
+            if (isOnline) {
+                badge.innerText = "Online";
+                badge.className = "badge status-online";
+                if (btnSend && !isGenerating) btnSend.disabled = userInput.value.trim() === '';
+            } else {
+                badge.innerText = "Offline";
+                badge.className = "badge status-offline";
+                document.getElementById('latency').innerText = "";
+                if (btnSend) btnSend.disabled = true;
+            }
+        }
 
-            // UI Optimistic Update
-            addMessageToUI(text, true);
-            userInput.value = '';
+        function checkOllamaStatus() {
+            const start = performance.now();
+            fetch(`${OLLAMA_URL}/api/tags`)
+                .then(res => {
+                    if (res.ok) {
+                        const end = performance.now();
+                        isOnline = true;
+                        document.getElementById('latency').innerText = `${Math.round(end - start)}ms`;
+                        updateHostOllamaBadge();
+                    } else {
+                        isOnline = false;
+                        updateHostOllamaBadge();
+                    }
+                })
+                .catch(() => {
+                    isOnline = false;
+                    updateHostOllamaBadge();
+                })
+                .finally(() => {
+                    if (roomState?.status === 'playing') {
+                        setTimeout(checkOllamaStatus, 10000);
+                    }
+                });
+        }
 
-            sendBtn.disabled = true;
-            sendBtn.style.opacity = '0.5';
+        function updateSpectatorTypingState(isTyping) {
+            if (isHost() || !typingIndicator) return;
+            if (isTyping) {
+                typingIndicator.classList.add('active');
+                scrollToBottom();
+            } else {
+                typingIndicator.classList.remove('active');
+            }
+        }
 
-            // Save to DB (async)
-            saveMessage(text, 'user');
-            conversationContext.push({ role: 'user', content: text });
+        function scrollToBottom() {
+            if (chatHistory) chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
 
-            // Show typing indicator
-            const typingIndicator = document.createElement('div');
-            typingIndicator.className = 'chat-message other';
-            typingIndicator.id = 'typing-indicator';
-            typingIndicator.innerHTML = `
-                <div class="msg-content">
-                    <div class="msg-bubble" style="font-style: italic; opacity: 0.7;">Thinking...</div>
+        // --- FIREBASE SYNC ---
+
+        function subscribeToMessages() {
+            if (messagesUnsubscribe) messagesUnsubscribe();
+
+            const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
+            const q = query(msgsRef, orderBy('timestamp', 'asc'));
+
+            messagesUnsubscribe = onSnapshot(q, (snapshot) => {
+                let messagesAdded = false;
+
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === 'added') {
+                        const data = change.doc.data();
+                        const id = change.doc.id;
+
+                        // Only append if we haven't seen it
+                        if (!displayedMessageIds.has(id)) {
+                            displayedMessageIds.add(id);
+
+                            // Keep context linear for the host
+                            localMessageContext.push({ role: data.role === 'user' ? 'user' : 'assistant', content: data.content });
+
+                            appendStaticMessage(data.role, data.content, data.authorName, data.timestamp);
+                            messagesAdded = true;
+                        }
+                    }
+                });
+
+                if (messagesAdded) scrollToBottom();
+            });
+        }
+
+        function formatTime(isoString) {
+            const d = new Date(isoString);
+            return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function appendStaticMessage(role, content, authorName, timestampIso) {
+            // Remove local streaming bubble if it exists and we're receiving the final DB write
+            if (streamingBubble && role === 'ai') {
+                streamingBubble.parentNode.remove();
+                streamingBubble = null;
+            }
+
+            let formattedContent = escapeHTML(content);
+            formattedContent = formattedContent.replace(/```([\s\S]*?)```/g, '<pre style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; overflow-x: auto;"><code>$1</code></pre>');
+            formattedContent = formattedContent.replace(/\n/g, '<br/>');
+
+            const nameHtml = (role === 'user' && authorName) ? `<div style="font-size:0.75rem; color:var(--text-muted); margin-bottom: 2px;">${escapeHTML(authorName)}</div>` : '';
+
+            const html = `
+                <div class="message ${role}">
+                    ${nameHtml}
+                    <div class="bubble">${formattedContent}</div>
+                    <div class="message-time">${formatTime(timestampIso)}</div>
                 </div>
             `;
-            chatHistory.appendChild(typingIndicator);
-            chatHistory.scrollTop = chatHistory.scrollHeight;
+            chatHistory.insertAdjacentHTML('beforeend', html);
+        }
 
-            const start = Date.now();
+        // --- HOST ACTIONS ---
+
+        async function handleSendHostMessage() {
+            const text = userInput.value.trim();
+            if (!text || !isOnline || isGenerating) return;
+
+            isGenerating = true;
+            btnSend.disabled = true;
+            userInput.value = '';
+            userInput.style.height = '52px';
+
+            const userIsoString = new Date().toISOString();
+
+            // 1. Immediately write Host message to DB so spectators see it
             try {
-                // Send payload (history context limited to last 10 turns to save tokens)
-                const payloadMessages = conversationContext.slice(-10);
+                const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
+                await addDoc(msgsRef, {
+                    role: 'user',
+                    content: text,
+                    authorName: currentUser.displayName || 'Host',
+                    timestamp: userIsoString
+                });
 
-                const response = await fetch(`${OLLAMA_URL}/v1/chat/completions`, {
+                // Tell spectators AI is typing
+                await updateDoc(roomRef, { 'state.isAiTyping': true });
+            } catch (err) {
+                console.error("Error sending user message:", err);
+                isGenerating = false;
+                btnSend.disabled = userInput.value.trim() === '';
+                return;
+            }
+
+            typingIndicator.classList.add('active');
+            scrollToBottom();
+
+            // 2. Local Streaming Phase
+            let fullAiResponse = "";
+            try {
+                // Ensure localContext has the sent msg (might have raced with snapshot, wait to dedupe)
+                // Actually the onSnapshot handles it, but we can generate prompts natively from localMessageContext since it gets pushed
+                // Building the prompt manually just like the standalone ver, but ignoring the very last msg if snapshot hasn't fired yet
+
+                let promptString = "";
+                // Local context already has previous msgs, but the snapshot might not have fired for our just-added message.
+                // We'll manually include it in the prompt if missing.
+                const recentContext = [...localMessageContext];
+                if (recentContext.length === 0 || recentContext[recentContext.length - 1].content !== text) {
+                    recentContext.push({ role: 'user', content: text });
+                }
+
+                recentContext.slice(-10).forEach(msg => {
+                    promptString += `${msg.role === 'user' ? 'Human' : 'Assistant'}: ${msg.content}\n\n`;
+                });
+                promptString += "Assistant: ";
+
+                const response = await fetch(`${OLLAMA_URL}/api/generate`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         model: MODEL,
-                        messages: payloadMessages.length > 0 ? payloadMessages : [{ role: 'user', content: text }],
-                        stream: false
+                        prompt: promptString,
+                        stream: true
                     })
                 });
 
-                if (!response.ok) throw new Error("Network response was not ok");
+                if (!response.ok) throw new Error('Network response was not ok');
+                typingIndicator.classList.remove('active');
 
-                const data = await response.json();
-                const reply = data.choices[0].message.content;
-                const end = Date.now();
+                // Generate local streaming bubble ONLY for host
+                streamingBubble = createLocalStreamingBubble();
 
-                // Cleanup typing indicator
-                const indicator = document.getElementById('typing-indicator');
-                if (indicator) indicator.remove();
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder("utf-8");
 
-                // Show reply
-                addMessageToUI(reply, false);
-                latencyDisplay.innerText = `| Latency: ${((end - start) / 1000).toFixed(1)}s`;
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
 
-                // Save AI reply to DB & Context
-                saveMessage(reply, 'assistant');
-                conversationContext.push({ role: 'assistant', content: reply });
+                    const chunk = decoder.decode(value, { stream: true });
+                    const lines = chunk.split('\n').filter(line => line.trim() !== '');
 
-            } catch (err) {
-                const indicator = document.getElementById('typing-indicator');
-                if (indicator) indicator.remove();
-                addMessageToUI("⚠️ Error: Could not connect to the model. Ensure the Cloudflare Tunnel is running.", false);
+                    for (const line of lines) {
+                        try {
+                            const data = JSON.parse(line);
+                            if (data.response) {
+                                fullAiResponse += data.response;
+                                streamingBubble.innerHTML = escapeHTML(fullAiResponse).replace(/\n/g, '<br>');
+                                scrollToBottom();
+                            }
+                        } catch (e) { }
+                    }
+                }
+
+            } catch (error) {
+                console.error("Error generating response:", error);
+                typingIndicator.classList.remove('active');
+                fullAiResponse = "⚠️ Warning: Failed to retrieve prediction from Ollama.";
+                if (streamingBubble) streamingBubble.innerHTML = fullAiResponse;
+                else streamingBubble = createLocalStreamingBubble(fullAiResponse);
             } finally {
-                sendBtn.disabled = false;
-                sendBtn.style.opacity = '1';
-                userInput.focus();
+                // 3. Save final AI message to DB, pushing to spectators
+                try {
+                    const aiIsoString = new Date().toISOString();
+                    const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
+                    await addDoc(msgsRef, {
+                        role: 'ai',
+                        content: fullAiResponse,
+                        timestamp: aiIsoString
+                    });
+                    await updateDoc(roomRef, { 'state.isAiTyping': false });
+                } catch (err) {
+                    console.error("Failed to save final AI msg", err);
+                }
+
+                isGenerating = false;
+                if (btnSend) btnSend.disabled = userInput.value.trim() === '';
+                if (userInput) userInput.focus();
             }
-        });
+        }
+
+        function createLocalStreamingBubble(initialText = '') {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ai`;
+
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            bubble.innerHTML = initialText;
+
+            const timeStrEl = document.createElement('div');
+            timeStrEl.className = 'message-time';
+            timeStrEl.innerText = formatTime(new Date().toISOString());
+
+            msgDiv.appendChild(bubble);
+            msgDiv.appendChild(timeStrEl);
+            chatHistory.appendChild(msgDiv);
+            scrollToBottom();
+
+            return bubble;
+        }
+
     </script>
 </body>
 
