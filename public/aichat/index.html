@@ -4,151 +4,312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uros de Rivas — AI Agent Assistant</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>DONMITX — AI Chat</title>
+    <!-- Use same fonts as main dashboard -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"
         rel="stylesheet">
+
+    <!-- Link to dashboard styles to reuse components -->
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background: #0f172a;
-            color: #e2e8f0;
+            background: transparent;
+            /* Seamless iframe integration */
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            font-family: var(--font-body), sans-serif;
         }
 
-        .glass {
-            background: rgba(30, 41, 59, 0.7);
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Override defaults for full width inside iframe */
+        #chat-panel {
+            flex: 1;
+            margin: 0;
+            max-width: 100%;
+            border-radius: 0;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            background: rgba(10, 11, 22, 0.6);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .gradient-text {
-            background: linear-gradient(90deg, #38bdf8, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .ai-status-indicator {
+            padding: 4px 10px;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid transparent;
         }
 
-        ::-webkit-scrollbar {
-            width: 6px;
+        .ai-online {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.3);
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 10px;
+        .ai-offline {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        /* Ensure scrolling area takes remaining space */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-4);
+        }
+
+        .chat-input-area {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-glass);
+            padding: var(--space-3);
+        }
+
+        .model-info {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            padding: 4px;
+            background: var(--bg-card);
         }
     </style>
 </head>
 
-<body class="min-h-screen flex flex-col p-4 md:p-8">
+<body>
 
-    <header class="max-w-4xl w-full mx-auto mb-8 flex justify-between items-center">
-        <div>
-            <h1 class="text-2xl font-bold tracking-tight">
-                <span class="gradient-text">Uros</span><span>AI</span>
-            </h1>
-            <p class="text-slate-400 text-sm">Basketball Intelligence Swarm</p>
-        </div>
-        <div id="status-badge"
-            class="px-3 py-1 rounded-full text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/20">
-            Offline
-        </div>
-    </header>
-
-    <main class="max-w-4xl w-full mx-auto flex-grow flex flex-col glass rounded-2xl overflow-hidden shadow-2xl">
-        <!-- Chat History -->
-        <div id="chat-history" class="flex-grow p-6 overflow-y-auto space-y-4">
-            <div class="flex justify-start">
-                <div class="max-w-[80%] p-3 rounded-2xl bg-slate-800 border border-slate-700 text-sm">
-                    Hello! I am the Uros de Rivas AI Assistant. I can help you with basketball management, data
-                    translation, or team strategy. How can I assist you today?
+    <div class="chat-container">
+        <div class="chat-area" id="chat-panel">
+            <div class="chat-header">
+                <div class="chat-user-info">
+                    <div
+                        style="font-size: 28px; margin-right: 12px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; background: rgba(255,255,255,0.05); border-radius: 50%; border: 1px solid var(--border-glass);">
+                        🤖</div>
+                    <div class="chat-titles" style="display:flex; flex-direction:column;">
+                        <h4 id="chat-username" style="margin:0;"><span class="gradient-text">DON</span><span
+                                class="gradient-text-accent">MITX</span> AI</h4>
+                        <span id="chat-subtitle" style="font-size:0.75rem; color:var(--text-muted);">Intelligent Swarm
+                            Assistant</span>
+                    </div>
+                </div>
+                <div class="chat-actions" style="display:flex; gap:8px; align-items:center;">
+                    <span id="status-badge" class="ai-status-indicator ai-offline">Offline</span>
                 </div>
             </div>
-        </div>
 
-        <!-- Input Area -->
-        <div class="p-4 bg-slate-900/50 border-t border-slate-700">
-            <form id="chat-form" class="flex gap-2">
-                <input type="text" id="user-input" autocomplete="off"
-                    class="flex-grow bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all"
-                    placeholder="Type your message here...">
-                <button type="submit"
-                    class="bg-sky-600 hover:bg-sky-500 text-white px-6 py-2 rounded-xl text-sm font-semibold transition-colors shadow-lg shadow-sky-900/20">
-                    Send
+            <div class="chat-messages" id="chat-messages">
+                <!-- Initial Welcome Message -->
+                <div class="chat-message other">
+                    <div class="msg-content">
+                        <div class="msg-bubble">Hello! I am the DONMITX AI Assistant. How can I help you today?</div>
+                    </div>
+                </div>
+            </div>
+
+            <form class="chat-input-area" id="chat-form">
+                <input type="text" id="user-input" placeholder="Message DONMITX AI..." autocomplete="off" required>
+                <button type="submit" class="btn-primary btn-icon" id="btn-send">
+                    ➤
                 </button>
             </form>
-            <div class="mt-2 flex justify-between items-center text-[10px] text-slate-500 px-1">
-                <span>Model: Qwen 2.5 Coder 14B</span>
-                <span id="latency">Latency: -- ms</span>
+
+            <div class="model-info">
+                Model: Qwen 2.5 Coder 14B <span id="latency" style="margin-left: 8px;"></span>
             </div>
         </div>
-    </main>
+    </div>
 
-    <script>
-        // CONFIGURATION
-        // Replace this with your Cloudflare Tunnel URL or GCP IP
+    <script type="module">
+        // --- CONFIGURATION ---
         const OLLAMA_URL = "http://34.155.103.125:11434";
         const MODEL = "qwen2.5-coder:14b";
 
-        const chatHistory = document.getElementById('chat-history');
+        // DOM Elements
+        const chatHistory = document.getElementById('chat-messages');
         const chatForm = document.getElementById('chat-form');
         const userInput = document.getElementById('user-input');
         const statusBadge = document.getElementById('status-badge');
         const latencyDisplay = document.getElementById('latency');
+        const sendBtn = document.getElementById('btn-send');
 
-        // Check Connection
+        // Access Firebase from parent dashboard
+        const api = window.parent.DONMITX_GAME_API;
+        const currentUser = api?.auth?.currentUser;
+
+        // Optional: Keep full conversation history for context to the model
+        let conversationContext = [];
+
+        // Check Connection to Ollama
         async function checkStatus() {
             try {
                 const res = await fetch(`${OLLAMA_URL}/api/tags`);
                 if (res.ok) {
                     statusBadge.innerText = "Online";
-                    statusBadge.className = "px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                    statusBadge.className = "ai-status-indicator ai-online";
                 }
             } catch (e) {
-                console.error("Connection failed", e);
+                console.error("AI Connection failed", e);
             }
         }
         checkStatus();
 
-        function addMessage(text, isUser = false) {
-            const div = document.createElement('div');
-            div.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
-            div.innerHTML = `
-                <div class="max-w-[80%] p-3 rounded-2xl ${isUser ? 'bg-sky-600 text-white' : 'bg-slate-800 border border-slate-700'} text-sm shadow-md">
-                    ${text}
+        // Load History from Firebase across sessions
+        async function loadHistory() {
+            if (!api || !currentUser) return;
+            try {
+                // We use standard db operations exposed by the parent
+                const q = api.query(
+                    api.collection(api.db, 'users', currentUser.uid, 'ai_chats'),
+                    api.orderBy('timestamp', 'asc')
+                );
+                const snap = await api.getDocs(q);
+
+                if (!snap.empty) {
+                    // Clear the default welcome message if there's history
+                    chatHistory.innerHTML = '';
+                    conversationContext = [];
+
+                    snap.docs.forEach(doc => {
+                        const data = doc.data();
+                        addMessageToUI(data.text, data.role === 'user');
+                        conversationContext.push({ role: data.role, content: data.text });
+                    });
+                } else {
+                    // Initialize context with a system prompt if desired, or skip
+                }
+            } catch (e) {
+                console.error("Failed to load AI chat history:", e);
+            }
+        }
+
+        // Run setup
+        if (currentUser) {
+            loadHistory();
+        }
+
+        // Helper: Convert markdown-like syntax or returns to HTML safely
+        function formatMessage(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/```([\s\S]*?)```/g, '<pre style="background:rgba(0,0,0,0.3); padding:8px; border-radius:8px; overflow-x:auto;"><code>$1</code></pre>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, "<br>");
+        }
+
+        // Render message to chat bubble
+        function addMessageToUI(text, isUser = false) {
+            const el = document.createElement('div');
+            el.className = `chat-message ${isUser ? 'own' : 'other'}`;
+
+            el.innerHTML = `
+                <div class="msg-content">
+                    <div class="msg-bubble">${formatMessage(text)}</div>
                 </div>
             `;
-            chatHistory.appendChild(div);
+            chatHistory.appendChild(el);
             chatHistory.scrollTop = chatHistory.scrollHeight;
         }
 
+        // Persist message
+        async function saveMessage(text, role) {
+            if (!api || !currentUser) return;
+            try {
+                await api.addDoc(api.collection(api.db, 'users', currentUser.uid, 'ai_chats'), {
+                    text,
+                    role,
+                    timestamp: api.serverTimestamp ? api.serverTimestamp() : new Date().toISOString()
+                });
+            } catch (e) {
+                console.error("Failed to save message to Firebase", e);
+            }
+        }
+
+        // Handle Chat Submission
         chatForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const text = userInput.value.trim();
             if (!text) return;
 
-            addMessage(text, true);
+            // UI Optimistic Update
+            addMessageToUI(text, true);
             userInput.value = '';
+
+            sendBtn.disabled = true;
+            sendBtn.style.opacity = '0.5';
+
+            // Save to DB (async)
+            saveMessage(text, 'user');
+            conversationContext.push({ role: 'user', content: text });
+
+            // Show typing indicator
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'chat-message other';
+            typingIndicator.id = 'typing-indicator';
+            typingIndicator.innerHTML = `
+                <div class="msg-content">
+                    <div class="msg-bubble" style="font-style: italic; opacity: 0.7;">Thinking...</div>
+                </div>
+            `;
+            chatHistory.appendChild(typingIndicator);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
 
             const start = Date.now();
             try {
+                // Send payload (history context limited to last 10 turns to save tokens)
+                const payloadMessages = conversationContext.slice(-10);
+
                 const response = await fetch(`${OLLAMA_URL}/v1/chat/completions`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         model: MODEL,
-                        messages: [{ role: 'user', content: text }],
+                        messages: payloadMessages.length > 0 ? payloadMessages : [{ role: 'user', content: text }],
                         stream: false
                     })
                 });
+
+                if (!response.ok) throw new Error("Network response was not ok");
 
                 const data = await response.json();
                 const reply = data.choices[0].message.content;
                 const end = Date.now();
 
-                addMessage(reply, false);
-                latencyDisplay.innerText = `Latency: ${end - start} ms`;
+                // Cleanup typing indicator
+                const indicator = document.getElementById('typing-indicator');
+                if (indicator) indicator.remove();
+
+                // Show reply
+                addMessageToUI(reply, false);
+                latencyDisplay.innerText = `| Latency: ${((end - start) / 1000).toFixed(1)}s`;
+
+                // Save AI reply to DB & Context
+                saveMessage(reply, 'assistant');
+                conversationContext.push({ role: 'assistant', content: reply });
+
             } catch (err) {
-                addMessage("⚠️ Error: Could not connect to the model. Ensure the Cloudflare Tunnel is running.", false);
+                const indicator = document.getElementById('typing-indicator');
+                if (indicator) indicator.remove();
+                addMessageToUI("⚠️ Error: Could not connect to the model. Ensure the Cloudflare Tunnel is running.", false);
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.style.opacity = '1';
+                userInput.focus();
             }
         });
     </script>
