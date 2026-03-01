@@ -946,6 +946,14 @@ function setupEventListeners() {
                     openModal('modal-play-game');
                 }
             }
+            return;
+        }
+
+        // Catch legacy links added before the strategy update
+        const visitLnk = e.target.closest('a');
+        if (visitLnk && visitLnk.getAttribute('href') && visitLnk.getAttribute('href').includes('/aichat/index.html')) {
+            e.preventDefault();
+            openGameLobby('aichat', '/aichat/index.html');
         }
     });
 

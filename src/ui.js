@@ -91,11 +91,11 @@ export const UI = {
         };
         const icon = icons[item.type] || '📄';
 
-        const isApp = item.type === ContentType.APP;
+        const isApp = item.type === ContentType.APP || item.type === ContentType.AI_CHAT;
         const actions = {
             [ContentType.YOUTUBE]: 'Watch',
             [ContentType.VIDEO]: 'Watch',
-            [ContentType.AI_CHAT]: 'Read Chat',
+            [ContentType.AI_CHAT]: '🤖 Enter Chat',
             [ContentType.CODE]: 'View Code',
             [ContentType.APP]: '🎮 Play'
         };

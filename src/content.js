@@ -18,12 +18,17 @@ export const ContentType = {
 class AIStrategy {
     canHandle(url) {
         try {
+            if (url.startsWith('/aichat/')) return true;
             return /(?:^|\.)(?:chatgpt|openai|gemini\.google|deepseek|claude)\./i.test(new URL(url).hostname);
         } catch (e) { return false; }
     }
     parse(url) {
         let title = 'AI Match';
         let imageUrl = '';
+
+        if (url.startsWith('/aichat/')) {
+            return { type: ContentType.AI_CHAT, title: 'AI Chat Room', imageUrl, summary: 'Multiplayer AI Chat Assistant' };
+        }
 
         if (url.includes('chatgpt')) {
             title = 'ChatGPT Conversation';
