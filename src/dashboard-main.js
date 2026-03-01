@@ -926,6 +926,21 @@ function setupEventListeners() {
         select.innerHTML = folders.map(f => `<option value="${f.id}">${escapeHtml(f.title)}</option>`).join('');
     });
 
+    document.getElementById('opt-new-aichat').addEventListener('click', async () => {
+        closeModal('modal-new-content');
+
+        const select = document.getElementById('inp-item-folder');
+        select.innerHTML = '<option>Loading...</option>';
+        openModal('modal-add-item');
+
+        const urlInput = document.getElementById('inp-item-url');
+        urlInput.value = '/aichat/index.html';
+        urlInput.dispatchEvent(new Event('input'));
+
+        const folders = await getFolders(currentUser.uid);
+        select.innerHTML = folders.map(f => `<option value="${f.id}">${escapeHtml(f.title)}</option>`).join('');
+    });
+
     // Global: Play App handler (delegated)
     document.addEventListener('click', (e) => {
         const playBtn = e.target.closest('.btn-play-app');
