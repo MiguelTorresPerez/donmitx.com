@@ -465,8 +465,8 @@
 
     <script>
         // --- CONFIGURATION ---
-        const OLLAMA_URL = "http://34.155.103.125:11434";
-        const MODEL = "qwen2.5-coder:14b";
+        let OLLAMA_URL = localStorage.getItem('donmitx_ollama_url') || "https://api.donmitx.com";
+        let MODEL = localStorage.getItem('donmitx_ollama_model') || "qwen2.5-coder:14b";
 
         // Access Firebase via parent window (Dashboard)
         if (!window.parent.DONMITX_GAME_API) {
@@ -599,7 +599,20 @@
             `;
 
             if (isHost()) {
-                html += `<button class="btn-host" id="btn-start-session">Start Session</button>`;
+                html += `
+                    <div style="margin-top:20px; text-align:left;">
+                        <label style="font-size:0.85rem; color:var(--text-muted); display:block; margin-bottom:6px;">🔗 Ollama API URL</label>
+                        <input type="text" id="host-ollama-url" value="${escapeHTML(OLLAMA_URL)}" placeholder="https://api.donmitx.com" style="width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.3); color:white; font-family:monospace; font-size:0.85rem;">
+                    </div>
+                    <div style="margin-top:16px; text-align:left;">
+                        <label style="font-size:0.85rem; color:var(--text-muted); display:block; margin-bottom:6px;">🤖 Model</label>
+                        <select id="host-model-select" style="width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.3); color:white; font-family:inherit; font-size:0.9rem; cursor:pointer;">
+                            <option value="" disabled>Loading models...</option>
+                        </select>
+                        <p id="model-load-status" style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;"></p>
+                    </div>
+                    <button class="btn-host" id="btn-start-session">Start Session</button>
+                `;
             } else {
                 html += `<div style="margin-top: 24px; color: var(--text-muted); font-size: 0.9rem;">Waiting for Host to start the session...</div>`;
             }
@@ -609,13 +622,42 @@
         }
 
         function setupLobbyControls() {
+            // Fetch available models from the API
+            fetchAvailableModels();
+
+            // Re-fetch models when URL is changed
+            const urlInput = document.getElementById('host-ollama-url');
+            let fetchTimer = null;
+            urlInput.addEventListener('input', () => {
+                clearTimeout(fetchTimer);
+                fetchTimer = setTimeout(() => {
+                    OLLAMA_URL = urlInput.value.trim().replace(/\/$/, '');
+                    localStorage.setItem('donmitx_ollama_url', OLLAMA_URL);
+                    fetchAvailableModels();
+                }, 600);
+            });
+
             document.getElementById('btn-start-session').addEventListener('click', async (e) => {
+                // Persist URL
+                if (urlInput && urlInput.value.trim()) {
+                    OLLAMA_URL = urlInput.value.trim().replace(/\/$/, '');
+                    localStorage.setItem('donmitx_ollama_url', OLLAMA_URL);
+                }
+                // Persist model
+                const modelSelect = document.getElementById('host-model-select');
+                if (modelSelect && modelSelect.value) {
+                    MODEL = modelSelect.value;
+                    localStorage.setItem('donmitx_ollama_model', MODEL);
+                }
+
                 e.target.disabled = true;
                 e.target.textContent = 'Starting...';
                 try {
                     await updateDoc(roomRef, {
                         status: 'playing',
-                        'state.isAiTyping': false
+                        'state.isAiTyping': false,
+                        'state.model': MODEL,
+                        'state.ollamaUrl': OLLAMA_URL
                     });
                 } catch (err) {
                     console.error('Failed to start:', err);
@@ -624,6 +666,48 @@
                     e.target.textContent = 'Start Session';
                 }
             });
+        }
+
+        async function fetchAvailableModels() {
+            const select = document.getElementById('host-model-select');
+            const status = document.getElementById('model-load-status');
+            if (!select) return;
+
+            select.innerHTML = '<option value="" disabled selected>Loading models...</option>';
+            if (status) status.textContent = 'Connecting to ' + OLLAMA_URL + '...';
+
+            try {
+                const res = await fetch(`${OLLAMA_URL}/api/tags`);
+                if (!res.ok) throw new Error('API returned ' + res.status);
+                const data = await res.json();
+                const models = (data.models || []).map(m => m.name).sort();
+
+                select.innerHTML = '';
+                if (models.length === 0) {
+                    select.innerHTML = '<option value="" disabled>No models found</option>';
+                    if (status) status.textContent = '⚠️ No models installed on this Ollama instance.';
+                    return;
+                }
+
+                models.forEach(name => {
+                    const opt = document.createElement('option');
+                    opt.value = name;
+                    opt.textContent = name;
+                    if (name === MODEL) opt.selected = true;
+                    select.appendChild(opt);
+                });
+
+                // If saved model isn't in the list, select first
+                if (!models.includes(MODEL)) {
+                    select.selectedIndex = 0;
+                }
+
+                if (status) status.textContent = `✅ ${models.length} model${models.length > 1 ? 's' : ''} available`;
+            } catch (err) {
+                console.error('Failed to fetch models:', err);
+                select.innerHTML = `<option value="${escapeHTML(MODEL)}" selected>${escapeHTML(MODEL)} (cached)</option>`;
+                if (status) status.textContent = '⚠️ Could not connect – using last known model.';
+            }
         }
 
         // --- PLAYING PHASE ---
@@ -648,7 +732,7 @@
 
             const topbarHtml = isHost() ? `
                 <div class="chat-topbar">
-                    <h2>Connection Status</h2>
+                    <h2>🤖 ${escapeHTML(MODEL)}</h2>
                     <div class="status-container">
                         <span id="latency" style="font-size: 0.8rem; color: var(--text-muted);"></span>
                         <div id="status-badge" class="badge status-checking">Checking...</div>
@@ -656,7 +740,7 @@
                 </div>
             ` : `
                 <div class="chat-topbar">
-                    <h2>Session Hosted by ${escapeHTML(hostDisplay)}</h2>
+                    <h2>🤖 ${escapeHTML(roomState?.state?.model || MODEL)} · Hosted by ${escapeHTML(hostDisplay)}</h2>
                     <div class="badge spectator-badge">Spectator Read-Only</div>
                 </div>
             `;
