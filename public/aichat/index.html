@@ -465,7 +465,7 @@
 
     <script>
         // --- CONFIGURATION ---
-        let OLLAMA_URL = localStorage.getItem('donmitx_ollama_url') || "https://api.donmitx.com";
+        let OLLAMA_URL = (localStorage.getItem('donmitx_ollama_url') || "https://api.donmitx.com").replace(/\/$/, '');
         let MODEL = localStorage.getItem('donmitx_ollama_model') || "qwen2.5-coder:14b";
 
         // Access Firebase via parent window (Dashboard)
@@ -601,7 +601,10 @@
             if (isHost()) {
                 html += `
                     <div style="margin-top:20px; text-align:left;">
-                        <label style="font-size:0.85rem; color:var(--text-muted); display:block; margin-bottom:6px;">🔗 Ollama API URL</label>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                            <label style="font-size:0.85rem; color:var(--text-muted); display:block;">🔗 Ollama API URL</label>
+                            <button id="btn-reset-url" style="background:transparent; border:none; color:var(--primary); font-size:0.75rem; cursor:pointer; padding:0;">Reset to Default</button>
+                        </div>
                         <input type="text" id="host-ollama-url" value="${escapeHTML(OLLAMA_URL)}" placeholder="https://api.donmitx.com" style="width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.3); color:white; font-family:monospace; font-size:0.85rem;">
                     </div>
                     <div style="margin-top:16px; text-align:left;">
@@ -624,6 +627,16 @@
         function setupLobbyControls() {
             // Fetch available models from the API
             fetchAvailableModels();
+
+            // Reset button
+            const resetBtn = document.getElementById('btn-reset-url');
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                    localStorage.removeItem('donmitx_ollama_url');
+                    localStorage.removeItem('donmitx_ollama_model');
+                    window.location.reload();
+                });
+            }
 
             // Re-fetch models when URL is changed
             const urlInput = document.getElementById('host-ollama-url');
@@ -706,7 +719,7 @@
             } catch (err) {
                 console.error('Failed to fetch models:', err);
                 select.innerHTML = `<option value="${escapeHTML(MODEL)}" selected>${escapeHTML(MODEL)} (cached)</option>`;
-                if (status) status.textContent = '⚠️ Could not connect – using last known model.';
+                if (status) status.textContent = `❌ Error: ${err.message || 'Connection failed'}. Check if CORS or SSL is blocking the request.`;
             }
         }
 
