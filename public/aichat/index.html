@@ -686,7 +686,7 @@
             <h1>🤖 AI Chat Room</h1>
             <p class="subtitle" id="room-code">Connecting to room...</p>
         </div>
-        <div id="app-area" style="text-align: center; height: 100%; display: flex; flex-direction: column;">
+        <div id="app-area" style="text-align: center; flex: 1; min-height: 0; display: flex; flex-direction: column;">
             <div class="spinner"></div>
         </div>
     </div>
@@ -765,9 +765,22 @@
 
         const GAME_MODES = {
             free_chat: { name: '💬 Free Chat', desc: 'Open conversation with the AI. All participants can send messages.' },
-            consciousness: { name: '🧠 Create Consciousness', desc: 'Recursive AI loop. The model calls itself continuously, compressing context. Human messages are prioritized.' },
+            consciousness: { name: '🧠 Create Consciousness', desc: 'Recursive AI loop. The model calls itself continuously, compressing context. Warning: Stops if all users leave.' },
             questioner: { name: '❓ The Questioner', desc: 'Trivia game! AI asks questions, players answer for points. Host can end the game.' }
         };
+
+        // Fallback runner for consciousness loop (if host leaves, participants keep it alive)
+        setInterval(() => {
+            if (roomState?.status === 'playing' && getGameMode() === 'consciousness' && isParticipant()) {
+                const lastUpdate = roomState.state?.lastConsciousnessUpdate || 0;
+                const isTyping = roomState.state?.isAiTyping || false;
+                // If no one updated it in the last 20 seconds and it's not currently generating
+                if (!isGenerating && !isTyping && Date.now() - lastUpdate > 20000) {
+                    console.log("[aichat] Host appears inactive. Fallback runner taking over loop...");
+                    startConsciousnessLoop();
+                }
+            }
+        }, 5000);
 
         // Listen for Auth State
         auth.onAuthStateChanged((user) => {
@@ -1479,13 +1492,16 @@
         const RECURSION_INTERVAL = 15000; // 15 seconds between recursions
 
         async function startConsciousnessLoop() {
-            if (!isHost() || !isOnline || roomState?.status !== 'playing') {
-                console.warn('[aichat] Consciousness loop skipped: host=', isHost(), 'online=', isOnline, 'status=', roomState?.status);
-                if (isHost() && !isOnline && roomState?.status === 'playing') {
+            if (!isOnline || roomState?.status !== 'playing' || getGameMode() !== 'consciousness') {
+                console.warn('[aichat] Consciousness loop skipped: online=', isOnline, 'status=', roomState?.status);
+                // Retry if just not online yet
+                if (isParticipant() && !isOnline && roomState?.status === 'playing') {
                     recursionTimer = setTimeout(() => startConsciousnessLoop(), 3000);
                 }
                 return;
             }
+            // Prevent multiple runners from colliding locally
+            if (isGenerating) return;
 
             // Drain queued human messages into memory before building prompt
             const drainedMessages = [...humanMessageQueue];
@@ -1596,13 +1612,16 @@
                     }
 
                     // Save the updated consciousness memory to the room document to persist across reloads
-                    const memoryToSave = { ...consciousnessMemory };
-                    // Optionally cap recent outputs to prevent exceeding Firestore doc size limits
-                    if (memoryToSave.recentAiOutputs.length > 3) {
-                        memoryToSave.recentAiOutputs = memoryToSave.recentAiOutputs.slice(-3);
-                    }
+                    const memoryToSave = JSON.parse(JSON.stringify(consciousnessMemory)); // strict sanitize
+
+                    // Cap arrays to prevent exceeding Firestore doc size limits
+                    if (memoryToSave.recentAiOutputs.length > 3) memoryToSave.recentAiOutputs = memoryToSave.recentAiOutputs.slice(-3);
+                    if (memoryToSave.hostMessages.length > 10) memoryToSave.hostMessages = memoryToSave.hostMessages.slice(-10);
+                    if (memoryToSave.userMessages.length > 10) memoryToSave.userMessages = memoryToSave.userMessages.slice(-10);
+
                     await updateDoc(roomRef, {
                         'state.isAiTyping': false,
+                        'state.lastConsciousnessUpdate': Date.now(),
                         'state.consciousnessMemory': memoryToSave
                     });
                 } catch (e) { console.error("Failed to save consciousness msg / memory", e); }
