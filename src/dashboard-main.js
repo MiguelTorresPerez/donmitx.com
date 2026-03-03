@@ -1006,10 +1006,13 @@ function setupEventListeners() {
 
                 let actionBtn = '';
                 const isStarted = room.status === 'playing' || room.status === 'teambuilder';
+                const isAiChat = currentLobbyGameId === 'aichat';
                 if (hasMe) {
                     actionBtn = `<button class="btn-primary btn-sm btn-join-room" data-room-id="${room.id}" data-rejoin="true">Rejoin</button>`;
-                } else if (isStarted) {
+                } else if (isStarted && !isAiChat) {
                     actionBtn = `<button class="btn-secondary btn-sm btn-join-room" data-room-id="${room.id}" data-spectator="true" style="background:var(--primary); color:white;">Spectate</button>`;
+                } else if (isStarted && isAiChat && playerCount < (room.config?.maxPlayers || 10)) {
+                    actionBtn = `<button class="btn-primary btn-sm btn-join-room" data-room-id="${room.id}">Join</button>`;
                 } else if (playerCount < (room.config?.maxPlayers || 6)) {
                     actionBtn = `<button class="btn-primary btn-sm btn-join-room" data-room-id="${room.id}">Join</button>`;
                 } else {

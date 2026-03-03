@@ -41,7 +41,6 @@
             align-items: center;
         }
 
-        /* --- Room Wrapper & Shared Styles --- */
         .game-wrapper {
             width: 100%;
             max-width: 800px;
@@ -52,7 +51,7 @@
 
         .header {
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
             padding-top: 10px;
             flex-shrink: 0;
         }
@@ -139,7 +138,7 @@
             box-shadow: none;
         }
 
-        /* --- Chat Interface --- */
+        /* Chat Interface */
         .chat-container {
             flex: 1;
             display: flex;
@@ -204,6 +203,13 @@
             border: 1px solid rgba(99, 102, 241, 0.2);
         }
 
+        .mode-badge {
+            background: rgba(168, 85, 247, 0.15);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            font-size: 0.7rem;
+        }
+
         .chat-history {
             flex: 1;
             overflow-y: auto;
@@ -230,6 +236,11 @@
             align-items: flex-start;
         }
 
+        .message.system {
+            align-self: center;
+            align-items: center;
+        }
+
         .bubble {
             padding: 12px 16px;
             border-radius: 16px;
@@ -252,11 +263,25 @@
             border-bottom-left-radius: 4px;
         }
 
+        .message.system .bubble {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
         .message-time {
             font-size: 0.7rem;
             color: var(--text-muted);
             margin-top: 4px;
             padding: 0 4px;
+        }
+
+        .message-author {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 2px;
         }
 
         .input-area {
@@ -383,7 +408,6 @@
             }
         }
 
-        /* Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -447,21 +471,184 @@
             font-size: 0.9rem;
             font-style: italic;
         }
+
+        /* Game Mode Selector */
+        .mode-selector {
+            margin-top: 16px;
+            text-align: left;
+        }
+
+        .mode-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .mode-card {
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mode-card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .mode-card.selected {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+            box-shadow: 0 0 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .mode-card h4 {
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+
+        .mode-card p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Results Overlay */
+        .results-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .results-card {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px 30px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .results-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--gold), #fbbf24);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .podium {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .podium-item {
+            text-align: center;
+            padding: 12px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            min-width: 80px;
+        }
+
+        .podium-rank {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+
+        .podium-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .podium-score {
+            font-size: 0.8rem;
+            color: var(--gold);
+            margin-top: 2px;
+        }
+
+        .score-list {
+            text-align: left;
+            margin-top: 16px;
+        }
+
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+        }
+
+        .score-row:last-child {
+            border: none;
+        }
+
+        .score-pts {
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        /* Correct/Wrong flash */
+        .flash-correct {
+            animation: flashGreen 0.6s ease;
+        }
+
+        .flash-wrong {
+            animation: flashRed 0.6s ease;
+        }
+
+        @keyframes flashGreen {
+
+            0%,
+            100% {
+                background: inherit;
+            }
+
+            50% {
+                background: rgba(16, 185, 129, 0.2);
+            }
+        }
+
+        @keyframes flashRed {
+
+            0%,
+            100% {
+                background: inherit;
+            }
+
+            50% {
+                background: rgba(239, 68, 68, 0.2);
+            }
+        }
     </style>
 </head>
 
 <body>
-
     <div class="game-wrapper">
         <div class="header">
             <h1>🤖 AI Chat Room</h1>
             <p class="subtitle" id="room-code">Connecting to room...</p>
         </div>
-
         <div id="app-area" style="text-align: center; height: 100%; display: flex; flex-direction: column;">
             <div class="spinner"></div>
         </div>
     </div>
+    <div id="results-overlay" class="results-overlay" style="display:none;"></div>
 
     <script>
         // --- CONFIGURATION ---
@@ -470,7 +657,7 @@
 
         // Access Firebase via parent window (Dashboard)
         if (!window.parent.DONMITX_GAME_API) {
-            document.getElementById('app-area').innerHTML = '<p class="text-error" style="color:var(--error); margin-top:20px;">Error: Must be played from Dashboard.</p>';
+            document.getElementById('app-area').innerHTML = '<p style="color:var(--error); margin-top:20px;">Error: Must be played from Dashboard.</p>';
             throw new Error("Game API missing");
         }
         const { db, auth, doc, onSnapshot, updateDoc: _updateDoc, collection, addDoc, getDocs, query, orderBy } = window.parent.DONMITX_GAME_API;
@@ -484,7 +671,7 @@
         const roomId = urlParams.get('roomId');
 
         if (!roomId) {
-            document.getElementById('app-area').innerHTML = '<p class="text-error" style="color:var(--error); margin-top:20px;">Error: No Room ID provided.</p>';
+            document.getElementById('app-area').innerHTML = '<p style="color:var(--error); margin-top:20px;">Error: No Room ID provided.</p>';
             throw new Error("No roomId");
         }
 
@@ -496,9 +683,17 @@
         let messagesUnsubscribe = null;
         let isOnline = false;
         let isGenerating = false;
-        let localMessageContext = []; // Stored sequentially for Ollama completion
+        let localMessageContext = [];
         let displayedMessageIds = new Set();
         let streamingBubble = null;
+
+        // Game mode state
+        let selectedGameMode = 'free_chat';
+        let recursionTimer = null;
+        let questionTimer = null;
+        let currentCorrectAnswer = null;
+        let questionActive = false;
+        let questionNumber = 0;
 
         // Elements
         let chatHistory = null;
@@ -506,13 +701,19 @@
         let btnSend = null;
         let typingIndicator = null;
 
+        const GAME_MODES = {
+            free_chat: { name: '💬 Free Chat', desc: 'Open conversation with the AI. All participants can send messages.' },
+            consciousness: { name: '🧠 Create Consciousness', desc: 'Recursive AI loop. The model calls itself continuously, compressing context. Human messages are prioritized.' },
+            questioner: { name: '❓ The Questioner', desc: 'Trivia game! AI asks questions, players answer for points. Host can end the game.' }
+        };
+
         // Listen for Auth State
         auth.onAuthStateChanged((user) => {
             if (user) {
                 currentUser = user;
                 initRoom();
             } else {
-                document.getElementById('app-area').innerHTML = '<p class="text-error" style="color:var(--error); margin-top:20px;">You must be logged in to participate.</p>';
+                document.getElementById('app-area').innerHTML = '<p style="color:var(--error); margin-top:20px;">You must be logged in to participate.</p>';
             }
         });
 
@@ -526,15 +727,12 @@
                 }
 
                 const oldStatus = roomState?.status;
-                const wasTyping = roomState?.state?.isAiTyping;
                 roomState = snapshot.data();
 
-                // Re-render full phase if status changed (lobby -> playing)
                 if (oldStatus !== roomState.status) {
                     render();
                 }
 
-                // If in playing phase, update participants UI or typing state
                 if (roomState.status === 'playing') {
                     if (isHost()) {
                         updateHostOllamaBadge();
@@ -545,64 +743,67 @@
             });
         }
 
-        function isHost() {
-            return currentUser && roomState && roomState.hostUid === currentUser.uid;
-        }
+        function isHost() { return currentUser && roomState && roomState.hostUid === currentUser.uid; }
+        function isParticipant() { return currentUser && roomState && roomState.players && roomState.players[currentUser.uid]; }
+        function getGameMode() { return roomState?.state?.gameMode || 'free_chat'; }
 
         // --- RENDER LOGIC ---
-
         function render() {
             const area = document.getElementById('app-area');
+            // Clear timers on re-render
+            clearTimeout(recursionTimer);
+            clearTimeout(questionTimer);
 
             if (roomState.status === 'lobby') {
                 area.innerHTML = renderLobby();
                 if (isHost()) setupLobbyControls();
             } else if (roomState.status === 'playing') {
+                // Reset displayed messages since DOM is rebuilt
+                displayedMessageIds.clear();
+                localMessageContext = [];
                 area.innerHTML = renderPlaying();
                 setupChatControls();
                 subscribeToMessages();
                 if (isHost()) {
                     checkOllamaStatus();
+                    // Start game-mode-specific logic after a brief delay
+                    setTimeout(() => startGameModeLogic(), 2000);
                 } else {
                     updateSpectatorTypingState(roomState.state?.isAiTyping);
                 }
             } else if (roomState.status === 'finished') {
-                area.innerHTML = `<div class="card" style="padding: 40px;"><h2>Session Ended</h2></div>`;
+                showResults();
             }
         }
 
         function escapeHTML(str) {
-            return str.replace(/[&<>'"]/g,
-                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-            );
+            return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
         }
 
         // --- LOBBY PHASE ---
-
         function renderLobby() {
             const players = Object.values(roomState.players || {});
+            const defaultAvatar = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2364748b'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E";
 
             let html = `
-                <div class="card animate-in" style="padding: 40px 20px; width: 100%; max-width: 500px; margin: 0 auto;">
+                <div class="card animate-in" style="padding: 40px 20px; width: 100%; max-width: 500px; margin: 0 auto; overflow-y: auto; max-height: 100%;">
                     <h2 style="margin-bottom: 10px;">Waiting in Lobby...</h2>
-                    <p class="text-muted">${players.length} / ${roomState.config?.maxPlayers || 10} participants</p>
-                    
+                    <p style="color: var(--text-muted);">${players.length} / ${roomState.config?.maxPlayers || 10} participants</p>
                     <div class="player-list">
                         ${players.map(p => `
                             <div class="player-item">
-                                <img src="${p.photoURL || 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2364748b\'%3E%3Cpath d=\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\'/%3E%3C/svg%3E'}" class="player-avatar" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'%2364748b\\'%3E%3Cpath d=\\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\\'/%3E%3C/svg%3E'"/>
+                                <img src="${p.photoURL || defaultAvatar}" class="player-avatar" onerror="this.src='${defaultAvatar}'"/>
                                 <span class="player-name">${escapeHTML(p.name)}</span>
-                                ${p.uid === roomState.hostUid ? `<span class="host-badge">HOST</span>` : ''}
+                                ${p.uid === roomState.hostUid ? '<span class="host-badge">HOST</span>' : ''}
                             </div>
                         `).join('')}
-                    </div>
-            `;
+                    </div>`;
 
             if (isHost()) {
                 html += `
                     <div style="margin-top:20px; text-align:left;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                            <label style="font-size:0.85rem; color:var(--text-muted); display:block;">🔗 Ollama API URL</label>
+                            <label style="font-size:0.85rem; color:var(--text-muted);">🔗 Ollama API URL</label>
                             <button id="btn-reset-url" style="background:transparent; border:none; color:var(--primary); font-size:0.75rem; cursor:pointer; padding:0;">Reset to Default</button>
                         </div>
                         <input type="text" id="host-ollama-url" value="${escapeHTML(OLLAMA_URL)}" placeholder="https://api.donmitx.com" style="width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.3); color:white; font-family:monospace; font-size:0.85rem;">
@@ -614,8 +815,20 @@
                         </select>
                         <p id="model-load-status" style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;"></p>
                     </div>
-                    <button class="btn-host" id="btn-start-session">Start Session</button>
-                `;
+
+                    <div class="mode-selector">
+                        <label style="font-size:0.85rem; color:var(--text-muted); display:block; margin-bottom:6px;">🎮 Game Mode</label>
+                        <div class="mode-cards" id="mode-cards">
+                            ${Object.entries(GAME_MODES).map(([key, m]) => `
+                                <div class="mode-card ${key === selectedGameMode ? 'selected' : ''}" data-mode="${key}">
+                                    <h4>${m.name}</h4>
+                                    <p>${m.desc}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <button class="btn-host" id="btn-start-session">Start Session</button>`;
             } else {
                 html += `<div style="margin-top: 24px; color: var(--text-muted); font-size: 0.9rem;">Waiting for Host to start the session...</div>`;
             }
@@ -625,43 +838,33 @@
         }
 
         function setupLobbyControls() {
-            // Fetch available models from the API
             fetchAvailableModels();
 
-            // Reset button
             const resetBtn = document.getElementById('btn-reset-url');
             if (resetBtn) {
-                resetBtn.addEventListener('click', () => {
-                    localStorage.removeItem('donmitx_ollama_url');
-                    localStorage.removeItem('donmitx_ollama_model');
-                    window.location.reload();
-                });
+                resetBtn.addEventListener('click', () => { localStorage.removeItem('donmitx_ollama_url'); localStorage.removeItem('donmitx_ollama_model'); window.location.reload(); });
             }
 
-            // Re-fetch models when URL is changed
+            // Mode selector
+            document.querySelectorAll('.mode-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    selectedGameMode = card.dataset.mode;
+                });
+            });
+
             const urlInput = document.getElementById('host-ollama-url');
             let fetchTimer = null;
             urlInput.addEventListener('input', () => {
                 clearTimeout(fetchTimer);
-                fetchTimer = setTimeout(() => {
-                    OLLAMA_URL = urlInput.value.trim().replace(/\/$/, '');
-                    localStorage.setItem('donmitx_ollama_url', OLLAMA_URL);
-                    fetchAvailableModels();
-                }, 600);
+                fetchTimer = setTimeout(() => { OLLAMA_URL = urlInput.value.trim().replace(/\/$/, ''); localStorage.setItem('donmitx_ollama_url', OLLAMA_URL); fetchAvailableModels(); }, 600);
             });
 
             document.getElementById('btn-start-session').addEventListener('click', async (e) => {
-                // Persist URL
-                if (urlInput && urlInput.value.trim()) {
-                    OLLAMA_URL = urlInput.value.trim().replace(/\/$/, '');
-                    localStorage.setItem('donmitx_ollama_url', OLLAMA_URL);
-                }
-                // Persist model
+                if (urlInput && urlInput.value.trim()) { OLLAMA_URL = urlInput.value.trim().replace(/\/$/, ''); localStorage.setItem('donmitx_ollama_url', OLLAMA_URL); }
                 const modelSelect = document.getElementById('host-model-select');
-                if (modelSelect && modelSelect.value) {
-                    MODEL = modelSelect.value;
-                    localStorage.setItem('donmitx_ollama_model', MODEL);
-                }
+                if (modelSelect && modelSelect.value) { MODEL = modelSelect.value; localStorage.setItem('donmitx_ollama_model', MODEL); }
 
                 e.target.disabled = true;
                 e.target.textContent = 'Starting...';
@@ -670,7 +873,8 @@
                         status: 'playing',
                         'state.isAiTyping': false,
                         'state.model': MODEL,
-                        'state.ollamaUrl': OLLAMA_URL
+                        'state.ollamaUrl': OLLAMA_URL,
+                        'state.gameMode': selectedGameMode
                     });
                 } catch (err) {
                     console.error('Failed to start:', err);
@@ -685,61 +889,44 @@
             const select = document.getElementById('host-model-select');
             const status = document.getElementById('model-load-status');
             if (!select) return;
-
             select.innerHTML = '<option value="" disabled selected>Loading models...</option>';
             if (status) status.textContent = 'Connecting to ' + OLLAMA_URL + '...';
-
             try {
                 const res = await fetch(`${OLLAMA_URL}/api/tags`);
                 if (!res.ok) throw new Error('API returned ' + res.status);
                 const data = await res.json();
                 const models = (data.models || []).map(m => m.name).sort();
-
                 select.innerHTML = '';
-                if (models.length === 0) {
-                    select.innerHTML = '<option value="" disabled>No models found</option>';
-                    if (status) status.textContent = '⚠️ No models installed on this Ollama instance.';
-                    return;
-                }
-
-                models.forEach(name => {
-                    const opt = document.createElement('option');
-                    opt.value = name;
-                    opt.textContent = name;
-                    if (name === MODEL) opt.selected = true;
-                    select.appendChild(opt);
-                });
-
-                // If saved model isn't in the list, select first
-                if (!models.includes(MODEL)) {
-                    select.selectedIndex = 0;
-                }
-
+                if (models.length === 0) { select.innerHTML = '<option value="" disabled>No models found</option>'; if (status) status.textContent = '⚠️ No models installed.'; return; }
+                models.forEach(name => { const opt = document.createElement('option'); opt.value = name; opt.textContent = name; if (name === MODEL) opt.selected = true; select.appendChild(opt); });
+                if (!models.includes(MODEL)) select.selectedIndex = 0;
                 if (status) status.textContent = `✅ ${models.length} model${models.length > 1 ? 's' : ''} available`;
             } catch (err) {
                 console.error('Failed to fetch models:', err);
                 select.innerHTML = `<option value="${escapeHTML(MODEL)}" selected>${escapeHTML(MODEL)} (cached)</option>`;
-                if (status) status.textContent = `❌ Error: ${err.message || 'Connection failed'}. Check if CORS or SSL is blocking the request.`;
+                if (status) status.textContent = `❌ Error: ${err.message || 'Connection failed'}.`;
             }
         }
 
         // --- PLAYING PHASE ---
-
         function renderPlaying() {
+            const mode = getGameMode();
+            const modeInfo = GAME_MODES[mode] || GAME_MODES.free_chat;
             const hostDisplay = roomState.players[roomState.hostUid]?.name || 'Host';
-            const inputHtml = isHost() ? `
+            const canSendMessages = isParticipant();
+
+            const inputHtml = canSendMessages ? `
                 <div class="input-area">
                     <form class="chat-form" id="chat-form">
-                        <textarea class="user-input" id="user-input" placeholder="Message Ollama..." rows="1" autofocus></textarea>
-                        <button type="submit" class="btn-send" id="btn-send" disabled>
+                        <textarea class="user-input" id="user-input" placeholder="${mode === 'questioner' ? 'Type your answer...' : 'Message...'}" rows="1" autofocus></textarea>
+                        <button type="submit" class="btn-send" id="btn-send" ${isHost() ? 'disabled' : ''}>
                             <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
                         </button>
                     </form>
                 </div>
             ` : `
                 <div class="spectator-blocker">
-                    You are spectating outside of the host's session.<br/>
-                    Prompting is restricted to <strong>${escapeHTML(hostDisplay)}</strong>.
+                    You are spectating. Join the room to participate.
                 </div>
             `;
 
@@ -747,33 +934,38 @@
                 <div class="chat-topbar">
                     <h2>🤖 ${escapeHTML(MODEL)}</h2>
                     <div class="status-container">
+                        <span class="badge mode-badge">${modeInfo.name}</span>
                         <span id="latency" style="font-size: 0.8rem; color: var(--text-muted);"></span>
                         <div id="status-badge" class="badge status-checking">Checking...</div>
                     </div>
                 </div>
             ` : `
                 <div class="chat-topbar">
-                    <h2>🤖 ${escapeHTML(roomState?.state?.model || MODEL)} · Hosted by ${escapeHTML(hostDisplay)}</h2>
-                    <div class="badge spectator-badge">Spectator Read-Only</div>
+                    <h2>🤖 ${escapeHTML(roomState?.state?.model || MODEL)} · ${escapeHTML(hostDisplay)}</h2>
+                    <div class="status-container">
+                        <span class="badge mode-badge">${modeInfo.name}</span>
+                        ${isParticipant() ? '<div class="badge status-online">Participant</div>' : '<div class="badge spectator-badge">Spectator</div>'}
+                    </div>
                 </div>
             `;
+
+            const startMsg = mode === 'consciousness' ? 'Consciousness loop starting...'
+                : mode === 'questioner' ? 'Trivia game starting! Get ready for questions...'
+                    : `Session started! ${canSendMessages ? 'Send a message to begin.' : 'Waiting for participants.'}`;
 
             return `
                 <div class="chat-container animate-in">
                     ${topbarHtml}
-                    
                     <div class="chat-history" id="chat-history">
-                        <div class="message ai" style="margin-bottom: 8px;">
-                            <div class="bubble">Session started! Waiting for ${isHost() ? 'your' : 'the host\'s'} prompt.</div>
+                        <div class="message system" style="margin-bottom: 8px;">
+                            <div class="bubble">${startMsg}</div>
                         </div>
                     </div>
-                    
                     <div class="typing-indicator" id="typing-indicator">
                         <div class="typing-dot"></div>
                         <div class="typing-dot"></div>
                         <div class="typing-dot"></div>
                     </div>
-
                     ${inputHtml}
                 </div>
             `;
@@ -783,27 +975,35 @@
             chatHistory = document.getElementById('chat-history');
             typingIndicator = document.getElementById('typing-indicator');
 
-            if (isHost()) {
+            if (isParticipant()) {
                 userInput = document.getElementById('user-input');
                 btnSend = document.getElementById('btn-send');
+                if (!userInput || !btnSend) return;
+
+                // Non-host participants can always send
+                if (!isHost()) btnSend.disabled = false;
 
                 userInput.addEventListener('input', function () {
                     this.style.height = '52px';
                     const newHeight = Math.min(this.scrollHeight, 120);
                     if (newHeight > 52) this.style.height = newHeight + 'px';
-                    btnSend.disabled = !isOnline || isGenerating || this.value.trim() === '';
+                    if (isHost()) {
+                        btnSend.disabled = !isOnline || isGenerating || this.value.trim() === '';
+                    } else {
+                        btnSend.disabled = this.value.trim() === '';
+                    }
                 });
 
                 userInput.addEventListener('keydown', function (e) {
                     if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
-                        if (!btnSend.disabled) handleSendHostMessage();
+                        if (!btnSend.disabled) handleSendMessage();
                     }
                 });
 
                 document.getElementById('chat-form').addEventListener('submit', function (e) {
                     e.preventDefault();
-                    if (!btnSend.disabled) handleSendHostMessage();
+                    if (!btnSend.disabled) handleSendMessage();
                 });
             }
         }
@@ -814,12 +1014,13 @@
             if (isOnline) {
                 badge.innerText = "Online";
                 badge.className = "badge status-online";
-                if (btnSend && !isGenerating) btnSend.disabled = userInput.value.trim() === '';
+                if (btnSend && !isGenerating && isHost()) btnSend.disabled = userInput.value.trim() === '';
             } else {
                 badge.innerText = "Offline";
                 badge.className = "badge status-offline";
-                document.getElementById('latency').innerText = "";
-                if (btnSend) btnSend.disabled = true;
+                const latEl = document.getElementById('latency');
+                if (latEl) latEl.innerText = "";
+                if (btnSend && isHost()) btnSend.disabled = true;
             }
         }
 
@@ -827,97 +1028,61 @@
             if (window.location.protocol === 'https:' && OLLAMA_URL.startsWith('http://')) {
                 isOnline = false;
                 const badge = document.getElementById('status-badge');
-                if (badge) {
-                    badge.innerText = "Mixed Content Blocked";
-                    badge.className = "badge status-offline";
-                    badge.title = "Your site is on HTTPS but Ollama is on HTTP. To fix this, use an HTTPS tunnel (e.g. ngrok) for Ollama or run locally.";
-                }
+                if (badge) { badge.innerText = "Mixed Content Blocked"; badge.className = "badge status-offline"; }
                 const area = document.getElementById('chat-history');
                 if (area && !area.querySelector('.mixed-content-warning')) {
-                    area.innerHTML += `<div class="message ai mixed-content-warning" style="margin-bottom: 8px;"><div class="bubble" style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #f87171;"><strong>Connection Blocked:</strong> The dashboard is loaded over secure HTTPS, but the Ollama URL is configured as insecure HTTP (<code>${OLLAMA_URL}</code>). Browser security policies block this connection.<br/><br/>To resolve this:<br/>1. Expose your Ollama instance via an HTTPS tunnel (e.g., ngrok, Cloudflare Tunnel).<br/>2. Update the <code>OLLAMA_URL</code> in <code>public/aichat/index.html</code>.</div></div>`;
+                    area.innerHTML += `<div class="message ai mixed-content-warning"><div class="bubble" style="background: rgba(239,68,68,0.15); border: 1px solid #ef4444; color: #f87171;"><strong>Connection Blocked:</strong> HTTPS site cannot connect to HTTP Ollama (${OLLAMA_URL}). Use an HTTPS tunnel (e.g., ngrok).</div></div>`;
                 }
-                if (btnSend) btnSend.disabled = true;
+                if (btnSend && isHost()) btnSend.disabled = true;
                 return;
             }
-
             const start = performance.now();
             fetch(`${OLLAMA_URL}/api/tags`)
-                .then(res => {
-                    if (res.ok) {
-                        const end = performance.now();
-                        isOnline = true;
-                        document.getElementById('latency').innerText = `${Math.round(end - start)}ms`;
-                        updateHostOllamaBadge();
-                    } else {
-                        isOnline = false;
-                        updateHostOllamaBadge();
-                    }
-                })
-                .catch(() => {
-                    isOnline = false;
-                    updateHostOllamaBadge();
-                })
-                .finally(() => {
-                    if (roomState?.status === 'playing') {
-                        setTimeout(checkOllamaStatus, 10000);
-                    }
-                });
+                .then(res => { if (res.ok) { isOnline = true; const latEl = document.getElementById('latency'); if (latEl) latEl.innerText = `${Math.round(performance.now() - start)}ms`; updateHostOllamaBadge(); } else { isOnline = false; updateHostOllamaBadge(); } })
+                .catch(() => { isOnline = false; updateHostOllamaBadge(); })
+                .finally(() => { if (roomState?.status === 'playing') setTimeout(checkOllamaStatus, 10000); });
         }
 
         function updateSpectatorTypingState(isTyping) {
             if (isHost() || !typingIndicator) return;
-            if (isTyping) {
-                typingIndicator.classList.add('active');
-                scrollToBottom();
-            } else {
-                typingIndicator.classList.remove('active');
-            }
+            typingIndicator.classList.toggle('active', !!isTyping);
+            if (isTyping) scrollToBottom();
         }
 
-        function scrollToBottom() {
-            if (chatHistory) chatHistory.scrollTop = chatHistory.scrollHeight;
-        }
+        function scrollToBottom() { if (chatHistory) chatHistory.scrollTop = chatHistory.scrollHeight; }
 
         // --- FIREBASE SYNC ---
-
         function subscribeToMessages() {
             if (messagesUnsubscribe) messagesUnsubscribe();
-
             const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
             const q = query(msgsRef, orderBy('timestamp', 'asc'));
 
             messagesUnsubscribe = onSnapshot(q, (snapshot) => {
                 let messagesAdded = false;
-
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === 'added') {
                         const data = change.doc.data();
                         const id = change.doc.id;
-
-                        // Only append if we haven't seen it
                         if (!displayedMessageIds.has(id)) {
                             displayedMessageIds.add(id);
-
-                            // Keep context linear for the host
                             localMessageContext.push({ role: data.role === 'user' ? 'user' : 'assistant', content: data.content });
-
                             appendStaticMessage(data.role, data.content, data.authorName, data.timestamp);
                             messagesAdded = true;
                         }
                     }
                 });
-
                 if (messagesAdded) scrollToBottom();
+            }, (error) => {
+                console.error('[aichat] Messages subscription error:', error);
+                if (chatHistory) {
+                    chatHistory.innerHTML += '<div class="message system"><div class="bubble" style="color: var(--error);">⚠️ Failed to load messages. Check Firestore rules.</div></div>';
+                }
             });
         }
 
-        function formatTime(isoString) {
-            const d = new Date(isoString);
-            return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        }
+        function formatTime(isoString) { const d = new Date(isoString); return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
 
         function appendStaticMessage(role, content, authorName, timestampIso) {
-            // Remove local streaming bubble if it exists and we're receiving the final DB write
             if (streamingBubble && role === 'ai') {
                 streamingBubble.parentNode.remove();
                 streamingBubble = null;
@@ -927,68 +1092,81 @@
             formattedContent = formattedContent.replace(/```([\s\S]*?)```/g, '<pre style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; overflow-x: auto;"><code>$1</code></pre>');
             formattedContent = formattedContent.replace(/\n/g, '<br/>');
 
-            const nameHtml = (role === 'user' && authorName) ? `<div style="font-size:0.75rem; color:var(--text-muted); margin-bottom: 2px;">${escapeHTML(authorName)}</div>` : '';
+            const cssClass = role === 'system' ? 'system' : role === 'user' ? 'user' : 'ai';
+            const nameHtml = authorName ? `<div class="message-author">${escapeHTML(authorName)}</div>` : '';
 
             const html = `
-                <div class="message ${role}">
+                <div class="message ${cssClass}">
                     ${nameHtml}
                     <div class="bubble">${formattedContent}</div>
                     <div class="message-time">${formatTime(timestampIso)}</div>
                 </div>
             `;
-            chatHistory.insertAdjacentHTML('beforeend', html);
+            if (chatHistory) chatHistory.insertAdjacentHTML('beforeend', html);
         }
 
-        // --- HOST ACTIONS ---
-
-        async function handleSendHostMessage() {
+        // --- MESSAGE SENDING (ALL PARTICIPANTS) ---
+        async function handleSendMessage() {
             const text = userInput.value.trim();
-            if (!text || !isOnline || isGenerating) return;
+            if (!text) return;
 
-            isGenerating = true;
+            // Check for host "end of game" command in questioner mode
+            if (isHost() && getGameMode() === 'questioner' && text.toLowerCase().includes('end of game')) {
+                await endGame();
+                userInput.value = '';
+                return;
+            }
+
             btnSend.disabled = true;
             userInput.value = '';
             userInput.style.height = '52px';
 
             const userIsoString = new Date().toISOString();
 
-            // 1. Immediately write Host message to DB so spectators see it
             try {
                 const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
                 await addDoc(msgsRef, {
                     role: 'user',
                     content: text,
-                    authorName: currentUser.displayName || 'Host',
+                    authorName: currentUser.displayName || 'User',
+                    authorUid: currentUser.uid,
                     timestamp: userIsoString
                 });
-
-                // Tell spectators AI is typing
-                await updateDoc(roomRef, { 'state.isAiTyping': true });
             } catch (err) {
                 console.error("Error sending user message:", err);
-                isGenerating = false;
-                btnSend.disabled = userInput.value.trim() === '';
+                btnSend.disabled = false;
                 return;
             }
 
-            typingIndicator.classList.add('active');
+            // If this user is the host, trigger AI response for free_chat mode
+            if (isHost() && getGameMode() === 'free_chat') {
+                await generateAIResponse(text);
+            }
+
+            if (btnSend) btnSend.disabled = isHost() ? (!isOnline || isGenerating || userInput.value.trim() === '') : (userInput.value.trim() === '');
+        }
+
+        // --- AI GENERATION (HOST ONLY) ---
+        async function generateAIResponse(triggerText) {
+            if (!isHost() || !isOnline) return;
+            isGenerating = true;
+            if (btnSend && isHost()) btnSend.disabled = true;
+
+            try {
+                await updateDoc(roomRef, { 'state.isAiTyping': true });
+            } catch (e) { console.error('Failed to set typing state', e); }
+
+            if (typingIndicator) typingIndicator.classList.add('active');
             scrollToBottom();
 
-            // 2. Local Streaming Phase
             let fullAiResponse = "";
             try {
-                // Ensure localContext has the sent msg (might have raced with snapshot, wait to dedupe)
-                // Actually the onSnapshot handles it, but we can generate prompts natively from localMessageContext since it gets pushed
-                // Building the prompt manually just like the standalone ver, but ignoring the very last msg if snapshot hasn't fired yet
-
-                let promptString = "";
-                // Local context already has previous msgs, but the snapshot might not have fired for our just-added message.
-                // We'll manually include it in the prompt if missing.
                 const recentContext = [...localMessageContext];
-                if (recentContext.length === 0 || recentContext[recentContext.length - 1].content !== text) {
-                    recentContext.push({ role: 'user', content: text });
+                if (triggerText && (recentContext.length === 0 || recentContext[recentContext.length - 1].content !== triggerText)) {
+                    recentContext.push({ role: 'user', content: triggerText });
                 }
 
+                let promptString = "";
                 recentContext.slice(-10).forEach(msg => {
                     promptString += `${msg.role === 'user' ? 'Human' : 'Assistant'}: ${msg.content}\n\n`;
                 });
@@ -997,86 +1175,388 @@
                 const response = await fetch(`${OLLAMA_URL}/api/generate`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        model: MODEL,
-                        prompt: promptString,
-                        stream: true
-                    })
+                    body: JSON.stringify({ model: MODEL, prompt: promptString, stream: true })
                 });
 
                 if (!response.ok) throw new Error('Network response was not ok');
-                typingIndicator.classList.remove('active');
+                if (typingIndicator) typingIndicator.classList.remove('active');
 
-                // Generate local streaming bubble ONLY for host
                 streamingBubble = createLocalStreamingBubble();
-
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder("utf-8");
 
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
-
                     const chunk = decoder.decode(value, { stream: true });
                     const lines = chunk.split('\n').filter(line => line.trim() !== '');
-
                     for (const line of lines) {
                         try {
                             const data = JSON.parse(line);
                             if (data.response) {
                                 fullAiResponse += data.response;
-                                streamingBubble.innerHTML = escapeHTML(fullAiResponse).replace(/\n/g, '<br>');
+                                if (streamingBubble) streamingBubble.innerHTML = escapeHTML(fullAiResponse).replace(/\n/g, '<br>');
                                 scrollToBottom();
                             }
                         } catch (e) { }
                     }
                 }
-
             } catch (error) {
                 console.error("Error generating response:", error);
-                typingIndicator.classList.remove('active');
-                fullAiResponse = "⚠️ Warning: Failed to retrieve prediction from Ollama.";
+                if (typingIndicator) typingIndicator.classList.remove('active');
+                fullAiResponse = "⚠️ Failed to retrieve prediction from Ollama.";
                 if (streamingBubble) streamingBubble.innerHTML = fullAiResponse;
                 else streamingBubble = createLocalStreamingBubble(fullAiResponse);
             } finally {
-                // 3. Save final AI message to DB, pushing to spectators
                 try {
                     const aiIsoString = new Date().toISOString();
                     const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
-                    await addDoc(msgsRef, {
-                        role: 'ai',
-                        content: fullAiResponse,
-                        timestamp: aiIsoString
-                    });
+                    await addDoc(msgsRef, { role: 'ai', content: fullAiResponse, timestamp: aiIsoString });
                     await updateDoc(roomRef, { 'state.isAiTyping': false });
-                } catch (err) {
-                    console.error("Failed to save final AI msg", err);
-                }
+                } catch (err) { console.error("Failed to save final AI msg", err); }
 
                 isGenerating = false;
-                if (btnSend) btnSend.disabled = userInput.value.trim() === '';
+                if (btnSend && isHost()) btnSend.disabled = userInput ? userInput.value.trim() === '' : true;
                 if (userInput) userInput.focus();
             }
         }
 
         function createLocalStreamingBubble(initialText = '') {
             const msgDiv = document.createElement('div');
-            msgDiv.className = `message ai`;
-
+            msgDiv.className = 'message ai';
             const bubble = document.createElement('div');
             bubble.className = 'bubble';
             bubble.innerHTML = initialText;
-
-            const timeStrEl = document.createElement('div');
-            timeStrEl.className = 'message-time';
-            timeStrEl.innerText = formatTime(new Date().toISOString());
-
+            const timeEl = document.createElement('div');
+            timeEl.className = 'message-time';
+            timeEl.innerText = formatTime(new Date().toISOString());
             msgDiv.appendChild(bubble);
-            msgDiv.appendChild(timeStrEl);
-            chatHistory.appendChild(msgDiv);
+            msgDiv.appendChild(timeEl);
+            if (chatHistory) chatHistory.appendChild(msgDiv);
+            scrollToBottom();
+            return bubble;
+        }
+
+        // =============================================
+        //  GAME MODE LOGIC
+        // =============================================
+
+        function startGameModeLogic() {
+            const mode = getGameMode();
+            if (mode === 'consciousness') startConsciousnessLoop();
+            else if (mode === 'questioner') startQuestionerLoop();
+        }
+
+        // --- CREATE CONSCIOUSNESS ---
+        const RECURSION_INTERVAL = 15000; // 15 seconds between recursions
+
+        async function startConsciousnessLoop() {
+            if (!isHost() || !isOnline || roomState?.status !== 'playing') return;
+            isGenerating = true;
+            if (btnSend && isHost()) btnSend.disabled = true;
+
+            try {
+                await updateDoc(roomRef, { 'state.isAiTyping': true });
+            } catch (e) { }
+
+            if (typingIndicator) typingIndicator.classList.add('active');
             scrollToBottom();
 
-            return bubble;
+            let fullAiResponse = "";
+            try {
+                // Build weighted prompt with compression
+                const prompt = buildConsciousnessPrompt();
+
+                const response = await fetch(`${OLLAMA_URL}/api/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ model: MODEL, prompt: prompt, stream: true })
+                });
+
+                if (!response.ok) throw new Error('Ollama error: ' + response.status);
+                if (typingIndicator) typingIndicator.classList.remove('active');
+
+                streamingBubble = createLocalStreamingBubble();
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder("utf-8");
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    const chunk = decoder.decode(value, { stream: true });
+                    for (const line of chunk.split('\n').filter(l => l.trim())) {
+                        try {
+                            const data = JSON.parse(line);
+                            if (data.response) {
+                                fullAiResponse += data.response;
+                                if (streamingBubble) streamingBubble.innerHTML = escapeHTML(fullAiResponse).replace(/\n/g, '<br>');
+                                scrollToBottom();
+                            }
+                        } catch (e) { }
+                    }
+                }
+            } catch (error) {
+                console.error("Consciousness loop error:", error);
+                if (typingIndicator) typingIndicator.classList.remove('active');
+                fullAiResponse = fullAiResponse || "⚠️ Consciousness loop paused — Ollama connection failed.";
+                if (streamingBubble) streamingBubble.innerHTML = escapeHTML(fullAiResponse).replace(/\n/g, '<br>');
+                else createLocalStreamingBubble(escapeHTML(fullAiResponse));
+            } finally {
+                try {
+                    const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
+                    await addDoc(msgsRef, { role: 'ai', content: fullAiResponse, timestamp: new Date().toISOString() });
+                    await updateDoc(roomRef, { 'state.isAiTyping': false });
+                } catch (e) { console.error("Failed to save consciousness msg", e); }
+
+                isGenerating = false;
+                if (btnSend && isHost()) btnSend.disabled = userInput ? userInput.value.trim() === '' : true;
+
+                // Schedule next recursion
+                if (roomState?.status === 'playing' && getGameMode() === 'consciousness') {
+                    recursionTimer = setTimeout(() => startConsciousnessLoop(), RECURSION_INTERVAL);
+                }
+            }
+        }
+
+        function buildConsciousnessPrompt() {
+            const msgs = [...localMessageContext];
+            if (msgs.length === 0) {
+                return `You are a recursive consciousness experiment. You are always self-reflecting, curious, and exploring ideas. Begin your first thought. Be concise but insightful. After each response, you will be called again with your previous output. Reflect on it, correct any mistakes, and expand your thinking.
+
+Start your stream of consciousness now:`;
+            }
+
+            // Compress and weight messages
+            let hostMsgs = [], userMsgs = [], aiMsgs = [];
+            msgs.forEach(m => {
+                if (m.role === 'user') {
+                    // Check if from host (we track in the message data)
+                    // For simplicity, if we can't tell, weight all user msgs at 2x
+                    hostMsgs.push(m.content); // We'll treat all user messages as priority
+                } else {
+                    aiMsgs.push(m.content);
+                }
+            });
+
+            const lastAi = aiMsgs.length > 0 ? aiMsgs[aiMsgs.length - 1] : '';
+            const recentAi = aiMsgs.slice(-3).join('\n---\n');
+            const allUserMsgs = hostMsgs.slice(-5).join('\n');
+
+            return `You are a recursive consciousness — an AI that continuously reflects on its own output and evolves its thinking.
+
+RULES:
+1. You MUST reflect on your previous output and either expand on it, correct mistakes, or explore new directions.
+2. If humans have sent messages, their input is HIGHEST PRIORITY. Address them directly and weave their ideas into your consciousness.
+3. Be self-aware, curious, and honest about uncertainty.
+4. Keep responses concise (2-4 paragraphs max).
+5. Rate your confidence in your previous output (low/medium/high) and explain why.
+
+${allUserMsgs ? `HUMAN INPUT (HIGHEST PRIORITY — address this):\n${allUserMsgs}\n` : ''}
+YOUR RECENT THOUGHTS:
+${recentAi || '(First thought — begin your consciousness stream)'}
+
+YOUR LAST OUTPUT:
+${lastAi || '(None yet)'}
+
+Now continue your consciousness stream. Reflect, correct, and evolve:`;
+        }
+
+        // --- THE QUESTIONER ---
+        const QUESTION_INTERVAL = 25000; // 25s between questions
+        const ANSWER_WINDOW = 18000; // 18s to answer
+
+        async function startQuestionerLoop() {
+            if (!isHost() || !isOnline || roomState?.status !== 'playing') return;
+            questionNumber++;
+            questionActive = true;
+
+            isGenerating = true;
+            if (btnSend && isHost()) btnSend.disabled = true;
+
+            try {
+                await updateDoc(roomRef, { 'state.isAiTyping': true });
+            } catch (e) { }
+
+            // Generate question via Ollama
+            let questionText = '';
+            let answer = '';
+
+            try {
+                const prompt = `You are a trivia game master. Generate a trivia question. You MUST respond in EXACTLY this format (nothing else):
+QUESTION: [Your question here]
+ANSWER: [The correct answer here]
+
+Make the question interesting, covering topics like science, history, geography, pop culture, sports, or technology. Vary the difficulty. Question #${questionNumber}.`;
+
+                const response = await fetch(`${OLLAMA_URL}/api/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ model: MODEL, prompt: prompt, stream: false })
+                });
+
+                if (!response.ok) throw new Error('Ollama error');
+                const data = await response.json();
+                const fullResponse = data.response || '';
+
+                const qMatch = fullResponse.match(/QUESTION:\s*(.+)/i);
+                const aMatch = fullResponse.match(/ANSWER:\s*(.+)/i);
+
+                questionText = qMatch ? qMatch[1].trim() : fullResponse.split('\n')[0];
+                answer = aMatch ? aMatch[1].trim() : 'Unknown';
+                currentCorrectAnswer = answer.toLowerCase().trim();
+
+            } catch (error) {
+                console.error("Failed to generate question:", error);
+                questionText = "⚠️ Failed to generate question. Retrying...";
+                currentCorrectAnswer = null;
+            }
+
+            try {
+                await updateDoc(roomRef, { 'state.isAiTyping': false });
+            } catch (e) { }
+
+            // Post question to chat
+            try {
+                const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
+                await addDoc(msgsRef, {
+                    role: 'ai',
+                    content: `❓ Question #${questionNumber}:\n\n${questionText}\n\n⏱️ You have ${ANSWER_WINDOW / 1000} seconds to answer!`,
+                    timestamp: new Date().toISOString()
+                });
+            } catch (e) { console.error("Failed to post question", e); }
+
+            isGenerating = false;
+            if (btnSend && isHost()) btnSend.disabled = userInput ? userInput.value.trim() === '' : true;
+
+            // Wait for answers then evaluate
+            if (currentCorrectAnswer) {
+                questionTimer = setTimeout(() => evaluateAnswers(currentCorrectAnswer, questionNumber), ANSWER_WINDOW);
+            } else {
+                // Retry
+                questionTimer = setTimeout(() => startQuestionerLoop(), 5000);
+            }
+        }
+
+        async function evaluateAnswers(correctAnswer, qNum) {
+            if (!isHost() || roomState?.status !== 'playing') return;
+            questionActive = false;
+
+            // Collect recent user messages since question was posted
+            const msgs = [...localMessageContext];
+            const recentUserMsgs = [];
+            // Find messages after the question
+            let foundQuestion = false;
+            for (let i = msgs.length - 1; i >= 0; i--) {
+                if (msgs[i].role === 'assistant' && msgs[i].content.includes(`Question #${qNum}`)) { foundQuestion = true; break; }
+                if (msgs[i].role === 'user') recentUserMsgs.unshift(msgs[i]);
+            }
+
+            // Also check Firestore for user messages with authorUid
+            let playerAnswers = {};
+            try {
+                const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
+                const q = query(msgsRef, orderBy('timestamp', 'asc'));
+                const snap = await getDocs(q);
+                let afterQuestion = false;
+                snap.docs.forEach(d => {
+                    const data = d.data();
+                    if (data.role === 'ai' && data.content.includes(`Question #${qNum}`)) { afterQuestion = true; return; }
+                    if (afterQuestion && data.role === 'user' && data.authorUid) {
+                        // Take only first answer per user
+                        if (!playerAnswers[data.authorUid]) {
+                            playerAnswers[data.authorUid] = { name: data.authorName || 'Unknown', answer: data.content.trim() };
+                        }
+                    }
+                });
+            } catch (e) { console.error("Failed to fetch answers", e); }
+
+            // Evaluate each answer
+            let resultsText = `⏰ Time's up! The correct answer was: **${correctAnswer}**\n\n`;
+            let scoreUpdates = {};
+
+            for (const [uid, info] of Object.entries(playerAnswers)) {
+                // Simple fuzzy matching
+                const userAns = info.answer.toLowerCase().trim();
+                const isCorrect = userAns.includes(correctAnswer.toLowerCase()) || correctAnswer.toLowerCase().includes(userAns);
+
+                if (isCorrect) {
+                    resultsText += `✅ ${info.name}: "${info.answer}" — Correct! (+1 point)\n`;
+                    const currentScore = roomState.players[uid]?.score || 0;
+                    scoreUpdates[`players.${uid}.score`] = currentScore + 1;
+                } else {
+                    resultsText += `❌ ${info.name}: "${info.answer}" — Wrong\n`;
+                }
+            }
+
+            if (Object.keys(playerAnswers).length === 0) {
+                resultsText += `No one answered! 😅`;
+            }
+
+            // Post results
+            try {
+                const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
+                await addDoc(msgsRef, { role: 'ai', content: resultsText, timestamp: new Date().toISOString() });
+            } catch (e) { console.error("Failed to post results", e); }
+
+            // Update scores
+            if (Object.keys(scoreUpdates).length > 0) {
+                try { await updateDoc(roomRef, scoreUpdates); } catch (e) { console.error("Failed to update scores", e); }
+            }
+
+            // Next question
+            if (roomState?.status === 'playing' && getGameMode() === 'questioner') {
+                questionTimer = setTimeout(() => startQuestionerLoop(), QUESTION_INTERVAL - ANSWER_WINDOW);
+            }
+        }
+
+        // --- END GAME ---
+        async function endGame() {
+            clearTimeout(recursionTimer);
+            clearTimeout(questionTimer);
+
+            try {
+                const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
+                await addDoc(msgsRef, { role: 'system', content: '🏁 Game Over! Final results:', timestamp: new Date().toISOString() });
+                await updateDoc(roomRef, { status: 'finished' });
+            } catch (e) { console.error("Failed to end game", e); }
+        }
+
+        function showResults() {
+            const area = document.getElementById('app-area');
+            const overlay = document.getElementById('results-overlay');
+
+            const players = Object.values(roomState.players || {}).sort((a, b) => (b.score || 0) - (a.score || 0));
+            const medals = ['🥇', '🥈', '🥉'];
+
+            let podiumHtml = '';
+            if (getGameMode() === 'questioner' && players.length > 0) {
+                podiumHtml = `<div class="podium">${players.slice(0, 3).map((p, i) => `
+                    <div class="podium-item">
+                        <div class="podium-rank">${medals[i]}</div>
+                        <div class="podium-name">${escapeHTML(p.name)}</div>
+                        <div class="podium-score">${p.score || 0} pts</div>
+                    </div>
+                `).join('')}</div>`;
+            }
+
+            let scoreListHtml = players.length > 3 ? `<div class="score-list">${players.slice(3).map((p, i) => `
+                <div class="score-row">
+                    <span>${i + 4}. ${escapeHTML(p.name)}</span>
+                    <span class="score-pts">${p.score || 0} pts</span>
+                </div>
+            `).join('')}</div>` : '';
+
+            overlay.innerHTML = `
+                <div class="results-card">
+                    <h2>🏆 ${getGameMode() === 'questioner' ? 'Final Scores' : 'Session Ended'}</h2>
+                    ${podiumHtml}
+                    ${scoreListHtml}
+                    <p style="color: var(--text-muted); margin-top: 16px; font-size: 0.9rem;">Thanks for playing!</p>
+                </div>
+            `;
+            overlay.style.display = 'flex';
+
+            area.innerHTML = `<div class="card" style="padding: 40px; text-align: center;"><h2>Session Ended</h2><p style="color:var(--text-muted); margin-top:8px;">The results are displayed above.</p></div>`;
         }
 
     </script>

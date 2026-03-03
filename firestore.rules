@@ -145,6 +145,12 @@ service cloud.firestore {
       );
       allow delete: if isOwner(resource.data.hostUid) || isSuperUser();
 
+      // Messages subcollection for AI Chat
+      match /messages/{messageId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn();
+      }
+
       match /answers/{answerId} {
         allow read: if isSignedIn();
         allow write: if isSignedIn() && request.resource.data.uid == request.auth.uid;
