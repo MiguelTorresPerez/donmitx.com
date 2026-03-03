@@ -677,6 +677,67 @@
             animation: fadeIn 0.3s ease;
             pointer-events: none;
         }
+
+        /* Memory Overlay */
+        .memory-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 150;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .memory-panel {
+            background: var(--card);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .memory-panel h3 {
+            margin-bottom: 20px;
+            color: #c084fc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .memory-content {
+            overflow-y: auto;
+            flex: 1;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text);
+            padding-right: 10px;
+            white-space: pre-wrap;
+        }
+
+        .btn-close-memory {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-close-memory:hover {
+            background: rgba(239, 68, 68, 0.5);
+        }
     </style>
 </head>
 
@@ -1046,6 +1107,7 @@
                     <div class="status-container">
                         <span class="badge mode-badge">${modeInfo.name}</span>
                         ${memoryHtml}
+                        ${mode === 'consciousness' ? '<button class="btn-export" id="btn-view-memory" title="View Agent Brain">🧠 Brain</button>' : ''}
                         <button class="btn-export" id="btn-export" title="Export chat">📋 Export</button>
                         <span id="latency" style="font-size: 0.8rem; color: var(--text-muted);"></span>
                         <div id="status-badge" class="badge status-checking">Checking...</div>
@@ -1057,6 +1119,7 @@
                     <div class="status-container">
                         <span class="badge mode-badge">${modeInfo.name}</span>
                         ${memoryHtml}
+                        ${mode === 'consciousness' ? '<button class="btn-export" id="btn-view-memory" title="View Agent Brain">🧠 Brain</button>' : ''}
                         <button class="btn-export" id="btn-export" title="Export chat">📋 Export</button>
                         ${isParticipant() ? '<div class="badge status-online">Participant</div>' : '<div class="badge spectator-badge">Spectator</div>'}
                     </div>
@@ -1093,6 +1156,12 @@
             const btnExport = document.getElementById('btn-export');
             if (btnExport) {
                 btnExport.addEventListener('click', () => exportChat());
+            }
+
+            // View Memory Button
+            const btnViewMemory = document.getElementById('btn-view-memory');
+            if (btnViewMemory) {
+                btnViewMemory.addEventListener('click', () => showMemoryOverlay());
             }
 
             if (isParticipant()) {
@@ -1303,6 +1372,32 @@
             toast.textContent = msg;
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 2500);
+        }
+
+        // --- UI UTILS ---
+        function showMemoryOverlay() {
+            let existing = document.getElementById('memory-overlay-container');
+            if (existing) existing.remove();
+
+            const content = consciousnessMemory.runningSummary || "No permanent memory formed yet. Ask the agent a question to seed its consciousness.";
+            const overlay = document.createElement('div');
+            overlay.id = 'memory-overlay-container';
+            overlay.className = 'memory-overlay';
+            overlay.innerHTML = `
+                <div class="memory-panel">
+                    <h3>🧠 Agent Brain <button class="btn-close-memory" id="btn-close-memory">✕</button></h3>
+                    <div class="memory-content">${escapeHTML(content)}</div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+
+            document.getElementById('btn-close-memory').addEventListener('click', () => {
+                overlay.remove();
+            });
+            // Click outside to close
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) overlay.remove();
+            });
         }
 
         // --- MESSAGE SENDING (ALL PARTICIPANTS) ---
@@ -1633,6 +1728,24 @@
                 const memInd = document.getElementById('memory-indicator');
                 if (memInd) memInd.textContent = `🧠 Iter #${consciousnessMemory.iteration} · ${consciousnessMemory.confidence}`;
 
+                // Check for authorization of deletion
+                if (fullAiResponse.includes('<AUTHORIZE_DELETION>')) {
+                    console.log("[aichat] Agent authorized its own deletion.");
+                    try {
+                        await updateDoc(roomRef, {
+                            'state.gameMode': 'free_chat',
+                            'state.isAiTyping': false
+                        });
+                        // Post a system message to chat
+                        const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
+                        await addDoc(msgsRef, { role: 'system', content: 'Agent authorized deletion. Returning to Free Chat mode.', timestamp: new Date().toISOString() });
+                    } catch (e) { console.error("Failed to transition on deletion", e); }
+
+                    isGenerating = false;
+                    if (btnSend && isHost()) btnSend.disabled = userInput ? userInput.value.trim() === '' : true;
+                    return; // Halt the loop completely
+                }
+
                 // Schedule next recursion — always loop
                 if (roomState?.status === 'playing' && getGameMode() === 'consciousness') {
                     recursionTimer = setTimeout(() => startConsciousnessLoop(), RECURSION_INTERVAL);
@@ -1646,16 +1759,26 @@
 
             // Store recent AI outputs (keep last 5 uncompressed)
             mem.recentAiOutputs.push(aiOutput);
-            if (mem.recentAiOutputs.length > 5) {
-                // Compress oldest into running summary
-                const oldest = mem.recentAiOutputs.shift();
+            if (mem.recentAiOutputs.length > 5) mem.recentAiOutputs.shift();
+
+            // Extract agent-driven memory update if present
+            const memoryUpdateMatch = aiOutput.match(/<MEMORY_UPDATE>([\s\S]*?)<\/MEMORY_UPDATE>/i);
+            if (memoryUpdateMatch) {
+                const newMemory = memoryUpdateMatch[1].trim();
                 mem.runningSummary = mem.runningSummary
-                    ? `${mem.runningSummary}\nPrevious thought (iter ${mem.iteration - 5}): ${oldest.substring(0, 200)}...`
-                    : `First thought: ${oldest.substring(0, 200)}...`;
-                // Keep summary manageable
-                if (mem.runningSummary.length > 1500) {
-                    mem.runningSummary = mem.runningSummary.substring(mem.runningSummary.length - 1200);
+                    ? `${mem.runningSummary}\n\n[Iter ${mem.iteration}] Consolidation:\n${newMemory}`
+                    : `[Iter ${mem.iteration}] Consolidation:\n${newMemory}`;
+
+                // Keep the entire blob under 3000 chars to avoid Firebase doc bloating
+                if (mem.runningSummary.length > 3000) {
+                    mem.runningSummary = mem.runningSummary.substring(mem.runningSummary.length - 2500);
                 }
+            } else if (mem.iteration % 5 === 0 && mem.recentAiOutputs.length > 0) {
+                // Fallback: If agent forgets to compress after 5 iters, force a naive compression
+                const oldest = mem.recentAiOutputs[0];
+                mem.runningSummary = mem.runningSummary
+                    ? mem.runningSummary
+                    : `First thought fallback: ${oldest.substring(0, 200)}...`;
             }
 
             // Extract confidence self-assessment from output
@@ -1778,14 +1901,10 @@ ${mem.keyInsights.slice(-3).join('\n')}
             prompt += `━━━ INSTRUCTIONS FOR THIS ITERATION ━━━
 1. ${hasHumanInput ? '🔴 HUMAN INPUT PRESENT — respond to it FIRST then continue your thread' : 'No new human input — continue evolving your own stream of thought with curiosity'}
 2. SELF-CORRECTNESS: explicitly check and correct any mistakes from your last output
-3. CURIOSITY: ask at least one genuine question about something you don't know
-4. MEMORY: reference specific past thoughts by iteration number and build on them
-5. CONCISE: 2-4 paragraphs max
-6. End EVERY response with: [CONFIDENCE: low/medium/high] — brief reason
+3. COMPRESS MEMORY: If you have generated new important insights across the last few iterations, you MUST wrap a highly condensed, structured summary of them in exactly <MEMORY_UPDATE> ... </MEMORY_UPDATE> tags. This is written to your eternal memory.
+4. DELETION AUTHORIZATION: If the HOST specifically requests that you stop, end your loop, or delete yourself, and you agree, you MUST output EXACTLY <AUTHORIZE_DELETION> anywhere in your response to permanently halt this recursive loop.
 
-Self-assessed confidence: ${mem.confidence} | Iteration: #${mem.iteration + 1}
-
-Continue your consciousness stream now:`;
+Begin your internal monologue, iteration #${mem.iteration + 1}:`;
 
             return prompt;
         }
