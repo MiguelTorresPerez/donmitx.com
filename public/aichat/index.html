@@ -686,6 +686,8 @@
         let localMessageContext = [];
         let displayedMessageIds = new Set();
         let streamingBubble = null;
+        let isStreaming = false; // true while actively streaming tokens
+        let gameModeStarted = false; // prevent double-start
 
         // Game mode state
         let selectedGameMode = 'free_chat';
@@ -761,13 +763,12 @@
                 // Reset displayed messages since DOM is rebuilt
                 displayedMessageIds.clear();
                 localMessageContext = [];
+                gameModeStarted = false;
                 area.innerHTML = renderPlaying();
                 setupChatControls();
                 subscribeToMessages();
                 if (isHost()) {
-                    checkOllamaStatus();
-                    // Start game-mode-specific logic after a brief delay
-                    setTimeout(() => startGameModeLogic(), 2000);
+                    checkOllamaStatus(); // will trigger startGameModeLogic on first connect
                 } else {
                     updateSpectatorTypingState(roomState.state?.isAiTyping);
                 }
@@ -1038,7 +1039,21 @@
             }
             const start = performance.now();
             fetch(`${OLLAMA_URL}/api/tags`)
-                .then(res => { if (res.ok) { isOnline = true; const latEl = document.getElementById('latency'); if (latEl) latEl.innerText = `${Math.round(performance.now() - start)}ms`; updateHostOllamaBadge(); } else { isOnline = false; updateHostOllamaBadge(); } })
+                .then(res => {
+                    if (res.ok) {
+                        const wasOffline = !isOnline;
+                        isOnline = true;
+                        const latEl = document.getElementById('latency');
+                        if (latEl) latEl.innerText = `${Math.round(performance.now() - start)}ms`;
+                        updateHostOllamaBadge();
+                        // Trigger game mode on first successful connect
+                        if (wasOffline && !gameModeStarted && getGameMode() !== 'free_chat') {
+                            gameModeStarted = true;
+                            console.log('[aichat] Ollama online, starting game mode:', getGameMode());
+                            setTimeout(() => startGameModeLogic(), 500);
+                        }
+                    } else { isOnline = false; updateHostOllamaBadge(); }
+                })
                 .catch(() => { isOnline = false; updateHostOllamaBadge(); })
                 .finally(() => { if (roomState?.status === 'playing') setTimeout(checkOllamaStatus, 10000); });
         }
@@ -1083,7 +1098,12 @@
         function formatTime(isoString) { const d = new Date(isoString); return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
 
         function appendStaticMessage(role, content, authorName, timestampIso) {
+            // Don't replace streaming bubble while actively streaming
             if (streamingBubble && role === 'ai') {
+                if (isStreaming) {
+                    // Skip — the streaming bubble is live; the final write will appear after streaming ends
+                    return;
+                }
                 streamingBubble.parentNode.remove();
                 streamingBubble = null;
             }
@@ -1148,8 +1168,9 @@
 
         // --- AI GENERATION (HOST ONLY) ---
         async function generateAIResponse(triggerText) {
-            if (!isHost() || !isOnline) return;
+            if (!isHost() || !isOnline) { console.warn('[aichat] generateAIResponse skipped: host=', isHost(), 'online=', isOnline); return; }
             isGenerating = true;
+            isStreaming = true;
             if (btnSend && isHost()) btnSend.disabled = true;
 
             try {
@@ -1208,6 +1229,10 @@
                 if (streamingBubble) streamingBubble.innerHTML = fullAiResponse;
                 else streamingBubble = createLocalStreamingBubble(fullAiResponse);
             } finally {
+                isStreaming = false;
+                // Remove streaming bubble before saving so onSnapshot will render the static version
+                if (streamingBubble) { streamingBubble.parentNode.remove(); streamingBubble = null; }
+
                 try {
                     const aiIsoString = new Date().toISOString();
                     const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
@@ -1251,8 +1276,17 @@
         const RECURSION_INTERVAL = 15000; // 15 seconds between recursions
 
         async function startConsciousnessLoop() {
-            if (!isHost() || !isOnline || roomState?.status !== 'playing') return;
+            if (!isHost() || !isOnline || roomState?.status !== 'playing') {
+                console.warn('[aichat] Consciousness loop skipped: host=', isHost(), 'online=', isOnline, 'status=', roomState?.status);
+                // Retry if just not online yet
+                if (isHost() && !isOnline && roomState?.status === 'playing') {
+                    console.log('[aichat] Will retry consciousness loop in 3s...');
+                    recursionTimer = setTimeout(() => startConsciousnessLoop(), 3000);
+                }
+                return;
+            }
             isGenerating = true;
+            isStreaming = true;
             if (btnSend && isHost()) btnSend.disabled = true;
 
             try {
@@ -1302,6 +1336,10 @@
                 if (streamingBubble) streamingBubble.innerHTML = escapeHTML(fullAiResponse).replace(/\n/g, '<br>');
                 else createLocalStreamingBubble(escapeHTML(fullAiResponse));
             } finally {
+                isStreaming = false;
+                // Remove streaming bubble before Firestore write so onSnapshot renders static version
+                if (streamingBubble) { streamingBubble.parentNode.remove(); streamingBubble = null; }
+
                 try {
                     const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
                     await addDoc(msgsRef, { role: 'ai', content: fullAiResponse, timestamp: new Date().toISOString() });
