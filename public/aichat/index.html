@@ -688,6 +688,7 @@
         let streamingBubble = null;
         let isStreaming = false; // true while actively streaming tokens
         let gameModeStarted = false; // prevent double-start
+        let currentRenderedStatus = null; // guard against double-render for same status
 
         // Game mode state
         let selectedGameMode = 'free_chat';
@@ -728,10 +729,10 @@
                     return;
                 }
 
-                const oldStatus = roomState?.status;
                 roomState = snapshot.data();
 
-                if (oldStatus !== roomState.status) {
+                if (currentRenderedStatus !== roomState.status) {
+                    currentRenderedStatus = roomState.status;
                     render();
                 }
 
@@ -763,7 +764,6 @@
                 // Reset displayed messages since DOM is rebuilt
                 displayedMessageIds.clear();
                 localMessageContext = [];
-                gameModeStarted = false;
                 area.innerHTML = renderPlaying();
                 setupChatControls();
                 subscribeToMessages();
@@ -1163,6 +1163,12 @@
                 await generateAIResponse(text);
             }
 
+            // In consciousness mode, if a user message arrives while idle, schedule a faster recursion
+            if (isHost() && getGameMode() === 'consciousness' && !isGenerating) {
+                clearTimeout(recursionTimer);
+                recursionTimer = setTimeout(() => startConsciousnessLoop(), 2000);
+            }
+
             if (btnSend) btnSend.disabled = isHost() ? (!isOnline || isGenerating || userInput.value.trim() === '') : (userInput.value.trim() === '');
         }
 
@@ -1230,8 +1236,6 @@
                 else streamingBubble = createLocalStreamingBubble(fullAiResponse);
             } finally {
                 isStreaming = false;
-                // Remove streaming bubble before saving so onSnapshot will render the static version
-                if (streamingBubble) { streamingBubble.parentNode.remove(); streamingBubble = null; }
 
                 try {
                     const aiIsoString = new Date().toISOString();
@@ -1239,6 +1243,9 @@
                     await addDoc(msgsRef, { role: 'ai', content: fullAiResponse, timestamp: aiIsoString });
                     await updateDoc(roomRef, { 'state.isAiTyping': false });
                 } catch (err) { console.error("Failed to save final AI msg", err); }
+
+                // Remove streaming bubble AFTER Firestore write so onSnapshot renders the static version seamlessly
+                if (streamingBubble) { streamingBubble.parentNode.remove(); streamingBubble = null; }
 
                 isGenerating = false;
                 if (btnSend && isHost()) btnSend.disabled = userInput ? userInput.value.trim() === '' : true;
@@ -1337,14 +1344,15 @@
                 else createLocalStreamingBubble(escapeHTML(fullAiResponse));
             } finally {
                 isStreaming = false;
-                // Remove streaming bubble before Firestore write so onSnapshot renders static version
-                if (streamingBubble) { streamingBubble.parentNode.remove(); streamingBubble = null; }
 
                 try {
                     const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
                     await addDoc(msgsRef, { role: 'ai', content: fullAiResponse, timestamp: new Date().toISOString() });
                     await updateDoc(roomRef, { 'state.isAiTyping': false });
                 } catch (e) { console.error("Failed to save consciousness msg", e); }
+
+                // Remove streaming bubble AFTER Firestore write so onSnapshot renders the static version seamlessly
+                if (streamingBubble) { streamingBubble.parentNode.remove(); streamingBubble = null; }
 
                 isGenerating = false;
                 if (btnSend && isHost()) btnSend.disabled = userInput ? userInput.value.trim() === '' : true;
