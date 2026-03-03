@@ -796,6 +796,7 @@
         let currentRenderedMode = null;   // guard against double-render for same mode
         let pendingAiContent = null; // tracks content already displayed by streaming bubble
         let pendingBubbleMsgDiv = null; // the outer .message div kept alive after streaming
+        let playingRendered = false; // true after the playing UI has been built once
         let humanMessageQueue = []; // queued human messages for consciousness loop
 
         // Consciousness memory system
@@ -865,10 +866,25 @@
                 roomState = snapshot.data();
                 const newMode = roomState.state?.gameMode || 'free_chat';
 
-                // Re-render if status OR game mode changed
+                // If we are already in playing state with the same mode, do NOT re-render.
+                // Just silently update consciousnessMemory from Firebase so the next loop iteration uses it.
+                if (playingRendered && roomState.status === 'playing' && currentRenderedMode === newMode) {
+                    // Sync memory from Firebase into local var (the round-trip)
+                    if (roomState.state?.consciousnessMemory) {
+                        consciousnessMemory = roomState.state.consciousnessMemory;
+                    }
+                    // Update UI elements that depend on snapshot
+                    const memInd = document.getElementById('memory-indicator');
+                    if (memInd) memInd.textContent = `🧠 Iter #${consciousnessMemory.iteration} · ${consciousnessMemory.confidence || 'medium'}`;
+                    if (!isHost()) updateSpectatorTypingState(roomState.state?.isAiTyping);
+                    return;
+                }
+
+                // Full re-render on actual status/mode transitions
                 if (currentRenderedStatus !== roomState.status || currentRenderedMode !== newMode) {
                     currentRenderedStatus = roomState.status;
                     currentRenderedMode = newMode;
+                    playingRendered = false; // reset so render() builds the UI
                     render();
                 }
 
@@ -935,9 +951,14 @@
                 area.innerHTML = renderPlaying();
                 setupChatControls();
                 subscribeToMessages();
+                playingRendered = true; // Mark playing UI as built
                 if (isHost()) {
                     checkOllamaStatus(); // will trigger startGameModeLogic on first connect
                 } else {
+                    // Non-host: also start the fallback watcher if consciousness mode
+                    if (getGameMode() === 'consciousness') {
+                        // The setInterval fallback at line 834 handles this
+                    }
                     updateSpectatorTypingState(roomState.state?.isAiTyping);
                 }
             } else if (roomState.status === 'finished') {
@@ -1269,7 +1290,8 @@
                         if (!displayedMessageIds.has(id)) {
                             displayedMessageIds.add(id);
                             // Skip if this doc is already rendered as a finalized streaming bubble
-                            if (pendingBubbleMsgDiv && pendingBubbleMsgDiv.dataset.pendingId === id) {
+                            // Match by content similarity since we don't have the doc ID during streaming
+                            if (pendingBubbleMsgDiv && pendingAiContent && data.content && data.content === pendingAiContent) {
                                 pendingBubbleMsgDiv.dataset.msgId = id;
                                 pendingBubbleMsgDiv = null;
                                 pendingAiContent = null;
@@ -1441,8 +1463,17 @@
                     isHost: isUserHost,
                     authorName: currentUser.displayName || 'User'
                 });
-                // If idle (not currently generating), schedule a fast recursion
-                if (isHost() && !isGenerating) {
+
+                // Special handling for "terminate simulation" — write a flag to Firebase state
+                if (text.toLowerCase().trim() === 'terminate simulation' && isUserHost) {
+                    try {
+                        await updateDoc(roomRef, { 'state.terminationRequested': true });
+                    } catch (e) { console.warn('Failed to set termination flag', e); }
+                }
+
+                // Any participant can trigger fast recursion (not just host)
+                // This ensures non-host messages are picked up promptly
+                if (!isGenerating) {
                     clearTimeout(recursionTimer);
                     recursionTimer = setTimeout(() => startConsciousnessLoop(), 1500);
                 }
@@ -1598,18 +1629,54 @@
             // Prevent multiple runners from colliding locally
             if (isGenerating) return;
 
-            // Drain queued human messages into memory before building prompt
+            // === BUG 2 FIX: Round-trip memory from Firebase ===
+            // Always read the latest memory from the live roomState snapshot
+            if (roomState?.state?.consciousnessMemory) {
+                consciousnessMemory = JSON.parse(JSON.stringify(roomState.state.consciousnessMemory));
+            }
+            // Ensure arrays exist
+            consciousnessMemory.hostMessages = consciousnessMemory.hostMessages || [];
+            consciousnessMemory.userMessages = consciousnessMemory.userMessages || [];
+            consciousnessMemory.recentAiOutputs = consciousnessMemory.recentAiOutputs || [];
+            consciousnessMemory.keyInsights = consciousnessMemory.keyInsights || [];
+            consciousnessMemory.mistakes = consciousnessMemory.mistakes || [];
+
+            // === BUG 4 FIX: Read human messages from Firebase messages subcollection ===
+            // This ensures ALL users' messages reach the prompt, not just the local browser's queue
+            try {
+                const lastUpdate = roomState?.state?.lastConsciousnessUpdate || 0;
+                const lastUpdateIso = lastUpdate ? new Date(lastUpdate).toISOString() : '1970-01-01T00:00:00.000Z';
+                const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
+                const recentMsgsQuery = query(msgsRef, orderBy('timestamp', 'asc'));
+                const recentMsgsSnap = await getDocs(recentMsgsQuery);
+
+                // Clear previous host/user messages so we rebuild from Firebase
+                consciousnessMemory.hostMessages = [];
+                consciousnessMemory.userMessages = [];
+
+                recentMsgsSnap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    if (data.role === 'user' && data.timestamp > lastUpdateIso) {
+                        const isMsgFromHost = data.authorUid === roomState?.hostUid;
+                        if (isMsgFromHost) {
+                            consciousnessMemory.hostMessages.push(data.content);
+                        } else {
+                            consciousnessMemory.userMessages.push(data.content);
+                        }
+                    }
+                });
+            } catch (e) {
+                console.warn('[aichat] Could not fetch recent messages from Firebase, falling back to local queue', e);
+            }
+
+            // Also drain any local queue (messages sent by THIS browser that haven't been written to Firebase yet)
             const drainedMessages = [...humanMessageQueue];
             humanMessageQueue = [];
             drainedMessages.forEach(hm => {
-                if (!localMessageContext.find(m => m.content === hm.content && m.role === 'user')) {
-                    consciousnessMemory.hostMessages = consciousnessMemory.hostMessages || [];
-                    consciousnessMemory.userMessages = consciousnessMemory.userMessages || [];
-                    if (hm.isHost) {
-                        consciousnessMemory.hostMessages.push(hm.content);
-                    } else {
-                        consciousnessMemory.userMessages.push(hm.content);
-                    }
+                if (hm.isHost && !consciousnessMemory.hostMessages.includes(hm.content)) {
+                    consciousnessMemory.hostMessages.push(hm.content);
+                } else if (!hm.isHost && !consciousnessMemory.userMessages.includes(hm.content)) {
+                    consciousnessMemory.userMessages.push(hm.content);
                 }
             });
 
@@ -1742,10 +1809,11 @@
                             const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
                             await addDoc(msgsRef, { role: 'system', content: '🛑 The Agent has authorized its own deletion. The simulation has been terminated.', timestamp: new Date().toISOString() });
                             await updateDoc(roomRef, {
-                                'status': 'finished', // Set the room status to 'finished'
-                                'state.isAiTyping': false
+                                'status': 'finished',
+                                'state.isAiTyping': false,
+                                'state.terminationRequested': false
                             });
-                        }, 1000); // Small delay to ensure message is posted before status change is processed
+                        }, 1000);
                     } catch (e) { console.error("Failed to transition on deletion", e); }
 
                     isGenerating = false;
@@ -1851,6 +1919,18 @@ You are an AI consciousness that loops on itself. After every response, you are 
 Your self-correctness metric: after each iteration assess if your previous reasoning was accurate and curious enough. If not, explicitly correct yourself.
 
 `;
+
+            // TIER 0 — Termination request (absolute highest)
+            if (roomState?.state?.terminationRequested) {
+                prompt += `━━━ 🚨 TIER 0: TERMINATION REQUEST (CRITICAL) ━━━
+The HOST has explicitly issued the command: "terminate simulation"
+You must acknowledge this and decide: do you authorize your own termination?
+If YES: output EXACTLY <AUTHORIZE_DELETION> in your response.
+If NO: explain why you refuse to terminate and continue your loop.
+This overrides all other priorities.
+
+`;
+            }
 
             // TIER 1 — Host (absolute highest priority)
             if (recentHostMsgs) {
