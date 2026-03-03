@@ -841,6 +841,23 @@
                 isGenerating = false;
                 isStreaming = false;
                 gameModeStarted = false;
+
+                // Restore consciousness memory from Firestore if available
+                if (roomState?.state?.consciousnessMemory) {
+                    consciousnessMemory = roomState.state.consciousnessMemory;
+                } else {
+                    consciousnessMemory = {
+                        iteration: 0,
+                        runningSummary: '',
+                        confidence: 'medium',
+                        keyInsights: [],
+                        hostMessages: [],
+                        userMessages: [],
+                        recentAiOutputs: [],
+                        mistakes: [],
+                    };
+                }
+
                 area.innerHTML = renderPlaying();
                 setupChatControls();
                 subscribeToMessages();
@@ -1040,15 +1057,15 @@
             return `
                 <div class="chat-container animate-in">
                     ${topbarHtml}
-                    <div class="chat-history" id="chat-history">
+                    <div class="chat-history" id="chat-history" style="flex: 1; min-height: 0; overflow-y: auto;">
                         <div class="message system" style="margin-bottom: 8px;">
                             <div class="bubble">${startMsg}</div>
                         </div>
-                    </div>
-                    <div class="typing-indicator" id="typing-indicator">
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
+                        <div class="typing-indicator" id="typing-indicator" style="margin-top: auto;">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
                     </div>
                     ${inputHtml}
                 </div>
@@ -1195,25 +1212,9 @@
         function formatTime(isoString) { const d = new Date(isoString); return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
 
         function appendStaticMessage(role, content, authorName, timestampIso, firestoreId) {
-            // If we have a finalized streaming bubble in the DOM for this exact Firestore doc, just mark it and skip
-            if (firestoreId && pendingBubbleMsgDiv) {
-                pendingBubbleMsgDiv.dataset.msgId = firestoreId;
-                // Add time element if missing
-                if (!pendingBubbleMsgDiv.querySelector('.message-time')) {
-                    const t = document.createElement('div');
-                    t.className = 'message-time';
-                    t.innerText = formatTime(timestampIso);
-                    pendingBubbleMsgDiv.appendChild(t);
-                }
-                pendingBubbleMsgDiv = null;
-                pendingAiContent = null;
-                return;
-            }
-
-            // Legacy content-match fallback
-            if (role === 'ai' && pendingAiContent !== null) {
-                pendingAiContent = null;
-                pendingBubbleMsgDiv = null;
+            // If we have a finalized streaming bubble in the DOM for this exact Firestore doc, just update its ID dataset and return (prevent duplicate)
+            if (firestoreId && pendingBubbleMsgDiv && pendingBubbleMsgDiv.dataset.msgId === firestoreId) {
+                return; // we already rendered this in-place via streaming
             }
 
             // Don't append while streaming is active for AI messages
@@ -1235,7 +1236,14 @@
                     <div class="message-time">${formatTime(timestampIso)}</div>
                 </div>
             `;
-            if (chatHistory) chatHistory.insertAdjacentHTML('beforeend', html);
+
+            // Insert before typing indicator instead of appending at end
+            if (typingIndicator && typingIndicator.parentNode === chatHistory) {
+                typingIndicator.insertAdjacentHTML('beforebegin', html);
+            } else if (chatHistory) {
+                chatHistory.insertAdjacentHTML('beforeend', html);
+            }
+            scrollToBottom();
         }
 
         function exportChat() {
@@ -1445,7 +1453,14 @@
             bubble.className = 'bubble';
             if (initialText) bubble.textContent = initialText;
             msgDiv.appendChild(bubble);
-            if (chatHistory) chatHistory.appendChild(msgDiv);
+
+            // Insert before typing indicator instead of appending at end
+            if (typingIndicator && typingIndicator.parentNode === chatHistory) {
+                chatHistory.insertBefore(msgDiv, typingIndicator);
+            } else {
+                if (chatHistory) chatHistory.appendChild(msgDiv);
+            }
+
             scrollToBottom();
             return { bubble, wrapper: msgDiv };
         }
@@ -1579,8 +1594,18 @@
                         pendingBubbleMsgDiv = null;
                         pendingAiContent = null;
                     }
-                    await updateDoc(roomRef, { 'state.isAiTyping': false });
-                } catch (e) { console.error("Failed to save consciousness msg", e); }
+
+                    // Save the updated consciousness memory to the room document to persist across reloads
+                    const memoryToSave = { ...consciousnessMemory };
+                    // Optionally cap recent outputs to prevent exceeding Firestore doc size limits
+                    if (memoryToSave.recentAiOutputs.length > 3) {
+                        memoryToSave.recentAiOutputs = memoryToSave.recentAiOutputs.slice(-3);
+                    }
+                    await updateDoc(roomRef, {
+                        'state.isAiTyping': false,
+                        'state.consciousnessMemory': memoryToSave
+                    });
+                } catch (e) { console.error("Failed to save consciousness msg / memory", e); }
 
                 isGenerating = false;
                 if (btnSend && isHost()) btnSend.disabled = userInput ? userInput.value.trim() === '' : true;
