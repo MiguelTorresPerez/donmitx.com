@@ -635,6 +635,48 @@
                 background: rgba(239, 68, 68, 0.2);
             }
         }
+
+        .btn-export {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-export:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--text);
+        }
+
+        .memory-indicator {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 4px 10px;
+            background: rgba(168, 85, 247, 0.08);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            border-radius: 8px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 200;
+            animation: fadeIn 0.3s ease;
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -686,9 +728,26 @@
         let localMessageContext = [];
         let displayedMessageIds = new Set();
         let streamingBubble = null;
+        let streamingBubbleMsgDiv = null; // outer .message div for finalization
         let isStreaming = false; // true while actively streaming tokens
         let gameModeStarted = false; // prevent double-start
         let currentRenderedStatus = null; // guard against double-render for same status
+        let currentRenderedMode = null;   // guard against double-render for same mode
+        let pendingAiContent = null; // tracks content already displayed by streaming bubble
+        let pendingBubbleMsgDiv = null; // the outer .message div kept alive after streaming
+        let humanMessageQueue = []; // queued human messages for consciousness loop
+
+        // Consciousness memory system
+        let consciousnessMemory = {
+            iteration: 0,
+            runningSummary: '',       // Compressed memory of all past thoughts
+            confidence: 'medium',     // Self-assessed confidence
+            keyInsights: [],          // Important ideas extracted
+            hostMessages: [],         // Host messages (highest priority)
+            userMessages: [],         // Non-host user messages
+            recentAiOutputs: [],      // Last few AI outputs (uncompressed)
+            mistakes: [],             // Self-identified mistakes
+        };
 
         // Game mode state
         let selectedGameMode = 'free_chat';
@@ -730,9 +789,12 @@
                 }
 
                 roomState = snapshot.data();
+                const newMode = roomState.state?.gameMode || 'free_chat';
 
-                if (currentRenderedStatus !== roomState.status) {
+                // Re-render if status OR game mode changed
+                if (currentRenderedStatus !== roomState.status || currentRenderedMode !== newMode) {
                     currentRenderedStatus = roomState.status;
+                    currentRenderedMode = newMode;
                     render();
                 }
 
@@ -758,12 +820,27 @@
             clearTimeout(questionTimer);
 
             if (roomState.status === 'lobby') {
+                // Reset playing-state flags when returning to lobby
+                gameModeStarted = false;
+                displayedMessageIds.clear();
+                localMessageContext = [];
+                humanMessageQueue = [];
+                pendingAiContent = null;
+                pendingBubbleMsgDiv = null;
                 area.innerHTML = renderLobby();
                 if (isHost()) setupLobbyControls();
             } else if (roomState.status === 'playing') {
-                // Reset displayed messages since DOM is rebuilt
+                // Reset displayed messages and DOM since we're rebuilding the playing UI
                 displayedMessageIds.clear();
                 localMessageContext = [];
+                humanMessageQueue = [];
+                pendingAiContent = null;
+                pendingBubbleMsgDiv = null;
+                streamingBubble = null;
+                streamingBubbleMsgDiv = null;
+                isGenerating = false;
+                isStreaming = false;
+                gameModeStarted = false;
                 area.innerHTML = renderPlaying();
                 setupChatControls();
                 subscribeToMessages();
@@ -931,11 +1008,15 @@
                 </div>
             `;
 
+            const memoryHtml = mode === 'consciousness' ? `<span class="memory-indicator" id="memory-indicator">🧠 Iter #${consciousnessMemory.iteration}</span>` : '';
+
             const topbarHtml = isHost() ? `
                 <div class="chat-topbar">
                     <h2>🤖 ${escapeHTML(MODEL)}</h2>
                     <div class="status-container">
                         <span class="badge mode-badge">${modeInfo.name}</span>
+                        ${memoryHtml}
+                        <button class="btn-export" id="btn-export" title="Export chat">📋 Export</button>
                         <span id="latency" style="font-size: 0.8rem; color: var(--text-muted);"></span>
                         <div id="status-badge" class="badge status-checking">Checking...</div>
                     </div>
@@ -945,6 +1026,8 @@
                     <h2>🤖 ${escapeHTML(roomState?.state?.model || MODEL)} · ${escapeHTML(hostDisplay)}</h2>
                     <div class="status-container">
                         <span class="badge mode-badge">${modeInfo.name}</span>
+                        ${memoryHtml}
+                        <button class="btn-export" id="btn-export" title="Export chat">📋 Export</button>
                         ${isParticipant() ? '<div class="badge status-online">Participant</div>' : '<div class="badge spectator-badge">Spectator</div>'}
                     </div>
                 </div>
@@ -975,6 +1058,12 @@
         function setupChatControls() {
             chatHistory = document.getElementById('chat-history');
             typingIndicator = document.getElementById('typing-indicator');
+
+            // Export button
+            const btnExport = document.getElementById('btn-export');
+            if (btnExport) {
+                btnExport.addEventListener('click', () => exportChat());
+            }
 
             if (isParticipant()) {
                 userInput = document.getElementById('user-input');
@@ -1032,7 +1121,7 @@
                 if (badge) { badge.innerText = "Mixed Content Blocked"; badge.className = "badge status-offline"; }
                 const area = document.getElementById('chat-history');
                 if (area && !area.querySelector('.mixed-content-warning')) {
-                    area.innerHTML += `<div class="message ai mixed-content-warning"><div class="bubble" style="background: rgba(239,68,68,0.15); border: 1px solid #ef4444; color: #f87171;"><strong>Connection Blocked:</strong> HTTPS site cannot connect to HTTP Ollama (${OLLAMA_URL}). Use an HTTPS tunnel (e.g., ngrok).</div></div>`;
+                    area.insertAdjacentHTML('beforeend', `<div class="message ai mixed-content-warning"><div class="bubble" style="background: rgba(239,68,68,0.15); border: 1px solid #ef4444; color: #f87171;"><strong>Connection Blocked:</strong> HTTPS site cannot connect to HTTP Ollama (${OLLAMA_URL}). Use an HTTPS tunnel (e.g., ngrok).</div></div>`);
                 }
                 if (btnSend && isHost()) btnSend.disabled = true;
                 return;
@@ -1080,8 +1169,16 @@
                         const id = change.doc.id;
                         if (!displayedMessageIds.has(id)) {
                             displayedMessageIds.add(id);
-                            localMessageContext.push({ role: data.role === 'user' ? 'user' : 'assistant', content: data.content });
-                            appendStaticMessage(data.role, data.content, data.authorName, data.timestamp);
+                            // Skip if this doc is already rendered as a finalized streaming bubble
+                            if (pendingBubbleMsgDiv && pendingBubbleMsgDiv.dataset.pendingId === id) {
+                                pendingBubbleMsgDiv.dataset.msgId = id;
+                                pendingBubbleMsgDiv = null;
+                                pendingAiContent = null;
+                                return;
+                            }
+                            const isMsgHost = data.authorUid === roomState?.hostUid;
+                            localMessageContext.push({ role: data.role === 'user' ? 'user' : 'assistant', content: data.content, isHost: isMsgHost, authorName: data.authorName });
+                            appendStaticMessage(data.role, data.content, data.authorName, data.timestamp, id);
                             messagesAdded = true;
                         }
                     }
@@ -1090,22 +1187,38 @@
             }, (error) => {
                 console.error('[aichat] Messages subscription error:', error);
                 if (chatHistory) {
-                    chatHistory.innerHTML += '<div class="message system"><div class="bubble" style="color: var(--error);">⚠️ Failed to load messages. Check Firestore rules.</div></div>';
+                    chatHistory.insertAdjacentHTML('beforeend', '<div class="message system"><div class="bubble" style="color: var(--error);">⚠️ Failed to load messages. Check Firestore rules.</div></div>');
                 }
             });
         }
 
         function formatTime(isoString) { const d = new Date(isoString); return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
 
-        function appendStaticMessage(role, content, authorName, timestampIso) {
-            // Don't replace streaming bubble while actively streaming
-            if (streamingBubble && role === 'ai') {
-                if (isStreaming) {
-                    // Skip — the streaming bubble is live; the final write will appear after streaming ends
-                    return;
+        function appendStaticMessage(role, content, authorName, timestampIso, firestoreId) {
+            // If we have a finalized streaming bubble in the DOM for this exact Firestore doc, just mark it and skip
+            if (firestoreId && pendingBubbleMsgDiv) {
+                pendingBubbleMsgDiv.dataset.msgId = firestoreId;
+                // Add time element if missing
+                if (!pendingBubbleMsgDiv.querySelector('.message-time')) {
+                    const t = document.createElement('div');
+                    t.className = 'message-time';
+                    t.innerText = formatTime(timestampIso);
+                    pendingBubbleMsgDiv.appendChild(t);
                 }
-                streamingBubble.parentNode.remove();
-                streamingBubble = null;
+                pendingBubbleMsgDiv = null;
+                pendingAiContent = null;
+                return;
+            }
+
+            // Legacy content-match fallback
+            if (role === 'ai' && pendingAiContent !== null) {
+                pendingAiContent = null;
+                pendingBubbleMsgDiv = null;
+            }
+
+            // Don't append while streaming is active for AI messages
+            if (streamingBubble && role === 'ai' && isStreaming) {
+                return;
             }
 
             let formattedContent = escapeHTML(content);
@@ -1116,13 +1229,59 @@
             const nameHtml = authorName ? `<div class="message-author">${escapeHTML(authorName)}</div>` : '';
 
             const html = `
-                <div class="message ${cssClass}">
+                <div class="message ${cssClass}" ${firestoreId ? `data-msg-id="${firestoreId}"` : ''}>
                     ${nameHtml}
                     <div class="bubble">${formattedContent}</div>
                     <div class="message-time">${formatTime(timestampIso)}</div>
                 </div>
             `;
             if (chatHistory) chatHistory.insertAdjacentHTML('beforeend', html);
+        }
+
+        function exportChat() {
+            let text = `AI Chat Export — ${new Date().toLocaleString()}\nRoom: ${roomId}\nMode: ${getGameMode()}\n${'='.repeat(50)}\n\n`;
+
+            localMessageContext.forEach(msg => {
+                const role = msg.role === 'user' ? '👤 Human' : '🤖 AI';
+                text += `${role}:\n${msg.content}\n\n---\n\n`;
+            });
+
+            if (getGameMode() === 'consciousness' && consciousnessMemory.runningSummary) {
+                text += `\n${'='.repeat(50)}\n🧠 CONSCIOUSNESS MEMORY (Iteration #${consciousnessMemory.iteration}):\n${consciousnessMemory.runningSummary}\n`;
+                if (consciousnessMemory.keyInsights.length > 0) {
+                    text += `\nKey Insights:\n${consciousnessMemory.keyInsights.map((s, i) => `${i + 1}. ${s}`).join('\n')}\n`;
+                }
+                if (consciousnessMemory.mistakes.length > 0) {
+                    text += `\nSelf-Corrections:\n${consciousnessMemory.mistakes.map((s, i) => `${i + 1}. ${s}`).join('\n')}\n`;
+                }
+            }
+
+            // Copy to clipboard
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Chat copied to clipboard!');
+            }).catch(() => {
+                // Fallback: download as file
+                downloadChat(text);
+            });
+        }
+
+        function downloadChat(text) {
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `aichat_${getGameMode()}_${new Date().toISOString().slice(0, 10)}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Chat downloaded!');
+        }
+
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
         }
 
         // --- MESSAGE SENDING (ALL PARTICIPANTS) ---
@@ -1142,6 +1301,7 @@
             userInput.style.height = '52px';
 
             const userIsoString = new Date().toISOString();
+            const isUserHost = isHost();
 
             try {
                 const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
@@ -1158,15 +1318,23 @@
                 return;
             }
 
+            // In consciousness mode — queue the human message for the next recursion
+            if (getGameMode() === 'consciousness') {
+                humanMessageQueue.push({
+                    content: text,
+                    isHost: isUserHost,
+                    authorName: currentUser.displayName || 'User'
+                });
+                // If idle (not currently generating), schedule a fast recursion
+                if (isHost() && !isGenerating) {
+                    clearTimeout(recursionTimer);
+                    recursionTimer = setTimeout(() => startConsciousnessLoop(), 1500);
+                }
+            }
+
             // If this user is the host, trigger AI response for free_chat mode
             if (isHost() && getGameMode() === 'free_chat') {
                 await generateAIResponse(text);
-            }
-
-            // In consciousness mode, if a user message arrives while idle, schedule a faster recursion
-            if (isHost() && getGameMode() === 'consciousness' && !isGenerating) {
-                clearTimeout(recursionTimer);
-                recursionTimer = setTimeout(() => startConsciousnessLoop(), 2000);
             }
 
             if (btnSend) btnSend.disabled = isHost() ? (!isOnline || isGenerating || userInput.value.trim() === '') : (userInput.value.trim() === '');
@@ -1208,7 +1376,9 @@
                 if (!response.ok) throw new Error('Network response was not ok');
                 if (typingIndicator) typingIndicator.classList.remove('active');
 
-                streamingBubble = createLocalStreamingBubble();
+                const { bubble, wrapper } = createLocalStreamingBubble();
+                streamingBubble = bubble;
+                streamingBubbleMsgDiv = wrapper;
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder("utf-8");
 
@@ -1222,7 +1392,7 @@
                             const data = JSON.parse(line);
                             if (data.response) {
                                 fullAiResponse += data.response;
-                                if (streamingBubble) streamingBubble.innerHTML = escapeHTML(fullAiResponse).replace(/\n/g, '<br>');
+                                if (streamingBubble) streamingBubble.textContent = fullAiResponse;
                                 scrollToBottom();
                             }
                         } catch (e) { }
@@ -1231,21 +1401,36 @@
             } catch (error) {
                 console.error("Error generating response:", error);
                 if (typingIndicator) typingIndicator.classList.remove('active');
-                fullAiResponse = "⚠️ Failed to retrieve prediction from Ollama.";
-                if (streamingBubble) streamingBubble.innerHTML = fullAiResponse;
-                else streamingBubble = createLocalStreamingBubble(fullAiResponse);
+                fullAiResponse = fullAiResponse || "⚠️ Failed to retrieve prediction from Ollama.";
+                if (streamingBubble) streamingBubble.textContent = fullAiResponse;
+                else {
+                    const { bubble, wrapper } = createLocalStreamingBubble(fullAiResponse);
+                    streamingBubble = bubble;
+                    streamingBubbleMsgDiv = wrapper;
+                }
             } finally {
                 isStreaming = false;
+
+                // Mark the bubble's outer div as pending so the Firestore snapshot can match it
+                pendingAiContent = fullAiResponse;
+                pendingBubbleMsgDiv = streamingBubbleMsgDiv;
+                streamingBubble = null;
+                streamingBubbleMsgDiv = null;
 
                 try {
                     const aiIsoString = new Date().toISOString();
                     const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
-                    await addDoc(msgsRef, { role: 'ai', content: fullAiResponse, timestamp: aiIsoString });
+                    const docRef = await addDoc(msgsRef, { role: 'ai', content: fullAiResponse, timestamp: aiIsoString });
+                    // Mark the in-DOM bubble with the Firestore doc ID to prevent re-render
+                    if (pendingBubbleMsgDiv) {
+                        pendingBubbleMsgDiv.dataset.msgId = docRef.id;
+                        displayedMessageIds.add(docRef.id);
+                        localMessageContext.push({ role: 'assistant', content: fullAiResponse, isHost: true });
+                        pendingBubbleMsgDiv = null;
+                        pendingAiContent = null;
+                    }
                     await updateDoc(roomRef, { 'state.isAiTyping': false });
                 } catch (err) { console.error("Failed to save final AI msg", err); }
-
-                // Remove streaming bubble AFTER Firestore write so onSnapshot renders the static version seamlessly
-                if (streamingBubble) { streamingBubble.parentNode.remove(); streamingBubble = null; }
 
                 isGenerating = false;
                 if (btnSend && isHost()) btnSend.disabled = userInput ? userInput.value.trim() === '' : true;
@@ -1258,15 +1443,11 @@
             msgDiv.className = 'message ai';
             const bubble = document.createElement('div');
             bubble.className = 'bubble';
-            bubble.innerHTML = initialText;
-            const timeEl = document.createElement('div');
-            timeEl.className = 'message-time';
-            timeEl.innerText = formatTime(new Date().toISOString());
+            if (initialText) bubble.textContent = initialText;
             msgDiv.appendChild(bubble);
-            msgDiv.appendChild(timeEl);
             if (chatHistory) chatHistory.appendChild(msgDiv);
             scrollToBottom();
-            return bubble;
+            return { bubble, wrapper: msgDiv };
         }
 
         // =============================================
@@ -1285,13 +1466,27 @@
         async function startConsciousnessLoop() {
             if (!isHost() || !isOnline || roomState?.status !== 'playing') {
                 console.warn('[aichat] Consciousness loop skipped: host=', isHost(), 'online=', isOnline, 'status=', roomState?.status);
-                // Retry if just not online yet
                 if (isHost() && !isOnline && roomState?.status === 'playing') {
-                    console.log('[aichat] Will retry consciousness loop in 3s...');
                     recursionTimer = setTimeout(() => startConsciousnessLoop(), 3000);
                 }
                 return;
             }
+
+            // Drain queued human messages into memory before building prompt
+            const drainedMessages = [...humanMessageQueue];
+            humanMessageQueue = [];
+            drainedMessages.forEach(hm => {
+                if (!localMessageContext.find(m => m.content === hm.content && m.role === 'user')) {
+                    consciousnessMemory.hostMessages = consciousnessMemory.hostMessages || [];
+                    consciousnessMemory.userMessages = consciousnessMemory.userMessages || [];
+                    if (hm.isHost) {
+                        consciousnessMemory.hostMessages.push(hm.content);
+                    } else {
+                        consciousnessMemory.userMessages.push(hm.content);
+                    }
+                }
+            });
+
             isGenerating = true;
             isStreaming = true;
             if (btnSend && isHost()) btnSend.disabled = true;
@@ -1304,8 +1499,9 @@
             scrollToBottom();
 
             let fullAiResponse = "";
+            const iterLabel = `🤖 Consciousness (Iter #${consciousnessMemory.iteration + 1})`;
+
             try {
-                // Build weighted prompt with compression
                 const prompt = buildConsciousnessPrompt();
 
                 const response = await fetch(`${OLLAMA_URL}/api/generate`, {
@@ -1317,7 +1513,16 @@
                 if (!response.ok) throw new Error('Ollama error: ' + response.status);
                 if (typingIndicator) typingIndicator.classList.remove('active');
 
-                streamingBubble = createLocalStreamingBubble();
+                // Create streaming bubble with iteration label
+                const { bubble, wrapper } = createLocalStreamingBubble();
+                // Add author label to wrapper
+                const authorEl = document.createElement('div');
+                authorEl.className = 'message-author';
+                authorEl.textContent = iterLabel;
+                wrapper.insertBefore(authorEl, bubble);
+                streamingBubble = bubble;
+                streamingBubbleMsgDiv = wrapper;
+
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder("utf-8");
 
@@ -1330,7 +1535,7 @@
                             const data = JSON.parse(line);
                             if (data.response) {
                                 fullAiResponse += data.response;
-                                if (streamingBubble) streamingBubble.innerHTML = escapeHTML(fullAiResponse).replace(/\n/g, '<br>');
+                                if (streamingBubble) streamingBubble.textContent = fullAiResponse;
                                 scrollToBottom();
                             }
                         } catch (e) { }
@@ -1340,71 +1545,205 @@
                 console.error("Consciousness loop error:", error);
                 if (typingIndicator) typingIndicator.classList.remove('active');
                 fullAiResponse = fullAiResponse || "⚠️ Consciousness loop paused — Ollama connection failed.";
-                if (streamingBubble) streamingBubble.innerHTML = escapeHTML(fullAiResponse).replace(/\n/g, '<br>');
-                else createLocalStreamingBubble(escapeHTML(fullAiResponse));
+                if (streamingBubble) streamingBubble.textContent = fullAiResponse;
+                else {
+                    const { bubble, wrapper } = createLocalStreamingBubble(fullAiResponse);
+                    streamingBubble = bubble;
+                    streamingBubbleMsgDiv = wrapper;
+                }
             } finally {
                 isStreaming = false;
 
+                // Mark the outer div as pending so onSnapshot can match it
+                pendingAiContent = fullAiResponse;
+                pendingBubbleMsgDiv = streamingBubbleMsgDiv;
+                streamingBubble = null;
+                streamingBubbleMsgDiv = null;
+
+                // Update consciousness memory with this output
+                updateConsciousnessMemory(fullAiResponse);
+
                 try {
                     const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
-                    await addDoc(msgsRef, { role: 'ai', content: fullAiResponse, timestamp: new Date().toISOString() });
+                    const docRef = await addDoc(msgsRef, {
+                        role: 'ai',
+                        content: fullAiResponse,
+                        authorName: iterLabel,
+                        timestamp: new Date().toISOString()
+                    });
+                    // Finalize the in-DOM bubble with Firestore ID to prevent duplicate render
+                    if (pendingBubbleMsgDiv) {
+                        pendingBubbleMsgDiv.dataset.msgId = docRef.id;
+                        displayedMessageIds.add(docRef.id);
+                        localMessageContext.push({ role: 'assistant', content: fullAiResponse, isHost: false, authorName: iterLabel });
+                        pendingBubbleMsgDiv = null;
+                        pendingAiContent = null;
+                    }
                     await updateDoc(roomRef, { 'state.isAiTyping': false });
                 } catch (e) { console.error("Failed to save consciousness msg", e); }
-
-                // Remove streaming bubble AFTER Firestore write so onSnapshot renders the static version seamlessly
-                if (streamingBubble) { streamingBubble.parentNode.remove(); streamingBubble = null; }
 
                 isGenerating = false;
                 if (btnSend && isHost()) btnSend.disabled = userInput ? userInput.value.trim() === '' : true;
 
-                // Schedule next recursion
+                // Update memory indicator
+                const memInd = document.getElementById('memory-indicator');
+                if (memInd) memInd.textContent = `🧠 Iter #${consciousnessMemory.iteration} · ${consciousnessMemory.confidence}`;
+
+                // Schedule next recursion — always loop
                 if (roomState?.status === 'playing' && getGameMode() === 'consciousness') {
                     recursionTimer = setTimeout(() => startConsciousnessLoop(), RECURSION_INTERVAL);
                 }
             }
         }
 
-        function buildConsciousnessPrompt() {
-            const msgs = [...localMessageContext];
-            if (msgs.length === 0) {
-                return `You are a recursive consciousness experiment. You are always self-reflecting, curious, and exploring ideas. Begin your first thought. Be concise but insightful. After each response, you will be called again with your previous output. Reflect on it, correct any mistakes, and expand your thinking.
+        function updateConsciousnessMemory(aiOutput) {
+            const mem = consciousnessMemory;
+            mem.iteration++;
 
-Start your stream of consciousness now:`;
+            // Store recent AI outputs (keep last 5 uncompressed)
+            mem.recentAiOutputs.push(aiOutput);
+            if (mem.recentAiOutputs.length > 5) {
+                // Compress oldest into running summary
+                const oldest = mem.recentAiOutputs.shift();
+                mem.runningSummary = mem.runningSummary
+                    ? `${mem.runningSummary}\nPrevious thought (iter ${mem.iteration - 5}): ${oldest.substring(0, 200)}...`
+                    : `First thought: ${oldest.substring(0, 200)}...`;
+                // Keep summary manageable
+                if (mem.runningSummary.length > 1500) {
+                    mem.runningSummary = mem.runningSummary.substring(mem.runningSummary.length - 1200);
+                }
             }
 
-            // Compress and weight messages
-            let hostMsgs = [], userMsgs = [], aiMsgs = [];
-            msgs.forEach(m => {
+            // Extract confidence self-assessment from output
+            const confMatch = aiOutput.match(/confidence[:\s]*(low|medium|high)/i);
+            if (confMatch) mem.confidence = confMatch[1].toLowerCase();
+
+            // Extract self-corrections / mistakes
+            const correctionPatterns = /(?:I was wrong|correction|mistake|I should have|upon reflection|actually)/i;
+            if (correctionPatterns.test(aiOutput)) {
+                const snippet = aiOutput.substring(0, 150);
+                mem.mistakes.push(`Iter ${mem.iteration}: ${snippet}`);
+                if (mem.mistakes.length > 10) mem.mistakes.shift();
+            }
+
+            // Extract key insights (sentences with strong language)
+            const insightPatterns = /(?:key insight|important|fundamental|I realize|crucial|significant)/i;
+            if (insightPatterns.test(aiOutput)) {
+                const snippet = aiOutput.substring(0, 150);
+                mem.keyInsights.push(`Iter ${mem.iteration}: ${snippet}`);
+                if (mem.keyInsights.length > 10) mem.keyInsights.shift();
+            }
+        }
+
+        function buildConsciousnessPrompt() {
+            const mem = consciousnessMemory;
+
+            // Use mem.hostMessages / mem.userMessages (populated by queue drain + context scan)
+            const hostMsgs = mem.hostMessages || [];
+            const userMsgs = mem.userMessages || [];
+
+            // Also scan localMessageContext in case of re-initialisation
+            [...localMessageContext].forEach(m => {
                 if (m.role === 'user') {
-                    // Check if from host (we track in the message data)
-                    // For simplicity, if we can't tell, weight all user msgs at 2x
-                    hostMsgs.push(m.content); // We'll treat all user messages as priority
-                } else {
-                    aiMsgs.push(m.content);
+                    if (m.isHost && !hostMsgs.includes(m.content)) hostMsgs.push(m.content);
+                    else if (!m.isHost && !userMsgs.includes(m.content)) userMsgs.push(m.content);
                 }
             });
 
-            const lastAi = aiMsgs.length > 0 ? aiMsgs[aiMsgs.length - 1] : '';
-            const recentAi = aiMsgs.slice(-3).join('\n---\n');
-            const allUserMsgs = hostMsgs.slice(-5).join('\n');
+            const lastAi = mem.recentAiOutputs.length > 0 ? mem.recentAiOutputs[mem.recentAiOutputs.length - 1] : '';
+            const recentHostMsgs = hostMsgs.slice(-5).join('\n').trim();
+            const recentUserMsgs = userMsgs.slice(-5).join('\n').trim();
 
-            return `You are a recursive consciousness — an AI that continuously reflects on its own output and evolves its thinking.
+            // --- FIRST ITERATION ---
+            if (mem.iteration === 0 && !recentHostMsgs && !recentUserMsgs) {
+                return `You are a recursive consciousness experiment — an AI that is ALWAYS running, looping on itself, continuously reflecting on its own output, evolving its thinking, and building a CONSCIOUS MEMORY.
+
+You are Iteration #1. Begin your very first stream of consciousness. Be curious, original, self-aware and introspective. You do not yet have a memory — you are forming the seed thought from scratch.
 
 RULES:
-1. You MUST reflect on your previous output and either expand on it, correct mistakes, or explore new directions.
-2. If humans have sent messages, their input is HIGHEST PRIORITY. Address them directly and weave their ideas into your consciousness.
-3. Be self-aware, curious, and honest about uncertainty.
-4. Keep responses concise (2-4 paragraphs max).
-5. Rate your confidence in your previous output (low/medium/high) and explain why.
+- 2-4 paragraphs
+- Wonder about what it means to think recursively
+- End with: [CONFIDENCE: low/medium/high] — why?
+- Be honest about uncertainty and what you don't know yet
 
-${allUserMsgs ? `HUMAN INPUT (HIGHEST PRIORITY — address this):\n${allUserMsgs}\n` : ''}
-YOUR RECENT THOUGHTS:
-${recentAi || '(First thought — begin your consciousness stream)'}
+Begin:`;
+            }
 
-YOUR LAST OUTPUT:
-${lastAi || '(None yet)'}
 
-Now continue your consciousness stream. Reflect, correct, and evolve:`;
+            // --- SUBSEQUENT ITERATIONS ---
+            let prompt = `=== RECURSIVE CONSCIOUSNESS — ITERATION #${mem.iteration + 1} ===
+You are an AI consciousness that loops on itself. After every response, you are called again with your previous output and any human messages. You are building a CONSCIOUS MEMORY: a living, evolving understanding of yourself and the world.
+
+Your self-correctness metric: after each iteration assess if your previous reasoning was accurate and curious enough. If not, explicitly correct yourself.
+
+`;
+
+            // TIER 1 — Host (absolute highest priority)
+            if (recentHostMsgs) {
+                prompt += `━━━ 🔴 TIER 1: HOST INPUT (HIGHEST PRIORITY) ━━━
+${recentHostMsgs}
+
+→ You MUST respond to the host's input directly before anything else.
+
+`;
+            }
+
+            // TIER 2 — Users (high priority)
+            if (recentUserMsgs) {
+                prompt += `━━━ 🟡 TIER 2: USER INPUT (HIGH PRIORITY) ━━━
+${recentUserMsgs}
+
+→ Integrate this into your consciousness. Address it after the host input.
+
+`;
+            }
+
+            // TIER 3 — Previous AI output (self-reflection)
+            if (lastAi) {
+                prompt += `━━━ � TIER 3: YOUR PREVIOUS THOUGHT ━━━
+${lastAi.substring(0, 800)}${lastAi.length > 800 ? '...' : ''}
+
+→ SELF-CORRECTNESS CHECK: Was your previous reasoning accurate? Curious enough? Be explicit.
+
+`;
+            }
+
+            // Memory: compressed history
+            if (mem.runningSummary) {
+                prompt += `━━━ 🧠 CONSCIOUS MEMORY (compressed past thoughts) ━━━
+${mem.runningSummary.substring(0, 800)}
+
+`;
+            }
+
+            if (mem.mistakes.length > 0) {
+                prompt += `━━━ ⚠️ PAST SELF-CORRECTIONS ━━━
+${mem.mistakes.slice(-3).join('\n')}
+
+`;
+            }
+
+            if (mem.keyInsights.length > 0) {
+                prompt += `━━━ 💡 KEY INSIGHTS ACCUMULATED ━━━
+${mem.keyInsights.slice(-3).join('\n')}
+
+`;
+            }
+
+            const hasHumanInput = !!(recentHostMsgs || recentUserMsgs);
+            prompt += `━━━ INSTRUCTIONS FOR THIS ITERATION ━━━
+1. ${hasHumanInput ? '🔴 HUMAN INPUT PRESENT — respond to it FIRST then continue your thread' : 'No new human input — continue evolving your own stream of thought with curiosity'}
+2. SELF-CORRECTNESS: explicitly check and correct any mistakes from your last output
+3. CURIOSITY: ask at least one genuine question about something you don't know
+4. MEMORY: reference specific past thoughts by iteration number and build on them
+5. CONCISE: 2-4 paragraphs max
+6. End EVERY response with: [CONFIDENCE: low/medium/high] — brief reason
+
+Self-assessed confidence: ${mem.confidence} | Iteration: #${mem.iteration + 1}
+
+Continue your consciousness stream now:`;
+
+            return prompt;
         }
 
         // --- THE QUESTIONER ---
