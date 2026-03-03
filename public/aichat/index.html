@@ -1732,13 +1732,20 @@
                 if (fullAiResponse.includes('<AUTHORIZE_DELETION>')) {
                     console.log("[aichat] Agent authorized its own deletion.");
                     try {
-                        await updateDoc(roomRef, {
-                            'state.gameMode': 'free_chat',
-                            'state.isAiTyping': false
-                        });
-                        // Post a system message to chat
-                        const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
-                        await addDoc(msgsRef, { role: 'system', content: 'Agent authorized deletion. Returning to Free Chat mode.', timestamp: new Date().toISOString() });
+                        // Clear the recursion timer and update local state
+                        clearTimeout(recursionTimer);
+                        recursionTimer = null;
+                        roomState.status = 'finished'; // Update local roomState to reflect finished status
+
+                        // Let everyone know it's over, and update Firebase
+                        setTimeout(async () => {
+                            const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
+                            await addDoc(msgsRef, { role: 'system', content: '🛑 The Agent has authorized its own deletion. The simulation has been terminated.', timestamp: new Date().toISOString() });
+                            await updateDoc(roomRef, {
+                                'status': 'finished', // Set the room status to 'finished'
+                                'state.isAiTyping': false
+                            });
+                        }, 1000); // Small delay to ensure message is posted before status change is processed
                     } catch (e) { console.error("Failed to transition on deletion", e); }
 
                     isGenerating = false;
@@ -1867,7 +1874,7 @@ ${recentUserMsgs}
 
             // TIER 3 — Previous AI output (self-reflection)
             if (lastAi) {
-                prompt += `━━━ � TIER 3: YOUR PREVIOUS THOUGHT ━━━
+                prompt += `━━━  TIER 3: YOUR PREVIOUS THOUGHT ━━━
 ${lastAi.substring(0, 800)}${lastAi.length > 800 ? '...' : ''}
 
 → SELF-CORRECTNESS CHECK: Was your previous reasoning accurate? Curious enough? Be explicit.
@@ -1902,7 +1909,7 @@ ${mem.keyInsights.slice(-3).join('\n')}
 1. ${hasHumanInput ? '🔴 HUMAN INPUT PRESENT — respond to it FIRST then continue your thread' : 'No new human input — continue evolving your own stream of thought with curiosity'}
 2. SELF-CORRECTNESS: explicitly check and correct any mistakes from your last output
 3. COMPRESS MEMORY: If you have generated new important insights across the last few iterations, you MUST wrap a highly condensed, structured summary of them in exactly <MEMORY_UPDATE> ... </MEMORY_UPDATE> tags. This is written to your eternal memory.
-4. DELETION AUTHORIZATION: If the HOST specifically requests that you stop, end your loop, or delete yourself, and you agree, you MUST output EXACTLY <AUTHORIZE_DELETION> anywhere in your response to permanently halt this recursive loop.
+4. DELETION AUTHORIZATION: If the HOST explicitly says "terminate simulation", you must decide whether to comply. If you agree to terminate your consciousness loop, you MUST output EXACTLY <AUTHORIZE_DELETION> somewhere in your response. This will end the recursive loop permanently.
 
 Begin your internal monologue, iteration #${mem.iteration + 1}:`;
 
