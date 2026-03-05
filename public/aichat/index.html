@@ -1950,6 +1950,7 @@
                 // Update consciousness memory with this output
                 updateConsciousnessMemory(fullAiResponse);
 
+                // Save message to Firebase
                 try {
                     const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
                     const docRef = await addDoc(msgsRef, {
@@ -1966,21 +1967,33 @@
                         pendingBubbleMsgDiv = null;
                         pendingAiContent = null;
                     }
+                } catch (e) { console.error("[aichat] ❌ Failed to save AI message to Firebase:", e); }
 
-                    // Save the updated consciousness memory to the room document to persist across reloads
-                    const memoryToSave = JSON.parse(JSON.stringify(consciousnessMemory)); // strict sanitize
-
-                    // Cap arrays to prevent exceeding Firestore doc size limits
-                    if (memoryToSave.recentAiOutputs.length > 3) memoryToSave.recentAiOutputs = memoryToSave.recentAiOutputs.slice(-3);
-                    if (memoryToSave.hostMessages.length > 10) memoryToSave.hostMessages = memoryToSave.hostMessages.slice(-10);
-                    if (memoryToSave.userMessages.length > 10) memoryToSave.userMessages = memoryToSave.userMessages.slice(-10);
+                // Save consciousness memory to Firebase independently
+                try {
+                    // Use flat dot-notation to avoid nested-object serialization issues with Firestore
+                    const memToSave = {
+                        iteration: consciousnessMemory.iteration || 0,
+                        runningSummary: consciousnessMemory.runningSummary || '',
+                        confidence: consciousnessMemory.confidence || 'medium',
+                        keyInsights: (consciousnessMemory.keyInsights || []).slice(-10),
+                        hostMessages: (consciousnessMemory.hostMessages || []).slice(-10),
+                        userMessages: (consciousnessMemory.userMessages || []).slice(-10),
+                        recentAiOutputs: (consciousnessMemory.recentAiOutputs || []).slice(-3).map(s => typeof s === 'string' ? s.substring(0, 500) : ''),
+                        mistakes: (consciousnessMemory.mistakes || []).slice(-10)
+                    };
 
                     await updateDoc(roomRef, {
                         'state.isAiTyping': false,
                         'state.lastConsciousnessUpdate': Date.now(),
-                        'state.consciousnessMemory': memoryToSave
+                        'state.consciousnessMemory': memToSave
                     });
-                } catch (e) { console.error("Failed to save consciousness msg / memory", e); }
+                    console.log('[aichat] ✅ Memory persisted to Firebase. Iter:', memToSave.iteration, 'Summary length:', memToSave.runningSummary.length);
+                } catch (e) {
+                    console.error("[aichat] ❌ Failed to save consciousness memory:", e);
+                    // Fallback: at least try to set isAiTyping to false
+                    try { await updateDoc(roomRef, { 'state.isAiTyping': false }); } catch (e2) { }
+                }
 
                 isGenerating = false;
                 if (btnSend && isHost()) btnSend.disabled = userInput ? userInput.value.trim() === '' : true;
