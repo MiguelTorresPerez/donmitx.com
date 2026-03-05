@@ -910,6 +910,27 @@
                         updateHostOllamaBadge();
                     } else {
                         updateSpectatorTypingState(roomState.state?.isAiTyping);
+                        // Live AI Stream Sync for Spectators
+                        if (roomState.state?.isAiTyping && roomState.state?.currentAiStream) {
+                            if (!streamingBubble) {
+                                const { bubble, wrapper } = createLocalStreamingBubble('...');
+                                const authorEl = document.createElement('div');
+                                authorEl.className = 'message-author';
+                                authorEl.textContent = `🤖 Consciousness`;
+                                wrapper.insertBefore(authorEl, bubble);
+                                streamingBubble = bubble;
+                                streamingBubbleMsgDiv = wrapper;
+                            }
+                            streamingBubble.textContent = roomState.state.currentAiStream;
+                            scrollToBottom();
+                        } else if (!roomState.state?.isAiTyping && streamingBubbleMsgDiv) {
+                            // Clear local streaming bubble if AI stops typing and stream is null
+                            if (chatHistory && streamingBubbleMsgDiv.parentNode === chatHistory) {
+                                chatHistory.removeChild(streamingBubbleMsgDiv);
+                            }
+                            streamingBubble = null;
+                            streamingBubbleMsgDiv = null;
+                        }
                     }
                 }
             });
@@ -1838,24 +1859,25 @@
             // === BUG 4 FIX: Read human messages from Firebase messages subcollection ===
             // This ensures ALL users' messages reach the prompt, not just the local browser's queue
             try {
-                const lastUpdate = roomState?.state?.lastConsciousnessUpdate || 0;
-                const lastUpdateIso = lastUpdate ? new Date(lastUpdate).toISOString() : '1970-01-01T00:00:00.000Z';
+                // Fetch the last 20 messages regardless of exact timestamp to avoid the "AI was typing" boundary gap issue
                 const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
-                const recentMsgsQuery = query(msgsRef, orderBy('timestamp', 'asc'));
+                // Use limitToLast(20) pattern via descending order then reverse
+                const recentMsgsQuery = query(msgsRef, orderBy('timestamp', 'desc')); // need limit, but we'll manually filter
                 const recentMsgsSnap = await getDocs(recentMsgsQuery);
 
-                // Clear previous host/user messages so we rebuild from Firebase
-                consciousnessMemory.hostMessages = [];
-                consciousnessMemory.userMessages = [];
+                const msgs = [];
+                recentMsgsSnap.forEach(docSnap => msgs.push(docSnap.data()));
+                msgs.reverse(); // put back in chronological order
 
-                recentMsgsSnap.forEach(docSnap => {
-                    const data = docSnap.data();
-                    if (data.role === 'user' && data.timestamp > lastUpdateIso) {
+                // don't clear memory entirely, just append new ones we haven't seen in the last batch
+                // to prevent huge prompting, keep the arrays cropped
+                msgs.slice(-20).forEach(data => {
+                    if (data.role === 'user') {
                         const isMsgFromHost = data.authorUid === roomState?.hostUid;
                         if (isMsgFromHost) {
-                            consciousnessMemory.hostMessages.push(data.content);
+                            if (!consciousnessMemory.hostMessages.includes(data.content)) consciousnessMemory.hostMessages.push(data.content);
                         } else {
-                            consciousnessMemory.userMessages.push(data.content);
+                            if (!consciousnessMemory.userMessages.includes(data.content)) consciousnessMemory.userMessages.push(data.content);
                         }
                     }
                 });
@@ -1912,6 +1934,7 @@
 
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder("utf-8");
+                let lastSyncTime = Date.now();
 
                 while (true) {
                     const { done, value } = await reader.read();
@@ -1924,6 +1947,12 @@
                                 fullAiResponse += data.response;
                                 if (streamingBubble) streamingBubble.textContent = fullAiResponse;
                                 scrollToBottom();
+
+                                // Sync live stream to Firebase every ~1000ms so spectators can see it
+                                if (Date.now() - lastSyncTime > 1000) {
+                                    lastSyncTime = Date.now();
+                                    try { await updateDoc(roomRef, { 'state.currentAiStream': fullAiResponse }); } catch (eSync) { }
+                                }
                             }
                         } catch (e) { }
                     }
@@ -1972,6 +2001,7 @@
                 // Save consciousness memory to Firebase independently
                 try {
                     // Use flat dot-notation to avoid nested-object serialization issues with Firestore
+                    // Fix: Stop cropping recentAiOutputs to 500 chars so the AI has context of its past self
                     const memToSave = {
                         iteration: consciousnessMemory.iteration || 0,
                         runningSummary: consciousnessMemory.runningSummary || '',
@@ -1979,12 +2009,13 @@
                         keyInsights: (consciousnessMemory.keyInsights || []).slice(-10),
                         hostMessages: (consciousnessMemory.hostMessages || []).slice(-10),
                         userMessages: (consciousnessMemory.userMessages || []).slice(-10),
-                        recentAiOutputs: (consciousnessMemory.recentAiOutputs || []).slice(-3).map(s => typeof s === 'string' ? s.substring(0, 500) : ''),
+                        recentAiOutputs: (consciousnessMemory.recentAiOutputs || []).slice(-2), // keep 2 full thoughts
                         mistakes: (consciousnessMemory.mistakes || []).slice(-10)
                     };
 
                     await updateDoc(roomRef, {
                         'state.isAiTyping': false,
+                        'state.currentAiStream': null, // clear stream
                         'state.lastConsciousnessUpdate': Date.now(),
                         'state.consciousnessMemory': memToSave
                     });
@@ -1992,7 +2023,7 @@
                 } catch (e) {
                     console.error("[aichat] ❌ Failed to save consciousness memory:", e);
                     // Fallback: at least try to set isAiTyping to false
-                    try { await updateDoc(roomRef, { 'state.isAiTyping': false }); } catch (e2) { }
+                    try { await updateDoc(roomRef, { 'state.isAiTyping': false, 'state.currentAiStream': null }); } catch (e2) { }
                 }
 
                 isGenerating = false;
