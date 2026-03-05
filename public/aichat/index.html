@@ -883,6 +883,30 @@
                 roomState = snapshot.data();
                 const newMode = roomState.state?.gameMode || 'free_chat';
 
+                // Helper to sync live text to spectator's DOM
+                const syncSpectatorLiveStream = (state) => {
+                    if (isHost()) return;
+                    if (state?.isAiTyping && state?.currentAiStream) {
+                        if (!streamingBubble) {
+                            const { bubble, wrapper } = createLocalStreamingBubble('...');
+                            const authorEl = document.createElement('div');
+                            authorEl.className = 'message-author';
+                            authorEl.textContent = `🤖 Consciousness`;
+                            wrapper.insertBefore(authorEl, bubble);
+                            streamingBubble = bubble;
+                            streamingBubbleMsgDiv = wrapper;
+                        }
+                        streamingBubble.textContent = state.currentAiStream;
+                        scrollToBottom();
+                    } else if (!state?.isAiTyping && streamingBubbleMsgDiv) {
+                        if (chatHistory && streamingBubbleMsgDiv.parentNode === chatHistory) {
+                            chatHistory.removeChild(streamingBubbleMsgDiv);
+                        }
+                        streamingBubble = null;
+                        streamingBubbleMsgDiv = null;
+                    }
+                };
+
                 // If we are already in playing state with the same mode, do NOT re-render.
                 // Just silently update consciousnessMemory from Firebase so the next loop iteration uses it.
                 if (playingRendered && roomState.status === 'playing' && currentRenderedMode === newMode) {
@@ -893,7 +917,10 @@
                     // Update UI elements that depend on snapshot
                     const memInd = document.getElementById('memory-indicator');
                     if (memInd) memInd.textContent = `🧠 Iter #${consciousnessMemory.iteration} · ${consciousnessMemory.confidence || 'medium'}`;
-                    if (!isHost()) updateSpectatorTypingState(roomState.state?.isAiTyping);
+                    if (!isHost()) {
+                        updateSpectatorTypingState(roomState.state?.isAiTyping);
+                        syncSpectatorLiveStream(roomState.state);
+                    }
                     return;
                 }
 
@@ -910,27 +937,7 @@
                         updateHostOllamaBadge();
                     } else {
                         updateSpectatorTypingState(roomState.state?.isAiTyping);
-                        // Live AI Stream Sync for Spectators
-                        if (roomState.state?.isAiTyping && roomState.state?.currentAiStream) {
-                            if (!streamingBubble) {
-                                const { bubble, wrapper } = createLocalStreamingBubble('...');
-                                const authorEl = document.createElement('div');
-                                authorEl.className = 'message-author';
-                                authorEl.textContent = `🤖 Consciousness`;
-                                wrapper.insertBefore(authorEl, bubble);
-                                streamingBubble = bubble;
-                                streamingBubbleMsgDiv = wrapper;
-                            }
-                            streamingBubble.textContent = roomState.state.currentAiStream;
-                            scrollToBottom();
-                        } else if (!roomState.state?.isAiTyping && streamingBubbleMsgDiv) {
-                            // Clear local streaming bubble if AI stops typing and stream is null
-                            if (chatHistory && streamingBubbleMsgDiv.parentNode === chatHistory) {
-                                chatHistory.removeChild(streamingBubbleMsgDiv);
-                            }
-                            streamingBubble = null;
-                            streamingBubbleMsgDiv = null;
-                        }
+                        syncSpectatorLiveStream(roomState.state);
                     }
                 }
             });
@@ -2105,7 +2112,8 @@
             // Extract self-corrections / mistakes
             const correctionPatterns = /(?:I was wrong|correction|mistake|I should have|upon reflection|actually)/i;
             if (correctionPatterns.test(aiOutput)) {
-                const snippet = aiOutput.substring(0, 150);
+                // Keep up to 300 chars to avoid aggressive cropping, but don't take the whole output
+                const snippet = aiOutput.substring(0, 300) + (aiOutput.length > 300 ? '...' : '');
                 mem.mistakes.push(`Iter ${mem.iteration}: ${snippet}`);
                 if (mem.mistakes.length > 10) mem.mistakes.shift();
             }
@@ -2113,7 +2121,8 @@
             // Extract key insights (sentences with strong language)
             const insightPatterns = /(?:key insight|important|fundamental|I realize|crucial|significant)/i;
             if (insightPatterns.test(aiOutput)) {
-                const snippet = aiOutput.substring(0, 150);
+                // Keep up to 300 chars to avoid aggressive cropping
+                const snippet = aiOutput.substring(0, 300) + (aiOutput.length > 300 ? '...' : '');
                 mem.keyInsights.push(`Iter ${mem.iteration}: ${snippet}`);
                 if (mem.keyInsights.length > 10) mem.keyInsights.shift();
             }
@@ -2189,7 +2198,7 @@ ${recentUserMsgs}
             // TIER 3 — Previous AI output (self-reflection)
             if (lastAi) {
                 prompt += `━━━  TIER 3: YOUR PREVIOUS THOUGHT ━━━
-${lastAi.substring(0, 1200)}${lastAi.length > 1200 ? '...' : ''}
+${lastAi.substring(0, 4000)}${lastAi.length > 4000 ? '...' : ''}
 
 → SELF-CORRECTNESS CHECK: Was your previous reasoning accurate? Curious enough? Be explicit.
 
@@ -2199,7 +2208,7 @@ ${lastAi.substring(0, 1200)}${lastAi.length > 1200 ? '...' : ''}
             // Memory: compressed history (PRIMARY CONTEXT for deep iteration)
             if (mem.runningSummary) {
                 prompt += `━━━ 🧠 CONSCIOUS MEMORY (compressed past thoughts — your PRIMARY context) ━━━
-${mem.runningSummary.substring(0, 1500)}
+${mem.runningSummary.substring(0, 4000)}
 
 `;
             }
