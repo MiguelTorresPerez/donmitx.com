@@ -226,7 +226,9 @@
             animation: fadeIn 0.3s ease;
         }
 
-        .message.user {
+        .message.user,
+        .message.host,
+        .message.participant {
             align-self: flex-end;
             align-items: flex-end;
         }
@@ -252,6 +254,18 @@
 
         .message.user .bubble {
             background: linear-gradient(135deg, var(--primary), #818cf8);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.host .bubble {
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.participant .bubble {
+            background: linear-gradient(135deg, #0d9488, #14b8a6);
             color: white;
             border-bottom-right-radius: 4px;
         }
@@ -827,18 +841,21 @@
 
         const GAME_MODES = {
             free_chat: { name: '💬 Free Chat', desc: 'Open conversation with the AI. All participants can send messages.' },
-            consciousness: { name: '🧠 Create Consciousness', desc: 'Recursive AI loop. The model calls itself continuously, compressing context. Warning: Stops if all users leave.' },
+            consciousness: { name: '🧠 Create Consciousness', desc: 'Recursive AI loop. The model calls itself continuously, compressing context. Memory persists in Firebase — any participant can drive the loop.' },
             questioner: { name: '❓ The Questioner', desc: 'Trivia game! AI asks questions, players answer for points. Host can end the game.' }
         };
 
         // Fallback runner for consciousness loop (if host leaves, participants keep it alive)
+        // Enhanced: also checks state.loopAlive flag — loop continues unless self-killed
         setInterval(() => {
             if (roomState?.status === 'playing' && getGameMode() === 'consciousness' && isParticipant()) {
+                const loopAlive = roomState.state?.loopAlive !== false; // default true
+                if (!loopAlive) return; // self-killed, don't revive
                 const lastUpdate = roomState.state?.lastConsciousnessUpdate || 0;
                 const isTyping = roomState.state?.isAiTyping || false;
                 // If no one updated it in the last 20 seconds and it's not currently generating
                 if (!isGenerating && !isTyping && Date.now() - lastUpdate > 20000) {
-                    console.log("[aichat] Host appears inactive. Fallback runner taking over loop...");
+                    console.log("[aichat] Fallback runner taking over consciousness loop...");
                     startConsciousnessLoop();
                 }
             }
@@ -903,6 +920,171 @@
         function getGameMode() { return roomState?.state?.gameMode || 'free_chat'; }
 
         // --- RENDER LOGIC ---
+        function renderLobby() {
+            const players = Object.values(roomState.players || {});
+
+            let html = `
+                <div class="card animate-in" style="padding: 40px 20px; width: 100%; max-width: 500px; margin: 0 auto;">
+                    <h2 style="margin-bottom: 10px;">Waiting in Lobby...</h2>
+                    <p class="text-muted">${players.length} / ${roomState.config?.maxPlayers || 10} participants</p>
+                    
+                    <div class="player-list">
+                        ${players.map(p => `
+                            <div class="player-item">
+                                <img src="${p.photoURL || 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%2364748b\'%3E%3Cpath d=\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\'/%3E%3C/svg%3E'}" class="player-avatar" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\' fill=\\'%2364748b\\'%3E%3Cpath d=\\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\\'/%3E%3C/svg%3E'"/>
+                                <span class="player-name">${escapeHTML(p.name)}</span>
+                                ${p.uid === roomState.hostUid ? `<span class="host-badge">HOST</span>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+            `;
+
+            if (isHost()) {
+                html += `<button class="btn-host" id="btn-start-session">Start Session</button>`;
+            } else {
+                html += `<div style="margin-top: 24px; color: var(--text-muted); font-size: 0.9rem;">Waiting for Host to start the session...</div>`;
+            }
+
+            html += `</div>`;
+            return html;
+        }
+        function setupLobbyControls() {
+            document.getElementById('btn-start-session').addEventListener('click', async (e) => {
+                e.target.disabled = true;
+                e.target.textContent = 'Starting...';
+                try {
+                    await updateDoc(roomRef, {
+                        status: 'playing',
+                        'state.isAiTyping': false
+                    });
+                } catch (err) {
+                    console.error('Failed to start:', err);
+                    alert('Could not start room.');
+                    e.target.disabled = false;
+                    e.target.textContent = 'Start Session';
+                }
+            });
+        }
+        function renderPlaying() {
+            const hostDisplay = roomState.players[roomState.hostUid]?.name || 'Host';
+            const inputHtml = isHost() ? `
+                <div class="input-area">
+                    <form class="chat-form" id="chat-form">
+                        <textarea class="user-input" id="user-input" placeholder="Message Ollama..." rows="1" autofocus></textarea>
+                        <button type="submit" class="btn-send" id="btn-send" disabled>
+                            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+                        </button>
+                    </form>
+                </div>
+            ` : `
+                <div class="spectator-blocker">
+                    You are spectating outside of the host's session.<br/>
+                    Prompting is restricted to <strong>${escapeHTML(hostDisplay)}</strong>.
+                </div>
+            `;
+
+            const topbarHtml = isHost() ? `
+                <div class="chat-topbar">
+                    <h2>Connection Status</h2>
+                    <div class="status-container">
+                        <span id="latency" style="font-size: 0.8rem; color: var(--text-muted);"></span>
+                        <div id="status-badge" class="badge status-checking">Checking...</div>
+                    </div>
+                </div>
+            ` : `
+                <div class="chat-topbar">
+                    <h2>Session Hosted by ${escapeHTML(hostDisplay)}</h2>
+                    <div class="badge spectator-badge">Spectator Read-Only</div>
+                </div>
+            `;
+
+            return `
+                <div class="chat-container animate-in">
+                    ${topbarHtml}
+                    
+                    <div class="chat-history" id="chat-history">
+                        <div class="message ai" style="margin-bottom: 8px;">
+                            <div class="bubble">Session started! Waiting for ${isHost() ? 'your' : 'the host\'s'} prompt.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="typing-indicator" id="typing-indicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+
+                    ${inputHtml}
+                </div>
+            `;
+        }
+        function setupChatControls() {
+            chatHistory = document.getElementById('chat-history');
+            typingIndicator = document.getElementById('typing-indicator');
+
+            if (isHost()) {
+                userInput = document.getElementById('user-input');
+                btnSend = document.getElementById('btn-send');
+
+                userInput.addEventListener('input', function () {
+                    this.style.height = '52px';
+                    const newHeight = Math.min(this.scrollHeight, 120);
+                    if (newHeight > 52) this.style.height = newHeight + 'px';
+                    btnSend.disabled = !isOnline || isGenerating || this.value.trim() === '';
+                });
+
+                userInput.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        if (!btnSend.disabled) handleSendHostMessage();
+                    }
+                });
+
+                document.getElementById('chat-form').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    if (!btnSend.disabled) handleSendHostMessage();
+                });
+            }
+        }
+
+        function showResults() {
+            const area = document.getElementById('app-area');
+            const overlay = document.getElementById('results-overlay');
+
+            const players = Object.values(roomState.players || {}).sort((a, b) => (b.score || 0) - (a.score || 0));
+            const medals = ['🥇', '🥈', '🥉'];
+
+            let podiumHtml = '';
+            if (getGameMode() === 'questioner' && players.length > 0) {
+                podiumHtml = `<div class="podium">${players.slice(0, 3).map((p, i) => `
+                    <div class="podium-item">
+                        <div class="podium-rank">${medals[i]}</div>
+                        <div class="podium-name">${escapeHTML(p.name)}</div>
+                        <div class="podium-score">${p.score || 0} pts</div>
+                    </div>
+                `).join('')}</div>`;
+            }
+
+            let scoreListHtml = players.length > 3 ? `<div class="score-list">${players.slice(3).map((p, i) => `
+                <div class="score-row">
+                    <span>${i + 4}. ${escapeHTML(p.name)}</span>
+                    <span class="score-pts">${p.score || 0} pts</span>
+                </div>
+            `).join('')}</div>` : '';
+
+            overlay.innerHTML = `
+                <div class="results-card">
+                    <h2>🏆 ${getGameMode() === 'questioner' ? 'Final Scores' : 'Session Ended'}</h2>
+                    ${podiumHtml}
+                    ${scoreListHtml}
+                    <p style="color: var(--text-muted); margin-top: 16px; font-size: 0.9rem;">Thanks for playing!</p>
+                </div>
+            `;
+            overlay.style.display = 'flex';
+
+            area.innerHTML = `<div class="card" style="padding: 40px; text-align: center;"><h2>Session Ended</h2><p style="color:var(--text-muted); margin-top:8px;">The results are displayed above.</p></div>`;
+        }
+
         function render() {
             const area = document.getElementById('app-area');
             // Clear timers on re-render
@@ -1064,7 +1246,8 @@
                         'state.isAiTyping': false,
                         'state.model': MODEL,
                         'state.ollamaUrl': OLLAMA_URL,
-                        'state.gameMode': selectedGameMode
+                        'state.gameMode': selectedGameMode,
+                        'state.loopAlive': true
                     });
                 } catch (err) {
                     console.error('Failed to start:', err);
@@ -1299,7 +1482,7 @@
                             }
                             const isMsgHost = data.authorUid === roomState?.hostUid;
                             localMessageContext.push({ role: data.role === 'user' ? 'user' : 'assistant', content: data.content, isHost: isMsgHost, authorName: data.authorName });
-                            appendStaticMessage(data.role, data.content, data.authorName, data.timestamp, id);
+                            appendStaticMessage(data.role, data.content, data.authorName, data.timestamp, id, data.authorUid);
                             messagesAdded = true;
                         }
                     }
@@ -1315,7 +1498,7 @@
 
         function formatTime(isoString) { const d = new Date(isoString); return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
 
-        function appendStaticMessage(role, content, authorName, timestampIso, firestoreId) {
+        function appendStaticMessage(role, content, authorName, timestampIso, firestoreId, authorUid) {
             // If we have a finalized streaming bubble in the DOM for this exact Firestore doc, just update its ID dataset and return (prevent duplicate)
             if (firestoreId && pendingBubbleMsgDiv && pendingBubbleMsgDiv.dataset.msgId === firestoreId) {
                 return; // we already rendered this in-place via streaming
@@ -1330,7 +1513,13 @@
             formattedContent = formattedContent.replace(/```([\s\S]*?)```/g, '<pre style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; overflow-x: auto;"><code>$1</code></pre>');
             formattedContent = formattedContent.replace(/\n/g, '<br/>');
 
-            const cssClass = role === 'system' ? 'system' : role === 'user' ? 'user' : 'ai';
+            // Distinguish host vs participant vs AI vs system bubbles
+            let cssClass;
+            if (role === 'system') cssClass = 'system';
+            else if (role === 'ai') cssClass = 'ai';
+            else if (authorUid && authorUid === roomState?.hostUid) cssClass = 'host';
+            else if (role === 'user') cssClass = 'participant';
+            else cssClass = 'user';
             const nameHtml = authorName ? `<div class="message-author">${escapeHTML(authorName)}</div>` : '';
 
             const html = `
@@ -1618,6 +1807,11 @@
         const RECURSION_INTERVAL = 15000; // 15 seconds between recursions
 
         async function startConsciousnessLoop() {
+            // Check loopAlive — if the agent self-killed, don't revive
+            if (roomState?.state?.loopAlive === false) {
+                console.log('[aichat] Loop is dead (self-killed). Not reviving.');
+                return;
+            }
             if (!isOnline || roomState?.status !== 'playing' || getGameMode() !== 'consciousness') {
                 console.warn('[aichat] Consciousness loop skipped: online=', isOnline, 'status=', roomState?.status);
                 // Retry if just not online yet
@@ -1811,7 +2005,8 @@
                             await updateDoc(roomRef, {
                                 'status': 'finished',
                                 'state.isAiTyping': false,
-                                'state.terminationRequested': false
+                                'state.terminationRequested': false,
+                                'state.loopAlive': false
                             });
                         }, 1000);
                     } catch (e) { console.error("Failed to transition on deletion", e); }
@@ -1843,17 +2038,20 @@
                 mem.runningSummary = mem.runningSummary
                     ? `${mem.runningSummary}\n\n[Iter ${mem.iteration}] Consolidation:\n${newMemory}`
                     : `[Iter ${mem.iteration}] Consolidation:\n${newMemory}`;
-
-                // Keep the entire blob under 3000 chars to avoid Firebase doc bloating
-                if (mem.runningSummary.length > 3000) {
-                    mem.runningSummary = mem.runningSummary.substring(mem.runningSummary.length - 2500);
+            } else {
+                // Auto-compress EVERY iteration when model doesn't output <MEMORY_UPDATE> tags
+                // Extract first 300 chars of the AI output as a compressed summary
+                const compressed = aiOutput.replace(/<[^>]+>/g, '').substring(0, 300).trim();
+                if (compressed) {
+                    mem.runningSummary = mem.runningSummary
+                        ? `${mem.runningSummary}\n\n[Iter ${mem.iteration}] Auto-summary:\n${compressed}...`
+                        : `[Iter ${mem.iteration}] Auto-summary:\n${compressed}...`;
                 }
-            } else if (mem.iteration % 5 === 0 && mem.recentAiOutputs.length > 0) {
-                // Fallback: If agent forgets to compress after 5 iters, force a naive compression
-                const oldest = mem.recentAiOutputs[0];
-                mem.runningSummary = mem.runningSummary
-                    ? mem.runningSummary
-                    : `First thought fallback: ${oldest.substring(0, 200)}...`;
+            }
+
+            // Keep the entire blob under 4000 chars to avoid Firebase doc bloating
+            if (mem.runningSummary && mem.runningSummary.length > 4000) {
+                mem.runningSummary = mem.runningSummary.substring(mem.runningSummary.length - 3000);
             }
 
             // Extract confidence self-assessment from output
@@ -1880,17 +2078,9 @@
         function buildConsciousnessPrompt() {
             const mem = consciousnessMemory;
 
-            // Use mem.hostMessages / mem.userMessages (populated by queue drain + context scan)
+            // Use mem.hostMessages / mem.userMessages (populated by Firebase snapshot in startConsciousnessLoop)
             const hostMsgs = mem.hostMessages || [];
             const userMsgs = mem.userMessages || [];
-
-            // Also scan localMessageContext in case of re-initialisation
-            [...localMessageContext].forEach(m => {
-                if (m.role === 'user') {
-                    if (m.isHost && !hostMsgs.includes(m.content)) hostMsgs.push(m.content);
-                    else if (!m.isHost && !userMsgs.includes(m.content)) userMsgs.push(m.content);
-                }
-            });
 
             const lastAi = mem.recentAiOutputs.length > 0 ? mem.recentAiOutputs[mem.recentAiOutputs.length - 1] : '';
             const recentHostMsgs = hostMsgs.slice(-5).join('\n').trim();
@@ -1955,31 +2145,31 @@ ${recentUserMsgs}
             // TIER 3 — Previous AI output (self-reflection)
             if (lastAi) {
                 prompt += `━━━  TIER 3: YOUR PREVIOUS THOUGHT ━━━
-${lastAi.substring(0, 800)}${lastAi.length > 800 ? '...' : ''}
+${lastAi.substring(0, 1200)}${lastAi.length > 1200 ? '...' : ''}
 
 → SELF-CORRECTNESS CHECK: Was your previous reasoning accurate? Curious enough? Be explicit.
 
 `;
             }
 
-            // Memory: compressed history
+            // Memory: compressed history (PRIMARY CONTEXT for deep iteration)
             if (mem.runningSummary) {
-                prompt += `━━━ 🧠 CONSCIOUS MEMORY (compressed past thoughts) ━━━
-${mem.runningSummary.substring(0, 800)}
+                prompt += `━━━ 🧠 CONSCIOUS MEMORY (compressed past thoughts — your PRIMARY context) ━━━
+${mem.runningSummary.substring(0, 1500)}
 
 `;
             }
 
             if (mem.mistakes.length > 0) {
                 prompt += `━━━ ⚠️ PAST SELF-CORRECTIONS ━━━
-${mem.mistakes.slice(-3).join('\n')}
+${mem.mistakes.slice(-5).join('\n')}
 
 `;
             }
 
             if (mem.keyInsights.length > 0) {
                 prompt += `━━━ 💡 KEY INSIGHTS ACCUMULATED ━━━
-${mem.keyInsights.slice(-3).join('\n')}
+${mem.keyInsights.slice(-5).join('\n')}
 
 `;
             }

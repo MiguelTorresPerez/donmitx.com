@@ -588,7 +588,16 @@ export async function createGameRoom(gameId, user, config = {}) {
         state: {
             currentQuestion: 0,
             timestamp: 0,
-            answersRevealed: false
+            answersRevealed: false,
+            // AI Chat fields — initialized at creation for schema completeness
+            gameMode: 'free_chat',
+            isAiTyping: false,
+            consciousnessMemory: null,
+            lastConsciousnessUpdate: 0,
+            model: null,
+            ollamaUrl: null,
+            terminationRequested: false,
+            loopAlive: true
         },
         players: {
             [user.uid]: {
