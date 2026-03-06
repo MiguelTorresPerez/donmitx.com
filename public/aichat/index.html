@@ -910,8 +910,8 @@
                 // If we are already in playing state with the same mode, do NOT re-render.
                 // Just silently update consciousnessMemory from Firebase so the next loop iteration uses it.
                 if (playingRendered && roomState.status === 'playing' && currentRenderedMode === newMode) {
-                    // 1) Model Sync: Ensure non-hosts use the host's selected model
-                    if (!isHost() && roomState.state?.model) {
+                    // 1) Model Sync: Ensure ALL users sync with the live room model
+                    if (roomState.state?.model) {
                         MODEL = roomState.state.model;
                     }
 
@@ -932,7 +932,7 @@
                 // Full re-render on actual status/mode transitions
                 if (currentRenderedStatus !== roomState.status || currentRenderedMode !== newMode) {
                     // Update model before render so UI reflects it
-                    if (!isHost() && roomState.state?.model) {
+                    if (roomState.state?.model) {
                         MODEL = roomState.state.model;
                     }
                     currentRenderedStatus = roomState.status;
@@ -1140,8 +1140,6 @@
                 if (isHost()) setupLobbyControls();
             } else if (roomState.status === 'playing') {
                 // Reset displayed messages and DOM since we're rebuilding the playing UI
-                displayedMessageIds.clear();
-                localMessageContext = [];
                 humanMessageQueue = [];
                 pendingAiContent = null;
                 pendingBubbleMsgDiv = null;
@@ -1150,6 +1148,12 @@
                 isGenerating = false;
                 isStreaming = false;
                 gameModeStarted = false;
+
+                if (roomState?.status === 'playing' && !playingRendered) {
+                    // BUGFIX: Clear DOM tracking arrays so historical messages from Firebase inject properly on render
+                    displayedMessageIds.clear();
+                    localMessageContext = [];
+                }
 
                 // Restore consciousness memory from Firestore if available
                 if (roomState?.state?.consciousnessMemory) {
@@ -2151,18 +2155,14 @@
             // Extract self-corrections / mistakes
             const correctionPatterns = /(?:I was wrong|correction|mistake|I should have|upon reflection|actually)/i;
             if (correctionPatterns.test(aiOutput)) {
-                // Keep up to 300 chars to avoid aggressive cropping, but don't take the whole output
-                const snippet = aiOutput.substring(0, 300) + (aiOutput.length > 300 ? '...' : '');
-                mem.mistakes.push(`Iter ${mem.iteration}: ${snippet}`);
+                mem.mistakes.push(`Iter ${mem.iteration}: ${semanticCompress(aiOutput)}`);
                 if (mem.mistakes.length > 10) mem.mistakes.shift();
             }
 
             // Extract key insights (sentences with strong language)
             const insightPatterns = /(?:key insight|important|fundamental|I realize|crucial|significant)/i;
             if (insightPatterns.test(aiOutput)) {
-                // Keep up to 300 chars to avoid aggressive cropping
-                const snippet = aiOutput.substring(0, 300) + (aiOutput.length > 300 ? '...' : '');
-                mem.keyInsights.push(`Iter ${mem.iteration}: ${snippet}`);
+                mem.keyInsights.push(`Iter ${mem.iteration}: ${semanticCompress(aiOutput)}`);
                 if (mem.keyInsights.length > 10) mem.keyInsights.shift();
             }
         }
