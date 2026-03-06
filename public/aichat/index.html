@@ -752,6 +752,41 @@
         .btn-close-memory:hover {
             background: rgba(239, 68, 68, 0.5);
         }
+
+        .btn-delete-iter {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-delete-iter:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .iter-block {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .iter-header {
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            color: #a855f7;
+            font-size: 0.85rem;
+        }
     </style>
 </head>
 
@@ -777,7 +812,7 @@
             document.getElementById('app-area').innerHTML = '<p style="color:var(--error); margin-top:20px;">Error: Must be played from Dashboard.</p>';
             throw new Error("Game API missing");
         }
-        const { db, auth, doc, onSnapshot, updateDoc: _updateDoc, collection, addDoc, getDocs, query, orderBy } = window.parent.DONMITX_GAME_API;
+        const { db, auth, doc, onSnapshot, updateDoc: _updateDoc, collection, addDoc, getDocs, query, orderBy, limit } = window.parent.DONMITX_GAME_API;
 
         const updateDoc = async (ref, data) => {
             const pureData = window.parent.JSON.parse(JSON.stringify(data));
@@ -1631,17 +1666,82 @@
             let existing = document.getElementById('memory-overlay-container');
             if (existing) existing.remove();
 
-            const content = consciousnessMemory.runningSummary || "No permanent memory formed yet. Ask the agent a question to seed its consciousness.";
+            let contentHtml = '';
+            const rawContent = consciousnessMemory.runningSummary || '';
+
+            if (!rawContent) {
+                contentHtml = "No permanent memory formed yet. Ask the agent a question to seed its consciousness.";
+            } else {
+                // Parse iterations by [Iter X] or [Iter X] Auto-summary:
+                const iterRegex = /(\[Iter \d+\](?: Auto-summary:|\s*Human Message:)?)/g;
+                const parts = rawContent.split(iterRegex);
+
+                if (parts.length <= 1) {
+                    contentHtml = `<div class="iter-block">${escapeHTML(rawContent)}</div>`;
+                } else {
+                    // Reconstruct into blocks
+                    for (let i = 1; i < parts.length; i += 2) {
+                        const header = parts[i];
+                        const body = parts[i + 1] || '';
+                        // Extract just the exact string we would want to slice out if deleted
+                        const fullBlockRaw = header + body;
+
+                        const renderHeader = escapeHTML(header);
+                        const renderBody = escapeHTML(body.trim());
+
+                        // Give hosts a delete button
+                        const deleteBtn = isHost() ? `<button class="btn-delete-iter" data-block="${escapeHTML(fullBlockRaw)}">🗑️ Delete</button>` : '';
+
+                        contentHtml += `
+                            <div class="iter-block">
+                                <div class="iter-header">
+                                    ${renderHeader} 
+                                    ${deleteBtn}
+                                </div>
+                                <div class="iter-body">${renderBody}</div>
+                            </div>
+                        `;
+                    }
+                }
+            }
+
             const overlay = document.createElement('div');
             overlay.id = 'memory-overlay-container';
             overlay.className = 'memory-overlay';
             overlay.innerHTML = `
                 <div class="memory-panel">
                     <h3>🧠 Agent Brain <button class="btn-close-memory" id="btn-close-memory">✕</button></h3>
-                    <div class="memory-content">${escapeHTML(content)}</div>
+                    <div class="memory-content">${contentHtml}</div>
                 </div>
             `;
             document.body.appendChild(overlay);
+
+            // Bind delete events
+            if (isHost()) {
+                const deleteBtns = overlay.querySelectorAll('.btn-delete-iter');
+                deleteBtns.forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const targetBlockString = unescapeHTML(e.currentTarget.dataset.block);
+                        // Cut it out of the running block instantly
+                        let newSummary = consciousnessMemory.runningSummary.replace(targetBlockString, '');
+                        // Clean up any double newlines left behind
+                        newSummary = newSummary.replace(/\n{3,}/g, '\n\n').trim();
+
+                        consciousnessMemory.runningSummary = newSummary;
+                        e.currentTarget.closest('.iter-block').remove();
+
+                        // Push immediately to Firebase
+                        try {
+                            // Update just the exact deep property inside the map
+                            await updateDoc(roomRef, {
+                                'state.consciousnessMemory.runningSummary': newSummary
+                            });
+                        } catch (err) {
+                            console.error("Failed to delete memory chunk", err);
+                        }
+                    });
+                });
+            }
 
             document.getElementById('btn-close-memory').addEventListener('click', () => {
                 overlay.remove();
@@ -1887,8 +1987,8 @@
             try {
                 // Fetch the last 20 messages regardless of exact timestamp to avoid the "AI was typing" boundary gap issue
                 const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
-                // Use limitToLast(20) pattern via descending order then reverse
-                const recentMsgsQuery = query(msgsRef, orderBy('timestamp', 'desc')); // need limit, but we'll manually filter
+                // Use limit(20) pattern via descending order then reverse to vastly reduce Firebase bounds
+                const recentMsgsQuery = query(msgsRef, orderBy('timestamp', 'desc'), limit(20));
                 const recentMsgsSnap = await getDocs(recentMsgsQuery);
 
                 const msgs = [];
@@ -1906,6 +2006,10 @@
                         } else {
                             consciousnessMemory.userMessages.push(formattedMsg);
                         }
+                        // Structurally inject it permanently into the Brain episodic memory
+                        consciousnessMemory.runningSummary = consciousnessMemory.runningSummary
+                            ? `${consciousnessMemory.runningSummary}\n\n[Iter ${consciousnessMemory.iteration}] Human Message:\n${formattedMsg}`
+                            : `[Iter ${consciousnessMemory.iteration}] Human Message:\n${formattedMsg}`;
                     }
                 });
             } catch (e) {
@@ -1924,6 +2028,10 @@
                     } else {
                         consciousnessMemory.userMessages.push(formattedMsg);
                     }
+                    // Structurally inject it permanently into the Brain episodic memory
+                    consciousnessMemory.runningSummary = consciousnessMemory.runningSummary
+                        ? `${consciousnessMemory.runningSummary}\n\n[Iter ${consciousnessMemory.iteration}] Human Message:\n${formattedMsg}`
+                        : `[Iter ${consciousnessMemory.iteration}] Human Message:\n${formattedMsg}`;
                 }
             });
 

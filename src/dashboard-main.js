@@ -20,12 +20,12 @@ import {
     getAllGameRooms, deleteGameRoom
 } from './db.js';
 import { db, auth } from './firebase-init.js';
-import { doc, onSnapshot, updateDoc, collection, addDoc, getDocs, query, orderBy } from 'firebase/firestore';
+import { doc, onSnapshot, updateDoc, collection, addDoc, getDocs, query, orderBy, limit } from 'firebase/firestore';
 
 // Expose safe API to same-origin game iframes
 window.DONMITX_GAME_API = {
     db, auth, doc, onSnapshot, updateDoc,
-    collection, addDoc, getDocs, query, orderBy
+    collection, addDoc, getDocs, query, orderBy, limit
 };
 
 // --- State ---
