@@ -910,6 +910,11 @@
                 // If we are already in playing state with the same mode, do NOT re-render.
                 // Just silently update consciousnessMemory from Firebase so the next loop iteration uses it.
                 if (playingRendered && roomState.status === 'playing' && currentRenderedMode === newMode) {
+                    // 1) Model Sync: Ensure non-hosts use the host's selected model
+                    if (!isHost() && roomState.state?.model) {
+                        MODEL = roomState.state.model;
+                    }
+
                     // Sync memory from Firebase into local var (the round-trip)
                     if (roomState.state?.consciousnessMemory) {
                         consciousnessMemory = roomState.state.consciousnessMemory;
@@ -926,6 +931,10 @@
 
                 // Full re-render on actual status/mode transitions
                 if (currentRenderedStatus !== roomState.status || currentRenderedMode !== newMode) {
+                    // Update model before render so UI reflects it
+                    if (!isHost() && roomState.state?.model) {
+                        MODEL = roomState.state.model;
+                    }
                     currentRenderedStatus = roomState.status;
                     currentRenderedMode = newMode;
                     playingRendered = false; // reset so render() builds the UI
@@ -1660,51 +1669,49 @@
 
             try {
                 const msgsRef = collection(db, 'game_rooms', roomId, 'messages');
-                await addDoc(msgsRef, {
+                const docRef = await addDoc(msgsRef, {
                     role: 'user',
                     content: text,
                     authorName: currentUser.displayName || 'User',
                     authorUid: currentUser.uid,
                     timestamp: userIsoString
                 });
+
+                // In consciousness mode — queue the human message for the next recursion
+                if (getGameMode() === 'consciousness') {
+                    humanMessageQueue.push({
+                        id: docRef.id,
+                        content: text,
+                        isHost: isUserHost,
+                        authorName: currentUser.displayName || 'User'
+                    });
+
+                    // Special handling for "terminate simulation" — write a flag to Firebase state
+                    if (text.toLowerCase().trim() === 'terminate simulation' && isUserHost) {
+                        try {
+                            await updateDoc(roomRef, { 'state.terminationRequested': true });
+                        } catch (e) { console.warn('Failed to set termination flag', e); }
+                    }
+
+                    // Any participant can trigger fast recursion (not just host)
+                    // This ensures non-host messages are picked up promptly
+                    if (!isGenerating) {
+                        clearTimeout(recursionTimer);
+                        recursionTimer = setTimeout(() => startConsciousnessLoop(), 1500);
+                    }
+                }
+
+                // If this user is the host, trigger AI response for free_chat mode
+                if (isHost() && getGameMode() === 'free_chat') {
+                    await generateAIResponse(text);
+                }
+
+                if (btnSend) btnSend.disabled = isHost() ? (!isOnline || isGenerating || userInput.value.trim() === '') : (userInput.value.trim() === '');
             } catch (err) {
                 console.error("Error sending user message:", err);
                 btnSend.disabled = false;
-                return;
             }
-
-            // In consciousness mode — queue the human message for the next recursion
-            if (getGameMode() === 'consciousness') {
-                humanMessageQueue.push({
-                    content: text,
-                    isHost: isUserHost,
-                    authorName: currentUser.displayName || 'User'
-                });
-
-                // Special handling for "terminate simulation" — write a flag to Firebase state
-                if (text.toLowerCase().trim() === 'terminate simulation' && isUserHost) {
-                    try {
-                        await updateDoc(roomRef, { 'state.terminationRequested': true });
-                    } catch (e) { console.warn('Failed to set termination flag', e); }
-                }
-
-                // Any participant can trigger fast recursion (not just host)
-                // This ensures non-host messages are picked up promptly
-                if (!isGenerating) {
-                    clearTimeout(recursionTimer);
-                    recursionTimer = setTimeout(() => startConsciousnessLoop(), 1500);
-                }
-            }
-
-            // If this user is the host, trigger AI response for free_chat mode
-            if (isHost() && getGameMode() === 'free_chat') {
-                await generateAIResponse(text);
-            }
-
-            if (btnSend) btnSend.disabled = isHost() ? (!isOnline || isGenerating || userInput.value.trim() === '') : (userInput.value.trim() === '');
         }
-
-        // --- AI GENERATION (HOST ONLY) ---
         async function generateAIResponse(triggerText) {
             if (!isHost() || !isOnline) { console.warn('[aichat] generateAIResponse skipped: host=', isHost(), 'online=', isOnline); return; }
             isGenerating = true;
@@ -1745,6 +1752,7 @@
                 streamingBubbleMsgDiv = wrapper;
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder("utf-8");
+                let lastSyncTime = Date.now();
 
                 while (true) {
                     const { done, value } = await reader.read();
@@ -1758,6 +1766,12 @@
                                 fullAiResponse += data.response;
                                 if (streamingBubble) streamingBubble.textContent = fullAiResponse;
                                 scrollToBottom();
+
+                                // Free chat: Sync live stream to Firebase every ~1000ms so spectators see it
+                                if (Date.now() - lastSyncTime > 1000) {
+                                    lastSyncTime = Date.now();
+                                    try { await updateDoc(roomRef, { 'state.currentAiStream': fullAiResponse }); } catch (eSync) { }
+                                }
                             }
                         } catch (e) { }
                     }
@@ -1793,7 +1807,7 @@
                         pendingBubbleMsgDiv = null;
                         pendingAiContent = null;
                     }
-                    await updateDoc(roomRef, { 'state.isAiTyping': false });
+                    await updateDoc(roomRef, { 'state.isAiTyping': false, 'state.currentAiStream': null });
                 } catch (err) { console.error("Failed to save final AI msg", err); }
 
                 isGenerating = false;
@@ -1856,9 +1870,10 @@
             if (roomState?.state?.consciousnessMemory) {
                 consciousnessMemory = JSON.parse(JSON.stringify(roomState.state.consciousnessMemory));
             }
-            // Ensure arrays exist
-            consciousnessMemory.hostMessages = consciousnessMemory.hostMessages || [];
-            consciousnessMemory.userMessages = consciousnessMemory.userMessages || [];
+            // Ensure arrays exist and CLEAR message arrays so old messages don't loop forever
+            consciousnessMemory.hostMessages = [];
+            consciousnessMemory.userMessages = [];
+            consciousnessMemory.processedMessageIds = consciousnessMemory.processedMessageIds || [];
             consciousnessMemory.recentAiOutputs = consciousnessMemory.recentAiOutputs || [];
             consciousnessMemory.keyInsights = consciousnessMemory.keyInsights || [];
             consciousnessMemory.mistakes = consciousnessMemory.mistakes || [];
@@ -1873,18 +1888,19 @@
                 const recentMsgsSnap = await getDocs(recentMsgsQuery);
 
                 const msgs = [];
-                recentMsgsSnap.forEach(docSnap => msgs.push(docSnap.data()));
+                recentMsgsSnap.forEach(docSnap => msgs.push({ id: docSnap.id, ...docSnap.data() }));
                 msgs.reverse(); // put back in chronological order
 
-                // don't clear memory entirely, just append new ones we haven't seen in the last batch
-                // to prevent huge prompting, keep the arrays cropped
+                // append new ones we haven't processed yet
                 msgs.slice(-20).forEach(data => {
-                    if (data.role === 'user') {
+                    if (data.role === 'user' && data.id && !consciousnessMemory.processedMessageIds.includes(data.id)) {
+                        consciousnessMemory.processedMessageIds.push(data.id);
                         const isMsgFromHost = data.authorUid === roomState?.hostUid;
+                        const formattedMsg = `[${data.authorName || 'User'}]: ${data.content}`;
                         if (isMsgFromHost) {
-                            if (!consciousnessMemory.hostMessages.includes(data.content)) consciousnessMemory.hostMessages.push(data.content);
+                            consciousnessMemory.hostMessages.push(formattedMsg);
                         } else {
-                            if (!consciousnessMemory.userMessages.includes(data.content)) consciousnessMemory.userMessages.push(data.content);
+                            consciousnessMemory.userMessages.push(formattedMsg);
                         }
                     }
                 });
@@ -1896,10 +1912,14 @@
             const drainedMessages = [...humanMessageQueue];
             humanMessageQueue = [];
             drainedMessages.forEach(hm => {
-                if (hm.isHost && !consciousnessMemory.hostMessages.includes(hm.content)) {
-                    consciousnessMemory.hostMessages.push(hm.content);
-                } else if (!hm.isHost && !consciousnessMemory.userMessages.includes(hm.content)) {
-                    consciousnessMemory.userMessages.push(hm.content);
+                if (hm.id && !consciousnessMemory.processedMessageIds.includes(hm.id)) {
+                    consciousnessMemory.processedMessageIds.push(hm.id);
+                    const formattedMsg = `[${hm.authorName || 'User'}]: ${hm.content}`;
+                    if (hm.isHost) {
+                        consciousnessMemory.hostMessages.push(formattedMsg);
+                    } else {
+                        consciousnessMemory.userMessages.push(formattedMsg);
+                    }
                 }
             });
 
@@ -2014,8 +2034,9 @@
                         runningSummary: consciousnessMemory.runningSummary || '',
                         confidence: consciousnessMemory.confidence || 'medium',
                         keyInsights: (consciousnessMemory.keyInsights || []).slice(-10),
-                        hostMessages: (consciousnessMemory.hostMessages || []).slice(-10),
-                        userMessages: (consciousnessMemory.userMessages || []).slice(-10),
+                        hostMessages: [], // Clear so we don't clog Firebase or infinitely prompt next loop
+                        userMessages: [], // Clear so we don't clog Firebase or infinitely prompt next loop
+                        processedMessageIds: (consciousnessMemory.processedMessageIds || []).slice(-50), // keep last 50 processed IDs
                         recentAiOutputs: (consciousnessMemory.recentAiOutputs || []).slice(-2), // keep 2 full thoughts
                         mistakes: (consciousnessMemory.mistakes || []).slice(-10)
                     };
@@ -2074,21 +2095,39 @@
             }
         }
 
+        // Semantic Token Compression Helper
+        function semanticCompress(str) {
+            if (!str) return '';
+            return str
+                // Remove repeated newlines
+                .replace(/\n{3,}/g, '\n\n')
+                // Remove common padding/conversational filler that wastes tokens
+                .replace(/\b(I think|therefore|however|moreover|consequently|obviously|basically)\b/gi, '')
+                // Remove multiple spaces
+                .replace(/ {2,}/g, ' ')
+                // Finally, if it's still ridiculously huge (e.g. >10,000 chars), take the most recent 6000 chars
+                .slice(-6000)
+                .trim();
+        }
+
         function updateConsciousnessMemory(aiOutput) {
             const mem = consciousnessMemory;
             mem.iteration++;
 
-            // Store recent AI outputs (keep last 5 uncompressed)
-            mem.recentAiOutputs.push(aiOutput);
+            // Semantically compress the output before putting it in array to save tokens
+            const compressedOutput = semanticCompress(aiOutput);
+
+            // Store recent AI outputs (keep last 5 uncompressed originally, now lightly compressed)
+            mem.recentAiOutputs.push(compressedOutput);
             if (mem.recentAiOutputs.length > 5) mem.recentAiOutputs.shift();
 
             // Extract agent-driven memory update if present
             const memoryUpdateMatch = aiOutput.match(/<MEMORY_UPDATE>([\s\S]*?)<\/MEMORY_UPDATE>/i);
             if (memoryUpdateMatch) {
-                const newMemory = memoryUpdateMatch[1].trim();
+                const newMemory = semanticCompress(memoryUpdateMatch[1].trim());
                 mem.runningSummary = mem.runningSummary
-                    ? `${mem.runningSummary}\n\n[Iter ${mem.iteration}] Consolidation:\n${newMemory}`
-                    : `[Iter ${mem.iteration}] Consolidation:\n${newMemory}`;
+                    ? `${mem.runningSummary}\n\n[Iter ${mem.iteration}]:\n${newMemory}`
+                    : `[Iter ${mem.iteration}]:\n${newMemory}`;
             } else {
                 // Auto-compress EVERY iteration when model doesn't output <MEMORY_UPDATE> tags
                 // Extract first 300 chars of the AI output as a compressed summary
