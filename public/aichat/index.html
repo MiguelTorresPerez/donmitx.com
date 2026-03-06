@@ -1932,7 +1932,10 @@
             if (btnSend && isHost()) btnSend.disabled = true;
 
             try {
-                await updateDoc(roomRef, { 'state.isAiTyping': true });
+                await updateDoc(roomRef, {
+                    'state.isAiTyping': true,
+                    'state.lastConsciousnessUpdate': Date.now()
+                });
             } catch (e) { }
 
             if (typingIndicator) typingIndicator.classList.add('active');
@@ -2048,8 +2051,8 @@
                     await updateDoc(roomRef, {
                         'state.isAiTyping': false,
                         'state.currentAiStream': null, // clear stream
-                        'state.lastConsciousnessUpdate': Date.now(),
-                        'state.consciousnessMemory': memToSave
+                        'state.consciousnessMemory': memToSave,
+                        'state.lastConsciousnessUpdate': Date.now()
                     });
                     console.log('[aichat] ✅ Memory persisted to Firebase. Iter:', memToSave.iteration, 'Summary length:', memToSave.runningSummary.length);
                 } catch (e) {
