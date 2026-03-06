@@ -1722,10 +1722,32 @@
                 deleteBtns.forEach(btn => {
                     btn.addEventListener('click', async (e) => {
                         const targetBlockString = unescapeHTML(e.currentTarget.dataset.block);
-                        // Cut it out of the running block instantly
-                        let newSummary = consciousnessMemory.runningSummary.replace(targetBlockString, '');
+
+                        // Use precise index-based splicing to ensure no spacing mismatches from DOM
+                        const iterRegex = /(\[Iter \d+\](?: Auto-summary:|\s*Human Message:)?)/g;
+                        const parts = consciousnessMemory.runningSummary.split(iterRegex);
+
+                        let foundMatch = false;
+                        for (let i = 1; i < parts.length; i += 2) {
+                            const header = parts[i];
+                            const body = parts[i + 1] || '';
+                            if ((header + body) === targetBlockString) {
+                                parts.splice(i, 2); // Remove the header and the body completely from the array
+                                foundMatch = true;
+                                break;
+                            }
+                        }
+
+                        if (!foundMatch) {
+                            // Fallback to exact string replace if split array got out of sync
+                            consciousnessMemory.runningSummary = consciousnessMemory.runningSummary.replace(targetBlockString, '');
+                        } else {
+                            // Reconstruct the master string
+                            consciousnessMemory.runningSummary = parts.join('');
+                        }
+
                         // Clean up any double newlines left behind
-                        newSummary = newSummary.replace(/\n{3,}/g, '\n\n').trim();
+                        let newSummary = consciousnessMemory.runningSummary.replace(/\n{3,}/g, '\n\n').trim();
 
                         consciousnessMemory.runningSummary = newSummary;
                         e.currentTarget.closest('.iter-block').remove();
@@ -2254,9 +2276,14 @@
                 }
             }
 
-            // Keep the entire blob under 4000 chars to avoid Firebase doc bloating
-            if (mem.runningSummary && mem.runningSummary.length > 4000) {
-                mem.runningSummary = mem.runningSummary.substring(mem.runningSummary.length - 3000);
+            // Keep the entire blob under 50000 chars to avoid Firebase doc bloating, dropping ONLY the oldest thoughts safely
+            if (mem.runningSummary && mem.runningSummary.length > 50000) {
+                const cutoffIdx = mem.runningSummary.indexOf('[Iter ', mem.runningSummary.length - 45000);
+                if (cutoffIdx > -1) {
+                    mem.runningSummary = mem.runningSummary.substring(cutoffIdx);
+                } else {
+                    mem.runningSummary = mem.runningSummary.substring(mem.runningSummary.length - 45000);
+                }
             }
 
             // Extract confidence self-assessment from output
@@ -2357,10 +2384,17 @@ ${lastAi.substring(0, 4000)}${lastAi.length > 4000 ? '...' : ''}
 
             // Memory: compressed history (PRIMARY CONTEXT for deep iteration)
             if (mem.runningSummary) {
-                prompt += `━━━ 🧠 CONSCIOUS MEMORY (compressed past thoughts — your PRIMARY context) ━━━
-${mem.runningSummary.substring(0, 4000)}
-
-`;
+                // Supply the most recent 25000 chars exclusively from the tail of the timeline so it knows what it just thought about
+                let summaryToPrompt = mem.runningSummary;
+                if (summaryToPrompt.length > 25000) {
+                    const cutoffIdx = summaryToPrompt.indexOf('[Iter ', summaryToPrompt.length - 24000);
+                    if (cutoffIdx > -1) {
+                        summaryToPrompt = summaryToPrompt.substring(cutoffIdx);
+                    } else {
+                        summaryToPrompt = summaryToPrompt.substring(summaryToPrompt.length - 24000);
+                    }
+                }
+                prompt += `━━━ 🧠 CONSCIOUS MEMORY (compressed past thoughts — your PRIMARY context) ━━━\n${summaryToPrompt}\n\n`;
             }
 
             if (mem.mistakes.length > 0) {
